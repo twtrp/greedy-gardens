@@ -98,8 +98,7 @@ class TitleState(BaseState):
             self.tween_list.append(tween.to(container=self.surface_logo_props,
                                             key='scale',
                                             end_value=1,
-                                            # time=3,
-                                            time=0.1,
+                                            time=3,
                                             ease_type=tweentypes.easeOutCubic,
                                             delay=delay))
 

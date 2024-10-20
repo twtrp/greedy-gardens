@@ -26,13 +26,12 @@ class Game:
         self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(0.2)
 
-        self.music_started = False
         self.state_stack = []
         utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
 
 
     def update(self, dt, events):
-        if self.ready:
+        if self.ready: 
             if self.state_stack:
                 self.state_stack[-1].update(dt=dt, events=events)
             else:
