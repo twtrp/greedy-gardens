@@ -7,6 +7,8 @@ class TitleState(BaseState):
     def __init__(self, game):
         BaseState.__init__(self, game)
 
+        self.finished_boot_up = False
+
         utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
         utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
         self.game.music_channel.play()
@@ -74,7 +76,7 @@ class TitleState(BaseState):
                                         direction='bottom',
                                         distance=text_deco_distance,
                                         color=utils.color_lighten(color=utils.get_mono_color(100),factor=0.75))
-        text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(255))
+        text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.white)
         utils.blit(dest=self.surface_logo, 
                         source=text,
                         pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
@@ -87,30 +89,30 @@ class TitleState(BaseState):
         self.menu_options_list = [
             {
                 'text': 'Play',
-                'font-size': 'large',
+                'color': colors.white,
             },
             {
                 'text': 'Records',
-                'font-size': 'large',
+                'color': colors.white,
             },
             {
                 'text': 'Settings',
-                'font-size': 'large',
+                'color': colors.white,
             },
             {
                 'text': 'Quit',
-                'font-size': 'large',
+                'color': colors.white,
             },
         ]
         self.menu_options_surfaces = []
         for option in self.menu_options_list:
-            text_props = {'font': 'lf2', 'size': option['font-size']}
+            text_props = {'font': 'lf2', 'size': 'large'}
             text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
-            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=utils.get_mono_color(255))
+            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=option['color'])
             text = utils.effect_long_shadow(surface=text,
                                             direction='bottom',
                                             distance=text_deco_distance,
-                                            color=utils.color_darken(color=utils.get_mono_color(255), factor=0.5))
+                                            color=utils.color_darken(color=colors.white, factor=0.5))
             text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(50))
             self.menu_options_surfaces.append({
                 'surface': text,
@@ -119,69 +121,35 @@ class TitleState(BaseState):
             })
         
         self.tween_list = []
-        self.bootup_animation_tween_chain()
+        if not self.finished_boot_up:
+            self.bootup_animation_tween_chain()
 
 
     #Class methods
 
-    def unload_bootup_resources(self):
+    def skip_bootup_animation(self):
+        self.finished_boot_up = True
+        self.unload_bootup_surfaces()
+        self.tween_list.clear()
+        for layer in self.landscape_list:
+            layer['y_offset'] = 0
+        self.winds_props['y_offset'] = 0
+        self.game_logo_props['scale'] = 1
+        self.game_logo_props['alpha'] = 255
+        for option in self.menu_options_surfaces:
+            option['scale'] = 1
+            option['alpha'] = 255
+
+
+    def unload_bootup_surfaces(self):
+        self.finished_boot_up = True
         del self.surface_logo
         del self.surface_logo_props
         del self.overlay
         del self.overlay_props
 
-
-    def update_parallax(self, dt):
-        for layer in self.parallax_list:
-            layer['x_offset'] -= layer['x_step']*self.menu_bg_pixel_size*dt
-            if abs(layer['x_offset']) > layer['image'].get_width():
-                layer['x_offset'] = 0
-
-
-    def render_parallax(self, surface):
-        for layer in self.parallax_list:
-            num_duplicates = math.ceil(self.game.canvas_width/layer['image'].get_width()) + 1
-            for i in range(num_duplicates):
-                utils.blit(dest=surface, source=layer['image'], pos=(layer['image'].get_width()*i + layer['x_offset'], 0))
-
-
-    def update_winds(self, dt):
-        for wind in self.wind_entities_list:
-            wind.update_y_offset(y_offset=self.winds_props['y_offset'])
-            if wind.active:
-                wind.update(dt=dt, events=[])
-            else:
-                self.wind_entities_list.remove(wind)
-
-        spawn_rate = self.wind_spawn_rate_per_second * dt
-        spawns = int(spawn_rate)
-        spawn_chance = spawn_rate - spawns
-        for _ in range(spawns):
-            self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
-        if random.random() <= spawn_chance:
-            self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
-
-
-    def render_winds(self):
-        for wind in self.wind_entities_list:
-            wind.render()
-    
-
-    def render_landscape(self, surface):
-        for layer in self.landscape_list:
-            utils.blit(dest=surface, source=layer['image'], pos=(0, layer['y_offset']))
-
-
-    def render_menu_options(self, surface):
-        padding = 0
-        for i, option in enumerate(self.menu_options_surfaces):
-            processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            processed_option.set_alpha(option['alpha'])
-            utils.blit(dest=surface, source=processed_option, pos=(self.game.canvas_width/2, 350 + padding), pos_anchor='center')
-            padding += 90
-
         
-    def bootup_animation_tween_chain(self, skip=False):
+    def bootup_animation_tween_chain(self):
         delay = 0
         self.tween_list.append(tween.to(container=self.surface_logo_props,
                                         key='alpha',
@@ -222,7 +190,7 @@ class TitleState(BaseState):
                                         end_value=-500,
                                         time=3.25,
                                         ease_type=tweencurves.easeOutQuint,
-                                        delay=delay).on_complete(self.unload_bootup_resources))
+                                        delay=delay).on_complete(self.unload_bootup_surfaces))
         
         delay = 4
         self.tween_list.append(tween.to(container=self.game_logo_props,
@@ -237,12 +205,13 @@ class TitleState(BaseState):
                                         time=0.1,
                                         ease_type=tweencurves.easeOutCirc,
                                         delay=delay))
+        
         for option in self.menu_options_surfaces:
-            delay += 0.25
+            delay += 0.125
             self.tween_list.append(tween.to(container=option,
                                             key='scale',
                                             end_value=1,
-                                            time=0.75,
+                                            time=0.5,
                                             ease_type=tweencurves.easeOutElastic,
                                             delay=delay))
             self.tween_list.append(tween.to(container=option,
@@ -252,31 +221,87 @@ class TitleState(BaseState):
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
 
+        # for option in self.menu_options_surfaces:
+        #     delay += 0.025
+        #     self.tween_list.append(tween.to(container=option,
+        #                                     key='scale',
+        #                                     end_value=1,
+        #                                     time=0.75,
+        #                                     ease_type=tweencurves.easeOutElastic,
+        #                                     delay=delay))
+        #     self.tween_list.append(tween.to(container=option,
+        #                                     key='alpha',
+        #                                     end_value=255,
+        #                                     time=0.1,
+        #                                     ease_type=tweencurves.easeOutCirc,
+        #                                     delay=delay))
+        
 
     #Main methods
 
     def update(self, dt, events):
-        self.update_parallax(dt=dt)
-        self.update_winds(dt=dt)
+        # Skip bootup animation
+        if not self.finished_boot_up:
+            for event in events:
+                if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                    self.skip_bootup_animation()
+                    break
+
+        # Update tweens
         tween.update(passed_time=dt)
+
+        # Update parallax
+        for layer in self.parallax_list:
+            layer['x_offset'] -= layer['x_step']*self.menu_bg_pixel_size*dt
+            if abs(layer['x_offset']) > layer['image'].get_width():
+                layer['x_offset'] = 0
+
+        # Update winds
+        for wind in self.wind_entities_list:
+            wind.update_y_offset(y_offset=self.winds_props['y_offset'])
+            if wind.active:
+                wind.update(dt=dt, events=[])
+            else:
+                self.wind_entities_list.remove(wind)
+
+        spawn_rate = self.wind_spawn_rate_per_second * dt
+        spawns = int(spawn_rate)
+        spawn_chance = spawn_rate - spawns
+        for _ in range(spawns):
+            self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
+
+        if random.random() <= spawn_chance:
+            self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
+
 
 
     def render(self, canvas):
         # Build menu background
+
+        ## render sky
         utils.blit(dest=self.menu_bg, source=self.sky)
-        self.render_parallax(surface=self.menu_bg)
-        self.render_landscape(surface=self.menu_bg)
-        self.render_winds()
+        ## Render parallax
+        for layer in self.parallax_list:
+            num_duplicates = math.ceil(self.game.canvas_width/layer['image'].get_width()) + 1
+            for i in range(num_duplicates):
+                utils.blit(dest=self.menu_bg, source=layer['image'], pos=(layer['image'].get_width()*i + layer['x_offset'], 0))
+        ## Render landscape
+        for layer in self.landscape_list:
+            utils.blit(dest=self.menu_bg, source=layer['image'], pos=(0, layer['y_offset']))
+        ## Render winds
+        for wind in self.wind_entities_list:
+            wind.render()
         utils.blit(dest=self.menu_bg, source=self.noise_overlay)
         utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
 
-        # Build intro overlay
+        # Build intro
+
+        ## Render overlay
         if hasattr(self, 'overlay'):
             processed_overlay = self.overlay.copy()
             processed_overlay.set_alpha(self.overlay_props['alpha'])
             utils.blit(dest=canvas, source=processed_overlay)
-    
-        # Build intro logo surface
+        ## Render logo
         if hasattr(self, 'surface_logo'):
             processed_surface_logo = pygame.transform.scale_by(surface=self.surface_logo, factor=self.surface_logo_props['scale'])
             processed_surface_logo.set_alpha(self.surface_logo_props['alpha'])
@@ -286,7 +311,13 @@ class TitleState(BaseState):
                        pos_anchor='center')
             
         # Build main menu
+
+        ## Render game logo
         processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
         processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-        utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 150), pos_anchor='center')
-        self.render_menu_options(surface=canvas)
+        utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 160), pos_anchor='center')
+        ## Render menu options
+        for i, option in enumerate(self.menu_options_surfaces):
+            processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+            processed_option.set_alpha(option['alpha'])
+            utils.blit(dest=canvas, source=processed_option, pos=(self.game.canvas_width/2, 360 + i*90), pos_anchor='center')

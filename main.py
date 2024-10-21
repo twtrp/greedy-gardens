@@ -17,7 +17,7 @@ class Game:
         pygame.display.set_caption(self.title+' (0 FPS)')
         self.canvas = pygame.Surface(size=(self.canvas_width, self.canvas_height))
         self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
-        self.screen.fill(color=utils.get_mono_color(255))
+        self.screen.fill(color=colors.white)
         pygame.display.update()
 
         self.clock = pygame.time.Clock()
@@ -44,7 +44,7 @@ class Game:
     
 
     def render(self):
-        self.canvas.fill(color=utils.get_mono_color(255))
+        self.canvas.fill(color=colors.white)
         if self.state_stack:
             self.state_stack[-1].render(canvas=self.canvas)
         scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
