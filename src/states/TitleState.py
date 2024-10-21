@@ -84,7 +84,7 @@ class TitleState(BaseState):
 
         self.game_logo = utils.load_image(dir=utils.graphics_dir, name='game_logo.png', mode='colorkey')
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=5)
-        self.game_logo_props = {'scale': 0.5, 'alpha': 0,}
+        self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
         self.menu_options_list = [
             {
@@ -100,7 +100,7 @@ class TitleState(BaseState):
                 'color': colors.white,
             },
             {
-                'text': 'Quit',
+                'text': 'Credits',
                 'color': colors.white,
             },
         ]
@@ -122,24 +122,12 @@ class TitleState(BaseState):
         
         self.tween_list = []
         if not self.finished_boot_up:
-            self.bootup_animation_tween_chain()
+            self.bootup_animation_tween_chain(skip=False)
+        else:
+            self.bootup_animation_tween_chain(skip=True)
 
 
     #Class methods
-
-    def skip_bootup_animation(self):
-        self.finished_boot_up = True
-        self.unload_bootup_surfaces()
-        self.tween_list.clear()
-        for layer in self.landscape_list:
-            layer['y_offset'] = 0
-        self.winds_props['y_offset'] = 0
-        self.game_logo_props['scale'] = 1
-        self.game_logo_props['alpha'] = 255
-        for option in self.menu_options_surfaces:
-            option['scale'] = 1
-            option['alpha'] = 255
-
 
     def unload_bootup_surfaces(self):
         self.finished_boot_up = True
@@ -149,104 +137,95 @@ class TitleState(BaseState):
         del self.overlay_props
 
         
-    def bootup_animation_tween_chain(self):
-        delay = 0
-        self.tween_list.append(tween.to(container=self.surface_logo_props,
-                                        key='alpha',
-                                        end_value=255,
-                                        time=2,
-                                        ease_type=tweencurves.easeOutCubic,
-                                        delay=delay))
-        self.tween_list.append(tween.to(container=self.surface_logo_props,
-                                        key='scale',
-                                        end_value=1,
-                                        time=3,
-                                        ease_type=tweencurves.easeOutCubic,
-                                        delay=delay))
+    def bootup_animation_tween_chain(self, skip=False):
+        if not skip:
+            delay = 0
+            self.tween_list.append(tween.to(container=self.surface_logo_props,
+                                            key='alpha',
+                                            end_value=255,
+                                            time=2,
+                                            ease_type=tweencurves.easeOutCubic,
+                                            delay=delay))
+            self.tween_list.append(tween.to(container=self.surface_logo_props,
+                                            key='scale',
+                                            end_value=1,
+                                            time=3,
+                                            ease_type=tweencurves.easeOutCubic,
+                                            delay=delay))
 
-        delay = 1.75
-        self.tween_list.append(tween.to(container=self.overlay_props,
-                                        key='alpha',
-                                        end_value=0,
-                                        time=2,
-                                        ease_type=tweencurves.easeOutQuad,
-                                        delay=delay))
-        for layer in self.landscape_list:
-            self.tween_list.append(tween.to(container=layer,
+            delay = 1.75
+            self.tween_list.append(tween.to(container=self.overlay_props,
+                                            key='alpha',
+                                            end_value=0,
+                                            time=2,
+                                            ease_type=tweencurves.easeOutQuad,
+                                            delay=delay))
+            for layer in self.landscape_list:
+                self.tween_list.append(tween.to(container=layer,
+                                                key='y_offset',
+                                                end_value=0,
+                                                time=3.25,
+                                                ease_type=tweencurves.easeOutQuint,
+                                                delay=delay))
+                
+            self.tween_list.append(tween.to(container=self.winds_props,
                                             key='y_offset',
                                             end_value=0,
                                             time=3.25,
                                             ease_type=tweencurves.easeOutQuint,
                                             delay=delay))
+            self.tween_list.append(tween.to(container=self.surface_logo_props,
+                                            key='y_offset',
+                                            end_value=-500,
+                                            time=3.25,
+                                            ease_type=tweencurves.easeOutQuint,
+                                            delay=delay).on_complete(self.unload_bootup_surfaces))
             
-        self.tween_list.append(tween.to(container=self.winds_props,
-                                        key='y_offset',
-                                        end_value=0,
-                                        time=3.25,
-                                        ease_type=tweencurves.easeOutQuint,
-                                        delay=delay))
-        self.tween_list.append(tween.to(container=self.surface_logo_props,
-                                        key='y_offset',
-                                        end_value=-500,
-                                        time=3.25,
-                                        ease_type=tweencurves.easeOutQuint,
-                                        delay=delay).on_complete(self.unload_bootup_surfaces))
-        
-        delay = 4
-        self.tween_list.append(tween.to(container=self.game_logo_props,
-                                        key='scale',
-                                        end_value=1,
-                                        time=0.75,
-                                        ease_type=tweencurves.easeOutElastic,
-                                        delay=delay))
-        self.tween_list.append(tween.to(container=self.game_logo_props,
-                                        key='alpha',
-                                        end_value=255,
-                                        time=0.1,
-                                        ease_type=tweencurves.easeOutCirc,
-                                        delay=delay))
-        
-        for option in self.menu_options_surfaces:
-            delay += 0.125
-            self.tween_list.append(tween.to(container=option,
+            delay = 4
+            self.tween_list.append(tween.to(container=self.game_logo_props,
                                             key='scale',
                                             end_value=1,
-                                            time=0.5,
+                                            time=0.75,
                                             ease_type=tweencurves.easeOutElastic,
                                             delay=delay))
-            self.tween_list.append(tween.to(container=option,
+            self.tween_list.append(tween.to(container=self.game_logo_props,
                                             key='alpha',
                                             end_value=255,
                                             time=0.1,
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
+            
+            for option in self.menu_options_surfaces:
+                delay += 0.125
+                self.tween_list.append(tween.to(container=option,
+                                                key='scale',
+                                                end_value=1,
+                                                time=0.5,
+                                                ease_type=tweencurves.easeOutElastic,
+                                                delay=delay))
+                self.tween_list.append(tween.to(container=option,
+                                                key='alpha',
+                                                end_value=255,
+                                                time=0.1,
+                                                ease_type=tweencurves.easeOutCirc,
+                                                delay=delay))
 
-        # for option in self.menu_options_surfaces:
-        #     delay += 0.025
-        #     self.tween_list.append(tween.to(container=option,
-        #                                     key='scale',
-        #                                     end_value=1,
-        #                                     time=0.75,
-        #                                     ease_type=tweencurves.easeOutElastic,
-        #                                     delay=delay))
-        #     self.tween_list.append(tween.to(container=option,
-        #                                     key='alpha',
-        #                                     end_value=255,
-        #                                     time=0.1,
-        #                                     ease_type=tweencurves.easeOutCirc,
-        #                                     delay=delay))
+        else:
+            self.finished_boot_up = True
+            self.unload_bootup_surfaces()
+            for layer in self.landscape_list:
+                layer['y_offset'] = 0
+            self.winds_props['y_offset'] = 0
+            self.game_logo_props['scale'] = 1
+            self.game_logo_props['alpha'] = 255
+            for option in self.menu_options_surfaces:
+                option['scale'] = 1
+                option['alpha'] = 255
         
 
     #Main methods
 
     def update(self, dt, events):
-        # Skip bootup animation
-        if not self.finished_boot_up:
-            for event in events:
-                if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                    self.skip_bootup_animation()
-                    break
-
         # Update tweens
         tween.update(passed_time=dt)
 

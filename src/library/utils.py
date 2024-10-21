@@ -258,7 +258,6 @@ def effect_outline(surface, distance=1, color=(255, 255, 255), no_corner=False):
     return final_surface
 
 
-
 # Color functions
 
 def get_color(color, split=False):
