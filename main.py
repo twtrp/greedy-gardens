@@ -11,7 +11,7 @@ class Game:
 
         self.ready = False
         self.started = False
-        pygame.mixer.pre_init(44100, 16, 2, 4096)
+        pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
         pygame.display.set_icon(pygame.image.load(os.path.join(utils.graphics_dir, 'icon.png')))
         pygame.display.set_caption(self.title+' (0 FPS)')
@@ -46,7 +46,7 @@ class Game:
     def render(self):
         self.canvas.fill(color=utils.get_mono_color(255))
         if self.state_stack:
-            self.state_stack[-1].render(surface=self.canvas)
+            self.state_stack[-1].render(canvas=self.canvas)
         scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
         utils.blit(dest=self.screen, source=scaled_canvas)
         pygame.display.update()

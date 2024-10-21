@@ -1,2 +1,2 @@
 import src.resources.objects as objects
-import src.resources.tweentypes as tweentypes
+import src.resources.tweencurves as tweencurves

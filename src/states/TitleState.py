@@ -78,70 +78,53 @@ class TitleState(BaseState):
         utils.blit(dest=self.surface_logo, 
                         source=text,
                         pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
-                        pos_type='midtop')
+                        pos_anchor='midtop')
+
+        self.game_logo = utils.load_image(dir=utils.graphics_dir, name='game_logo.png', mode='colorkey')
+        self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=5)
+        self.game_logo_props = {'scale': 0.5, 'alpha': 0,}
+
+        self.menu_options_list = [
+            {
+                'text': 'Play',
+                'font-size': 'large',
+            },
+            {
+                'text': 'Records',
+                'font-size': 'large',
+            },
+            {
+                'text': 'Settings',
+                'font-size': 'large',
+            },
+            {
+                'text': 'Quit',
+                'font-size': 'large',
+            },
+        ]
+        self.menu_options_surfaces = []
+        for option in self.menu_options_list:
+            text_props = {'font': 'lf2', 'size': option['font-size']}
+            text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
+            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=utils.get_mono_color(255))
+            text = utils.effect_long_shadow(surface=text,
+                                            direction='bottom',
+                                            distance=text_deco_distance,
+                                            color=utils.color_darken(color=utils.get_mono_color(255), factor=0.5))
+            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(50))
+            self.menu_options_surfaces.append({
+                'surface': text,
+                'scale': 0.5,
+                'alpha': 0,
+            })
         
         self.tween_list = []
-        self.bootup_animation_tween_chain(skip=False)
+        self.bootup_animation_tween_chain()
 
 
     #Class methods
 
-    def bootup_animation_tween_chain(self, skip=False):
-        if not skip:
-            delay = 0
-            self.tween_list.append(tween.to(container=self.surface_logo_props,
-                                            key='alpha',
-                                            end_value=255,
-                                            time=2,
-                                            ease_type=tweentypes.easeOutCubic,
-                                            delay=delay))
-            self.tween_list.append(tween.to(container=self.surface_logo_props,
-                                            key='scale',
-                                            end_value=1,
-                                            time=3,
-                                            ease_type=tweentypes.easeOutCubic,
-                                            delay=delay))
-
-            delay += 1.75
-            self.tween_list.append(tween.to(container=self.overlay_props,
-                                            key='alpha',
-                                            end_value=0,
-                                            time=2,
-                                            ease_type=tweentypes.easeOutQuad,
-                                            delay=delay))
-            for layer in self.landscape_list:
-                self.tween_list.append(tween.to(container=layer,
-                                                key='y_offset',
-                                                end_value=0,
-                                                time=3.25,
-                                                ease_type=tweentypes.easeOutQuint,
-                                                delay=delay))
-                
-            self.tween_list.append(tween.to(container=self.winds_props,
-                                            key='y_offset',
-                                            end_value=0,
-                                            time=3.25,
-                                            ease_type=tweentypes.easeOutQuint,
-                                            delay=delay))
-            self.tween_list.append(tween.to(container=self.surface_logo_props,
-                                            key='y_offset',
-                                            end_value=-500,
-                                            time=3.25,
-                                            ease_type=tweentypes.easeOutQuint,
-                                            delay=delay).on_complete(self.unload_bootup_resources))
-        else:
-            self.surface_logo_props['alpha'] = 255
-            self.surface_logo_props['scale'] = 1
-            self.overlay_props['alpha'] = 0
-            for layer in self.landscape_list:
-                layer['y_offset'] = 0
-
-            self.winds_props['y_offset'] = 0
-            self.surface_logo_props['y_offset'] = -450
-
-
     def unload_bootup_resources(self):
-        self.tween_list.clear()
         del self.surface_logo
         del self.surface_logo_props
         del self.overlay
@@ -189,6 +172,87 @@ class TitleState(BaseState):
             utils.blit(dest=surface, source=layer['image'], pos=(0, layer['y_offset']))
 
 
+    def render_menu_options(self, surface):
+        padding = 0
+        for i, option in enumerate(self.menu_options_surfaces):
+            processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+            processed_option.set_alpha(option['alpha'])
+            utils.blit(dest=surface, source=processed_option, pos=(self.game.canvas_width/2, 350 + padding), pos_anchor='center')
+            padding += 90
+
+        
+    def bootup_animation_tween_chain(self, skip=False):
+        delay = 0
+        self.tween_list.append(tween.to(container=self.surface_logo_props,
+                                        key='alpha',
+                                        end_value=255,
+                                        time=2,
+                                        ease_type=tweencurves.easeOutCubic,
+                                        delay=delay))
+        self.tween_list.append(tween.to(container=self.surface_logo_props,
+                                        key='scale',
+                                        end_value=1,
+                                        time=3,
+                                        ease_type=tweencurves.easeOutCubic,
+                                        delay=delay))
+
+        delay = 1.75
+        self.tween_list.append(tween.to(container=self.overlay_props,
+                                        key='alpha',
+                                        end_value=0,
+                                        time=2,
+                                        ease_type=tweencurves.easeOutQuad,
+                                        delay=delay))
+        for layer in self.landscape_list:
+            self.tween_list.append(tween.to(container=layer,
+                                            key='y_offset',
+                                            end_value=0,
+                                            time=3.25,
+                                            ease_type=tweencurves.easeOutQuint,
+                                            delay=delay))
+            
+        self.tween_list.append(tween.to(container=self.winds_props,
+                                        key='y_offset',
+                                        end_value=0,
+                                        time=3.25,
+                                        ease_type=tweencurves.easeOutQuint,
+                                        delay=delay))
+        self.tween_list.append(tween.to(container=self.surface_logo_props,
+                                        key='y_offset',
+                                        end_value=-500,
+                                        time=3.25,
+                                        ease_type=tweencurves.easeOutQuint,
+                                        delay=delay).on_complete(self.unload_bootup_resources))
+        
+        delay = 4
+        self.tween_list.append(tween.to(container=self.game_logo_props,
+                                        key='scale',
+                                        end_value=1,
+                                        time=0.75,
+                                        ease_type=tweencurves.easeOutElastic,
+                                        delay=delay))
+        self.tween_list.append(tween.to(container=self.game_logo_props,
+                                        key='alpha',
+                                        end_value=255,
+                                        time=0.1,
+                                        ease_type=tweencurves.easeOutCirc,
+                                        delay=delay))
+        for option in self.menu_options_surfaces:
+            delay += 0.25
+            self.tween_list.append(tween.to(container=option,
+                                            key='scale',
+                                            end_value=1,
+                                            time=0.75,
+                                            ease_type=tweencurves.easeOutElastic,
+                                            delay=delay))
+            self.tween_list.append(tween.to(container=option,
+                                            key='alpha',
+                                            end_value=255,
+                                            time=0.1,
+                                            ease_type=tweencurves.easeOutCirc,
+                                            delay=delay))
+
+
     #Main methods
 
     def update(self, dt, events):
@@ -197,27 +261,32 @@ class TitleState(BaseState):
         tween.update(passed_time=dt)
 
 
-    def render(self, surface):
+    def render(self, canvas):
         # Build menu background
         utils.blit(dest=self.menu_bg, source=self.sky)
         self.render_parallax(surface=self.menu_bg)
         self.render_landscape(surface=self.menu_bg)
         self.render_winds()
         utils.blit(dest=self.menu_bg, source=self.noise_overlay)
-        utils.blit(dest=surface, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
+        utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
 
         # Build intro overlay
         if hasattr(self, 'overlay'):
             processed_overlay = self.overlay.copy()
             processed_overlay.set_alpha(self.overlay_props['alpha'])
-            utils.blit(dest=surface, source=processed_overlay)
+            utils.blit(dest=canvas, source=processed_overlay)
     
         # Build intro logo surface
         if hasattr(self, 'surface_logo'):
             processed_surface_logo = pygame.transform.scale_by(surface=self.surface_logo, factor=self.surface_logo_props['scale'])
             processed_surface_logo.set_alpha(self.surface_logo_props['alpha'])
-            utils.blit(dest=surface,
+            utils.blit(dest=canvas,
                        source=processed_surface_logo,
                        pos=(self.game.canvas_width/2, self.game.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
-                       pos_type='center')
+                       pos_anchor='center')
             
+        # Build main menu
+        processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
+        processed_game_logo.set_alpha(self.game_logo_props['alpha'])
+        utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 150), pos_anchor='center')
+        self.render_menu_options(surface=canvas)

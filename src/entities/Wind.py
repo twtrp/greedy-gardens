@@ -43,6 +43,6 @@ class Wind(BaseEntity):
                 sprite = pygame.transform.flip(surface=sprite, flip_x=False, flip_y=True)
             utils.blit(dest=self.surface,
                                source=sprite,
-                               pos=(self.x - self.x_step*self.current_stage, self.y + self.y_offset), pos_type='topleft')
+                               pos=(self.x - self.x_step*self.current_stage, self.y + self.y_offset), pos_anchor='topleft')
 
         

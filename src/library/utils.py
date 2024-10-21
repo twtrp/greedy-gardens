@@ -22,7 +22,7 @@ sfx_dir = os.path.join(sounds_dir, 'sfx')
 
 # Surface functions
 
-def blit(dest, source, pos=(0, 0), pos_type='topleft', debug_outline=False, debug_outline_color=(255, 0, 0)):
+def blit(dest, source, pos=(0, 0), pos_anchor='topleft', debug_outline=False, debug_outline_color=(255, 0, 0)):
     """
     Use this instead of pygame's blit.
     Returns nothing
@@ -30,15 +30,15 @@ def blit(dest, source, pos=(0, 0), pos_type='topleft', debug_outline=False, debu
     dest: Surface = surface to blit to
     source: Surface = surface to blit
     pos: coords = position on the dest surface to blit to
-    pos_type: str = center, topleft, topright, bottomleft, bottomright, midtop, midbottom, midleft, midright
+    pos_anchor: str = center, topleft, topright, bottomleft, bottomright, midtop, midbottom, midleft, midright
     debug_outline: bool = True to draw a debug outline around the source surface
     debug_outline_color: Color = color of the debug outline
     """
-    if pos_type == 'topleft':
+    if pos_anchor == 'topleft':
         dest.blit(source=source, dest=pos)
     else:
         source_rect = source.get_rect()
-        setattr(source_rect, pos_type, pos)
+        setattr(source_rect, pos_anchor, pos)
         dest.blit(source=source, dest=source_rect)
     
     if debug_outline:
@@ -58,6 +58,16 @@ def get_text(text, font, size, color):
     text_font = pygame.font.Font(os.path.join(fonts_dir, objects.fonts[font]['font']), objects.fonts[font]['sizes'][size])
     text_font_render = text_font.render(text=text, antialias=False, color=color)
     return text_font_render
+
+
+def get_font_size_number(font, size):
+    """
+    Returns int
+
+    font: str = font name defined in objects.fonts
+    size: str = font size key defined in objects.fonts
+    """
+    return objects.fonts[font]['sizes'][size]
 
 
 def get_font_deco_distance(font, size):
@@ -184,33 +194,33 @@ def effect_long_shadow(surface, direction='top-left', distance=1, color=(255, 25
     color: Color = color of the emboss effect
     """
     if direction == 'top-left':
-        emboss_vector = (-1, -1)
+        shadow_vector = (-1, -1)
     elif direction == 'top':
-        emboss_vector = (0, -1)
+        shadow_vector = (0, -1)
     elif direction == 'top-right':
-        emboss_vector = (1, -1)
+        shadow_vector = (1, -1)
     elif direction == 'left':
-        emboss_vector = (-1, 0)
+        shadow_vector = (-1, 0)
     elif direction == 'right':
-        emboss_vector = (1, 0)
+        shadow_vector = (1, 0)
     elif direction == 'bottom-left':
-        emboss_vector = (-1, 1)
+        shadow_vector = (-1, 1)
     elif direction == 'bottom':
-        emboss_vector = (0, 1)
+        shadow_vector = (0, 1)
     elif direction == 'bottom-right':
-        emboss_vector = (1, 1)
+        shadow_vector = (1, 1)
     else:
-        print('WARNING: invalid emboss direction')
-        pass
+        shadow_vector = (0, 0)
+        print('WARNING: invalid long shadow direction')
     
-    padding_x = abs(emboss_vector[0])*distance
-    padding_y = abs(emboss_vector[1])*distance
+    padding_x = abs(shadow_vector[0])*distance
+    padding_y = abs(shadow_vector[1])*distance
     final_surface = pygame.Surface(size=(surface.get_width() + padding_x, surface.get_height() + padding_y), flags=pygame.SRCALPHA)
     surface_silhouette = effect_silhouette(surface=surface, color=color)
     for i in range(1, distance + 1):
-        blit(dest=final_surface, source=surface_silhouette, pos=(emboss_vector[0]*i + padding_x, emboss_vector[1]*i + padding_y))
+        blit(dest=final_surface, source=surface_silhouette, pos=(shadow_vector[0]*i, shadow_vector[1]*i))
 
-    blit(dest=final_surface, source=surface, pos=(padding_x, padding_y))
+    blit(dest=final_surface, source=surface)
     return final_surface
 
 
