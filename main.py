@@ -9,8 +9,6 @@ class Game:
         self.max_fps += 1
         self.title = 'Greedy Gardens'
 
-        self.ready = False
-        self.started = False
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
         pygame.display.set_icon(pygame.image.load(os.path.join(utils.graphics_dir, 'icon.png')))
@@ -31,16 +29,15 @@ class Game:
 
 
     def update(self, dt, events):
-        if self.ready: 
-            if self.state_stack:
-                self.state_stack[-1].update(dt=dt, events=events)
-            else:
-                self.state_stack.append(TitleState(game=self))
-            for event in events:
-                if event.type == pygame.QUIT:
-                    pygame.mixer.stop()
-                    pygame.quit()
-                    sys.exit()
+        if self.state_stack:
+            self.state_stack[-1].update(dt=dt, events=events)
+        else:
+            self.state_stack.append(TitleState(game=self))
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.mixer.stop()
+                pygame.quit()
+                sys.exit()
     
 
     def render(self):
@@ -51,17 +48,13 @@ class Game:
         utils.blit(dest=self.screen, source=scaled_canvas)
         pygame.display.update()
 
-        if not self.ready:
-            self.ready = True
-
 
     def game_loop(self):
         while True:
             pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
             dt = self.clock.tick(self.max_fps)/1000.0
             events = pygame.event.get()
-            if self.ready:
-                self.update(dt=dt, events=events)
+            self.update(dt=dt, events=events)
             self.render()
 
 
