@@ -1,10 +1,11 @@
 from src.library.essentials import *
-from src.states.TitleState import TitleState
+from src.states.MenuState import MenuState
 
 class Game:
     def __init__(self):
         self.canvas_width, self.canvas_height = 1280, 720
         self.screen_width, self.screen_height = 1440, 810
+        
         self.max_fps = 30
         self.max_fps += 1
         self.title = 'Greedy Gardens'
@@ -32,7 +33,8 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            self.state_stack.append(TitleState(game=self))
+            self.state_stack.append(MenuState(game=self))
+            pass
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.mixer.stop()
@@ -44,8 +46,11 @@ class Game:
         self.canvas.fill(color=colors.white)
         if self.state_stack:
             self.state_stack[-1].render(canvas=self.canvas)
-        scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
-        utils.blit(dest=self.screen, source=scaled_canvas)
+        if (self.canvas_width, self.canvas_height) != (self.screen_width, self.screen_height):
+            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
+            utils.blit(dest=self.screen, source=scaled_canvas)
+        else:
+            utils.blit(dest=self.screen, source=self.canvas)
         pygame.display.update()
 
 

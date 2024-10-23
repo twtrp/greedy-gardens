@@ -3,11 +3,11 @@ from src.template.BaseState import BaseState
 from src.entities.Wind import Wind
 import tween
 
-class TitleState(BaseState):
+class MenuState(BaseState):
     def __init__(self, game):
         BaseState.__init__(self, game)
 
-        # Preload bootup surfaces
+        # Preload assets
 
         self.finished_boot_up = False
 
@@ -34,14 +34,6 @@ class TitleState(BaseState):
                         source=text,
                         pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
                         pos_anchor='midtop')
-        
-        # Load the rest of the assets
-        
-        self.ready = True
-        
-        utils.music_load(music_channel=self.game.music_channel, name='menu_loop.ogg')
-        utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
-        self.game.music_channel.play()
 
         self.sky = utils.load_image(dir=utils.menu_bg_dir, name='1_sky.png', mode='colorkey')
 
@@ -96,10 +88,7 @@ class TitleState(BaseState):
         self.menu_options_list = [
             {
                 'text': 'Play',
-                'color': [
-                    colors.green_bright,
-                    colors.orange_bright,
-                ]
+                'color': colors.white,
             },
             {
                 'text': 'Records',
@@ -118,43 +107,114 @@ class TitleState(BaseState):
         for option in self.menu_options_list:
             text_props = {'font': 'lf2', 'size': 'large'}
             text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
-            if not isinstance(option['color'], list):
-                text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=option['color'])
-                text = utils.effect_long_shadow(surface=text,
-                                                direction='bottom',
-                                                distance=text_deco_distance,
-                                                color=utils.color_darken(color=option['color'], factor=0.5))
-                text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(50))
-                self.menu_options_surfaces.append({
-                    'surface': text,
-                    'scale': 0.5,
-                    'alpha': 0,
-                })
-            else:
-                self.option_color_surfaces = []
-                for color in option['color']:
-                    text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=color)
-                    text = utils.effect_long_shadow(surface=text,
-                                                    direction='bottom',
-                                                    distance=text_deco_distance,
-                                                    color=utils.color_darken(color=color, factor=0.5))
-                    text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(50))       
-                    self.option_color_surfaces.append(text)
-                self.menu_options_surfaces.append({
-                    'surface': self.option_color_surfaces,
-                    'scale': 0.5,
-                    'alpha': 0,
-                })
-        self.beat_counter = 0
-        self.beat_counter_event = pygame.USEREVENT + 1
-        pygame.time.set_timer(event=self.beat_counter_event, millis=500)
+            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=option['color'])
+            text = utils.effect_long_shadow(surface=text,
+                                            direction='bottom',
+                                            distance=text_deco_distance,
+                                            color=utils.color_darken(color=option['color'], factor=0.5))
+            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(50))
+            self.menu_options_surfaces.append({
+                'surface': text,
+                'scale': 0.5,
+                'alpha': 0,
+            })
+
+        self.ready = True
+        
+        utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
+        utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
+        self.game.music_channel.play()
 
         self.tween_list = []
         if not self.finished_boot_up:
-            self.bootup_animation_tween_chain(skip=True)
+            self.bootup_animation_tween_chain(skip=False)
         else:
             self.bootup_animation_tween_chain(skip=True)
 
+
+    #Main methods
+
+    def update(self, dt, events):
+        if self.ready:
+
+            # Update tweens
+            tween.update(passed_time=dt)
+
+            # Update parallax
+            for layer in self.parallax_list:
+                layer['x_offset'] -= layer['x_step']*self.menu_bg_pixel_size*dt
+                if abs(layer['x_offset']) > layer['image'].get_width():
+                    layer['x_offset'] = 0
+
+            # Update winds
+            for wind in self.wind_entities_list:
+                wind.update_y_offset(y_offset=self.winds_props['y_offset'])
+                if wind.active:
+                    wind.update(dt=dt, events=[])
+                else:
+                    self.wind_entities_list.remove(wind)
+
+            spawn_rate = self.wind_spawn_rate_per_second * dt
+            spawns = int(spawn_rate)
+            spawn_chance = spawn_rate - spawns
+            for _ in range(spawns):
+                self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
+
+            if random.random() <= spawn_chance:
+                self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
+
+
+    def render(self, canvas):
+        if self.ready:
+
+            # Build menu background
+
+            ## Render sky
+            utils.blit(dest=self.menu_bg, source=self.sky)
+            ## Render parallax
+            for layer in self.parallax_list:
+                num_duplicates = math.ceil(self.game.canvas_width/layer['image'].get_width()) + 1
+                for i in range(num_duplicates):
+                    utils.blit(dest=self.menu_bg, source=layer['image'], pos=(layer['image'].get_width()*i + layer['x_offset'], 0))
+            ## Render landscape
+            for layer in self.landscape_list:
+                utils.blit(dest=self.menu_bg, source=layer['image'], pos=(0, layer['y_offset']))
+            ## Render winds
+            for wind in self.wind_entities_list:
+                wind.render()
+            utils.blit(dest=self.menu_bg, source=self.noise_overlay)
+
+            # Render menu background
+            utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
+
+            # Build intro
+
+            ## Render overlay
+            if hasattr(self, 'overlay'):
+                processed_overlay = self.overlay.copy()
+                processed_overlay.set_alpha(self.overlay_props['alpha'])
+                utils.blit(dest=canvas, source=processed_overlay)
+            ## Render logo
+            if hasattr(self, 'surface_logo'):
+                processed_surface_logo = pygame.transform.scale_by(surface=self.surface_logo, factor=self.surface_logo_props['scale'])
+                processed_surface_logo.set_alpha(self.surface_logo_props['alpha'])
+                utils.blit(dest=canvas,
+                        source=processed_surface_logo,
+                        pos=(self.game.canvas_width/2, self.game.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
+                        pos_anchor='center')
+                
+            # Build main menu
+
+            ## Render game logo
+            processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
+            processed_game_logo.set_alpha(self.game_logo_props['alpha'])
+            utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 160), pos_anchor='center')
+            ## Render menu options
+            for i, option in enumerate(self.menu_options_surfaces):
+                processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                processed_option.set_alpha(option['alpha'])
+                utils.blit(dest=canvas, source=processed_option, pos=(self.game.canvas_width/2, 360 + i*90), pos_anchor='center')
+                
 
     #Class methods
 
@@ -250,95 +310,3 @@ class TitleState(BaseState):
             for option in self.menu_options_surfaces:
                 option['scale'] = 1
                 option['alpha'] = 255
-        
-
-    #Main methods
-
-    def update(self, dt, events):
-        if self.ready:
-
-            # Update beat counter
-            for event in events:
-                if event.type == self.beat_counter_event:
-                    self.beat_counter += 1
-
-            # Update tweens
-            tween.update(passed_time=dt)
-
-            # Update parallax
-            for layer in self.parallax_list:
-                layer['x_offset'] -= layer['x_step']*self.menu_bg_pixel_size*dt
-                if abs(layer['x_offset']) > layer['image'].get_width():
-                    layer['x_offset'] = 0
-
-            # Update winds
-            for wind in self.wind_entities_list:
-                wind.update_y_offset(y_offset=self.winds_props['y_offset'])
-                if wind.active:
-                    wind.update(dt=dt, events=[])
-                else:
-                    self.wind_entities_list.remove(wind)
-
-            spawn_rate = self.wind_spawn_rate_per_second * dt
-            spawns = int(spawn_rate)
-            spawn_chance = spawn_rate - spawns
-            for _ in range(spawns):
-                self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
-
-            if random.random() <= spawn_chance:
-                self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
-
-
-    def render(self, canvas):
-        if self.ready:
-
-            # Build menu background
-
-            ## render sky
-            utils.blit(dest=self.menu_bg, source=self.sky)
-            ## Render parallax
-            for layer in self.parallax_list:
-                num_duplicates = math.ceil(self.game.canvas_width/layer['image'].get_width()) + 1
-                for i in range(num_duplicates):
-                    utils.blit(dest=self.menu_bg, source=layer['image'], pos=(layer['image'].get_width()*i + layer['x_offset'], 0))
-            ## Render landscape
-            for layer in self.landscape_list:
-                utils.blit(dest=self.menu_bg, source=layer['image'], pos=(0, layer['y_offset']))
-            ## Render winds
-            for wind in self.wind_entities_list:
-                wind.render()
-            utils.blit(dest=self.menu_bg, source=self.noise_overlay)
-            utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
-
-            # Build intro
-
-            ## Render overlay
-            if hasattr(self, 'overlay'):
-                processed_overlay = self.overlay.copy()
-                processed_overlay.set_alpha(self.overlay_props['alpha'])
-                utils.blit(dest=canvas, source=processed_overlay)
-            ## Render logo
-            if hasattr(self, 'surface_logo'):
-                processed_surface_logo = pygame.transform.scale_by(surface=self.surface_logo, factor=self.surface_logo_props['scale'])
-                processed_surface_logo.set_alpha(self.surface_logo_props['alpha'])
-                utils.blit(dest=canvas,
-                        source=processed_surface_logo,
-                        pos=(self.game.canvas_width/2, self.game.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
-                        pos_anchor='center')
-                
-            # Build main menu
-
-            ## Render game logo
-            processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-            processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-            utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 160), pos_anchor='center')
-            ## Render menu options
-            for i, option in enumerate(self.menu_options_surfaces):
-                if not isinstance(option['surface'], list):
-                    processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                else:
-                    processed_option = pygame.transform.scale_by(surface=option['surface'][self.beat_counter%len(option['surface'])],
-                                                                 factor=option['scale'])
-                processed_option.set_alpha(option['alpha'])
-                utils.blit(dest=canvas, source=processed_option, pos=(self.game.canvas_width/2, 360 + i*90), pos_anchor='center')
-                
