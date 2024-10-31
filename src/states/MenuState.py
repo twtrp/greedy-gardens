@@ -10,7 +10,7 @@ class MenuState(BaseState):
         self.ready = False
         self.load_assets()
         self.ready = True
-        
+
         self.finished_boot_up = False
         
         utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
@@ -102,7 +102,7 @@ class MenuState(BaseState):
         self.menu_options_list = [
             {
                 'text': 'Play',
-                'color': colors.white,
+                'color': colors.yellow_bright,
             },
             {
                 'text': 'Records',

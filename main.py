@@ -4,10 +4,8 @@ from src.states.MenuState import MenuState
 class Game:
     def __init__(self):
         self.canvas_width, self.canvas_height = 1280, 720
-        self.screen_width, self.screen_height = 1440, 810
         
-        self.max_fps = 30
-        self.max_fps += 1
+        self.max_fps = constants.max_fps + 1
         self.title = 'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
@@ -15,15 +13,15 @@ class Game:
         pygame.display.set_icon(pygame.image.load(os.path.join(utils.graphics_dir, 'icon.png')))
         pygame.display.set_caption(self.title+' (0 FPS)')
         self.canvas = pygame.Surface(size=(self.canvas_width, self.canvas_height))
-        self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+        self.screen = pygame.display.set_mode(size=(constants.screen_width, constants.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.screen.fill(color=colors.white)
         pygame.display.update()
 
         self.clock = pygame.time.Clock()
         self.music_channel = pygame.mixer.music
-        self.music_channel.set_volume(1)
+        self.music_channel.set_volume(constants.music_volume)
         self.ambience_channel = pygame.mixer.Channel(0)
-        self.ambience_channel.set_volume(0.2)
+        self.ambience_channel.set_volume(constants.ambience_volume)
 
         self.state_stack = []
         utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
@@ -46,8 +44,8 @@ class Game:
         self.canvas.fill(color=colors.white)
         if self.state_stack:
             self.state_stack[-1].render(canvas=self.canvas)
-        if (self.canvas_width, self.canvas_height) != (self.screen_width, self.screen_height):
-            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
+        if (self.canvas_width, self.canvas_height) != (constants.screen_width, constants.screen_height):
+            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(constants.screen_width, constants.screen_height))
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
             utils.blit(dest=self.screen, source=self.canvas)
