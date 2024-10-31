@@ -61,6 +61,7 @@ falling_leaf = {
     'shared_data': {
         'width': 16,
         'height': 16,
+        'y': 0,
     },
     'sprites': {
         'leaf_1': {

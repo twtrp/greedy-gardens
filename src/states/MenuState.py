@@ -19,7 +19,7 @@ class MenuState(BaseState):
 
         self.tween_list = []
         if not self.finished_boot_up:
-            self.bootup_tween_chain(skip=False)
+            self.bootup_tween_chain(skip=constants.skip_bootup)
         else:
             self.bootup_tween_chain(skip=True)
 
@@ -96,7 +96,7 @@ class MenuState(BaseState):
         self.menu_bg_pixel_size = 2
 
         self.game_logo = utils.load_image(dir=dir.graphics, name='game_logo.png', mode='colorkey')
-        self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=5)
+        self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=4)
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
         self.menu_options_list = [
