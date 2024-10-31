@@ -10,7 +10,7 @@ class Game:
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
-        pygame.display.set_icon(pygame.image.load(os.path.join(utils.graphics_dir, 'icon.png')))
+        pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
         pygame.display.set_caption(self.title+' (0 FPS)')
         self.canvas = pygame.Surface(size=(self.canvas_width, self.canvas_height))
         self.screen = pygame.display.set_mode(size=(constants.screen_width, constants.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)

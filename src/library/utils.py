@@ -1,23 +1,5 @@
 from src.library.core import *
-from src.library.resources import *
-
-
-# Directory paths
-
-assets_dir = os.path.join('assets')
-src_dir = os.path.join('src')
-
-fonts_dir = os.path.join(assets_dir, 'fonts')
-graphics_dir = os.path.join(assets_dir, 'graphics')
-sounds_dir = os.path.join(assets_dir, 'sounds')
-imports_dir = os.path.join(src_dir, 'imports')
-states_dir = os.path.join(src_dir, 'states')
-
-menu_bg_dir = os.path.join(graphics_dir, 'menu_bg')
-sprites_dir = os.path.join(graphics_dir, 'sprites')
-music_dir = os.path.join(sounds_dir, 'music')
-sfx_dir = os.path.join(sounds_dir, 'sfx')
-    
+from src.library.resource_loader import *
 
 
 # Surface functions
@@ -50,12 +32,12 @@ def get_text(text, font, size, color):
     Use this to get a text surface
     Returns Surface
 
-    text: str = text to render defined in objects.fonts
-    font: str = font name with .filetype
-    size: str = font size key defined in objects.fonts
+    text: str = text to render
+    font: dict = the font dictionary imported from fonts.py
+    size: str = font size key defined in the font_data
     color: Color = text color
     """
-    text_font = pygame.font.Font(os.path.join(fonts_dir, objects.fonts[font]['font']), objects.fonts[font]['sizes'][size])
+    text_font = pygame.font.Font(os.path.join(dir.fonts, font['file']), font['sizes'][size])
     text_font_render = text_font.render(text=text, antialias=False, color=color)
     return text_font_render
 
@@ -67,7 +49,7 @@ def get_font_size_number(font, size):
     font: str = font name defined in objects.fonts
     size: str = font size key defined in objects.fonts
     """
-    return objects.fonts[font]['sizes'][size]
+    return font['sizes'][size]
 
 
 def get_font_deco_distance(font, size):
@@ -77,8 +59,8 @@ def get_font_deco_distance(font, size):
     font: str = font name defined in objects.fonts
     size: str = font size key defined in objects.fonts
     """
-    font_size = objects.fonts[font]['sizes'][size]
-    pixel_size_divisor = objects.fonts[font]['pixel_size_divisor']
+    font_size = font['sizes'][size]
+    pixel_size_divisor = font['pixel_size_divisor']
     return font_size//pixel_size_divisor
 
 
@@ -113,9 +95,8 @@ def load_sprite(sprite_sheet, target_sprite, mode='colorkey', colorkey=(0, 0, 0)
     mode: str = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
     colorkey: Color = color to set as transparent if mode is 'colorkey'
     """
-    sprite_sheet_map = objects.sprite_sheet_maps[sprite_sheet]
-    shared_data = sprite_sheet_map['shared_data']
-    sprite_data = sprite_sheet_map['sprites'][target_sprite]
+    shared_data = sprite_sheet['shared_data']
+    sprite_data = sprite_sheet['sprites'][target_sprite]
     full_sprite_data = {**shared_data, **sprite_data}
 
     width = full_sprite_data['width']
@@ -123,7 +104,7 @@ def load_sprite(sprite_sheet, target_sprite, mode='colorkey', colorkey=(0, 0, 0)
     x = full_sprite_data['x']
     y = full_sprite_data['y']
 
-    sprite_sheet_image = load_image(dir=sprites_dir, name=sprite_sheet, mode=mode, colorkey=colorkey)
+    sprite_sheet_image = load_image(dir=dir.sprites, name=sprite_sheet['file'], mode=mode, colorkey=colorkey)
     sprite = pygame.Surface(size=(width, height), flags=pygame.SRCALPHA)
     sprite.blit(source=sprite_sheet_image, dest=(0, 0), area=(x, y, width, height))
 
@@ -140,8 +121,7 @@ def load_sprite_sheet(sprite_sheet, mode='colorkey', colorkey=(0, 0, 0)):
     colorkey: Color = color to set as transparent if mode is 'colorkey'
     """
     sprites = {}
-    sprite_sheet_map = objects.sprite_sheet_maps[sprite_sheet]
-    for sprite_name in sprite_sheet_map['sprites']:
+    for sprite_name in sprite_sheet['sprites']:
         sprites[sprite_name] = load_sprite(sprite_sheet=sprite_sheet, target_sprite=sprite_name, mode=mode, colorkey=colorkey)
     
     return sprites
@@ -260,32 +240,6 @@ def effect_outline(surface, distance=1, color=(255, 255, 255), no_corner=False):
 
 # Color functions
 
-def get_color(color, split=False):
-    """
-    Use this to get a basic color
-    Returns Color
-
-    color: str = color name defined in objects.colors
-    """
-    if split:
-        return objects.colors[color][0], objects.colors[color][1], objects.colors[color][2]
-    else:
-        return pygame.Color(objects.colors[color])
-
-
-def get_mono_color(mono, split=False):
-    """
-    Use this to get a monochromatic color
-    Returns Color
-
-    mono: int = monochromatic value [0,255]
-    """
-    if split:
-        return mono, mono, mono
-    else:
-        return pygame.Color(mono, mono, mono)
-
-
 def color_darken(color, factor):
     """
     Darken a color by a given percentage.
@@ -322,7 +276,7 @@ def music_load(music_channel, name):
     music_channel: pygame.mixer.music
     name: str = name of the music file with .filetype
     """
-    music_channel.load(filename=os.path.join(music_dir, name))
+    music_channel.load(filename=os.path.join(dir.music, name))
 
 
 def music_queue(music_channel, name, loops=0):
@@ -334,7 +288,7 @@ def music_queue(music_channel, name, loops=0):
     name: str = name of the music file with .filetype
     loops: int = number of times to loop the music. 0 means no loop. -1 means infinite loop
     """
-    music_channel.queue(filename=os.path.join(music_dir, name), loops=loops)
+    music_channel.queue(filename=os.path.join(dir.music, name), loops=loops)
 
 
 def sound_play(sound_channel, sound_name, loops=0, maxtime=0, fade_ms=0):
@@ -348,5 +302,5 @@ def sound_play(sound_channel, sound_name, loops=0, maxtime=0, fade_ms=0):
     maxtime: int = number of milliseconds to play the sound effect
     fade_ms: int = number of milliseconds to fade the sound effect in or out
     """
-    sound = pygame.mixer.Sound(file=os.path.join(sfx_dir, sound_name))
+    sound = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound_name))
     sound_channel.play(sound, loops=loops, maxtime=maxtime, fade_ms=fade_ms)

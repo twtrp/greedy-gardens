@@ -29,41 +29,41 @@ class MenuState(BaseState):
     def load_assets(self):
         self.overlay = pygame.Surface(size=(self.game.canvas_width, self.game.canvas_height), flags=pygame.SRCALPHA)
         self.overlay_props = {'alpha': 255}
-        self.overlay.fill(color=(*utils.get_mono_color(255, split=True), 255))
+        self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
         
-        self.logo = utils.load_image(dir=utils.graphics_dir, name='namsom_logo.png', mode='colorkey')
+        self.logo = utils.load_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
         self.logo = pygame.transform.scale_by(surface=self.logo, factor=8)
         self.surface_logo = pygame.Surface(size=(self.logo.get_width(), self.logo.get_height()+50), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
         utils.blit(dest=self.surface_logo, source=self.logo)
-        text_props = {'font': 'retro_arcade', 'size': 'small'}
+        text_props = {'font': fonts.retro_arcade, 'size': 'small'}
         text_deco_distance = utils.get_font_deco_distance(text_props['font'], text_props['size'])
-        text = utils.get_text(text='PRESENTS', font=text_props['font'], size=text_props['size'], color=utils.get_mono_color(100))
+        text = utils.get_text(text='PRESENTS', font=text_props['font'], size=text_props['size'], color=colors.mono_100)
         text = utils.effect_long_shadow(surface=text,
                                         direction='bottom',
                                         distance=text_deco_distance,
-                                        color=utils.color_lighten(color=utils.get_mono_color(100),factor=0.75))
+                                        color=utils.color_lighten(color=colors.mono_100,factor=0.75))
         text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.white)
         utils.blit(dest=self.surface_logo, 
-                        source=text,
-                        pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
-                        pos_anchor='midtop')
+                   source=text,
+                   pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
+                   pos_anchor='midtop')
 
-        self.sky = utils.load_image(dir=utils.menu_bg_dir, name='1_sky.png', mode='colorkey')
+        self.sky = utils.load_image(dir=dir.menu_bg, name='1_sky.png', mode='colorkey')
 
         self.parallax_list = [
             {
-                'image': utils.load_image(dir=utils.menu_bg_dir, name='2_cloud_1.png', mode='colorkey'),
+                'image': utils.load_image(dir=dir.menu_bg, name='2_cloud_1.png', mode='colorkey'),
                 'x_offset': 0,
                 'x_step': 0.5,
             },
             {
-                'image': utils.load_image(dir=utils.menu_bg_dir, name='3_cloud_2.png', mode='colorkey'),
+                'image': utils.load_image(dir=dir.menu_bg, name='3_cloud_2.png', mode='colorkey'),
                 'x_offset': 0,
                 'x_step': 2.5,
             },
             {
-                'image': utils.load_image(dir=utils.menu_bg_dir, name='4_cloud_3.png', mode='colorkey'),
+                'image': utils.load_image(dir=dir.menu_bg, name='4_cloud_3.png', mode='colorkey'),
                 'x_offset': 0,
                 'x_step': 7,
             },
@@ -71,38 +71,38 @@ class MenuState(BaseState):
         
         self.landscape_list = [
             {
-                'image': utils.load_image(dir=utils.menu_bg_dir, name='5_landscape_1.png', mode='colorkey'),
+                'image': utils.load_image(dir=dir.menu_bg, name='5_landscape_1.png', mode='colorkey'),
                 'y_offset': 200,
             },
             {
-                'image': utils.load_image(dir=utils.menu_bg_dir, name='6_landscape_2.png', mode='colorkey'),
+                'image': utils.load_image(dir=dir.menu_bg, name='6_landscape_2.png', mode='colorkey'),
                 'y_offset': 400,
             },
             {
-                'image': utils.load_image(dir=utils.menu_bg_dir, name='7_landscape_3.png', mode='colorkey'),
+                'image': utils.load_image(dir=dir.menu_bg, name='7_landscape_3.png', mode='colorkey'),
                 'y_offset': 1000,
             },
         ]
-        self.noise_overlay = utils.load_image(dir=utils.menu_bg_dir, name='8_noise.png', mode='alpha')
+        self.noise_overlay = utils.load_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
 
         self.wind_entities_list = []
-        self.winds_props = {'y_offset': 1000,}
+        self.winds_props = {'y_offset': 1000}
         self.wind_spawn_rate_per_second = 0.85
-        self.wind_sprites = utils.load_sprite_sheet('wind.png', mode='alpha')
+        self.wind_sprites = utils.load_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
         for wind_sprite in self.wind_sprites:
             self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (4, 2))
 
         self.menu_bg = pygame.Surface(size=(self.game.canvas_width, self.game.canvas_height))
         self.menu_bg_pixel_size = 2
 
-        self.game_logo = utils.load_image(dir=utils.graphics_dir, name='game_logo.png', mode='colorkey')
+        self.game_logo = utils.load_image(dir=dir.graphics, name='game_logo.png', mode='colorkey')
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=5)
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
         self.menu_options_list = [
             {
                 'text': 'Play',
-                'color': colors.yellow_bright,
+                'color': colors.white,
             },
             {
                 'text': 'Records',
@@ -119,14 +119,14 @@ class MenuState(BaseState):
         ]
         self.menu_options_surfaces = []
         for option in self.menu_options_list:
-            text_props = {'font': 'lf2', 'size': 'large'}
+            text_props = {'font': fonts.lf2, 'size': 'large'}
             text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
             text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=option['color'])
             text = utils.effect_long_shadow(surface=text,
                                             direction='bottom',
                                             distance=text_deco_distance,
                                             color=utils.color_darken(color=option['color'], factor=0.5))
-            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=utils.get_mono_color(50))
+            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_50)
             self.menu_options_surfaces.append({
                 'surface': text,
                 'scale': 0.5,
@@ -167,7 +167,7 @@ class MenuState(BaseState):
     def render(self, canvas):
         if self.ready:
 
-            # Build menu background
+            # Build background
 
             ## Render sky
             utils.blit(dest=self.menu_bg, source=self.sky)
@@ -183,8 +183,7 @@ class MenuState(BaseState):
             for wind in self.wind_entities_list:
                 wind.render()
             utils.blit(dest=self.menu_bg, source=self.noise_overlay)
-
-            # Render menu background
+            ## Render final background
             utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
 
             # Build intro
