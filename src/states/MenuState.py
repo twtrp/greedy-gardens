@@ -7,12 +7,26 @@ class MenuState(BaseState):
     def __init__(self, game):
         BaseState.__init__(self, game)
 
-        # Preload assets
-
-        self.finished_boot_up = False
-
         self.ready = False
+        self.load_assets()
+        self.ready = True
+        
+        self.finished_boot_up = False
+        
+        utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
+        utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
+        self.game.music_channel.play()
 
+        self.tween_list = []
+        if not self.finished_boot_up:
+            self.bootup_tween_chain(skip=False)
+        else:
+            self.bootup_tween_chain(skip=True)
+
+
+    #Main methods
+
+    def load_assets(self):
         self.overlay = pygame.Surface(size=(self.game.canvas_width, self.game.canvas_height), flags=pygame.SRCALPHA)
         self.overlay_props = {'alpha': 255}
         self.overlay.fill(color=(*utils.get_mono_color(255, split=True), 255))
@@ -119,20 +133,6 @@ class MenuState(BaseState):
                 'alpha': 0,
             })
 
-        self.ready = True
-        
-        utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
-        utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
-        self.game.music_channel.play()
-
-        self.tween_list = []
-        if not self.finished_boot_up:
-            self.bootup_animation_tween_chain(skip=False)
-        else:
-            self.bootup_animation_tween_chain(skip=True)
-
-
-    #Main methods
 
     def update(self, dt, events):
         if self.ready:
@@ -226,7 +226,7 @@ class MenuState(BaseState):
         del self.overlay_props
 
         
-    def bootup_animation_tween_chain(self, skip=False):
+    def bootup_tween_chain(self, skip=False):
         if not skip:
             delay = 0
             self.tween_list.append(tween.to(container=self.surface_logo_props,
