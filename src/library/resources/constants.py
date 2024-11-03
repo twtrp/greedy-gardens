@@ -1,5 +1,5 @@
-screen_width = 1280
-screen_height = 720
+screen_width = 1280    #default: 1280
+screen_height = 720    #default: 720
 max_fps = 30
 
 music_volume = 0    #default: 1

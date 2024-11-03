@@ -42,3 +42,10 @@
     - https://www.finalparsec.com/tools/sprite_sheet_maker
 - Sound effects
     - https://drive.google.com/drive/folders/1gkcY1atqp7wWKw-owWr6D_-aerRKtIyI (extracted stardew valley sounds)
+- Sparkle particles
+    - https://opengameart.org/content/ice-sparkles-overlay-effect
+- Tileset sprites
+    - https://snowhex.itch.io/harvest-summer-forest-pack
+    - https://almostapixel.itch.io/small-burg-village-pack
+    - https://danieldiggle.itch.io/sunnyside
+    - https://kenmi-art.itch.io/cute-fantasy-rpg

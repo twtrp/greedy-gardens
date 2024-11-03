@@ -1,3 +1,13 @@
+pixel_04b03 = {
+    'file': '04B_03__.ttf',
+    'sizes': {
+        'small': 24,
+        'medium': 36,
+        'large': 48,
+    },
+    'pixel_size_divisor': 7
+}
+
 retro_prop = {
     'file': 'retro-pixel-cute-prop.ttf',
     'sizes': {
@@ -79,7 +89,7 @@ lf6 = {
 }
 
 lf7 = {
-    'font': 'LazyFox Pixel Font 7.ttf',
+    'file': 'LazyFox Pixel Font 7.ttf',
     'sizes': {
         'small': 24,
         'medium': 36,

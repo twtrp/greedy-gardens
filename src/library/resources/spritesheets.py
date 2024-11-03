@@ -19,6 +19,7 @@ wind = {
         },
         'wind_4': {
             'x': 96,
+ 
             'y': 0,
         },
         'wind_5': {
@@ -52,32 +53,6 @@ wind = {
         'wind_12': {
             'x': 96,
             'y': 64,
-        },
-    }
-}
-
-falling_leaf = {
-    'file': 'falling_leaf.png',
-    'shared_data': {
-        'width': 16,
-        'height': 16,
-        'y': 0,
-    },
-    'sprites': {
-        'leaf_1': {
-            'x': 0,
-        },
-        'leaf_2': {
-            'x': 16,
-        },
-        'leaf_3': {
-            'x': 32,
-        },
-        'leaf_4': {
-            'x': 48,
-        },
-        'leaf_5': {
-            'x': 64,
         },
     }
 }

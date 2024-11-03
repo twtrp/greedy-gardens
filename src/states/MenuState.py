@@ -32,7 +32,7 @@ class MenuState(BaseState):
         self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
         
         self.logo = utils.load_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
-        self.logo = pygame.transform.scale_by(surface=self.logo, factor=8)
+        self.logo = pygame.transform.scale_by(surface=self.logo, factor=7)
         self.surface_logo = pygame.Surface(size=(self.logo.get_width(), self.logo.get_height()+50), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
         utils.blit(dest=self.surface_logo, source=self.logo)
@@ -101,7 +101,7 @@ class MenuState(BaseState):
 
         self.menu_options_list = [
             {
-                'text': 'Play',
+                'text': '>  Play  <',
                 'color': colors.white,
             },
             {
@@ -119,7 +119,7 @@ class MenuState(BaseState):
         ]
         self.menu_options_surfaces = []
         for option in self.menu_options_list:
-            text_props = {'font': fonts.lf2, 'size': 'large'}
+            text_props = {'font': fonts.lf2, 'size': 'medium'}
             text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
             text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=option['color'])
             text = utils.effect_long_shadow(surface=text,
@@ -207,12 +207,12 @@ class MenuState(BaseState):
             ## Render game logo
             processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
             processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-            utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 160), pos_anchor='center')
+            utils.blit(dest=canvas, source=processed_game_logo, pos=(self.game.canvas_width/2, 150), pos_anchor='center')
             ## Render menu options
             for i, option in enumerate(self.menu_options_surfaces):
                 processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                 processed_option.set_alpha(option['alpha'])
-                utils.blit(dest=canvas, source=processed_option, pos=(self.game.canvas_width/2, 360 + i*90), pos_anchor='center')
+                utils.blit(dest=canvas, source=processed_option, pos=(self.game.canvas_width/2, 340 + i*80), pos_anchor='center')
                 
 
     #Class methods
