@@ -143,6 +143,16 @@ def effect_pixelate(surface, pixel_size=1):
     return scaled_up_surface
 
 
+def effect_grayscale(surface):
+    """
+    Use this to grayscale a surface
+    Returns Surface
+
+    surface: Surface = surface to grayscale
+    """
+    return pygame.transform.grayscale(surface)
+
+
 def effect_silhouette(surface, color=(0, 0, 0)):
     """
     Use this to create a silhouette of a surface

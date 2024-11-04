@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
 class BaseState(ABC):
-    def __init__(self, game):
-        self.game = game
+    def __init__(self, parent, stack):
+        self.parent = parent
+        self.stack = stack
         self.prev_state = None
 
 
@@ -17,11 +18,11 @@ class BaseState(ABC):
 
     
     def enter_state(self):
-        if len(self.game.state_stack) > 1:
-            self.prev_state = self.game.state_stack[-1]
-        self.game.state_stack.append(self)
+        if len(self.stack) > 1:
+            self.prev_state = self.stack[-1]
+        self.stack.append(self)
 
 
     def exit_state(self):
-        self.game.state_stack.pop()
+        self.stack.pop()
         

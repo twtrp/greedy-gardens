@@ -10,6 +10,7 @@ imports = os.path.join(src, 'imports')
 states = os.path.join(src, 'states')
 
 menu_bg = os.path.join(graphics, 'menu_bg')
+play_bg = os.path.join(graphics, 'play_bg')
 sprites = os.path.join(graphics, 'sprites')
 music = os.path.join(sounds, 'music')
 sfx = os.path.join(sounds, 'sfx')

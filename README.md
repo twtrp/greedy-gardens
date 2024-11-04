@@ -49,3 +49,9 @@
     - https://almostapixel.itch.io/small-burg-village-pack
     - https://danieldiggle.itch.io/sunnyside
     - https://kenmi-art.itch.io/cute-fantasy-rpg
+- Loading icon
+    - https://bdragon1727.itch.io/basic-pixel-loading
+- Event card icons
+    - https://free-game-assets.itch.io/free-skill-3232-icons-for-cyberpunk-game
+- Some UI elements
+    - https://crusenho.itch.io/complete-ui-essential-pack

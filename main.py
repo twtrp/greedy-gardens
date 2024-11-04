@@ -4,7 +4,6 @@ from src.states.MenuState import MenuState
 class Game:
     def __init__(self):
         self.canvas_width, self.canvas_height = 1280, 720
-        
         self.max_fps = constants.max_fps + 1
         self.title = 'Greedy Gardens'
 
@@ -22,17 +21,20 @@ class Game:
         self.music_channel.set_volume(constants.music_volume)
         self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(constants.ambience_volume)
+        utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
 
         self.state_stack = []
-        utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
 
 
     def update(self, dt, events):
+        # Update current state
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            self.state_stack.append(MenuState(game=self))
+            MenuState(parent=self, stack=self.state_stack).enter_state()
             pass
+
+        # Handle quit
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.mixer.stop()
@@ -41,14 +43,18 @@ class Game:
     
 
     def render(self):
-        self.canvas.fill(color=colors.white)
+        # Render current state
         if self.state_stack:
             self.state_stack[-1].render(canvas=self.canvas)
+
+        # Render canvas to screen
         if (self.canvas_width, self.canvas_height) != (constants.screen_width, constants.screen_height):
             scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(constants.screen_width, constants.screen_height))
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
             utils.blit(dest=self.screen, source=self.canvas)
+            
+        # Update display
         pygame.display.update()
 
 
