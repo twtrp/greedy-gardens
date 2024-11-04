@@ -17,10 +17,8 @@ class Menu_TitleState(BaseState):
                         if i == 0:
                             Menu_PlayState(parent=self.parent, stack=self.stack).enter_state()
                         elif i == 1:
-                            # self.stack.append(MenuOptionsState(parent=self.parent, stack=self.stack))
                             pass
                         elif i == 2:
-                            # self.stack.append(MenuCreditsState(parent=self.parent, stack=self.stack))
                             pass
                         elif i == 3:
                             pygame.mixer.stop()
