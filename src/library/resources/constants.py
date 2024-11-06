@@ -7,4 +7,4 @@ max_fps = 30
 music_volume = 1    #default: 1
 ambience_volume = 0.2    #default: 0.2
 
-skip_bootup = False
+skip_bootup = True

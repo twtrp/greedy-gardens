@@ -20,6 +20,14 @@ class Menu_TitleState(BaseState):
     def update(self, dt, events):
         for button in self.button_list:
             button.update(dt=dt, events=events)
+            if button.hovered:
+                for option in self.parent.title_options_surfaces_list:
+                    if button.id == option['id']:
+                        option['scale'] = min(option['scale'] + 0.1, 1.2)
+            else:
+                for option in self.parent.title_options_surfaces_list:
+                    if button.id == option['id']:
+                        option['scale'] = max(option['scale'] - 0.1, 1.0)
             if button.clicked:
                 if button.id == 'play':
                     Menu_PlayState(parent=self.parent, stack=self.stack).enter_state()
@@ -32,4 +40,6 @@ class Menu_TitleState(BaseState):
         utils.blit(dest=canvas, source=self.parent.game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
         # Render menu options
         for i, option in enumerate(self.parent.title_options_surfaces_list):
-            utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+            processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+            processed_option.set_alpha(option['alpha'])
+            utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
