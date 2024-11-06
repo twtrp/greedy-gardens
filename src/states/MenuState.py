@@ -245,7 +245,7 @@ class MenuState(BaseState):
                 for i, option in enumerate(self.title_options_surfaces_list):
                     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     processed_option.set_alpha(option['alpha'])
-                    utils.blit(dest=canvas, source=processed_option, pos=option['rect'].center, pos_anchor='center')
+                    utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
 
             else:
                 self.substate_stack[-1].render(canvas=canvas)
