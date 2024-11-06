@@ -14,6 +14,7 @@ class Menu_TitleState(BaseState):
                                            pos=(constants.canvas_width/2, 340 + i*80),
                                            pos_anchor='center'))
 
+
     #Main methods
 
     def update(self, dt, events):

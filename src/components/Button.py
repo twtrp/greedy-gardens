@@ -31,21 +31,26 @@ class Button:
     def toggle_hover(self, enable: bool):
         self.enable_hover = enable
 
+
     def toggle_click(self, enable: bool):
         self.enable_click = enable
+
+
+    def set_pos(self, pos: tuple, pos_anchor: str):
+        setattr(self.rect, pos_anchor, pos)
         
 
     #Main methods
 
     def update(self, dt, events):
         pos = pygame.mouse.get_pos()
+        print(self.pressed)
         
         if self.enable_hover:
             if self.rect.collidepoint(pos):
                 self.hovered = True
             else:
                 self.hovered = False
-
         else:
             self.hovered = False
 
@@ -53,17 +58,13 @@ class Button:
             if self.clicked:
                 self.clicked = False
 
-            if pygame.mouse.get_pressed()[0] == 1:
-                if self.rect.collidepoint(pos):
-                    self.pressed = True
-
-            if pygame.mouse.get_pressed()[0] == 0:
-                if self.rect.collidepoint(pos):
-                    if self.pressed:
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.rect.collidepoint(pos):
+                        self.pressed = True
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    if self.rect.collidepoint(pos) and self.pressed:
                         self.clicked = True
-    
-                    self.pressed = False
-                else:
                     self.pressed = False
 
         else:
