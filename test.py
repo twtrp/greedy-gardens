@@ -18,10 +18,18 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.text = utils.get_text(text='Hello World', font=fonts.lf2, size='medium', color=colors.white)
-        self.button = Button(surface=self.text)
+        self.button = Button(id='test', surface=self.text, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center', padding_x=10, padding_y=10)
 
     def update(self, dt, events):
         self.button.update(dt=dt, events=events)
+
+        if self.button.hovered:
+            print('Hovered')
+
+        if self.button.clicked:
+            print('=======')
+            print('Clicked')
+            print('=======')
 
         # Handle quit
         for event in events:
@@ -38,7 +46,8 @@ class Game:
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
             utils.blit(dest=self.screen, source=self.canvas)
-        self.button.render(self.canvas, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center', debug_outline=True)
+        utils.blit(dest=self.canvas, source=self.text, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+        self.button.render(self.canvas)
         pygame.display.update()
 
 

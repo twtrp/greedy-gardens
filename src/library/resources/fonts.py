@@ -53,8 +53,9 @@ lf2 = {
     'sizes': {
         'tiny': 16,
         'small': 24,
-        'medium': 36,
-        'large': 48,
+        'medium': 32,
+        'large': 40,
+        'huge': 56,
     },
     'pixel_size_divisor': 8
 }
