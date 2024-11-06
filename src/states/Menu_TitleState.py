@@ -26,6 +26,7 @@ class Menu_TitleState(BaseState):
                 elif button.id == 'quit':
                     self.exit_state()
 
+
     def render(self, canvas):
         # Render game logo
         utils.blit(dest=canvas, source=self.parent.game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')

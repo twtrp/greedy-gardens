@@ -44,7 +44,6 @@ class Button:
 
     def update(self, dt, events):
         pos = pygame.mouse.get_pos()
-        print(self.pressed)
         
         if self.enable_hover:
             if self.rect.collidepoint(pos):
