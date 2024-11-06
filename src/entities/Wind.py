@@ -23,13 +23,13 @@ class Wind(BaseEntity):
             self.flip = False
 
 
-    #Class methods
+    # Class methods
     
     def update_y_offset(self, y_offset):
         self.y_offset = y_offset
 
 
-    #Main methods
+    # Main methods
 
     def update(self, dt, events):
         self.time_passed += dt

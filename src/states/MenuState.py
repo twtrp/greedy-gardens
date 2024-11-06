@@ -31,7 +31,7 @@ class MenuState(BaseState):
 
     def load_assets(self):
         # Load white overlay
-        self.overlay = pygame.Surface(size=(self.parent.canvas_width, self.parent.canvas_height), flags=pygame.SRCALPHA)
+        self.overlay = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.overlay_props = {'alpha': 255}
         self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
         
@@ -98,7 +98,7 @@ class MenuState(BaseState):
             self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (4, 2))
 
         # Initiate menu background surface
-        self.menu_bg = pygame.Surface(size=(self.parent.canvas_width, self.parent.canvas_height))
+        self.menu_bg = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         self.menu_bg_pixel_size = 2
 
         # Load game logo
@@ -107,25 +107,38 @@ class MenuState(BaseState):
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
         # Load menu options
+        text_props = {'font': fonts.lf2, 'size': 'medium'}
+        text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
+        text = utils.get_text(text='Back', font=text_props['font'], size=text_props['size'], color=colors.white)
+        text = utils.effect_long_shadow(surface=text,
+                                        direction='bottom',
+                                        distance=text_deco_distance,
+                                        color=utils.color_darken(color=colors.white, factor=0.5))
+        self.back_text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_50)
+        
         self.title_options_list = [
             {
+                'id': 'play',
                 'text': 'Play',
                 'color': colors.white,
             },
             {
+                'id': 'records',
                 'text': 'Records',
                 'color': colors.white,
             },
             {
+                'id': 'settings',
                 'text': 'Settings',
                 'color': colors.white,
             },
             {
+                'id': 'quit',
                 'text': 'Quit',
                 'color': colors.white,
             },
         ]
-        self.title_options_surfaces = []
+        self.title_options_surfaces_list = []
         for i, option in enumerate(self.title_options_list):
             text_props = {'font': fonts.lf2, 'size': 'medium'}
             text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
@@ -135,10 +148,9 @@ class MenuState(BaseState):
                                             distance=text_deco_distance,
                                             color=utils.color_darken(color=option['color'], factor=0.5))
             text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_50)
-            rect = text.get_rect(center=(self.parent.canvas_width / 2, 340 + i * 80))
-            self.title_options_surfaces.append({
+            self.title_options_surfaces_list.append({
+                'id': option['id'],
                 'surface': text,
-                'rect': rect,
                 'scale': 0.5,
                 'alpha': 0,
             })
@@ -146,8 +158,6 @@ class MenuState(BaseState):
 
     def update(self, dt, events):
         if self.ready:
-
-            print('substate_stack:', self.substate_stack)
 
             # Update substates
             if self.substate_stack:
@@ -190,7 +200,7 @@ class MenuState(BaseState):
 
             ## Render parallax to menu_bg
             for layer in self.parallax_list:
-                num_duplicates = math.ceil(self.parent.canvas_width/layer['image'].get_width()) + 1
+                num_duplicates = math.ceil(constants.canvas_width/layer['image'].get_width()) + 1
                 for i in range(num_duplicates):
                     utils.blit(dest=self.menu_bg, source=layer['image'], pos=(layer['image'].get_width()*i + layer['x_offset'], 0))
 
@@ -220,7 +230,7 @@ class MenuState(BaseState):
                 processed_surface_logo.set_alpha(self.surface_logo_props['alpha'])
                 utils.blit(dest=canvas,
                         source=processed_surface_logo,
-                        pos=(self.parent.canvas_width/2, self.parent.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
+                        pos=(constants.canvas_width/2, constants.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
                         pos_anchor='center')
                 
             # Render substates
@@ -229,10 +239,10 @@ class MenuState(BaseState):
                 ## Render game logo
                 processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
                 processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-                utils.blit(dest=canvas, source=processed_game_logo, pos=(self.parent.canvas_width/2, 150), pos_anchor='center')
+                utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
 
                 ## Render menu options
-                for i, option in enumerate(self.title_options_surfaces):
+                for i, option in enumerate(self.title_options_surfaces_list):
                     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     processed_option.set_alpha(option['alpha'])
                     utils.blit(dest=canvas, source=processed_option, pos=option['rect'].center, pos_anchor='center')
@@ -301,7 +311,7 @@ class MenuState(BaseState):
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
             
-            for option in self.title_options_surfaces:
+            for option in self.title_options_surfaces_list:
                 delay += 0.125
                 self.tween_list.append(tween.to(container=option,
                                                 key='scale',
@@ -335,13 +345,13 @@ class MenuState(BaseState):
             self.winds_props['y_offset'] = 0
             self.game_logo_props['scale'] = 1
             self.game_logo_props['alpha'] = 255
-            for option in self.title_options_surfaces:
+            for option in self.title_options_surfaces_list:
                 option['scale'] = 1
                 option['alpha'] = 255
 
         # Convert surfaces to static
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-        for option in self.title_options_surfaces:
+        for option in self.title_options_surfaces_list:
             option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
         
         # Initiate substate

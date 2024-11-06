@@ -3,7 +3,6 @@ from src.states.MenuState import MenuState
 
 class Game:
     def __init__(self):
-        self.canvas_width, self.canvas_height = 1280, 720
         self.max_fps = constants.max_fps + 1
         self.title = 'Greedy Gardens'
 
@@ -11,7 +10,7 @@ class Game:
         pygame.init()
         pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
         pygame.display.set_caption(self.title+' (0 FPS)')
-        self.canvas = pygame.Surface(size=(self.canvas_width, self.canvas_height))
+        self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         self.screen = pygame.display.set_mode(size=(constants.screen_width, constants.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.screen.fill(color=colors.white)
         pygame.display.update()
@@ -48,7 +47,7 @@ class Game:
             self.state_stack[-1].render(canvas=self.canvas)
 
         # Render canvas to screen
-        if (self.canvas_width, self.canvas_height) != (constants.screen_width, constants.screen_height):
+        if (constants.canvas_width, constants.canvas_height) != (constants.screen_width, constants.screen_height):
             scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(constants.screen_width, constants.screen_height))
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
