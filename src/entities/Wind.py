@@ -2,7 +2,9 @@ from src.library.essentials import *
 from src.template.BaseEntity import BaseEntity
 
 class Wind(BaseEntity):
-    def __init__(self, surface, sprites):
+    def __init__(self,
+                 surface: pygame.Surface,
+                 sprites: dict):
         BaseEntity.__init__(self)
         self.x = random.randint(0, surface.get_width())
         self.y = random.randint(-32, surface.get_height()-32)

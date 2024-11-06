@@ -13,7 +13,6 @@
 - Follow PEP-8 code styling guide: https://peps.python.org/pep-0008/
 - Tween library guide: https://pypi.org/project/tween/
 - Performance optimization guide: https://www.codeproject.com/Articles/5298051/Improving-Performance-in-Pygame-Speed-Up-Your-Game
-- Do not instantiate template classes directly. They are abstract classes and must be implemented as other classes.
 - "iconfont-preview" vscode extension is recommended to preview the font
 
 ### Credits

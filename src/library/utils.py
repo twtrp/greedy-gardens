@@ -4,17 +4,23 @@ from src.library.resource_loader import *
 
 # Surface functions
 
-def blit(dest, source, pos=(0, 0), pos_anchor='topleft', debug_outline=False, debug_outline_color=(255, 0, 0)):
+def blit(dest: pygame.Surface,
+         source: pygame.Surface,
+         pos: tuple = (0, 0),
+         pos_anchor: str = 'topleft',
+         debug_outline: bool = False,
+         debug_outline_color: pygame.Color = (255, 0, 0)
+        ) -> None:
     """
     Use this instead of pygame's blit.
     Returns nothing
 
-    dest: Surface = surface to blit to
-    source: Surface = surface to blit
-    pos: coords = position on the dest surface to blit to
-    pos_anchor: str = center, topleft, topright, bottomleft, bottomright, midtop, midbottom, midleft, midright
-    debug_outline: bool = True to draw a debug outline around the source surface
-    debug_outline_color: Color = color of the debug outline
+    dest = surface to blit to
+    source = surface to blit
+    pos = position on the dest surface to blit to
+    pos_anchor = center, topleft, topright, bottomleft, bottomright, midtop, midbottom, midleft, midright
+    debug_outline = True to draw a debug outline around the source surface
+    debug_outline_color = color of the debug outline
     """
     if pos_anchor == 'topleft':
         dest.blit(source=source, dest=pos)
@@ -27,52 +33,52 @@ def blit(dest, source, pos=(0, 0), pos_anchor='topleft', debug_outline=False, de
         pygame.draw.rect(dest, debug_outline_color, source_rect, 1)
 
 
-def get_text(text, font, size, color):
+def get_text(text: str,
+             font: dict,
+             size: str,
+             color: pygame.Color
+            ) -> pygame.Surface:
     """
     Use this to get a text surface
     Returns Surface
 
-    text: str = text to render
-    font: dict = the font dictionary imported from fonts.py
-    size: str = font size key defined in the font_data
-    color: Color = text color
+    text = text to render
+    font = the font dictionary imported from fonts.py
+    size = font size key defined in the fonts.py
+    color = text color
     """
     text_font = pygame.font.Font(os.path.join(dir.fonts, font['file']), font['sizes'][size])
     text_font_render = text_font.render(text=text, antialias=False, color=color)
     return text_font_render
 
 
-def get_font_size_number(font, size):
+def get_font_deco_distance(font: dict,
+                           size: str
+                          ) -> int:
     """
     Returns int
 
-    font: str = font name defined in objects.fonts
-    size: str = font size key defined in objects.fonts
-    """
-    return font['sizes'][size]
-
-
-def get_font_deco_distance(font, size):
-    """
-    Returns int
-
-    font: str = font name defined in objects.fonts
-    size: str = font size key defined in objects.fonts
+    font = the font dictionary imported from fonts.py
+    size = font size key defined in fonts.py
     """
     font_size = font['sizes'][size]
     pixel_size_divisor = font['pixel_size_divisor']
     return font_size//pixel_size_divisor
 
 
-def load_image(dir, name, mode=None, colorkey=(0, 0, 0)):
+def load_image(dir: str,
+               name: str,
+               mode: str = None,
+               colorkey: pygame.Color = (0, 0, 0)
+              ) -> pygame.Surface:
     """
     Use this instead of pygame's load image
     Returns Surface
 
-    dir: str = directory of the image. please use the constants defined in this file
-    name: str = name of the image with .filetype
-    mode: str = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
-    colorkey: Color = color to set as transparent if mode is 'colorkey'
+    dir = directory of the image. please use the constants defined in this file
+    name = name of the image with .filetype
+    mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
+    colorkey = color to set as transparent if mode is 'colorkey'
     """
     image = pygame.image.load(os.path.join(dir, name))
     if mode == 'alpha':
@@ -85,15 +91,19 @@ def load_image(dir, name, mode=None, colorkey=(0, 0, 0)):
         return image.convert()
     
 
-def load_sprite(sprite_sheet, target_sprite, mode='colorkey', colorkey=(0, 0, 0)):
+def load_sprite(sprite_sheet: str,
+                target_sprite: str,
+                mode: str = 'colorkey',
+                colorkey: pygame.Color = (0, 0, 0)
+               ) -> pygame.Surface:
     """
     Use this to get a single sprite from a sprite sheet
     Returns Surface
 
-    sprite_sheet: str = name of the sprite sheet image with .filetype
-    target_sprite: str = name of the sprite to get from the sprite sheet map
-    mode: str = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
-    colorkey: Color = color to set as transparent if mode is 'colorkey'
+    sprite_sheet = name of the sprite sheet image with .filetype
+    target_sprite = name of the sprite to get from the sprite sheet map
+    mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
+    colorkey = color to set as transparent if mode is 'colorkey'
     """
     shared_data = sprite_sheet['shared_data']
     sprite_data = sprite_sheet['sprites'][target_sprite]
@@ -111,14 +121,17 @@ def load_sprite(sprite_sheet, target_sprite, mode='colorkey', colorkey=(0, 0, 0)
     return sprite
 
 
-def load_sprite_sheet(sprite_sheet, mode='colorkey', colorkey=(0, 0, 0)):
+def load_sprite_sheet(sprite_sheet: str,
+                      mode: str = 'colorkey',
+                      colorkey: pygame.Color = (0, 0, 0)
+                     ) -> dict:
     """
     Use this to get all sprites from a sprite sheet as set
     Returns dict of Surfaces
 
-    sprite_sheet: str = name of the sprite sheet image with .filetype
-    mode: str = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
-    colorkey: Color = color to set as transparent if mode is 'colorkey'
+    sprite_sheet = name of the sprite sheet image with .filetype
+    mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
+    colorkey = color to set as transparent if mode is 'colorkey'
     """
     sprites = {}
     for sprite_name in sprite_sheet['sprites']:
@@ -127,13 +140,15 @@ def load_sprite_sheet(sprite_sheet, mode='colorkey', colorkey=(0, 0, 0)):
     return sprites
 
 
-def effect_pixelate(surface, pixel_size=1):
+def effect_pixelate(surface: pygame.Surface,
+                    pixel_size: int = 2
+                   ) -> pygame.Surface:
     """
     Use this to pixelate a surface
     Returns Surface
 
-    surface: Surface = surface to pixelate
-    pixel_size: int = size of the pixelation filter
+    surface = surface to pixelate
+    pixel_size = size of the pixelation filter
     """
     original_width = surface.get_width()
     original_height = surface.get_height()
@@ -143,23 +158,26 @@ def effect_pixelate(surface, pixel_size=1):
     return scaled_up_surface
 
 
-def effect_grayscale(surface):
+def effect_grayscale(surface: pygame.Surface
+                    ) -> pygame.Surface:
     """
     Use this to grayscale a surface
     Returns Surface
 
-    surface: Surface = surface to grayscale
+    surface = surface to grayscale
     """
     return pygame.transform.grayscale(surface)
 
 
-def effect_silhouette(surface, color=(0, 0, 0)):
+def effect_silhouette(surface: pygame.Surface, 
+                      color: pygame.Color = (0, 0, 0)
+                     ) -> pygame.Surface:
     """
     Use this to create a silhouette of a surface
     Returns Surface
 
-    surface: Surface = surface to create a silhouette of
-    color: Color = color of the silhouette
+    surface = surface to create a silhouette of
+    color = color of the silhouette
     """
     mask = pygame.mask.from_surface(surface=surface)
     mask_surface = mask.to_surface(unsetcolor=(1, 2, 3))
@@ -173,15 +191,19 @@ def effect_silhouette(surface, color=(0, 0, 0)):
     return mask_surface
 
 
-def effect_long_shadow(surface, direction='top-left', distance=1, color=(255, 255, 255)):
+def effect_long_shadow(surface: pygame.Surface,
+                       direction: str = 'top-left',
+                       distance: int = 1,
+                       color: pygame.Color = (255, 255, 255)
+                      ) -> pygame.Surface:
     """
-    Use this to emboss a surface
+    Use this to apply 3D on a surface
     Returns Surface
 
-    surface: Surface = surface to emboss
-    direction: str = 'top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'
-    distance: int = distance of the emboss effect
-    color: Color = color of the emboss effect
+    surface = surface to apply 3D effect on
+    direction = 'top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'
+    distance = distance of the 3D effect
+    color = color of the 3D effect
     """
     if direction == 'top-left':
         shadow_vector = (-1, -1)
@@ -214,15 +236,19 @@ def effect_long_shadow(surface, direction='top-left', distance=1, color=(255, 25
     return final_surface
 
 
-def effect_outline(surface, distance=1, color=(255, 255, 255), no_corner=False):
+def effect_outline(surface: pygame.Surface,
+                   distance: int = 1,
+                   color: pygame.Color = (255, 255, 255),
+                   no_corner: bool = False
+                  ) -> pygame.Surface:
     """
     Use this to outline a surface
     Returns Surface
 
-    surface: Surface = surface to outline
-    color: Color = color of the outline
-    distance: int = distance of the outline effect
-    noncorner: bool = True for non-corner outline, False for corner outline
+    surface = surface to outline
+    distance = distance of the outline effect
+    color = color of the outline
+    no_corner = True for non-corner outline, False for corner outline
     """
     padding_x = 2*distance
     padding_y = 2*distance
@@ -250,26 +276,30 @@ def effect_outline(surface, distance=1, color=(255, 255, 255), no_corner=False):
 
 # Color functions
 
-def color_darken(color, factor):
+def color_darken(color: pygame.Color,
+                 factor: int
+                ) -> pygame.Color:
     """
     Darken a color by a given percentage.
     Returns Color
 
-    color: Color = original color
-    factor: float [0,1] = percentage to darken the color by. 0 means no change. 1 means black
+    color = original color
+    factor = [0,1] percentage to darken the color by. 0 means no change. 1 means black
     """
     if not isinstance(color, pygame.Color):
         color = pygame.Color(color)
     return color.lerp(pygame.Color(0, 0, 0), factor)
 
 
-def color_lighten(color, factor):
+def color_lighten(color: pygame.Color,
+                  factor: int
+                 ) -> pygame.Color:
     """
     Lighten a color by a given percentage.
     Returns Color
 
-    color: Color = original color
-    factor: float [0,1] = percentage to lighten the color by. 0 means no change. 1 means white
+    color = original color
+    factor = [0,1] percentage to lighten the color by. 0 means no change. 1 means white
     """
     if not isinstance(color, pygame.Color):
         color = pygame.Color(color)
@@ -278,30 +308,39 @@ def color_lighten(color, factor):
 
 # Sound functions
 
-def music_load(music_channel, name):
+def music_load(music_channel: pygame.mixer.music,
+               name: str):
     """
     Use this to load music if the queue is empty
     Returns nothing
 
-    music_channel: pygame.mixer.music
-    name: str = name of the music file with .filetype
+    music_channel = pygame.mixer.music channel
+    name = name of the music file with .filetype
     """
     music_channel.load(filename=os.path.join(dir.music, name))
 
 
-def music_queue(music_channel, name, loops=0):
+def music_queue(music_channel: pygame.mixer.music,
+                name: str,
+                loops: int = 0
+               ) -> None:
     """
     Use this to add music to the queue
     Returns nothing
 
-    music_channel: pygame.mixer.music
-    name: str = name of the music file with .filetype
-    loops: int = number of times to loop the music. 0 means no loop. -1 means infinite loop
+    music_channel = pygame.mixer.music
+    name = name of the music file with .filetype
+    loops = number of times to loop the music. 0 means no loop. -1 means infinite loop
     """
     music_channel.queue(filename=os.path.join(dir.music, name), loops=loops)
 
 
-def sound_play(sound_channel, sound_name, loops=0, maxtime=0, fade_ms=0):
+def sound_play(sound_channel: pygame.mixer.Channel,
+               sound_name: str,
+               loops: int = 0,
+               maxtime: int = 0,
+               fade_ms: int = 0
+              ) -> None:
     """
     Use this to play sound effects
     Returns nothing
