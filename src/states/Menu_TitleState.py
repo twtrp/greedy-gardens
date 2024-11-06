@@ -1,7 +1,9 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
-from src.states.Menu_PlayState import Menu_PlayState
 from src.components.Button import Button
+from src.states.Menu_PlayState import Menu_PlayState
+from src.states.Menu_RecordsState import Menu_RecordsState
+from src.states.Menu_SettingsState import Menu_SettingsState
 
 class Menu_TitleState(BaseState):
     def __init__(self, parent, stack):
@@ -11,6 +13,8 @@ class Menu_TitleState(BaseState):
         for i, option in enumerate(self.parent.title_options_surfaces_list):
             self.button_list.append(Button(id=option['id'],
                                            surface=option['surface'],
+                                           width=300,
+                                           height=80,
                                            pos=(constants.canvas_width/2, 340 + i*80),
                                            pos_anchor='center'))
 
@@ -31,8 +35,14 @@ class Menu_TitleState(BaseState):
             if button.clicked:
                 if button.id == 'play':
                     Menu_PlayState(parent=self.parent, stack=self.stack).enter_state()
+                elif button.id == 'records':
+                    Menu_RecordsState(parent=self.parent, stack=self.stack).enter_state()
+                elif button.id == 'settings':
+                    Menu_SettingsState(parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'quit':
-                    self.exit_state()
+                    pygame.mixer.stop()
+                    pygame.quit()
+                    sys.exit()
 
 
     def render(self, canvas):
@@ -43,3 +53,4 @@ class Menu_TitleState(BaseState):
             processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
             processed_option.set_alpha(option['alpha'])
             utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+            

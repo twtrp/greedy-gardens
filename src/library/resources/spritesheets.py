@@ -56,3 +56,26 @@ wind = {
         },
     }
 }
+
+cursors = {
+    'file': 'cursors.png',
+    'shared_data': {
+        'y': 0,
+        'width': 32,
+        'height': 32,
+    },
+    'sprites': {
+        'cursor_normal': {
+            'x': 0,
+        },
+        'cursor_point': {
+            'x': 32,
+        },
+        'cursor_dig': {
+            'x': 64,
+        },
+        'cursor_bonk': {
+            'x': 96,
+        },
+    }
+}

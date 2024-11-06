@@ -4,6 +4,8 @@ class Button:
     def __init__(self,
                  id: str, 
                  surface: pygame.Surface,
+                 width: int = 0,
+                 height: int = 0,
                  pos: tuple = (0, 0),
                  pos_anchor: str = 'topleft',
                  padding_x: int = 0,
@@ -21,6 +23,10 @@ class Button:
         self.enable_click = True
 
         self.rect: pygame.Rect = self.surface.get_rect()
+        if width != 0:
+            self.rect.width = width
+        if height != 0:
+            self.rect.height = height
         self.rect.width += 2*self.padding_x
         self.rect.height += 2*self.padding_y
         setattr(self.rect, pos_anchor, pos)

@@ -1,6 +1,21 @@
 from src.library.core import *
 from src.library.resource_loader import *
 
+# Cursor functions
+
+def set_cursor(image: pygame.Surface,
+               hotspot: tuple = (0, 0)
+              ) -> None:
+    """
+    Use this to set the cursor
+    Returns nothing
+
+    image = surface to set as the cursor
+    hotspot = hotspot of the cursor
+    """
+    cursor = pygame.cursors.Cursor(hotspot, image)
+    pygame.mouse.set_cursor(cursor)
+
 
 # Surface functions
 
@@ -101,7 +116,7 @@ def load_sprite(sprite_sheet: str,
     Use this to get a single sprite from a sprite sheet
     Returns Surface
 
-    sprite_sheet = name of the sprite sheet image with .filetype
+    sprite_sheet = name of the sprite sheet dict
     target_sprite = name of the sprite to get from the sprite sheet map
     mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
     colorkey = color to set as transparent if mode is 'colorkey'
@@ -130,7 +145,7 @@ def load_sprite_sheet(sprite_sheet: str,
     Use this to get all sprites from a sprite sheet as set
     Returns dict of Surfaces
 
-    sprite_sheet = name of the sprite sheet image with .filetype
+    sprite_sheet = name of the sprite sheet dict
     mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
     colorkey = color to set as transparent if mode is 'colorkey'
     """

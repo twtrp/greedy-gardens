@@ -14,13 +14,14 @@ class Game:
         self.screen = pygame.display.set_mode(size=(constants.screen_width, constants.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.screen.fill(color=colors.white)
         pygame.display.update()
-
         self.clock = pygame.time.Clock()
+
         self.music_channel = pygame.mixer.music
         self.music_channel.set_volume(constants.music_volume)
         self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(constants.ambience_volume)
         utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
+        utils.set_cursor(image=utils.load_sprite(sprite_sheet=spritesheets.cursors, target_sprite='cursor_normal'))
 
         self.state_stack = []
 
