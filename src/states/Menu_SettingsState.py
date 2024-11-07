@@ -22,6 +22,7 @@ class Menu_SettingsState(BaseState):
         
         self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
         self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
+        
         self.settings_option_surface_list = []
         for i, setting in enumerate(self.settings_manager.settings_list):
             text_string = setting['label']+':  '+setting['value_label'][self.current_settings_index[i]]
@@ -29,7 +30,7 @@ class Menu_SettingsState(BaseState):
             self.settings_option_surface_list.append({
                 'id': setting['id'],
                 'surface': text,
-                'arrow_visibility': True,
+                'arrow_visibility': False,
                 'scale': 1.0,
             })
             
@@ -78,10 +79,19 @@ class Menu_SettingsState(BaseState):
             
             if button.hovered:
                 self.cursor = button.hover_cursor
+
+                for option in self.settings_option_surface_list:
+                    if button.id == option['id']:
+                        option['arrow_visibility'] = True
+
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
             else:
+                for option in self.settings_option_surface_list:
+                    if button.id == option['id']:
+                        option['arrow_visibility'] = False
+
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
@@ -103,11 +113,11 @@ class Menu_SettingsState(BaseState):
             if option['arrow_visibility']:
                 utils.blit(dest=canvas,
                            source=self.arrow_left,
-                           pos=(constants.canvas_width/2 - option['surface'].width/1.5, 200 + i*50),
+                           pos=(constants.canvas_width/2 - option['surface'].width/2 - 36, 200 + i*50),
                            pos_anchor='center')
                 utils.blit(dest=canvas,
                            source=self.arrow_right,
-                           pos=(constants.canvas_width/2 + option['surface'].width/1.5, 200 + i*50),
+                           pos=(constants.canvas_width/2 + option['surface'].width/2 + 36, 200 + i*50),
                            pos_anchor='center')
         for i, option in enumerate(self.button_option_surface_list):
             processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])

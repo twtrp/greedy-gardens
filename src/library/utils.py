@@ -62,7 +62,6 @@ def blit(dest: pygame.Surface,
         dest.blit(source=source, dest=source_rect)
     
     if debug_outline:
-        source_rect = source.get_rect()
         pygame.draw.rect(dest, debug_outline_color, source_rect, 1)
 
 
