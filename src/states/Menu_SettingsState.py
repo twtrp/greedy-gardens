@@ -9,13 +9,13 @@ class Menu_SettingsState(BaseState):
         self.settings_manager = SettingsManager()
         print(self.settings_manager.load_all_settings())
 
-
+        
     #Main methods
 
     def update(self, dt, events):
-        cursor = cursors.normal
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
-        utils.set_cursor(cursor=cursor)
 
     def render(self, canvas):
         pass

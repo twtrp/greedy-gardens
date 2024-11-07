@@ -3,4 +3,4 @@ sfx_volume=1
 ambience_volume=0.2
 fullscreen=0
 fps_cap=30
-skip_bootup=0
+skip_bootup=1

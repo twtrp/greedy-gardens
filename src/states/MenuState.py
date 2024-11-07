@@ -129,7 +129,7 @@ class MenuState(BaseState):
             },
         ]
         self.title_options_surfaces_list = []
-        for i, option in enumerate(self.title_options_list):
+        for option in self.title_options_list:
             text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=colors.white)
             text = utils.effect_long_shadow(surface=text,
                                             direction='bottom',

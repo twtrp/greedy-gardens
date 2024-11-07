@@ -23,13 +23,12 @@ class Menu_TitleState(BaseState):
     #Main methods
 
     def update(self, dt, events):
-        cursor = cursors.normal
         
         for button in self.button_list:
             button.update(dt=dt, events=events)
             
             if button.hovered:
-                cursor = button.hover_cursor
+                self.cursor = button.hover_cursor
                 for option in self.parent.title_options_surfaces_list:
                     if button.id == option['id']:
                         option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
@@ -50,7 +49,8 @@ class Menu_TitleState(BaseState):
                     pygame.quit()
                     sys.exit()
         
-        utils.set_cursor(cursor=cursor)
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
 
     def render(self, canvas):

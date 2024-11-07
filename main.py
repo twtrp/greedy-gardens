@@ -6,7 +6,6 @@ class Game:
     def __init__(self):
         self.settings_manager = SettingsManager()
         self.settings = self.settings_manager.load_all_settings()
-        print(self.settings)
 
         self.fps_cap = self.settings['fps_cap'] + 1
         self.title = 'Greedy Gardens'

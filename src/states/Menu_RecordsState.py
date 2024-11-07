@@ -10,9 +10,8 @@ class Menu_RecordsState(BaseState):
     #Main methods
 
     def update(self, dt, events):
-        cursor = cursors.normal
-
-        utils.set_cursor(cursor=cursor)
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
 
     def render(self, canvas):
