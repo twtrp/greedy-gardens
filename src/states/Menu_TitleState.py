@@ -29,7 +29,7 @@ class Menu_TitleState(BaseState):
             button.update(dt=dt, events=events)
             
             if button.hovered:
-                cursor = cursors.hand
+                cursor = button.hover_cursor
                 for option in self.parent.title_options_surfaces_list:
                     if button.id == option['id']:
                         option['scale'] = min(option['scale'] + 2.4*dt, 1.2)

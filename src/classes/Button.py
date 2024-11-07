@@ -10,7 +10,9 @@ class Button:
                  pos: tuple = (0, 0),
                  pos_anchor: str = 'topleft',
                  padding_x: int = 0,
-                 padding_y: int = 0):
+                 padding_y: int = 0,
+                 enable_click: bool = True,
+                 hover_cursor: dict = cursors.hand):
         self.game = game
         self.scale_x = self.game.screen_width / constants.canvas_width
         self.scale_y = self.game.screen_height / constants.canvas_height
@@ -24,8 +26,9 @@ class Button:
         self.pressed = False
         self.clicked = False
 
-        self.enable_hover = True
-        self.enable_click = True
+        self.enable_click = enable_click
+
+        self.hover_cursor = hover_cursor
 
         self.rect: pygame.Rect = self.surface.get_rect()
         if width != 0:
@@ -38,10 +41,6 @@ class Button:
 
 
     # Class methods
-
-    def toggle_hover(self, enable: bool):
-        self.enable_hover = enable
-
 
     def toggle_click(self, enable: bool):
         self.enable_click = enable
@@ -56,11 +55,9 @@ class Button:
     def update(self, dt, events):
         pos = pygame.mouse.get_pos()
         
-        if self.enable_hover:
-            if self.rect.collidepoint(pos):
-                self.hovered = True
-            else:
-                self.hovered = False
+        if self.rect.collidepoint(pos):
+            self.hovered = True
+            utils.set_cursor(self.hover_cursor)
         else:
             self.hovered = False
 
