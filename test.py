@@ -1,6 +1,6 @@
 from src.library.essentials import *
 from src.states.MenuState import MenuState
-from src.components.Button import Button
+from src.classes.Button import Button
 
 class Game:
     def __init__(self):

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 
 class BaseState(ABC):
-    def __init__(self, parent, stack):
+    def __init__(self, game, parent, stack):
+        self.game = game
         self.parent = parent
         self.stack = stack
         self.prev_state = None

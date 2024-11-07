@@ -2,6 +2,7 @@ from src.library.essentials import *
 
 class Button:
     def __init__(self,
+                 game: object,
                  id: str, 
                  surface: pygame.Surface,
                  width: int = 0,
@@ -10,10 +11,14 @@ class Button:
                  pos_anchor: str = 'topleft',
                  padding_x: int = 0,
                  padding_y: int = 0):
+        self.game = game
+        self.scale_x = self.game.screen_width / constants.canvas_width
+        self.scale_y = self.game.screen_height / constants.canvas_height
+
         self.id = id
         self.surface = surface
-        self.padding_x = padding_x
-        self.padding_y = padding_y
+        self.padding_x = padding_x*self.scale_x
+        self.padding_y = padding_y*self.scale_y
 
         self.hovered = False
         self.pressed = False
@@ -24,12 +29,12 @@ class Button:
 
         self.rect: pygame.Rect = self.surface.get_rect()
         if width != 0:
-            self.rect.width = width
+            self.rect.width = width*self.scale_x
         if height != 0:
-            self.rect.height = height
+            self.rect.height = height*self.scale_y
         self.rect.width += 2*self.padding_x
         self.rect.height += 2*self.padding_y
-        setattr(self.rect, pos_anchor, pos)
+        setattr(self.rect, pos_anchor, (pos[0]*self.scale_x, pos[1]*self.scale_y))
 
 
     # Class methods

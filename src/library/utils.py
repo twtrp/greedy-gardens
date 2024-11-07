@@ -1,22 +1,6 @@
 from src.library.core import *
 from src.library.resource_loader import *
 
-# Cursor functions
-
-def set_cursor(image: pygame.Surface,
-               hotspot: tuple = (0, 0)
-              ) -> None:
-    """
-    Use this to set the cursor
-    Returns nothing
-
-    image = surface to set as the cursor
-    hotspot = hotspot of the cursor
-    """
-    cursor = pygame.cursors.Cursor(hotspot, image)
-    pygame.mouse.set_cursor(cursor)
-
-
 # Surface functions
 
 def blit(dest: pygame.Surface,
@@ -107,7 +91,7 @@ def load_image(dir: str,
         return image.convert()
     
 
-def load_sprite(sprite_sheet: str,
+def load_sprite(sprite_sheet: dict,
                 target_sprite: str,
                 mode: str = 'colorkey',
                 colorkey: pygame.Color = (0, 0, 0)
@@ -116,7 +100,7 @@ def load_sprite(sprite_sheet: str,
     Use this to get a single sprite from a sprite sheet
     Returns Surface
 
-    sprite_sheet = name of the sprite sheet dict
+    sprite_sheet = spritesheet dict defined in spritesheets.py
     target_sprite = name of the sprite to get from the sprite sheet map
     mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
     colorkey = color to set as transparent if mode is 'colorkey'
@@ -145,7 +129,7 @@ def load_sprite_sheet(sprite_sheet: str,
     Use this to get all sprites from a sprite sheet as set
     Returns dict of Surfaces
 
-    sprite_sheet = name of the sprite sheet dict
+    sprite_sheet = spritesheet dict defined in spritesheets.py
     mode = 'alpha' for images with pixels that are semi-transparent, 'colorkey' for images with pixels that are fully transparent or fully opaque
     colorkey = color to set as transparent if mode is 'colorkey'
     """
@@ -195,20 +179,13 @@ def effect_silhouette(surface: pygame.Surface,
     surface = surface to create a silhouette of
     color = color of the silhouette
     """
-    mask = pygame.mask.from_surface(surface=surface)
-    mask_surface = mask.to_surface(unsetcolor=(1, 2, 3))
-    mask_surface.set_colorkey((1, 2, 3))
-    mask_width = mask_surface.get_width()
-    mask_height = mask_surface.get_height()
-    for x in range(mask_width):
-        for y in range(mask_height):
-            if mask_surface.get_at((x, y))[0] == 255:
-                mask_surface.set_at((x, y), color)
-    return mask_surface
+    mask = pygame.mask.from_surface(surface)
+    silhouette = mask.to_surface(setcolor=color, unsetcolor=(0,0,0,0))
+    return silhouette
 
 
 def effect_long_shadow(surface: pygame.Surface,
-                       direction: str = 'top-left',
+                       direction: str = 'top-left', 
                        distance: int = 1,
                        color: pygame.Color = (255, 255, 255)
                       ) -> pygame.Surface:
@@ -221,32 +198,29 @@ def effect_long_shadow(surface: pygame.Surface,
     distance = distance of the 3D effect
     color = color of the 3D effect
     """
-    if direction == 'top-left':
-        shadow_vector = (-1, -1)
-    elif direction == 'top':
-        shadow_vector = (0, -1)
-    elif direction == 'top-right':
-        shadow_vector = (1, -1)
-    elif direction == 'left':
-        shadow_vector = (-1, 0)
-    elif direction == 'right':
-        shadow_vector = (1, 0)
-    elif direction == 'bottom-left':
-        shadow_vector = (-1, 1)
-    elif direction == 'bottom':
-        shadow_vector = (0, 1)
-    elif direction == 'bottom-right':
-        shadow_vector = (1, 1)
-    else:
-        shadow_vector = (0, 0)
+    shadow_vector = {
+        'top-left': (-1, -1),
+        'top': (0, -1),
+        'top-right': (1, -1),
+        'left': (-1, 0),
+        'right': (1, 0),
+        'bottom-left': (-1, 1),
+        'bottom': (0, 1),
+        'bottom-right': (1, 1)
+    }.get(direction, (0, 0))
+
+    if shadow_vector == (0, 0):
         print('WARNING: invalid long shadow direction')
     
     padding_x = abs(shadow_vector[0])*distance
     padding_y = abs(shadow_vector[1])*distance
     final_surface = pygame.Surface(size=(surface.get_width() + padding_x, surface.get_height() + padding_y), flags=pygame.SRCALPHA)
+    
     surface_silhouette = effect_silhouette(surface=surface, color=color)
-    for i in range(1, distance + 1):
-        blit(dest=final_surface, source=surface_silhouette, pos=(shadow_vector[0]*i, shadow_vector[1]*i))
+    
+    positions = [(shadow_vector[0]*i, shadow_vector[1]*i) for i in range(1, distance + 1)]
+    for pos in positions:
+        blit(dest=final_surface, source=surface_silhouette, pos=pos)
 
     blit(dest=final_surface, source=surface)
     return final_surface
@@ -269,18 +243,23 @@ def effect_outline(surface: pygame.Surface,
     padding_x = 2*distance
     padding_y = 2*distance
     final_surface = pygame.Surface(size=(surface.get_width() + padding_x, surface.get_height() + padding_y), flags=pygame.SRCALPHA)
+    
     surface_silhouette = effect_silhouette(surface=surface, color=color)
+    
     if not no_corner:
-        for dx in range(-distance, distance + 1):
-            for dy in range(-distance, distance + 1):
-                if dx == 0 and dy == 0:
-                    continue
-                blit(dest=final_surface, source=surface_silhouette, pos=(dx + distance, dy + distance))
+        positions = [(dx + distance, dy + distance) 
+                    for dx in range(-distance, distance + 1)
+                    for dy in range(-distance, distance + 1)
+                    if not (dx == 0 and dy == 0)]
+        
+        for pos in positions:
+            blit(dest=final_surface, source=surface_silhouette, pos=pos)
     else:
         for dx in range(-distance, distance + 1):
             if dx == 0:
                 continue
             blit(dest=final_surface, source=surface_silhouette, pos=(dx + distance, distance))
+            
         for dy in range(-distance, distance + 1):
             if dy == 0:
                 continue
@@ -369,3 +348,20 @@ def sound_play(sound_channel: pygame.mixer.Channel,
     """
     sound = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound_name))
     sound_channel.play(sound, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
+
+
+# Cursor functions
+
+def set_cursor(cursor: dict,
+              ) -> None:
+    """
+    Use this to set the cursor
+    Returns nothing
+
+    image = surface to set as the cursor
+    hotspot = hotspot of the cursor
+    """
+    image = load_sprite(sprite_sheet=spritesheets.cursors, target_sprite=cursor['sprite'])
+    hotspot = cursor['hotspot']
+    cursor = pygame.cursors.Cursor(hotspot, image)
+    pygame.mouse.set_cursor(cursor)

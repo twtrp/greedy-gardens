@@ -68,7 +68,7 @@ cursors = {
         'cursor_normal': {
             'x': 0,
         },
-        'cursor_point': {
+        'cursor_hand': {
             'x': 32,
         },
         'cursor_dig': {

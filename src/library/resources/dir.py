@@ -1,6 +1,7 @@
 from src.library.core import *
 
 assets = os.path.join('assets')
+data = os.path.join('data')
 src = os.path.join('src')
 
 fonts = os.path.join(assets, 'fonts')

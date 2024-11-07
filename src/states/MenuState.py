@@ -5,8 +5,8 @@ from src.states.Menu_TitleState import Menu_TitleState
 import tween
 
 class MenuState(BaseState):
-    def __init__(self, parent, stack):
-        BaseState.__init__(self, parent, stack)
+    def __init__(self, game, parent, stack):
+        BaseState.__init__(self, game, parent, stack)
 
         self.substate_stack = []
 
@@ -16,13 +16,13 @@ class MenuState(BaseState):
 
         self.finished_boot_up = False
         
-        utils.music_load(music_channel=self.parent.music_channel, name='menu_intro.ogg')
-        utils.music_queue(music_channel=self.parent.music_channel, name='menu_loop.ogg', loops=-1)
-        self.parent.music_channel.play()
+        utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
+        utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
+        self.game.music_channel.play()
 
         self.tween_list = []
         if not self.finished_boot_up:
-            self.bootup_tween_chain(skip=constants.skip_bootup)
+            self.bootup_tween_chain(skip=self.game.settings['skip_bootup'])
         else:
             self.bootup_tween_chain(skip=True)
 
@@ -109,52 +109,40 @@ class MenuState(BaseState):
         # Load menu options
         text_props = {'font': fonts.lf2, 'size': 'medium'}
         text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
-        text = utils.get_text(text='Back', font=text_props['font'], size=text_props['size'], color=colors.white)
-        text = utils.effect_long_shadow(surface=text,
-                                        direction='bottom',
-                                        distance=text_deco_distance,
-                                        color=utils.color_darken(color=colors.white, factor=0.5))
-        self.back_text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_50)
         
         self.title_options_list = [
             {
                 'id': 'play',
                 'text': 'Play',
-                'color': colors.white,
             },
             {
                 'id': 'records',
                 'text': 'Records',
-                'color': colors.white,
             },
             {
                 'id': 'settings',
                 'text': 'Settings',
-                'color': colors.white,
             },
             {
                 'id': 'quit',
                 'text': 'Quit',
-                'color': colors.white,
             },
         ]
         self.title_options_surfaces_list = []
         for i, option in enumerate(self.title_options_list):
-            text_props = {'font': fonts.lf2, 'size': 'medium'}
-            text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
-            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=option['color'])
+            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=colors.white)
             text = utils.effect_long_shadow(surface=text,
                                             direction='bottom',
                                             distance=text_deco_distance,
-                                            color=utils.color_darken(color=option['color'], factor=0.5))
-            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_50)
+                                            color=utils.color_darken(color=colors.white, factor=0.5))
+            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_35)
             self.title_options_surfaces_list.append({
                 'id': option['id'],
                 'surface': text,
                 'scale': 0.5,
                 'alpha': 0,
             })
-
+        
 
     def update(self, dt, events):
         if self.ready:
@@ -355,4 +343,4 @@ class MenuState(BaseState):
             option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
         
         # Initiate substate
-        Menu_TitleState(parent=self, stack=self.substate_stack).enter_state()
+        Menu_TitleState(game=self.game, parent=self, stack=self.substate_stack).enter_state()

@@ -1,9 +1,14 @@
 from src.library.essentials import *
+from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
 
 class Game:
     def __init__(self):
-        self.max_fps = constants.max_fps + 1
+        self.settings_manager = SettingsManager()
+        self.settings = self.settings_manager.load_all_settings()
+        print(self.settings)
+
+        self.fps_cap = self.settings['fps_cap'] + 1
         self.title = 'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
@@ -11,17 +16,29 @@ class Game:
         pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
         pygame.display.set_caption(self.title+' (0 FPS)')
         self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
-        self.screen = pygame.display.set_mode(size=(constants.screen_width, constants.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+        self.display_info = pygame.display.Info()
+        if self.settings['fullscreen']:
+            self.screen_width = self.display_info.current_w
+            self.screen_height = self.display_info.current_h
+            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                  flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+        else:
+            self.screen_width = constants.window_width
+            self.screen_height = constants.window_height
+            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                  flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+        utils.set_cursor(cursor=cursors.normal)
         self.screen.fill(color=colors.white)
         pygame.display.update()
         self.clock = pygame.time.Clock()
 
         self.music_channel = pygame.mixer.music
-        self.music_channel.set_volume(constants.music_volume)
-        self.ambience_channel = pygame.mixer.Channel(0)
-        self.ambience_channel.set_volume(constants.ambience_volume)
+        self.music_channel.set_volume(self.settings['music_volume'])
+        self.sfx_channel = pygame.mixer.Channel(0)
+        self.sfx_channel.set_volume(self.settings['sfx_volume'])
+        self.ambience_channel = pygame.mixer.Channel(1)
+        self.ambience_channel.set_volume(self.settings['ambience_volume'])
         utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
-        utils.set_cursor(image=utils.load_sprite(sprite_sheet=spritesheets.cursors, target_sprite='cursor_normal'))
 
         self.state_stack = []
 
@@ -31,7 +48,7 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            MenuState(parent=self, stack=self.state_stack).enter_state()
+            MenuState(game=self, parent=self, stack=self.state_stack).enter_state()
             pass
 
         # Handle quit
@@ -48,8 +65,8 @@ class Game:
             self.state_stack[-1].render(canvas=self.canvas)
 
         # Render canvas to screen
-        if (constants.canvas_width, constants.canvas_height) != (constants.screen_width, constants.screen_height):
-            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(constants.screen_width, constants.screen_height))
+        if (constants.canvas_width, constants.canvas_height) != (self.screen_width, self.screen_height):
+            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
             utils.blit(dest=self.screen, source=self.canvas)
@@ -61,7 +78,7 @@ class Game:
     def game_loop(self):
         while True:
             pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
-            dt = self.clock.tick(self.max_fps)/1000.0
+            dt = self.clock.tick(self.fps_cap)/1000.0
             events = pygame.event.get()
             self.update(dt=dt, events=events)
             self.render()
