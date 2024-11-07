@@ -98,7 +98,7 @@ class Game:
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
             utils.blit(dest=self.screen, source=self.canvas)
-            
+        
         # Update display
         pygame.display.update()
 
