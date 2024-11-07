@@ -118,7 +118,7 @@ def get_image(dir: str,
                name: str,
                mode: str = None,
                colorkey: pygame.Color = (0, 0, 0)
-              ) -> pygame.Surface:
+             ) -> pygame.Surface:
     '''
     Use this instead of pygame's load image
     Returns Surface
@@ -143,7 +143,7 @@ def get_sprite(sprite_sheet: dict,
                 target_sprite: str,
                 mode: str = 'colorkey',
                 colorkey: pygame.Color = (0, 0, 0)
-               ) -> pygame.Surface:
+              ) -> pygame.Surface:
     '''
     Use this to get a single sprite from a sprite sheet
     Returns Surface
