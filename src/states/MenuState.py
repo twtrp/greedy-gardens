@@ -36,59 +36,59 @@ class MenuState(BaseState):
         self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
         
         # Load intro assets
-        self.logo = utils.load_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
+        self.logo = utils.get_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
         self.logo = pygame.transform.scale_by(surface=self.logo, factor=7)
         self.surface_logo = pygame.Surface(size=(self.logo.get_width(), self.logo.get_height()+50), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
         utils.blit(dest=self.surface_logo, source=self.logo)
         text = utils.get_text(text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
-                              long_shadow=True, long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
-                              outline=True, outline_color=colors.white)
+                              long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
+                              outline_color=colors.white)
         utils.blit(dest=self.surface_logo, 
                    source=text,
                    pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
                    pos_anchor='midtop')
 
         # Load menu background assets
-        self.sky = utils.load_image(dir=dir.menu_bg, name='1_sky.png', mode='colorkey')
+        self.sky = utils.get_image(dir=dir.menu_bg, name='1_sky.png', mode='colorkey')
         self.parallax_list = [
             {
-                'image': utils.load_image(dir=dir.menu_bg, name='2_cloud_1.png', mode='colorkey'),
+                'image': utils.get_image(dir=dir.menu_bg, name='2_cloud_1.png', mode='colorkey'),
                 'x_offset': 0,
                 'x_step': 0.5,
             },
             {
-                'image': utils.load_image(dir=dir.menu_bg, name='3_cloud_2.png', mode='colorkey'),
+                'image': utils.get_image(dir=dir.menu_bg, name='3_cloud_2.png', mode='colorkey'),
                 'x_offset': 0,
                 'x_step': 2.5,
             },
             {
-                'image': utils.load_image(dir=dir.menu_bg, name='4_cloud_3.png', mode='colorkey'),
+                'image': utils.get_image(dir=dir.menu_bg, name='4_cloud_3.png', mode='colorkey'),
                 'x_offset': 0,
                 'x_step': 7,
             },
         ]
         self.landscape_list = [
             {
-                'image': utils.load_image(dir=dir.menu_bg, name='5_landscape_1.png', mode='colorkey'),
+                'image': utils.get_image(dir=dir.menu_bg, name='5_landscape_1.png', mode='colorkey'),
                 'y_offset': 200,
             },
             {
-                'image': utils.load_image(dir=dir.menu_bg, name='6_landscape_2.png', mode='colorkey'),
+                'image': utils.get_image(dir=dir.menu_bg, name='6_landscape_2.png', mode='colorkey'),
                 'y_offset': 400,
             },
             {
-                'image': utils.load_image(dir=dir.menu_bg, name='7_landscape_3.png', mode='colorkey'),
+                'image': utils.get_image(dir=dir.menu_bg, name='7_landscape_3.png', mode='colorkey'),
                 'y_offset': 1000,
             },
         ]
-        self.noise_overlay = utils.load_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
+        self.noise_overlay = utils.get_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
 
         # Load wind
         self.wind_entities_list = []
         self.winds_props = {'y_offset': 1000}
         self.wind_spawn_rate_per_second = 0.85
-        self.wind_sprites = utils.load_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
+        self.wind_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
         for wind_sprite in self.wind_sprites:
             self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (4, 2))
 
@@ -97,12 +97,12 @@ class MenuState(BaseState):
         self.menu_bg_pixel_size = 2
 
         # Load game logo
-        self.game_logo = utils.load_image(dir=dir.graphics, name='game_logo.png', mode='colorkey')
+        self.game_logo = utils.get_image(dir=dir.graphics, name='game_logo.png', mode='colorkey')
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=4)
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
         # Load menu options        
-        self.title_button_list = [
+        self.title_button_option_list = [
             {
                 'id': 'play',
                 'text': 'Play',
@@ -120,11 +120,10 @@ class MenuState(BaseState):
                 'text': 'Quit',
             },
         ]
-        self.title_button_surface_list = []
-        for option in self.title_button_list:
-            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white,
-                                  long_shadow=True, outline=True)
-            self.title_button_surface_list.append({
+        self.title_button_option_surface_list = []
+        for option in self.title_button_option_list:
+            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
+            self.title_button_option_surface_list.append({
                 'id': option['id'],
                 'surface': text,
                 'scale': 0.5,
@@ -218,7 +217,7 @@ class MenuState(BaseState):
                 utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
 
                 ## Render menu options
-                for i, option in enumerate(self.title_button_surface_list):
+                for i, option in enumerate(self.title_button_option_surface_list):
                     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     processed_option.set_alpha(option['alpha'])
                     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
@@ -287,7 +286,7 @@ class MenuState(BaseState):
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
             
-            for option in self.title_button_surface_list:
+            for option in self.title_button_option_surface_list:
                 delay += 0.125
                 self.tween_list.append(tween.to(container=option,
                                                 key='scale',
@@ -321,13 +320,13 @@ class MenuState(BaseState):
             self.winds_props['y_offset'] = 0
             self.game_logo_props['scale'] = 1
             self.game_logo_props['alpha'] = 255
-            for option in self.title_button_surface_list:
+            for option in self.title_button_option_surface_list:
                 option['scale'] = 1
                 option['alpha'] = 255
 
         # Convert surfaces to static
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-        for option in self.title_button_surface_list:
+        for option in self.title_button_option_surface_list:
             option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
         
         # Initiate substate

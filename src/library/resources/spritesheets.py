@@ -79,3 +79,22 @@ cursors = {
         },
     }
 }
+
+gui = {
+    'file': 'gui.png',
+    'shared_data': {},
+    'sprites': {
+        'arrow_left': {
+            'x': 0,
+            'y': 0,
+            'width': 48,
+            'height': 48,
+        },
+        'arrow_right': {
+            'x': 48,
+            'y': 0,
+            'width': 48,
+            'height': 48,
+        },
+    }
+}

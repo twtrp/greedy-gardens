@@ -6,21 +6,21 @@ class SettingsManager():
         self.settings_list = [
             {
                 'id': 'music_volume',
-                'label': 'Music volume',
+                'label': 'Music Volume',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 1,
             },
             {
                 'id': 'sfx_volume',
-                'label': 'SFX volume',
+                'label': 'SFX Volume',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 1,
             },
             {
                 'id': 'ambience_volume',
-                'label': 'Ambience volume',
+                'label': 'Ambience Volume',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 0.2,
@@ -29,21 +29,21 @@ class SettingsManager():
                 'id': 'fullscreen',
                 'label': 'Fullscreen',
                 'value': [0, 1],
-                'value_label': ['OFF', 'ON'],
+                'value_label': ['off', 'on'],
                 'value_default': 0,
             },
             {
                 'id': 'fps_cap',
-                'label': 'FPS cap',
+                'label': 'FPS Cap',
                 'value': [30, 60, 999],
-                'value_label': ['30', '60', 'UNCAPPED'],
+                'value_label': ['30', '60', 'uncapped'],
                 'value_default': 30
             },
             {
                 'id': 'skip_bootup',
-                'label': 'Skip bootup',
+                'label': 'Skip Bootup',
                 'value': [0, 1],
-                'value_label': ['OFF', 'ON'],
+                'value_label': ['off', 'on'],
                 'value_default': 0,
             },
         ]

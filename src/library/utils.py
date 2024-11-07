@@ -70,10 +70,10 @@ def get_text(text: str,
              font: dict,
              size: str,
              color: pygame.Color,
-             long_shadow: bool = False,
+             long_shadow: bool = True,
              long_shadow_direction = 'bottom',
              long_shadow_color: pygame.Color = None,
-             outline: bool = False,
+             outline: bool = True,
              outline_color: pygame.Color = colors.mono_35,
             ) -> pygame.Surface:
     """
@@ -115,7 +115,7 @@ def get_font_deco_distance(font: dict,
     return font_size//pixel_size_divisor
 
 
-def load_image(dir: str,
+def get_image(dir: str,
                name: str,
                mode: str = None,
                colorkey: pygame.Color = (0, 0, 0)
@@ -140,7 +140,7 @@ def load_image(dir: str,
         return image.convert()
     
 
-def load_sprite(sprite_sheet: dict,
+def get_sprite(sprite_sheet: dict,
                 target_sprite: str,
                 mode: str = 'colorkey',
                 colorkey: pygame.Color = (0, 0, 0)
@@ -163,14 +163,14 @@ def load_sprite(sprite_sheet: dict,
     x = full_sprite_data['x']
     y = full_sprite_data['y']
 
-    sprite_sheet_image = load_image(dir=dir.sprites, name=sprite_sheet['file'], mode=mode, colorkey=colorkey)
+    sprite_sheet_image = get_image(dir=dir.sprites, name=sprite_sheet['file'], mode=mode, colorkey=colorkey)
     sprite = pygame.Surface(size=(width, height), flags=pygame.SRCALPHA)
     sprite.blit(source=sprite_sheet_image, dest=(0, 0), area=(x, y, width, height))
 
     return sprite
 
 
-def load_sprite_sheet(sprite_sheet: str,
+def get_sprite_sheet(sprite_sheet: str,
                       mode: str = 'colorkey',
                       colorkey: pygame.Color = (0, 0, 0)
                      ) -> dict:
@@ -184,7 +184,7 @@ def load_sprite_sheet(sprite_sheet: str,
     """
     sprites = {}
     for sprite_name in sprite_sheet['sprites']:
-        sprites[sprite_name] = load_sprite(sprite_sheet=sprite_sheet, target_sprite=sprite_name, mode=mode, colorkey=colorkey)
+        sprites[sprite_name] = get_sprite(sprite_sheet=sprite_sheet, target_sprite=sprite_name, mode=mode, colorkey=colorkey)
     
     return sprites
 
@@ -378,7 +378,7 @@ def set_cursor(cursor: dict,
     image = surface to set as the cursor
     hotspot = hotspot of the cursor
     """
-    image = load_sprite(sprite_sheet=spritesheets.cursors, target_sprite=cursor['sprite'])
+    image = get_sprite(sprite_sheet=spritesheets.cursors, target_sprite=cursor['sprite'])
     hotspot = cursor['hotspot']
     cursor = pygame.cursors.Cursor(hotspot, image)
     pygame.mouse.set_cursor(cursor)

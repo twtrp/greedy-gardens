@@ -10,7 +10,7 @@ class Menu_TitleState(BaseState):
         BaseState.__init__(self, game, parent, stack)
 
         self.button_list = []
-        for i, option in enumerate(self.parent.title_button_surface_list):
+        for i, option in enumerate(self.parent.title_button_option_surface_list):
             self.button_list.append(Button(game=self.game,
                                            id=option['id'],
                                            surface=option['surface'],
@@ -29,11 +29,11 @@ class Menu_TitleState(BaseState):
             
             if button.hovered:
                 self.cursor = button.hover_cursor
-                for option in self.parent.title_button_surface_list:
+                for option in self.parent.title_button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
             else:
-                for option in self.parent.title_button_surface_list:
+                for option in self.parent.title_button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
             
@@ -57,8 +57,8 @@ class Menu_TitleState(BaseState):
         # Render game logo
         utils.blit(dest=canvas, source=self.parent.game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
         # Render menu options
-        for i, option in enumerate(self.parent.title_button_surface_list):
-            processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            processed_option.set_alpha(option['alpha'])
-            utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+        for i, option in enumerate(self.parent.title_button_option_surface_list):
+            processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+            processed_surface.set_alpha(option['alpha'])
+            utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
             
