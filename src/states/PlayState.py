@@ -36,8 +36,6 @@ class PlayState(BaseState):
         self.overlay = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.overlay_props = {'alpha': 255}
         self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
-
-        self.play_bg = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         
         # # Load intro assets
         # self.logo = utils.get_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
@@ -91,7 +89,7 @@ class PlayState(BaseState):
             ## Render landscape to menu_bg
             print("rendering")
             for layer in self.landscape_list:
-                utils.blit(dest=self.play_bg, source=layer['image'], pos=(0, 0))
+                utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
                 
             # Render substates
 
