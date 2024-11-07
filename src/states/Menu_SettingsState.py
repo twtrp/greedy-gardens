@@ -139,7 +139,9 @@ class Menu_SettingsState(BaseState):
                         }
                     self.settings_manager.reset_settings()
                     for i in range(len(self.settings_manager.settings_list)):
-                        self.game.apply_settings(i)
+                        if self.current_settings_index[i] != self.settings_manager.settings_list[i]['value_default_index']:
+                            self.game.apply_settings(i)
+                    self.current_settings_index = self.settings_manager.load_all_settings_index()
 
                 elif button.id == 'back':
                     self.exit_state()

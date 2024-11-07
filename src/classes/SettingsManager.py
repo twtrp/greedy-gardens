@@ -9,8 +9,9 @@ class SettingsManager():
                 'label': 'Music Volume',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
-                'value_default': 1,
-                'value_default_label': '100%',
+                'value_default': 0.8,
+                'value_default_label': '80%',
+                'value_default_index': 8,
             },
             {
                 'id': 'sfx_volume',
@@ -19,6 +20,7 @@ class SettingsManager():
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 1,
                 'value_default_label': '100%',
+                'value_default_index': 10,
             },
             {
                 'id': 'ambience_volume',
@@ -27,6 +29,7 @@ class SettingsManager():
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 0.2,
                 'value_default_label': '20%',
+                'value_default_index': 2,
             },
             {
                 'id': 'fullscreen',
@@ -35,6 +38,7 @@ class SettingsManager():
                 'value_label': ['off', 'on'],
                 'value_default': 0,
                 'value_default_label': 'off',
+                'value_default_index': 0,
             },
             {
                 'id': 'fps_cap',
@@ -43,6 +47,7 @@ class SettingsManager():
                 'value_label': ['30', '60', 'uncapped'],
                 'value_default': 30,
                 'value_default_label': '30',
+                'value_default_index': 0,
             },
             {
                 'id': 'skip_bootup',
@@ -51,6 +56,7 @@ class SettingsManager():
                 'value_label': ['off', 'on'],
                 'value_default': 0,
                 'value_default_label': 'off',
+                'value_default_index': 0,
             },
         ]
 

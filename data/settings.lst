@@ -1,6 +1,6 @@
-music_volume=0.7
+music_volume=0.8
 sfx_volume=1
 ambience_volume=0.2
-fullscreen=1
+fullscreen=0
 fps_cap=30
-skip_bootup=1
+skip_bootup=0
