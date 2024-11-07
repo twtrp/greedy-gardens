@@ -42,7 +42,54 @@ class Game:
         self.state_stack = []
 
 
+    # Class methods
+
+    def apply_settings(self, setting_index):
+        self.settings = self.settings_manager.load_all_settings()
+        if setting_index == 0:
+            self.music_channel.set_volume(self.settings['music_volume'])
+        elif setting_index == 1:
+            self.sfx_channel.set_volume(self.settings['sfx_volume'])
+        elif setting_index == 2:
+            self.ambience_channel.set_volume(self.settings['ambience_volume'])
+        elif setting_index == 3:
+            if self.settings['fullscreen']:
+                self.screen_width = self.display_info.current_w
+                self.screen_height = self.display_info.current_h
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                      flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+            else:
+                self.screen_width = constants.window_width
+                self.screen_height = constants.window_height
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                      flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+            pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
+            pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
+        elif setting_index == 4:
+            self.fps_cap = self.settings['fps_cap'] + 1
+            
+        elif setting_index == -1:
+            self.music_channel.set_volume(self.settings['music_volume'])
+            self.sfx_channel.set_volume(self.settings['sfx_volume'])
+            self.ambience_channel.set_volume(self.settings['ambience_volume'])
+            if self.settings['fullscreen']:
+                self.screen_width = self.display_info.current_w
+                self.screen_height = self.display_info.current_h
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                    flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+            else:
+                self.screen_width = constants.window_width
+                self.screen_height = constants.window_height
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                    flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+            pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
+            self.fps_cap = self.settings['fps_cap'] + 1
+
+
+    # Main methods
+
     def update(self, dt, events):
+
         # Update current state
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
