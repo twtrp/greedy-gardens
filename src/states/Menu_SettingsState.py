@@ -13,8 +13,9 @@ class Menu_SettingsState(BaseState):
     #Main methods
 
     def update(self, dt, events):
-        pass
+        cursor = cursors.normal
 
+        utils.set_cursor(cursor=cursor)
 
     def render(self, canvas):
         pass
