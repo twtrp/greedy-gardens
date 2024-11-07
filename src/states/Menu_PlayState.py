@@ -97,7 +97,8 @@ class Menu_PlayState(BaseState):
             
             if button.clicked:
                 if button.id == 'start':
-                    PlayState(game=self.game, parent=self.game, stack=self.game.state_stack).enter_state()                  
+                    PlayState(game=self.game, parent=self.game, stack=self.game.state_stack).enter_state()
+                    self.exit_state()                  
                 elif button.id == 'back':
                     self.exit_state()
         utils.set_cursor(cursor=self.cursor)

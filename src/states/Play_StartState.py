@@ -9,7 +9,7 @@ class Play_StartState(BaseState):
         print("Entered Start State")
 
     def update(self, dt, events):
-        self.exit_state()
+        pass
 
     def render(self, canvas):
         pass

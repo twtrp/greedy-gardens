@@ -28,7 +28,6 @@ class PlayState(BaseState):
         # else:
         #     self.bootup_tween_chain(skip=True)
 
-
     #Main methods
 
     def load_assets(self):
@@ -80,14 +79,24 @@ class PlayState(BaseState):
             # Update tweens
             tween.update(passed_time=dt)
 
+        for event in events:
+            print(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    print("entering")
+                    Play_StartState(game=self.game, parent=self.parent, stack=self.substate_stack).enter_state()
+                if event.key == pygame.K_ESCAPE:
+                        print("exiting")
+                        self.exit_state()
+
 
     def render(self, canvas):
+        
         if self.ready:
 
             # Build background
 
             ## Render landscape to menu_bg
-            print("rendering")
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
                 
@@ -104,7 +113,7 @@ class PlayState(BaseState):
                 pass
 
             else:
-                self.substate_stack[-1].render(canvas=canvas)
+                self.substate_stack[-1].render(canvas=canvas)          
                 
 
     #Class methods
