@@ -8,10 +8,34 @@ class Menu_SettingsState(BaseState):
         BaseState.__init__(self, game, parent, stack)
         self.settings_manager = SettingsManager()
         print(self.game.settings)
-        
-        self.page_title = utils.get_text(text='Settings', font=fonts.lf2, size='large', color=colors.yellow_light,
-                                         long_shadow=True, outline=True)
 
+        self.page_title = utils.get_text(text='Settings', font=fonts.lf2, size='huge', color=colors.yellow_light,
+                                         long_shadow=True, outline=True)
+        
+        self.settings_options_list = [
+            {
+                
+            }
+        ]
+        
+        self.button_surface_list = [
+            {
+                'id': 'reset',
+                'surface': utils.get_text(text='Reset', font=fonts.lf2, size='medium', color=colors.white,
+                                          long_shadow=True, outline=True),
+                'scale': 1.0,
+            },
+            {
+                'id': 'back',
+                'surface': utils.get_text(text='Back', font=fonts.lf2, size='medium', color=colors.white,
+                                          long_shadow=True, outline=True),
+                'scale': 1.0,
+            }
+        ]
+        
+        self.button_list = [
+            
+        ]
         
     #Main methods
 
@@ -21,4 +45,6 @@ class Menu_SettingsState(BaseState):
 
 
     def render(self, canvas):
-        pass
+        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
+        for i, surface in enumerate(self.button_surface_list):
+            utils.blit(dest=canvas, source=surface['surface'], pos=(constants.canvas_width/2, 520 + i*60), pos_anchor='center')

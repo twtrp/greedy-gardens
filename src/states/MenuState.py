@@ -102,7 +102,7 @@ class MenuState(BaseState):
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
         # Load menu options        
-        self.title_options_list = [
+        self.title_button_list = [
             {
                 'id': 'play',
                 'text': 'Play',
@@ -120,11 +120,11 @@ class MenuState(BaseState):
                 'text': 'Quit',
             },
         ]
-        self.title_options_surfaces_list = []
-        for option in self.title_options_list:
+        self.title_button_surface_list = []
+        for option in self.title_button_list:
             text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white,
                                   long_shadow=True, outline=True)
-            self.title_options_surfaces_list.append({
+            self.title_button_surface_list.append({
                 'id': option['id'],
                 'surface': text,
                 'scale': 0.5,
@@ -218,7 +218,7 @@ class MenuState(BaseState):
                 utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
 
                 ## Render menu options
-                for i, option in enumerate(self.title_options_surfaces_list):
+                for i, option in enumerate(self.title_button_surface_list):
                     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     processed_option.set_alpha(option['alpha'])
                     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
@@ -287,7 +287,7 @@ class MenuState(BaseState):
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
             
-            for option in self.title_options_surfaces_list:
+            for option in self.title_button_surface_list:
                 delay += 0.125
                 self.tween_list.append(tween.to(container=option,
                                                 key='scale',
@@ -321,13 +321,13 @@ class MenuState(BaseState):
             self.winds_props['y_offset'] = 0
             self.game_logo_props['scale'] = 1
             self.game_logo_props['alpha'] = 255
-            for option in self.title_options_surfaces_list:
+            for option in self.title_button_surface_list:
                 option['scale'] = 1
                 option['alpha'] = 255
 
         # Convert surfaces to static
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-        for option in self.title_options_surfaces_list:
+        for option in self.title_button_surface_list:
             option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
         
         # Initiate substate
