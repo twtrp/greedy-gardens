@@ -1,6 +1,39 @@
 from src.library.core import *
 from src.library.resource_loader import *
 
+
+# Color functions
+
+def color_darken(color: pygame.Color,
+                 factor: int
+                ) -> pygame.Color:
+    """
+    Darken a color by a given percentage.
+    Returns Color
+
+    color = original color
+    factor = [0,1] percentage to darken the color by. 0 means no change. 1 means black
+    """
+    if not isinstance(color, pygame.Color):
+        color = pygame.Color(color)
+    return color.lerp(pygame.Color(0, 0, 0), factor)
+
+
+def color_lighten(color: pygame.Color,
+                  factor: int
+                 ) -> pygame.Color:
+    """
+    Lighten a color by a given percentage.
+    Returns Color
+
+    color = original color
+    factor = [0,1] percentage to lighten the color by. 0 means no change. 1 means white
+    """
+    if not isinstance(color, pygame.Color):
+        color = pygame.Color(color)
+    return color.lerp(pygame.Color(255, 255, 255), factor)
+
+
 # Surface functions
 
 def blit(dest: pygame.Surface,
@@ -36,7 +69,12 @@ def blit(dest: pygame.Surface,
 def get_text(text: str,
              font: dict,
              size: str,
-             color: pygame.Color
+             color: pygame.Color,
+             long_shadow: bool = False,
+             long_shadow_direction = 'bottom',
+             long_shadow_color: pygame.Color = None,
+             outline: bool = False,
+             outline_color: pygame.Color = colors.mono_35,
             ) -> pygame.Surface:
     """
     Use this to get a text surface
@@ -48,8 +86,19 @@ def get_text(text: str,
     color = text color
     """
     text_font = pygame.font.Font(os.path.join(dir.fonts, font['file']), font['sizes'][size])
-    text_font_render = text_font.render(text=text, antialias=False, color=color)
-    return text_font_render
+    text_surface = text_font.render(text=text, antialias=False, color=color)
+
+    deco_distance = get_font_deco_distance(font=font, size=size)
+
+    if long_shadow:
+        if long_shadow_color is None:
+            long_shadow_color = color_darken(color=color, factor=0.5)
+        text_surface = effect_long_shadow(surface=text_surface, direction=long_shadow_direction, distance=deco_distance, color=long_shadow_color)
+
+    if outline:
+        text_surface = effect_outline(surface=text_surface, distance=deco_distance, color=outline_color)
+        
+    return text_surface
 
 
 def get_font_deco_distance(font: dict,
@@ -267,38 +316,6 @@ def effect_outline(surface: pygame.Surface,
 
     blit(dest=final_surface, source=surface, pos=(distance, distance))
     return final_surface
-
-
-# Color functions
-
-def color_darken(color: pygame.Color,
-                 factor: int
-                ) -> pygame.Color:
-    """
-    Darken a color by a given percentage.
-    Returns Color
-
-    color = original color
-    factor = [0,1] percentage to darken the color by. 0 means no change. 1 means black
-    """
-    if not isinstance(color, pygame.Color):
-        color = pygame.Color(color)
-    return color.lerp(pygame.Color(0, 0, 0), factor)
-
-
-def color_lighten(color: pygame.Color,
-                  factor: int
-                 ) -> pygame.Color:
-    """
-    Lighten a color by a given percentage.
-    Returns Color
-
-    color = original color
-    factor = [0,1] percentage to lighten the color by. 0 means no change. 1 means white
-    """
-    if not isinstance(color, pygame.Color):
-        color = pygame.Color(color)
-    return color.lerp(pygame.Color(255, 255, 255), factor)
 
 
 # Sound functions

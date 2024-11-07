@@ -41,14 +41,9 @@ class MenuState(BaseState):
         self.surface_logo = pygame.Surface(size=(self.logo.get_width(), self.logo.get_height()+50), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
         utils.blit(dest=self.surface_logo, source=self.logo)
-        text_props = {'font': fonts.retro_arcade, 'size': 'small'}
-        text_deco_distance = utils.get_font_deco_distance(text_props['font'], text_props['size'])
-        text = utils.get_text(text='PRESENTS', font=text_props['font'], size=text_props['size'], color=colors.mono_100)
-        text = utils.effect_long_shadow(surface=text,
-                                        direction='bottom',
-                                        distance=text_deco_distance,
-                                        color=utils.color_lighten(color=colors.mono_100,factor=0.75))
-        text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.white)
+        text = utils.get_text(text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
+                              long_shadow=True, long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
+                              outline=True, outline_color=colors.white)
         utils.blit(dest=self.surface_logo, 
                    source=text,
                    pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
@@ -106,10 +101,7 @@ class MenuState(BaseState):
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=4)
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 
-        # Load menu options
-        text_props = {'font': fonts.lf2, 'size': 'medium'}
-        text_deco_distance = utils.get_font_deco_distance(font=text_props['font'], size=text_props['size'])
-        
+        # Load menu options        
         self.title_options_list = [
             {
                 'id': 'play',
@@ -130,12 +122,8 @@ class MenuState(BaseState):
         ]
         self.title_options_surfaces_list = []
         for option in self.title_options_list:
-            text = utils.get_text(text=option['text'], font=text_props['font'], size=text_props['size'], color=colors.white)
-            text = utils.effect_long_shadow(surface=text,
-                                            direction='bottom',
-                                            distance=text_deco_distance,
-                                            color=utils.color_darken(color=colors.white, factor=0.5))
-            text = utils.effect_outline(surface=text, distance=text_deco_distance, color=colors.mono_35)
+            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white,
+                                  long_shadow=True, outline=True)
             self.title_options_surfaces_list.append({
                 'id': option['id'],
                 'surface': text,

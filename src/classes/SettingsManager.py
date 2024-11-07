@@ -1,6 +1,6 @@
 from src.library.essentials import *
 
-class SettingsManager(object):
+class SettingsManager():
     def __init__(self):
         self.settings_file = os.path.join(dir.data, "settings.lst")
         self.settings_list = [

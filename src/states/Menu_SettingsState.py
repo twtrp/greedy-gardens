@@ -7,7 +7,10 @@ class Menu_SettingsState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
         self.settings_manager = SettingsManager()
-        print(self.settings_manager.load_all_settings())
+        print(self.game.settings)
+        
+        self.page_title = utils.get_text(text='Settings', font=fonts.lf2, size='large', color=colors.yellow_light,
+                                         long_shadow=True, outline=True)
 
         
     #Main methods
