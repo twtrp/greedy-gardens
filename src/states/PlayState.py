@@ -31,26 +31,8 @@ class PlayState(BaseState):
     #Main methods
 
     def load_assets(self):
-        # Load white overlay
-        self.overlay = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
-        self.overlay_props = {'alpha': 255}
-        self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
         
-        # # Load intro assets
-        # self.logo = utils.get_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
-        # self.logo = pygame.transform.scale_by(surface=self.logo, factor=7)
-        # self.surface_logo = pygame.Surface(size=(self.logo.get_width(), self.logo.get_height()+50), flags=pygame.SRCALPHA)
-        # self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
-        # utils.blit(dest=self.surface_logo, source=self.logo)
-        # text = utils.get_text(text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
-        #                       long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
-        #                       outline_color=colors.white)
-        # utils.blit(dest=self.surface_logo, 
-        #            source=text,
-        #            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
-        #            pos_anchor='midtop')
-
-        # Load menu background assets
+        # Load background
         self.landscape_list = [
             {
                 'image': utils.get_image(dir=dir.play_bg, name='grass_pattern.png', mode='colorkey'),
@@ -80,7 +62,6 @@ class PlayState(BaseState):
             tween.update(passed_time=dt)
 
         for event in events:
-            print(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     print("entering")
