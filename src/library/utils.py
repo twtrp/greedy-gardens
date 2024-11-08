@@ -34,6 +34,56 @@ def color_lighten(color: pygame.Color,
     return color.lerp(pygame.Color(255, 255, 255), factor)
 
 
+# Shape functions
+
+def draw_rect(dest: pygame.Surface,
+              size: tuple,
+              pos: tuple = (0, 0),
+              pos_anchor: str = 'topleft',
+              color: pygame.Color = colors.white,
+              inner_border_width: int = 0,
+              inner_border_color: pygame.Color = colors.mono_35,
+              outer_border_width: int = 0,
+              outer_border_color: pygame.Color = colors.white,
+              outest_border_width: int = 0,
+              outest_border_color: pygame.Color = colors.mono_35
+             ) -> None:
+    """
+    Use this to draw a rectangle
+    Returns nothing
+    
+    dest = surface to draw on
+    size = size of the rectangle
+    pos = position of the rectangle
+    pos_anchor = center, topleft, topright, bottomleft, bottomright, midtop, midbottom, midleft, midright
+    color = color of the rectangle (supports alpha channel)
+    inner_border_width = width of the inner border
+    inner_border_color = color of the inner border (doesn't support alpha channel)
+    """
+    rect = pygame.Rect(0, 0, size[0], size[1])
+    setattr(rect, pos_anchor, pos)
+
+    if len(color) == 3:
+        pygame.draw.rect(surface=dest, color=color, rect=rect)
+    elif len(color) == 4:
+        temp_surface = pygame.Surface(size=(rect.width, rect.height), flags=pygame.SRCALPHA)
+        temp_surface.fill(color)
+        dest.blit(source=temp_surface, dest=rect)
+
+    if inner_border_width > 0:
+        pygame.draw.rect(surface=dest, color=inner_border_color, rect=rect, width=inner_border_width)
+    
+    if outer_border_width > 0:
+        outer_rect = pygame.Rect(rect.left - outer_border_width, rect.top - outer_border_width,
+                                 rect.width + 2*outer_border_width, rect.height + 2*outer_border_width)
+        pygame.draw.rect(surface=dest, color=outer_border_color, rect=outer_rect, width=outer_border_width)
+
+    if outest_border_width > 0:
+        outest_rect = pygame.Rect(outer_rect.left - outest_border_width, outer_rect.top - outest_border_width,
+                                  outer_rect.width + 2*outest_border_width, outer_rect.height + 2*outest_border_width)
+        pygame.draw.rect(surface=dest, color=outest_border_color, rect=outest_rect, width=outest_border_width)
+
+
 # Surface functions
 
 def blit(dest: pygame.Surface,

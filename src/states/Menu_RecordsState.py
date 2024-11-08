@@ -10,6 +10,11 @@ class Menu_RecordsState(BaseState):
     #Main methods
 
     def update(self, dt, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.exit_state()
+
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 

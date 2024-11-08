@@ -13,7 +13,7 @@ class Menu_TitleState(BaseState):
         for i, option in enumerate(self.parent.title_button_option_surface_list):
             self.button_list.append(Button(game=self.game,
                                            id=option['id'],
-                                           width=500,
+                                           width=300,
                                            height=80,
                                            pos=(constants.canvas_width/2, 340 + i*80),
                                            pos_anchor='center'))

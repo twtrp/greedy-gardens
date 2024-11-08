@@ -4,11 +4,12 @@ from src.states.Play_StartState import Play_StartState
 import tween
 
 class PlayState(BaseState):
-    def __init__(self, game, parent, stack):
-        BaseState.__init__(self, game, parent, stack)
+    def __init__(self, game, parent, stack, seed):
+        BaseState.__init__(self, game, parent, stack, seed)
 
         print("Entered PlayState")
         self.game.canvas.fill((0, 0, 0))
+        print(seed)
 
         self.substate_stack = []
 
@@ -80,14 +81,17 @@ class PlayState(BaseState):
             tween.update(passed_time=dt)
 
         for event in events:
-            print(event)
+            # print(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    print("entering")
+                    # print("entering")
                     Play_StartState(game=self.game, parent=self.parent, stack=self.substate_stack).enter_state()
                 if event.key == pygame.K_ESCAPE:
-                        print("exiting")
+                        # print("exiting")
                         self.exit_state()
+
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
 
     def render(self, canvas):

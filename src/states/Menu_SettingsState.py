@@ -10,6 +10,7 @@ class Menu_SettingsState(BaseState):
         self.current_settings_index = self.settings_manager.load_all_settings_index()
         self.setting_index = 0
 
+        self.button_list = []
         self.load_assets()
 
         
@@ -29,7 +30,8 @@ class Menu_SettingsState(BaseState):
             self.settings_option_surface_list.append({
                 'id': setting['id'],
                 'surface': text,
-                'arrow_scale': 0.0,
+                'left_arrow_scale': 0,
+                'right_arrow_scale': 0,
             })
             
         self.button_option_list = [
@@ -51,7 +53,6 @@ class Menu_SettingsState(BaseState):
                 'scale': 1.0
             })
         
-        self.button_list = []
         for i, option in enumerate(self.settings_option_surface_list):
             self.button_list.append(Button(game=self.game,
                                            id=option['id'],
@@ -76,13 +77,18 @@ class Menu_SettingsState(BaseState):
         for i, option in enumerate(self.button_option_surface_list):
             self.button_list.append(Button(game=self.game,
                                            id=option['id'],
-                                           width=500,
+                                           width=300,
                                            height=60,
                                            pos=(constants.canvas_width/2, 515 + i*65),
                                            pos_anchor='center'))
 
 
     def update(self, dt, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.exit_state()
+
         for button in self.button_list:
             button.update(dt=dt, events=events)
             
@@ -93,7 +99,8 @@ class Menu_SettingsState(BaseState):
                 for i, option in enumerate(self.settings_option_surface_list):
                     if button.id == option['id']:
                         self.setting_index = i
-                        option['arrow_scale'] = min(option['arrow_scale'] + 10*dt, 1.0)
+                        option['left_arrow_scale'] = min(option['left_arrow_scale'] + 10*dt, 1.0)
+                        option['right_arrow_scale'] = min(option['right_arrow_scale'] + 10*dt, 1.0)
 
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
@@ -102,7 +109,8 @@ class Menu_SettingsState(BaseState):
             else:
                 for option in self.settings_option_surface_list:
                     if button.id == option['id']:
-                        option['arrow_scale'] = max(option['arrow_scale'] - 10*dt, 0.0)
+                        option['left_arrow_scale'] = max(option['left_arrow_scale'] - 10*dt, 0)
+                        option['right_arrow_scale'] = max(option['right_arrow_scale'] - 10*dt, 0)
 
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
@@ -116,15 +124,20 @@ class Menu_SettingsState(BaseState):
                     if button.id.endswith('_left'):
                         self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] - 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
                         self.settings_manager.save_setting(self.current_settings_index)
+                        left_arrow_scale = 0.25
+                        right_arrow_scale = 1
                     elif button.id.endswith('_right'):
                         self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] + 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
                         self.settings_manager.save_setting(self.current_settings_index)
+                        left_arrow_scale = 1
+                        right_arrow_scale = 0.25
                     text_string = self.settings_manager.settings_list[self.setting_index]['label']+':  '+self.settings_manager.settings_list[self.setting_index]['value_label'][self.current_settings_index[self.setting_index]]
                     text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
                     self.settings_option_surface_list[self.setting_index] = {
                         'id': self.settings_manager.settings_list[self.setting_index]['id'],
                         'surface': text,
-                        'arrow_scale': 0.0,
+                        'left_arrow_scale': left_arrow_scale,
+                        'right_arrow_scale': right_arrow_scale,
                     }
                     self.game.apply_settings(self.setting_index)
 
@@ -135,7 +148,8 @@ class Menu_SettingsState(BaseState):
                         self.settings_option_surface_list[i] = {
                             'id': self.settings_manager.settings_list[i]['id'],
                             'surface': text,
-                            'arrow_scale': 0.0,
+                            'left_arrow_scale': 0,
+                            'right_arrow_scale': 0,
                         }
                     self.settings_manager.reset_settings()
                     for i in range(len(self.settings_manager.settings_list)):
@@ -157,8 +171,8 @@ class Menu_SettingsState(BaseState):
         utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
         for i, option in enumerate(self.settings_option_surface_list):
             utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 200 + i*50), pos_anchor='center')
-            scaled_left_arrow = pygame.transform.scale_by(surface=self.arrow_left, factor=option['arrow_scale'])
-            scaled_right_arrow = pygame.transform.scale_by(surface=self.arrow_right, factor=option['arrow_scale'])
+            scaled_left_arrow = pygame.transform.scale_by(surface=self.arrow_left, factor=option['left_arrow_scale'])
+            scaled_right_arrow = pygame.transform.scale_by(surface=self.arrow_right, factor=option['right_arrow_scale'])
             utils.blit(dest=canvas,
                         source=scaled_left_arrow,
                         pos=(constants.canvas_width/2 - 180, 200 + i*50),

@@ -9,7 +9,8 @@ class Play_StartState(BaseState):
         print("Entered Start State")
 
     def update(self, dt, events):
-        pass
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
     def render(self, canvas):
         pass
