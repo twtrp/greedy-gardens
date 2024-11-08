@@ -96,5 +96,17 @@ gui = {
             'width': 48,
             'height': 48,
         },
+        'strike_blank': {
+            'x': 0,
+            'y': 48,
+            'width': 96,
+            'height': 96,
+        },
+        'strike_live': {
+            'x': 96,
+            'y': 48,
+            'width': 96,
+            'height': 96,
+        },
     }
 }

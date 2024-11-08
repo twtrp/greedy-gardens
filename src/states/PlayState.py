@@ -7,7 +7,6 @@ class PlayState(BaseState):
     def __init__(self, game, parent, stack, seed):
         BaseState.__init__(self, game, parent, stack, seed)
 
-        print("Entered PlayState")
         self.game.canvas.fill((0, 0, 0))
         print(seed)
 
