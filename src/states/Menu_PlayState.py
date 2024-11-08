@@ -82,7 +82,7 @@ class Menu_PlayState(BaseState):
                     elif event.key == pygame.K_RETURN:
                         self.textbox_mode = 'inactive'
                     else:
-                        if len(self.textbox_text) < self.textbox_limit:
+                        if len(self.textbox_text) < self.textbox_limit and event.unicode.isdigit():
                             self.textbox_text += event.unicode
                             self.textbox_text_surface = utils.get_text(text=self.textbox_text,
                                                                        font=fonts.lf2,
