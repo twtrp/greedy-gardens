@@ -8,7 +8,7 @@ def blit(dest: pygame.Surface,
          debug_outline: bool = False,
          debug_outline_color: pygame.Color = (255, 0, 0)
         ) -> None:
-    """
+    '''
     Use this instead of pygame's blit.
     Returns nothing
 
@@ -18,7 +18,7 @@ def blit(dest: pygame.Surface,
     pos_anchor = center, topleft, topright, bottomleft, bottomright, midtop, midbottom, midleft, midright
     debug_outline = True to draw a debug outline around the source surface
     debug_outline_color = color of the debug outline
-    """
+    '''
     if pos_anchor == 'topleft':
         dest.blit(source=source, dest=pos)
     else:
@@ -29,18 +29,18 @@ def blit(dest: pygame.Surface,
     if debug_outline:
         source_rect = source.get_rect()
         pygame.draw.rect(dest, debug_outline_color, source_rect, 1)
-        
+
 
 def effect_silhouette(surface: pygame.Surface, 
                       color: pygame.Color = (0, 0, 0)
                      ) -> pygame.Surface:
-    """
+    '''
     Use this to create a silhouette of a surface
     Returns Surface
 
     surface = surface to create a silhouette of
     color = color of the silhouette
-    """
+    '''
     mask = pygame.mask.from_surface(surface=surface)
     mask_surface = mask.to_surface(unsetcolor=(1, 2, 3))
     mask_surface.set_colorkey((1, 2, 3))
@@ -58,7 +58,7 @@ def effect_long_shadow(surface: pygame.Surface,
                        distance: int = 1,
                        color: pygame.Color = (255, 255, 255)
                       ) -> pygame.Surface:
-    """
+    '''
     Use this to apply 3D on a surface
     Returns Surface
 
@@ -66,7 +66,7 @@ def effect_long_shadow(surface: pygame.Surface,
     direction = 'top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'
     distance = distance of the 3D effect
     color = color of the 3D effect
-    """
+    '''
     if direction == 'top-left':
         shadow_vector = (-1, -1)
     elif direction == 'top':
@@ -103,7 +103,7 @@ def effect_outline(surface: pygame.Surface,
                    color: pygame.Color = (255, 255, 255),
                    no_corner: bool = False
                   ) -> pygame.Surface:
-    """
+    '''
     Use this to outline a surface
     Returns Surface
 
@@ -111,7 +111,7 @@ def effect_outline(surface: pygame.Surface,
     distance = distance of the outline effect
     color = color of the outline
     no_corner = True for non-corner outline, False for corner outline
-    """
+    '''
     padding_x = 2*distance
     padding_y = 2*distance
     final_surface = pygame.Surface(size=(surface.get_width() + padding_x, surface.get_height() + padding_y), flags=pygame.SRCALPHA)

@@ -1,65 +1,78 @@
-from src.library.essentials import *
-from src.states.MenuState import MenuState
-from src.classes.Button import Button
+import pygame
+import sys
 
-class Game:
-    def __init__(self):
-        self.max_fps = constants.max_fps + 1
-        self.title = 'Greedy Gardens'
+# Initialize Pygame
+pygame.init()
 
-        pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
-        pygame.init()
-        pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
-        pygame.display.set_caption(self.title+' (0 FPS)')
-        self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
-        self.screen = pygame.display.set_mode(size=(constants.screen_width, constants.screen_height), flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
-        self.screen.fill(color=colors.white)
-        pygame.display.update()
+# Screen settings
+SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Pygame Textbox Demo")
 
-        self.clock = pygame.time.Clock()
-        self.text = utils.get_text(text='Hello World', font=fonts.lf2, size='medium', color=colors.white)
-        self.button = Button(id='test', surface=self.text, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center', padding_x=10, padding_y=10)
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (135, 206, 250)
 
-    def update(self, dt, events):
-        self.button.update(dt=dt, events=events)
+# Fonts
+FONT = pygame.font.Font(None, 32)
 
-        if self.button.hovered:
-            print('Hovered')
+# Textbox settings
+textbox_rect = pygame.Rect(100, 200, 440, 50)
+color_active = pygame.Color('dodgerblue2')
+color_inactive = pygame.Color('lightskyblue3')
+color = color_inactive
+active = False
+text = ''
 
-        if self.button.clicked:
-            print('=======')
-            print('Clicked')
-            print('=======')
+def main():
+    global active, color, text
 
-        # Handle quit
-        for event in events:
+    clock = pygame.time.Clock()
+    running = True
+
+    while running:
+        # Event handling
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
-    
 
-    def render(self):
-        # Render canvas to screen
-        if (constants.canvas_width, constants.canvas_height) != (constants.screen_width, constants.screen_height):
-            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(constants.screen_width, constants.screen_height))
-            utils.blit(dest=self.screen, source=scaled_canvas)
-        else:
-            utils.blit(dest=self.screen, source=self.canvas)
-        utils.blit(dest=self.canvas, source=self.text, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
-        self.button.render(self.canvas)
-        pygame.display.update()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print(active)
+                # Check if the mouse is within the textbox area
+                if textbox_rect.collidepoint(event.pos):
+                    active = not active
+                else:
+                    active = False
+                color = color_active if active else color_inactive
 
+            if event.type == pygame.KEYDOWN:
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        print("Text entered:", text)
+                        text = ''
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
 
-    def game_loop(self):
-        while True:
-            pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
-            dt = self.clock.tick(self.max_fps)/1000.0
-            events = pygame.event.get()
-            self.update(dt=dt, events=events)
-            self.render()
+        # Draw background
+        screen.fill(WHITE)
 
+        # Render the text
+        txt_surface = FONT.render(text, True, BLACK)
 
-if __name__ == '__main__':
-    game = Game()
-    game.game_loop()
+        # Resize textbox if text is too wide
+        textbox_rect.w = max(440, txt_surface.get_width() + 10)
+        
+        # Draw elements
+        pygame.draw.rect(screen, color, textbox_rect, 2)
+        screen.blit(txt_surface, (textbox_rect.x + 5, textbox_rect.y + 5))
+
+        # Update the display
+        pygame.display.flip()
+        clock.tick(30)
+
+if __name__ == "__main__":
+    main()

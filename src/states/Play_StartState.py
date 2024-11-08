@@ -27,7 +27,8 @@ class Play_StartState(BaseState):
         self.transparent_surface = pygame.Surface((canvas_width, canvas_height), pygame.SRCALPHA)
 
     def update(self, dt, events):
-        pass
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
     def render(self, canvas):
         self.transparent_surface.fill((0, 0, 0, 0))
