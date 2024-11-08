@@ -105,11 +105,16 @@ class Game:
 
     def game_loop(self):
         while True:
-            pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
-            dt = self.clock.tick(self.fps_cap)/1000.0
-            events = pygame.event.get()
-            self.update(dt=dt, events=events)
-            self.render()
+            try:
+                pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
+                dt = self.clock.tick(self.fps_cap)/1000.0
+                events = pygame.event.get()
+                self.update(dt=dt, events=events)
+                self.render()
+            except KeyboardInterrupt:
+                pygame.mixer.stop()
+                pygame.quit()
+                sys.exit()
 
 
 if __name__ == '__main__':

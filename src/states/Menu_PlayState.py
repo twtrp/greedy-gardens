@@ -58,8 +58,8 @@ class Menu_PlayState(BaseState):
                                                   long_shadow=False, outline=False)
         self.button_list.append(Button(game=self.game,
                                        id='textbox',
-                                       width=220,
-                                       height=60,
+                                       width=140,
+                                       height=50,
                                        pos=(constants.canvas_width/2, 420),
                                        pos_anchor='center'))
 
@@ -134,7 +134,7 @@ class Menu_PlayState(BaseState):
             processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
             utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 280 + i*300), pos_anchor='center')
 
-        utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 368), pos_anchor='center')
+        utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 373), pos_anchor='center')
         if self.textbox_mode == 'inactive':
             utils.draw_rect(dest=canvas,
                             size=(140, 50),
