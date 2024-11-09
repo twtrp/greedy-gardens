@@ -26,6 +26,11 @@ class MenuState(BaseState):
         else:
             self.bootup_tween_chain(skip=True)
 
+        self.records_sorter = {
+            'column': 'rowid',
+            'order': 'DESC',
+        }
+
 
     #Main methods
 
@@ -47,7 +52,7 @@ class MenuState(BaseState):
         utils.blit(dest=self.surface_logo, 
                    source=text,
                    pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
-                   pos_anchor='midtop')
+                   pos_anchor=posanchors.midtop)
 
         # Load menu background assets
         self.sky = utils.get_image(dir=dir.menu_bg, name='1_sky.png', mode='colorkey')
@@ -206,7 +211,7 @@ class MenuState(BaseState):
                 utils.blit(dest=canvas,
                         source=processed_surface_logo,
                         pos=(constants.canvas_width/2, constants.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
-                        pos_anchor='center')
+                        pos_anchor=posanchors.center)
                 
             # Render substates
 
@@ -214,13 +219,13 @@ class MenuState(BaseState):
                 ## Render game logo
                 processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
                 processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-                utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
+                utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor=posanchors.center)
 
                 ## Render menu options
                 for i, option in enumerate(self.title_button_option_surface_list):
                     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     processed_option.set_alpha(option['alpha'])
-                    utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+                    utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor=posanchors.center)
 
             else:
                 self.substate_stack[-1].render(canvas=canvas)
@@ -285,7 +290,7 @@ class MenuState(BaseState):
                                             time=0.1,
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
-            
+    
             for option in self.title_button_option_surface_list:
                 delay += 0.125
                 self.tween_list.append(tween.to(container=option,
@@ -302,6 +307,7 @@ class MenuState(BaseState):
                                                 delay=delay))
                 
         else:
+
             self.finish_bootup()
 
 

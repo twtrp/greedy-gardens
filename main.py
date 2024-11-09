@@ -33,11 +33,10 @@ class Game:
 
         self.music_channel = pygame.mixer.music
         self.music_channel.set_volume(self.settings['music_volume'])
-        self.sfx_channel = pygame.mixer.Channel(0)
-        self.sfx_channel.set_volume(self.settings['sfx_volume'])
-        self.ambience_channel = pygame.mixer.Channel(1)
+        self.sfx_volume = self.settings['sfx_volume']
+        self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(self.settings['ambience_volume'])
-        utils.sound_play(sound_channel=self.ambience_channel, sound_name='ambience.ogg', loops=-1, fade_ms=3000)
+        utils.sound_play(sound=sfx.ambience, sound_channel=self.ambience_channel, loops=-1, fade_ms=3000)
 
         self.state_stack = []
 
@@ -49,7 +48,7 @@ class Game:
         if setting_index == 0:
             self.music_channel.set_volume(self.settings['music_volume'])
         if setting_index == 1:
-            self.sfx_channel.set_volume(self.settings['sfx_volume'])
+            self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 2:
             self.ambience_channel.set_volume(self.settings['ambience_volume'])
         if setting_index == 3:
@@ -105,11 +104,16 @@ class Game:
 
     def game_loop(self):
         while True:
-            pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
-            dt = self.clock.tick(self.fps_cap)/1000.0
-            events = pygame.event.get()
-            self.update(dt=dt, events=events)
-            self.render()
+            try:
+                pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
+                dt = self.clock.tick(self.fps_cap)/1000.0
+                events = pygame.event.get()
+                self.update(dt=dt, events=events)
+                self.render()
+            except KeyboardInterrupt:
+                pygame.mixer.stop()
+                pygame.quit()
+                sys.exit()
 
 
 if __name__ == '__main__':

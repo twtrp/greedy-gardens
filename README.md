@@ -19,8 +19,8 @@
 - Main menu music:
     - https://youtu.be/TFmNW8lMITk?si=m1rsfmZrYmwVY0nk
     - https://youtu.be/B1zg9b4L88Q?si=K6Zwds-xZUdMJflR
-- Farm Ambience
-    - https://youtu.be/LFEGXjJhryY?si=TTUe2R5A281_xcYV
+- Ambience
+    - https://youtu.be/xNN7iTA57jM?si=TWThsI-VghS7OrgR
 - End music
     - https://youtu.be/29QaQuQnOqQ?si=8WHmnpmR2BA4yZ-4
 - Fonts
@@ -54,3 +54,5 @@
     - https://free-game-assets.itch.io/free-skill-3232-icons-for-cyberpunk-game
 - Some UI elements
     - https://crusenho.itch.io/complete-ui-essential-pack
+    - https://danieldiggle.itch.io/sunnyside
+    

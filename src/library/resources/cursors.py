@@ -17,3 +17,8 @@ bonk = {
     'sprite': 'cursor_bonk',
     'hotspot': (6, 6),
 }
+
+scroll = {
+    'sprite': 'cursor_scroll',
+    'hotspot': (10, 16),
+}
