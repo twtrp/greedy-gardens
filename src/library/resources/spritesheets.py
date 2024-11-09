@@ -110,3 +110,246 @@ gui = {
         },
     }
 }
+
+cards_fruit = {
+    'file': 'cards_fruit.png',
+    'shared_data': {},
+    'sprites': {
+        'card_fruit_blueberry': {
+            'x': 0,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_fruit_coconut': {
+            'x': 96,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_fruit_grape': {
+            'x': 192,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_fruit_orange': {
+            'x': 0,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_fruit_peach': {
+            'x': 96,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_fruit_strawberry': {
+            'x': 192,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_fruit_back': {
+            'x': 0,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+    }
+}
+
+cards_path = {
+    'file': 'cards_path.png',
+    'shared_data': {},
+    'sprites': {
+        'card_path_WS': {
+            'x': 0,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_ES': {
+            'x': 96,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_WE': {
+            'x': 192,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_NS': {
+            'x': 288,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_NW': {
+            'x': 384,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_NE': {
+            'x': 0,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_WES': {
+            'x': 96,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_NWS': {
+            'x': 192,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_NES': {
+            'x': 288,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_NWE': {
+            'x': 384,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_WS': {
+            'x': 0,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_ES': {
+            'x': 96,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_WE': {
+            'x': 192,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_NS': {
+            'x': 288,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_NW': {
+            'x': 384,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_NE': {
+            'x': 0,
+            'y': 384,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_WES': {
+            'x': 96,
+            'y': 384,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_NWS': {
+            'x': 192,
+            'y': 384,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_NES': {
+            'x': 288,
+            'y': 384,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_strike_NWE': {
+            'x': 384,
+            'y': 384,
+            'width': 96,
+            'height': 128,
+        },
+        'card_path_back': {
+            'x': 0,
+            'y': 512,
+            'width': 96,
+            'height': 128,
+        },
+    }
+}
+
+cards_event = {
+    'file': 'cards_event.png',
+    'shared_data': {},
+    'sprites': {
+        'card_event_free': {
+            'x': 0,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_keep': {
+            'x': 96,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_merge': {
+            'x': 192,
+            'y': 0,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_point': {
+            'x': 0,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_redraw': {
+            'x': 96,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_remove': {
+            'x': 192,
+            'y': 128,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_reveal': {
+            'x': 0,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_swap': {
+            'x': 96,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+        'card_event_back': {
+            'x': 192,
+            'y': 256,
+            'width': 96,
+            'height': 128,
+        },
+    }
+}
