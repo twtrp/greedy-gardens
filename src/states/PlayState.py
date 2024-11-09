@@ -16,9 +16,9 @@ class PlayState(BaseState):
         self.box_width = 272
 
         # create deck
-        self.deck_fruit = deck('fruit', ['blueberry', 'coconut', 'grape', 'orange', 'peach', 'strawberry'])
-        self.deck_path = deck('path', ['Card 1', 'Card 2'])
-        self.deck_event = deck('event', ['Card 1', 'Card 2'])
+        self.deck_fruit = deck('fruit')
+        self.deck_path = deck('path')
+        self.deck_event = deck('event')
 
         self.drawn_cards_fruit = []
         self.drawn_cards_path = []
