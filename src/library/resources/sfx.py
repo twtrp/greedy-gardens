@@ -1,0 +1,6 @@
+ambience = 'ambience.ogg'
+appear = '0000000f.wav'
+hover_button = '00000007.wav'
+deselect = '00000002_bigDeSelect.wav'
+select = '00000003_bigSelect.wav'
+chicken_crowing = '00000149_rooster.wav'

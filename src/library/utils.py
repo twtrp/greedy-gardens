@@ -4,9 +4,10 @@ from src.library.resource_loader import *
 
 # Color functions
 
-def color_darken(color: pygame.Color,
-                 factor: int
-                ) -> pygame.Color:
+def color_darken(
+        color: pygame.Color,
+        factor: int
+    ) -> pygame.Color:
     '''
     Darken a color by a given percentage.
     Returns Color
@@ -19,9 +20,10 @@ def color_darken(color: pygame.Color,
     return color.lerp(pygame.Color(0, 0, 0), factor)
 
 
-def color_lighten(color: pygame.Color,
-                  factor: int
-                 ) -> pygame.Color:
+def color_lighten(
+        color: pygame.Color,
+        factor: int
+    ) -> pygame.Color:
     '''
     Lighten a color by a given percentage.
     Returns Color
@@ -36,18 +38,19 @@ def color_lighten(color: pygame.Color,
 
 # Shape functions
 
-def draw_rect(dest: pygame.Surface,
-              size: tuple,
-              pos: tuple = (0, 0),
-              pos_anchor: str = posanchors.topleft,
-              color: pygame.Color = colors.white,
-              inner_border_width: int = 0,
-              inner_border_color: pygame.Color = colors.mono_35,
-              outer_border_width: int = 0,
-              outer_border_color: pygame.Color = colors.white,
-              outest_border_width: int = 0,
-              outest_border_color: pygame.Color = colors.mono_35
-             ) -> None:
+def draw_rect(
+        dest: pygame.Surface,
+        size: tuple,
+        pos: tuple = (0, 0),
+        pos_anchor: str = posanchors.topleft,
+        color: pygame.Color = colors.white,
+        inner_border_width: int = 0,
+        inner_border_color: pygame.Color = colors.mono_35,
+        outer_border_width: int = 0,
+        outer_border_color: pygame.Color = colors.white,
+        outest_border_width: int = 0,
+        outest_border_color: pygame.Color = colors.mono_35
+    ) -> None:
     """
     Use this to draw a rectangle
     Returns nothing
@@ -86,13 +89,14 @@ def draw_rect(dest: pygame.Surface,
 
 # Surface functions
 
-def blit(dest: pygame.Surface,
-         source: pygame.Surface,
-         pos: tuple = (0, 0),
-         pos_anchor: str = posanchors.topleft,
-         debug_outline: bool = False,
-         debug_outline_color: pygame.Color = (255, 0, 0)
-        ) -> None:
+def blit(
+        dest: pygame.Surface,
+        source: pygame.Surface,
+        pos: tuple = (0, 0),
+        pos_anchor: str = posanchors.topleft,
+        debug_outline: bool = False,
+        debug_outline_color: pygame.Color = (255, 0, 0)
+    ) -> None:
     '''
     Use this instead of pygame's blit.
     Returns nothing
@@ -115,16 +119,17 @@ def blit(dest: pygame.Surface,
         pygame.draw.rect(dest, debug_outline_color, source_rect, 1)
 
 
-def get_text(text: str,
-             font: dict,
-             size: str,
-             color: pygame.Color,
-             long_shadow: bool = True,
-             long_shadow_direction = 'bottom',
-             long_shadow_color: pygame.Color = None,
-             outline: bool = True,
-             outline_color: pygame.Color = colors.mono_35,
-            ) -> pygame.Surface:
+def get_text(
+        text: str,
+        font: dict,
+        size: str,
+        color: pygame.Color,
+        long_shadow: bool = True,
+        long_shadow_direction = 'bottom',
+        long_shadow_color: pygame.Color = None,
+        outline: bool = True,
+        outline_color: pygame.Color = colors.mono_35,
+    ) -> pygame.Surface:
     '''
     Use this to get a text surface
     Returns Surface
@@ -164,11 +169,12 @@ def get_font_deco_distance(font: dict,
     return font_size//pixel_size_divisor
 
 
-def get_image(dir: str,
-               name: str,
-               mode: str = None,
-               colorkey: pygame.Color = (0, 0, 0)
-             ) -> pygame.Surface:
+def get_image(
+        dir: str,
+        name: str,
+        mode: str = None,
+        colorkey: pygame.Color = (0, 0, 0)
+    ) -> pygame.Surface:
     '''
     Use this instead of pygame's load image
     Returns Surface
@@ -189,11 +195,12 @@ def get_image(dir: str,
         return image.convert()
     
 
-def get_sprite(sprite_sheet: dict,
-                target_sprite: str,
-                mode: str = 'colorkey',
-                colorkey: pygame.Color = (0, 0, 0)
-              ) -> pygame.Surface:
+def get_sprite(
+        sprite_sheet: dict,
+        target_sprite: str,
+        mode: str = 'colorkey',
+        colorkey: pygame.Color = (0, 0, 0)
+    ) -> pygame.Surface:
     '''
     Use this to get a single sprite from a sprite sheet
     Returns Surface
@@ -238,9 +245,10 @@ def get_sprite_sheet(sprite_sheet: str,
     return sprites
 
 
-def effect_pixelate(surface: pygame.Surface,
-                    pixel_size: int = 2
-                   ) -> pygame.Surface:
+def effect_pixelate(
+        surface: pygame.Surface,
+        pixel_size: int = 2
+    ) -> pygame.Surface:
     '''
     Use this to pixelate a surface
     Returns Surface
@@ -282,11 +290,12 @@ def effect_silhouette(surface: pygame.Surface,
     return silhouette
 
 
-def effect_long_shadow(surface: pygame.Surface,
-                       direction: str = 'bottom', 
-                       distance: int = 1,
-                       color: pygame.Color = (255, 255, 255)
-                      ) -> pygame.Surface:
+def effect_long_shadow(
+        surface: pygame.Surface,
+        direction: str = 'bottom', 
+        distance: int = 1,
+        color: pygame.Color = (255, 255, 255)
+    ) -> pygame.Surface:
     '''
     Use this to apply 3D on a surface
     Returns Surface
@@ -324,11 +333,12 @@ def effect_long_shadow(surface: pygame.Surface,
     return final_surface
 
 
-def effect_outline(surface: pygame.Surface,
-                   distance: int = 1,
-                   color: pygame.Color = colors.mono_35,
-                   no_corner: bool = False
-                  ) -> pygame.Surface:
+def effect_outline(
+        surface: pygame.Surface,
+        distance: int = 1,
+        color: pygame.Color = colors.mono_35,
+        no_corner: bool = False
+    ) -> pygame.Surface:
     '''
     Use this to outline a surface
     Returns Surface
@@ -381,10 +391,11 @@ def music_load(music_channel: pygame.mixer.music,
     music_channel.load(filename=os.path.join(dir.music, name))
 
 
-def music_queue(music_channel: pygame.mixer.music,
-                name: str,
-                loops: int = 0
-               ) -> None:
+def music_queue(
+        music_channel: pygame.mixer.music,
+        name: str,
+        loops: int = 0
+    ) -> None:
     '''
     Use this to add music to the queue
     Returns nothing
@@ -396,30 +407,35 @@ def music_queue(music_channel: pygame.mixer.music,
     music_channel.queue(filename=os.path.join(dir.music, name), loops=loops)
 
 
-def sound_play(sound_channel: pygame.mixer.Channel,
-               sound_name: str,
-               loops: int = 0,
-               maxtime: int = 0,
-               fade_ms: int = 0
-              ) -> None:
+def sound_play(
+        sound_name: str,
+        sound_channel: pygame.mixer.Channel = None,
+        loops: int = 0,
+        maxtime: int = 0,
+        fade_ms: int = 0
+    ) -> None:
     '''
     Use this to play sound effects
     Returns nothing
 
-    sound_channel: pygame.mixer.Channel
-    sound_name: str = name of the sound effect file with .filetype
-    loops: int = number of times to loop the sound effect. 0 means no loop. -1 means infinite loop
-    maxtime: int = number of milliseconds to play the sound effect
-    fade_ms: int = number of milliseconds to fade the sound effect in or out
+    sound_name = name of the sound effect file with .filetype
+    sound_channel = pygame.mixer.Channel to play the sound effect on. Leave blank to not assign a channel
+    loops = number of times to loop the sound effect. 0 means no loop. -1 means infinite loop
+    maxtime = number of milliseconds to play the sound effect
+    fade_ms = number of milliseconds to fade the sound effect in or out
     '''
     sound = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound_name))
-    sound_channel.play(sound, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
-
+    if sound_channel is not None:
+        sound_channel.play(sound, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
+    else:
+        sound.play(loops=loops, maxtime=maxtime, fade_ms=fade_ms)
+    
 
 # Cursor functions
 
-def set_cursor(cursor: dict,
-              ) -> None:
+def set_cursor(
+        cursor: dict,
+    ) -> None:
     '''
     Use this to set the cursor
     Returns nothing

@@ -17,13 +17,44 @@ class Menu_RecordsState(BaseState):
         self.button_list = []
         self.load_assets()
 
-        self.table_max_scroll_offset = min(0, -len(self.table_row_surface_list) * self.table_row_height + self.table_height - 12) 
+        self.table_row_surface_dict = {}
+        self.ordered_row_ids = []
 
+        query = f'SELECT rowid, * FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
+        self.sql_cursor.execute(query)
+        rows = self.sql_cursor.fetchall()
+            
+        for row in rows:
+            rowid = row[0]
+            self.ordered_row_ids.append(rowid)
+            surface = pygame.Surface(size=(constants.canvas_width, self.table_row_height), flags=pygame.SRCALPHA)
+            row_data = {
+                'rowid': rowid,
+                'score': row[1],
+                'seed': row[2],
+                'seed_type': row[3]
+            }
+            for idx, key in enumerate(row_data.keys()):
+                cell = utils.get_text(
+                    text=str(row_data[key]),
+                    font=fonts.lf2,
+                    size='small',
+                    color=colors.mono_50,
+                    long_shadow=False,
+                    outline=False
+                )
+                utils.blit(dest=surface,
+                           source=cell,
+                           pos=(self.table_header_list[idx]['x'] - 8, 0),
+                           pos_anchor=posanchors.midtop)
+            self.table_row_surface_dict[rowid] = surface
 
+        self.table_max_scroll_offset = min(0, -len(self.ordered_row_ids) * self.table_row_height + self.table_height - 12)
+
+    
     #Main methods
 
     def load_assets(self):
-
         self.page_title = utils.get_text(text='Records', font=fonts.lf2, size='huge', color=colors.yellow_light)
         
         self.table_header_list = [
@@ -83,9 +114,10 @@ class Menu_RecordsState(BaseState):
                                             surface=header['surface'],
                                             pos=(header['x'], 200),
                                             pos_anchor=posanchors.center,
-                                            padding_y=30))
+                                            padding_x=9,
+                                            padding_y=10))
         
-        query = f'SELECT rowid,* FROM records ORDER BY {self.parent.records_sorter['column']} {self.parent.records_sorter['order']}'
+        query = f'SELECT rowid,* FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
         self.sql_cursor.execute(query)
         rows = self.sql_cursor.fetchall()
         self.table_row_list = []
@@ -140,25 +172,22 @@ class Menu_RecordsState(BaseState):
                                        width=self.table_width,
                                        height=self.table_height,
                                        pos=(constants.canvas_width/2, 380),
+                                       pos_anchor=posanchors.center,
                                        enable_click=False,
-                                       hover_cursor=None))
-
+                                       hover_cursor=cursors.scroll))
 
     def update(self, dt, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.exit_state()
-                if event.key == pygame.K_UP:
-                    self.table_scroll_offset = min(self.table_scroll_offset + self.table_row_height, 0)
-                elif event.key == pygame.K_DOWN:
-                    self.table_scroll_offset = max(self.table_scroll_offset - self.table_row_height, self.table_max_scroll_offset)
-                print(self.table_scroll_offset)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 4:
-                    self.table_scroll_offset = min(self.table_scroll_offset + self.table_row_height, 0)
-                elif event.button == 5:
-                    self.table_scroll_offset = max(self.table_scroll_offset - self.table_row_height, self.table_max_scroll_offset)
+                for button in self.button_list:
+                    if button.id == 'table' and button.hovered:
+                        if event.button == 4:
+                            self.table_scroll_offset = min(self.table_scroll_offset + self.table_row_height, 0)
+                        elif event.button == 5:
+                            self.table_scroll_offset = max(self.table_scroll_offset - self.table_row_height, self.table_max_scroll_offset)
 
         for button in self.button_list:
             button.update(dt=dt, events=events)
@@ -214,7 +243,7 @@ class Menu_RecordsState(BaseState):
                             'scale': new_scale,
                             'x': header['x']
                         })
-                        query = f'SELECT rowid, * FROM records ORDER BY {self.parent.records_sorter['column']} {self.parent.records_sorter['order']}'
+                        query = f'SELECT rowid FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
                         if self.parent.records_sorter['column'] == 'score':
                             query += ', seed ASC, seed_type ASC'
                         elif self.parent.records_sorter['column'] == 'seed':
@@ -222,31 +251,7 @@ class Menu_RecordsState(BaseState):
                         elif self.parent.records_sorter['column'] == 'seed_type':
                             query += ', seed ASC, score DESC'
                         self.sql_cursor.execute(query)
-                        rows = self.sql_cursor.fetchall()
-                        self.table_row_list = []
-                        for row in rows:
-                            self.table_row_list.append({
-                                'rowid': row[0],
-                                'score': row[1],
-                                'seed': row[2],
-                                'seed_type': row[3]
-                            })
-                        self.table_row_surface_list = []
-                        for row in self.table_row_list:
-                            row_keys = list(self.table_row_list[0].keys())
-                            surface = pygame.Surface(size=(constants.canvas_width, self.table_row_height), flags=pygame.SRCALPHA)
-                            for key in row_keys:
-                                cell = utils.get_text(text=str(row[key]),
-                                                      font=fonts.lf2,
-                                                      size='small',
-                                                      color=colors.mono_50,
-                                                      long_shadow=False,
-                                                      outline=False)
-                                utils.blit(dest=surface,
-                                           source=cell,
-                                           pos=(self.table_header_list[row_keys.index(key)]['x'] - 8, 0),
-                                           pos_anchor=posanchors.midtop)
-                            self.table_row_surface_list.append(surface)
+                        self.ordered_row_ids = [row[0] for row in self.sql_cursor.fetchall()]
 
                 if button.id == 'back':
                     self.sql_conn.close()
@@ -255,22 +260,41 @@ class Menu_RecordsState(BaseState):
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 
-
     def render(self, canvas):
         utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
+
         for header in self.table_header_surface_list:
             scaled_surface = pygame.transform.scale_by(surface=header['surface'], factor=header['scale'])
             utils.blit(dest=canvas, source=scaled_surface, pos=(header['x'], 200), pos_anchor=posanchors.center)
+
         utils.draw_rect(dest=canvas,
                         size=(self.table_width, self.table_height),
                         pos=(constants.canvas_width/2, 380),
                         pos_anchor=posanchors.center,
                         color=(*colors.white, 200),
                         inner_border_width=3)
+        
         table_surface = pygame.Surface(size=(constants.canvas_width, self.table_height), flags=pygame.SRCALPHA)
-        for i, row in enumerate(self.table_row_surface_list):
-            utils.blit(dest=table_surface, source=row, pos=(0, 6 + i*self.table_row_height + self.table_scroll_offset), pos_anchor=posanchors.topleft)
+        if not self.ordered_row_ids:
+            no_records_text = utils.get_text(text="No games played yet",
+                                             font=fonts.lf2,
+                                             size='small',
+                                             color=colors.mono_50,
+                                             long_shadow=False,
+                                             outline=False)
+            utils.blit(dest=table_surface,
+                       source=no_records_text,
+                       pos=(constants.canvas_width / 2, self.table_height / 2),
+                       pos_anchor=posanchors.center)
+        else:
+            for i, rowid in enumerate(self.ordered_row_ids):
+                row_surface = self.table_row_surface_dict[rowid]
+                utils.blit(dest=table_surface,
+                           source=row_surface,
+                           pos=(0, 7 + i*self.table_row_height + self.table_scroll_offset),
+                           pos_anchor=posanchors.topleft)
         utils.blit(dest=canvas, source=table_surface, pos=(constants.canvas_width/2, 380), pos_anchor=posanchors.center)
+
         for i, option in enumerate(self.button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
             utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 580), pos_anchor=posanchors.center)

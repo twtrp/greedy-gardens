@@ -290,7 +290,7 @@ class MenuState(BaseState):
                                             time=0.1,
                                             ease_type=tweencurves.easeOutCirc,
                                             delay=delay))
-            
+    
             for option in self.title_button_option_surface_list:
                 delay += 0.125
                 self.tween_list.append(tween.to(container=option,
@@ -307,6 +307,7 @@ class MenuState(BaseState):
                                                 delay=delay))
                 
         else:
+
             self.finish_bootup()
 
 
