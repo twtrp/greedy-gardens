@@ -3,18 +3,20 @@ from src.library.essentials import *
 class Button:
     def __init__(self,
                  game: object,
-                 id: str, 
+                 id: str,
+                 group: str = 'default',
                  surface: pygame.Surface = None,
                  width: int = 0,
                  height: int = 0,
                  pos: tuple = (0, 0),
-                 pos_anchor: str = 'topleft',
+                 pos_anchor: str = posanchors.topleft,
                  padding_x: int = 0,
                  padding_y: int = 0,
                  enable_click: bool = True,
                  hover_cursor: dict = cursors.hand):
         self.game = game
         self.id = id
+        self.group = group
 
         self.surface = surface if surface is not None else pygame.Surface((width, height))
         

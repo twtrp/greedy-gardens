@@ -4,7 +4,7 @@ from src.library.resource_loader import *
 def blit(dest: pygame.Surface,
          source: pygame.Surface,
          pos: tuple = (0, 0),
-         pos_anchor: str = 'topleft',
+         pos_anchor: str = posanchors.topleft,
          debug_outline: bool = False,
          debug_outline_color: pygame.Color = (255, 0, 0)
         ) -> None:
@@ -19,7 +19,7 @@ def blit(dest: pygame.Surface,
     debug_outline = True to draw a debug outline around the source surface
     debug_outline_color = color of the debug outline
     '''
-    if pos_anchor == 'topleft':
+    if pos_anchor == posanchors.topleft:
         dest.blit(source=source, dest=pos)
     else:
         source_rect = source.get_rect()

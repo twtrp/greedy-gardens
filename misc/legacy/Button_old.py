@@ -8,7 +8,7 @@ class Button:
                  width: int = 0,
                  height: int = 0,
                  pos: tuple = (0, 0),
-                 pos_anchor: str = 'topleft',
+                 pos_anchor: str = posanchors.topleft,
                  padding_x: int = 0,
                  padding_y: int = 0,
                  enable_click: bool = True,

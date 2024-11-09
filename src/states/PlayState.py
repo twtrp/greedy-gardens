@@ -49,7 +49,7 @@ class PlayState(BaseState):
         # utils.blit(dest=self.surface_logo, 
         #            source=text,
         #            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
-        #            pos_anchor='midtop')
+        #            pos_anchor=posanchors.midtop)
 
         # Load menu background assets
         self.landscape_list = [
@@ -112,7 +112,7 @@ class PlayState(BaseState):
                 # for i, option in enumerate(self.title_button_option_surface_list):
                 #     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                 #     processed_option.set_alpha(option['alpha'])
-                #     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+                #     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor=posanchors.center)
 
                 pass
 

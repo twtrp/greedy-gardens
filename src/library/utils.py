@@ -39,7 +39,7 @@ def color_lighten(color: pygame.Color,
 def draw_rect(dest: pygame.Surface,
               size: tuple,
               pos: tuple = (0, 0),
-              pos_anchor: str = 'topleft',
+              pos_anchor: str = posanchors.topleft,
               color: pygame.Color = colors.white,
               inner_border_width: int = 0,
               inner_border_color: pygame.Color = colors.mono_35,
@@ -89,7 +89,7 @@ def draw_rect(dest: pygame.Surface,
 def blit(dest: pygame.Surface,
          source: pygame.Surface,
          pos: tuple = (0, 0),
-         pos_anchor: str = 'topleft',
+         pos_anchor: str = posanchors.topleft,
          debug_outline: bool = False,
          debug_outline_color: pygame.Color = (255, 0, 0)
         ) -> None:
@@ -104,10 +104,10 @@ def blit(dest: pygame.Surface,
     debug_outline = True to draw a debug outline around the source surface
     debug_outline_color = color of the debug outline
     '''
-    if pos_anchor == 'topleft':
+    source_rect = source.get_rect()
+    if pos_anchor == posanchors.topleft:
         dest.blit(source=source, dest=pos)
     else:
-        source_rect = source.get_rect()
         setattr(source_rect, pos_anchor, pos)
         dest.blit(source=source, dest=source_rect)
     
@@ -283,7 +283,7 @@ def effect_silhouette(surface: pygame.Surface,
 
 
 def effect_long_shadow(surface: pygame.Surface,
-                       direction: str = 'top-left', 
+                       direction: str = 'bottom', 
                        distance: int = 1,
                        color: pygame.Color = (255, 255, 255)
                       ) -> pygame.Surface:
@@ -326,7 +326,7 @@ def effect_long_shadow(surface: pygame.Surface,
 
 def effect_outline(surface: pygame.Surface,
                    distance: int = 1,
-                   color: pygame.Color = (255, 255, 255),
+                   color: pygame.Color = colors.mono_35,
                    no_corner: bool = False
                   ) -> pygame.Surface:
     '''
