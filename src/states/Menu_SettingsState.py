@@ -15,7 +15,7 @@ class Menu_SettingsState(BaseState):
         self.load_assets()
 
         
-    #Main methods
+    # Main methods
 
     def load_assets(self):
 
@@ -26,13 +26,13 @@ class Menu_SettingsState(BaseState):
         
         self.settings_option_surface_list = []
         for i, setting in enumerate(self.settings_manager.settings_list):
-            text_string = setting['label']+':  '+setting['value_label'][self.current_settings_index[i]]
+            text_string = setting['label'] + ':  ' + setting['value_label'][self.current_settings_index[i]]
             text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
             self.settings_option_surface_list.append({
                 'id': setting['id'],
                 'surface': text,
                 'left_arrow_scale': 0,
-                'right_arrow_scale': 0,
+                'right_arrow_scale': 0
             })
         for i, option in enumerate(self.settings_option_surface_list):
             self.button_list.append(Button(game=self.game,
@@ -140,8 +140,9 @@ class Menu_SettingsState(BaseState):
                         'id': self.settings_manager.settings_list[self.setting_index]['id'],
                         'surface': text,
                         'left_arrow_scale': left_arrow_scale,
-                        'right_arrow_scale': right_arrow_scale,
+                        'right_arrow_scale': right_arrow_scale
                     }
+                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                     self.game.apply_settings(self.setting_index)
 
                 if button.id == 'reset':
@@ -152,18 +153,20 @@ class Menu_SettingsState(BaseState):
                             'id': self.settings_manager.settings_list[i]['id'],
                             'surface': text,
                             'left_arrow_scale': 0,
-                            'right_arrow_scale': 0,
+                            'right_arrow_scale': 0
                         }
                     self.settings_manager.reset_settings()
                     for i in range(len(self.settings_manager.settings_list)):
                         if self.current_settings_index[i] != self.settings_manager.settings_list[i]['value_default_index']:
                             self.game.apply_settings(i)
                     self.current_settings_index = self.settings_manager.load_all_settings_index()
+                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                     """
                     UGLIEST CODE EVER!! DON'T LOOK!!!!!
                     """
 
                 elif button.id == 'back':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
                     
         utils.set_cursor(cursor=self.cursor)
@@ -188,4 +191,3 @@ class Menu_SettingsState(BaseState):
         for i, option in enumerate(self.button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
             utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 515 + i*65), pos_anchor=posanchors.center)
-            

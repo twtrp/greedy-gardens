@@ -38,12 +38,16 @@ class Menu_TitleState(BaseState):
             
             if button.clicked:
                 if button.id == 'play':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     Menu_PlayState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'records':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     Menu_RecordsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'settings':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     Menu_SettingsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'quit':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     pygame.mixer.stop()
                     pygame.quit()
                     sys.exit()

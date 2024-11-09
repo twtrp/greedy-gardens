@@ -185,8 +185,12 @@ class Menu_RecordsState(BaseState):
                 for button in self.button_list:
                     if button.id == 'table' and button.hovered:
                         if event.button == 4:
+                            if self.table_scroll_offset != 0:
+                                utils.sound_play(sound=sfx.tick, volume=self.game.sfx_volume*0.5)
                             self.table_scroll_offset = min(self.table_scroll_offset + self.table_row_height, 0)
                         elif event.button == 5:
+                            if self.table_scroll_offset != self.table_max_scroll_offset:
+                                utils.sound_play(sound=sfx.tick, volume=self.game.sfx_volume*0.5)
                             self.table_scroll_offset = max(self.table_scroll_offset - self.table_row_height, self.table_max_scroll_offset)
 
         for button in self.button_list:
@@ -252,8 +256,10 @@ class Menu_RecordsState(BaseState):
                             query += ', seed ASC, score DESC'
                         self.sql_cursor.execute(query)
                         self.ordered_row_ids = [row[0] for row in self.sql_cursor.fetchall()]
+                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
 
                 if button.id == 'back':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.sql_conn.close()
                     self.exit_state()
 

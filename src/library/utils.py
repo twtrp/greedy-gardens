@@ -408,7 +408,8 @@ def music_queue(
 
 
 def sound_play(
-        sound_name: str,
+        sound: dict,
+        volume: float = 1.0,
         sound_channel: pygame.mixer.Channel = None,
         loops: int = 0,
         maxtime: int = 0,
@@ -418,17 +419,19 @@ def sound_play(
     Use this to play sound effects
     Returns nothing
 
-    sound_name = name of the sound effect file with .filetype
+    sound = sound effect dict defined in sfx.py
+    volume = volume of the sound effect
     sound_channel = pygame.mixer.Channel to play the sound effect on. Leave blank to not assign a channel
     loops = number of times to loop the sound effect. 0 means no loop. -1 means infinite loop
     maxtime = number of milliseconds to play the sound effect
     fade_ms = number of milliseconds to fade the sound effect in or out
     '''
-    sound = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound_name))
+    sound_audio = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound['name']))
+    sound_audio.set_volume(sound['volume'] * volume)
     if sound_channel is not None:
-        sound_channel.play(sound, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
+        sound_channel.play(sound_audio, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
     else:
-        sound.play(loops=loops, maxtime=maxtime, fade_ms=fade_ms)
+        sound_audio.play(loops=loops, maxtime=maxtime, fade_ms=fade_ms)
     
 
 # Cursor functions

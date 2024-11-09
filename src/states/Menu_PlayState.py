@@ -117,11 +117,13 @@ class Menu_PlayState(BaseState):
             
             if button.clicked:
                 if button.id == 'start':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=self.textbox_text).enter_state()
                     self.exit_state()      
                 elif button.id == 'textbox':
                     self.textbox_mode = 'active'            
                 elif button.id == 'back':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
