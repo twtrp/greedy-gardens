@@ -19,6 +19,9 @@ class PlayState(BaseState):
         self.day3_score = 2
         self.day4_score = 3
         self.seasonal_score = 4
+        self.fruit_deck_remaining = 6
+        self.path_deck_remaining = 62
+        self.event_deck_remaining = 16
 
         self.substate_stack = []
 
@@ -203,6 +206,14 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=scaled_card_path_back, pos=(1079, 250), pos_anchor='center')
             scaled_card_event_back = pygame.transform.scale_by(surface=self.card_event_back_image, factor=0.875)
             utils.blit(dest=canvas, source=scaled_card_event_back, pos=(1079, 375), pos_anchor='center')
+
+            # Render value in right white box
+            self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.fruit_deck_remaining_amount, pos=(1150, 135), pos_anchor='topleft')
+            self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.path_deck_remaining_amount, pos=(1150, 260), pos_anchor='topleft')
+            self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.event_deck_remaining_amount, pos=(1150, 385), pos_anchor='topleft')
 
             if not self.substate_stack:
 
