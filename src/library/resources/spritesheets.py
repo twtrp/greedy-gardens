@@ -353,3 +353,64 @@ cards_event = {
         },
     }
 }
+
+fruit_16x16 = {
+    'file': 'fruits_16x16.png',
+    'shared_data': {},
+    'sprites': {
+        'orange': {
+            'x': 0,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'blueberry': {
+            'x': 16,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'grape': {
+            'x': 32,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'strawberry': {
+            'x': 48,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'peach': {
+            'x': 64,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'coconut': {
+            'x': 80,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'magic_fruit_1': {
+            'x': 96,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'magic_fruit_2': {
+            'x': 112,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+        'magic_fruit_3': {
+            'x': 128,
+            'y': 0,
+            'width': 16,
+            'height': 16,
+        },
+    }
+}

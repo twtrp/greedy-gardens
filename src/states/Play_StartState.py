@@ -28,6 +28,7 @@ class Play_StartState(BaseState):
                     # for testing
                     self.card_drawn = self.parent.deck_fruit.draw_card()
                     if self.card_drawn:
+                        self.parent.seasonal_fruit = self.card_drawn.card_name
                         self.parent.drawn_cards_fruit.append(self.card_drawn)
                         self.card_fruit_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_fruit_{self.card_drawn.card_name}")
 

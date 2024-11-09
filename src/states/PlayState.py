@@ -34,6 +34,13 @@ class PlayState(BaseState):
         self.path_deck_remaining = deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = deck.remaining_cards(self.deck_event)
 
+        self.day1_fruit = None
+        self.day2_fruit = None
+        self.day3_fruit = None
+        self.day4_fruit = None
+        self.seasonal_fruit = None
+
+        # stack and state
         self.substate_stack = []
 
         self.started = False
@@ -139,7 +146,6 @@ class PlayState(BaseState):
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
 
-
         self.fruit_deck_remaining = deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = deck.remaining_cards(self.deck_event)
@@ -183,6 +189,27 @@ class PlayState(BaseState):
                     utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
             scaled_card_pathtest_back = pygame.transform.scale_by(surface=self.card_path_back_image, factor=0.875)
             utils.blit(dest=canvas, source=scaled_card_pathtest_back, pos=(self.box_width/2, 640), pos_anchor='center')
+            ## Render Day's Fruit
+            if self.day1_fruit:
+                self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
+                scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
+                utils.blit(dest=canvas, source=scaled_day1_fruit_image, pos=(40, 95), pos_anchor='center')
+            if self.day2_fruit:
+                self.day2_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit)
+                scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=1.25)
+                utils.blit(dest=canvas, source=scaled_day2_fruit_image, pos=(40, 140), pos_anchor='center')
+            if self.day3_fruit:
+                self.day3_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit)
+                scaled_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=1.25)
+                utils.blit(dest=canvas, source=scaled_day3_fruit_image, pos=(40, 185), pos_anchor='center')
+            if self.day4_fruit:
+                self.day4_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit)
+                scaled_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=1.25)
+                utils.blit(dest=canvas, source=scaled_day4_fruit_image, pos=(40, 230), pos_anchor='center')
+            if self.seasonal_fruit:
+                self.seasonal_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.seasonal_fruit)
+                scaled_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=1.25)
+                utils.blit(dest=canvas, source=scaled_seasonal_fruit_image, pos=(40, 275), pos_anchor='center')
 
             # Render value in left white box
             self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
