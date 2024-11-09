@@ -10,8 +10,15 @@ class PlayState(BaseState):
         self.game.canvas.fill((0, 0, 0))
         print(seed)
 
-        
+        # config of gui
         self.box_width = 272
+
+        # value
+        self.day1_score = 0
+        self.day2_score = 1
+        self.day3_score = 2
+        self.day4_score = 3
+        self.seasonal_score = 4
 
         self.substate_stack = []
 
@@ -120,8 +127,6 @@ class PlayState(BaseState):
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 
-        Play_StartState(game=self.game, parent=self.parent, stack=self.substate_stack).enter_state()
-
     def render(self, canvas):
         
         if self.ready:
@@ -156,6 +161,22 @@ class PlayState(BaseState):
             scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
             for i in range(3):
                     utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
+
+            # Render value in left white box
+            self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
+
+            self.day1_score_amount = utils.get_text(text=str(self.day1_score), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.day1_score_amount, pos=(240, 80), pos_anchor='topright')
+            self.day2_score_amount = utils.get_text(text=str(self.day2_score), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.day2_score_amount, pos=(240, 125), pos_anchor='topright')
+            self.day3_score_amount = utils.get_text(text=str(self.day3_score), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.day3_score_amount, pos=(240, 170), pos_anchor='topright')
+            self.day4_score_amount = utils.get_text(text=str(self.day4_score), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.day4_score_amount, pos=(240, 215), pos_anchor='topright')
+            self.seasonal_score_amount = utils.get_text(text=str(self.seasonal_score), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.seasonal_score_amount, pos=(240, 260), pos_anchor='topright')
+            self.total_score_amount = utils.get_text(text=str(self.total_score), font=fonts.lf2, size='smaller', color=colors.white)
+            utils.blit(dest=canvas, source=self.total_score_amount, pos=(240, 305), pos_anchor='topright')
             
             # Render right white box
             utils.draw_rect(dest=canvas,
