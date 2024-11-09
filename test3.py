@@ -1,6 +1,6 @@
 # Kram testing site
 
-from src.library.deck import deck
+from src.library.deck import Deck
 
-event_deck = deck('path')
+event_deck = Deck('path')
 print(event_deck.verify_consecutive_strike())

@@ -1,8 +1,8 @@
-from src.library.card import card
+from src.library.card import Card
 import pygame
 import random
 
-class deck:
+class Deck:
     def __init__(self, card_type):
         self.deck_type = card_type
         self.cards = []
@@ -68,9 +68,9 @@ class deck:
                 name.append('card_event_swap')
         for i in name:
             if not 'strike' in i:
-                self.cards.append(card(self.deck_type, i, False))
+                self.cards.append(Card(self.deck_type, i, False))
             else:
-                self.cards.append(card(self.deck_type, i, True))
+                self.cards.append(Card(self.deck_type, i, True))
     
     # This function make sure that there will be no 3 strike cards in a row in a day
     def organize_deck(self):
