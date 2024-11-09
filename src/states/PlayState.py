@@ -3,6 +3,7 @@ from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
 from src.library.card import card
 from src.library.deck import deck
+from src.library.GameBoard import GameBoard
 import tween
 
 class PlayState(BaseState):
@@ -39,6 +40,14 @@ class PlayState(BaseState):
         self.day3_fruit = None
         self.day4_fruit = None
         self.seasonal_fruit = None
+        
+        # define board
+        self.game_board = GameBoard()
+        #function and example for use in gen map and place path
+        #self.game_board.set_path(index, path_type)
+        #self.game_board.add_fruit(index, fruit_type, value)
+        #self.game_board.set_home(index)
+        #self.game_board.set_magic_fruit(index,num)
 
         # stack and state
         self.substate_stack = []
