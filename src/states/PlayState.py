@@ -1,6 +1,8 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
+from src.library.card import card
+from src.library.deck import deck
 import tween
 
 class PlayState(BaseState):
@@ -13,18 +15,28 @@ class PlayState(BaseState):
         # config of gui
         self.box_width = 272
 
+        # create deck
+        self.deck_fruit = deck('fruit', ['blueberry', 'coconut', 'grape', 'orange', 'peach', 'strawberry'])
+        self.deck_path = deck('path', ['Card 1', 'Card 2'])
+        self.deck_event = deck('event', ['Card 1', 'Card 2'])
+
+        self.drawn_cards_fruit = []
+        self.drawn_cards_path = []
+        self.drawn_cards_event = []
+
         # value
         self.day1_score = 0
         self.day2_score = 1
         self.day3_score = 2
         self.day4_score = 3
         self.seasonal_score = 4
-        self.fruit_deck_remaining = 6
-        self.path_deck_remaining = 62
-        self.event_deck_remaining = 16
+        self.fruit_deck_remaining = deck.remaining_cards(self.deck_fruit)
+        self.path_deck_remaining = deck.remaining_cards(self.deck_path)
+        self.event_deck_remaining = deck.remaining_cards(self.deck_event)
 
         self.substate_stack = []
 
+        self.started = False
         self.ready = False
         self.load_assets()
         self.ready = True
@@ -120,12 +132,17 @@ class PlayState(BaseState):
 
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    # print("entering")
-                    Play_StartState(game=self.game, parent=self.parent, stack=self.substate_stack).enter_state()
+                if event.key == pygame.K_RETURN and not self.started:
+                    # for testing
+                    Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.started = True
                 if event.key == pygame.K_ESCAPE:
-                        # print("exiting")
                         self.exit_state()
+
+
+        self.fruit_deck_remaining = deck.remaining_cards(self.deck_fruit)
+        self.path_deck_remaining = deck.remaining_cards(self.deck_path)
+        self.event_deck_remaining = deck.remaining_cards(self.deck_event)
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
@@ -164,6 +181,8 @@ class PlayState(BaseState):
             scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
             for i in range(3):
                     utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
+            scaled_card_pathtest_back = pygame.transform.scale_by(surface=self.card_path_back_image, factor=0.875)
+            utils.blit(dest=canvas, source=scaled_card_pathtest_back, pos=(self.box_width/2, 640), pos_anchor='center')
 
             # Render value in left white box
             self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
