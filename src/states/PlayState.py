@@ -10,6 +10,9 @@ class PlayState(BaseState):
         self.game.canvas.fill((0, 0, 0))
         print(seed)
 
+        
+        self.box_width = 272
+
         self.substate_stack = []
 
         self.ready = False
@@ -51,6 +54,50 @@ class PlayState(BaseState):
             },
         ]
 
+        # left gui
+        self.left_box_title = utils.get_text(text='Score', font=fonts.lf2, size='small', color=colors.white)
+
+        self.score_list = [
+            {'text': 'Day 1',},
+            {'text': 'Day 2',},
+            {'text': 'Day 3',},
+            {'text': 'Day 4',},
+            {'text': 'Seasonal',},
+            {'text': 'Total',},
+        ]
+
+        self.score_title_list = []
+        for score in self.score_list:
+            text = utils.get_text(text=score['text'], font=fonts.lf2, size='smaller', color=colors.white)
+            self.score_title_list.append(text)
+
+        self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.lf2, size='small', color=colors.white)
+        self.left_box_task = utils.get_text(text='Current task', font=fonts.lf2, size='small', color=colors.white)
+        self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
+
+        self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
+
+        # right gui
+        self.right_box_title = utils.get_text(text='Cards', font=fonts.lf2, size='small', color=colors.white)
+
+        self.deck_list = [
+            {'text': 'Fruit',},
+            {'text': 'Path',},
+            {'text': 'Event',},
+        ]
+
+        self.deck_title_list = []
+        for score in self.deck_list:
+            text = utils.get_text(text=score['text'], font=fonts.lf2, size='smaller', color=colors.white)
+            self.deck_title_list.append(text)
+
+        self.right_remaining = utils.get_text(text='Remaining', font=fonts.lf2, size='smaller', color=colors.white)
+        self.right_magic_fruits = utils.get_text(text='Magic Fruits', font=fonts.lf2, size='small', color=colors.white)
+
+        self.card_fruit_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite='card_fruit_back')
+        self.card_path_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite='card_path_back')
+        self.card_event_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite='card_event_back')
+
     def update(self, dt, events):
         if self.ready:
 
@@ -73,6 +120,7 @@ class PlayState(BaseState):
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 
+        Play_StartState(game=self.game, parent=self.parent, stack=self.substate_stack).enter_state()
 
     def render(self, canvas):
         
@@ -84,7 +132,56 @@ class PlayState(BaseState):
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
                 
-            # Render substates
+            # Render gui
+
+            # Render left white box
+            utils.draw_rect(dest=canvas,
+                                size=(self.box_width, constants.canvas_height),
+                                pos=(0, 0),
+                                pos_anchor='topleft',
+                                color=(*colors.white, 191), # 75% transparency
+                                inner_border_width=4,
+                                outer_border_width=0,
+                                outer_border_color=colors.black)
+            
+            # Render text in left white box
+            utils.blit(dest=canvas, source=self.left_box_title, pos=(self.box_width/2, 40), pos_anchor='center')
+            for i, score in enumerate(self.score_title_list):
+                utils.blit(dest=canvas, source=score, pos=(60, 80 + i*45), pos_anchor='topleft')
+            utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 390), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 510), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 550), pos_anchor='center')
+
+            # Render image in left white box
+            scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
+            for i in range(3):
+                    utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
+            
+            # Render right white box
+            utils.draw_rect(dest=canvas,
+                                size=(self.box_width, constants.canvas_height),
+                                pos=(constants.canvas_width - self.box_width, 0),
+                                pos_anchor='topleft',
+                                color=(*colors.white, 191), # 75% transparency
+                                inner_border_width=4,
+                                outer_border_width=0,
+                                outer_border_color=colors.black)
+            
+            # Render text in right white box
+            utils.blit(dest=canvas, source=self.right_box_title, pos=(constants.canvas_width - self.box_width/2, 40), pos_anchor='center')
+            for i, deck in enumerate(self.deck_title_list):
+                utils.blit(dest=canvas, source=deck, pos=(1150, 85 + i*125), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.right_remaining, pos=(1150, 110 + i*125), pos_anchor='topleft')
+                # utils.blit(dest=canvas, source=, pos=(1150, 135 + i*125), pos_anchor='topleft') # card amount
+            utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 475), pos_anchor='center')
+
+            # Render image in right white box
+            scaled_card_fruit_back = pygame.transform.scale_by(surface=self.card_fruit_back_image, factor=0.875)
+            utils.blit(dest=canvas, source=scaled_card_fruit_back, pos=(1079, 125), pos_anchor='center')
+            scaled_card_path_back = pygame.transform.scale_by(surface=self.card_path_back_image, factor=0.875)
+            utils.blit(dest=canvas, source=scaled_card_path_back, pos=(1079, 250), pos_anchor='center')
+            scaled_card_event_back = pygame.transform.scale_by(surface=self.card_event_back_image, factor=0.875)
+            utils.blit(dest=canvas, source=scaled_card_event_back, pos=(1079, 375), pos_anchor='center')
 
             if not self.substate_stack:
 
