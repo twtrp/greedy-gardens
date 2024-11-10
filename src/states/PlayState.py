@@ -98,7 +98,7 @@ class PlayState(BaseState):
         total_grid_height = self.cell_size * 8
         available_width = constants.canvas_width - (self.box_width * 2)
         self.grid_start_x = self.box_width + (available_width - total_grid_width) // 2
-        self.grid_start_y = 10 + (constants.canvas_height - total_grid_height) // 2
+        self.grid_start_y = 8 + (constants.canvas_height - total_grid_height) // 2
         
         # Create hit boxes for each cell
         self.grid_hitboxes = []
@@ -510,7 +510,7 @@ class PlayState(BaseState):
                     self.dirt_sprite_7 = self.dirt_sprites_7[i]
                     self.dirt_sprite_8 = self.dirt_sprites_8[i]
                     self.dirt_sprite_9 = self.dirt_sprites_9[i]
-                    if (i // 8) + (i % 2) == 0:
+                    if ((i // 8) + (i % 2)) % 2 == 0:
                         if self.game_board.board[i].north:
                             utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
