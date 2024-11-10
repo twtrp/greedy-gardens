@@ -31,6 +31,7 @@ class PlayState(BaseState):
         self.day3_score = 2
         self.day4_score = 3
         self.seasonal_score = 4
+        self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
@@ -49,10 +50,16 @@ class PlayState(BaseState):
         #self.game_board.set_home(index)
         #self.game_board.set_magic_fruit(index,num)
 
-        # stack and state
+        # stack
         self.substate_stack = []
 
+        #state
         self.started = False
+        self.day1 = True
+        self.day2 = False
+        self.day3 = False
+        self.day4 = False
+
         self.ready = False
         self.load_assets()
         self.ready = True
@@ -92,22 +99,54 @@ class PlayState(BaseState):
             },
         ]
 
+        # check color of score
+        if self.day1:
+            day1_color = colors.yellow_light
+            day2_color = colors.mono_100
+            day3_color = colors.mono_100
+            day4_color = colors.mono_100
+        elif self.day2:
+            day1_color = colors.white
+            day2_color = colors.yellow_light
+            day3_color = colors.mono_100
+            day4_color = colors.mono_100
+        elif self.day3:
+            day1_color = colors.white
+            day2_color = colors.white
+            day3_color = colors.yellow_light
+            day4_color = colors.mono_100
+        elif self.day4:
+            day1_color = colors.white
+            day2_color = colors.white
+            day3_color = colors.white
+            day4_color = colors.yellow_light
+        else: # for any bug that every day is False
+            day1_color = colors.mono_100
+            day2_color = colors.mono_100
+            day3_color = colors.mono_100
+            day4_color = colors.mono_100
+
         # left gui
         self.left_box_title = utils.get_text(text='Score', font=fonts.lf2, size='small', color=colors.white)
 
         self.score_list = [
-            {'text': 'Day 1',},
-            {'text': 'Day 2',},
-            {'text': 'Day 3',},
-            {'text': 'Day 4',},
-            {'text': 'Seasonal',},
-            {'text': 'Total',},
+            {'text': 'Day 1', 'color': day1_color, 'amount': self.day1_score},
+            {'text': 'Day 2', 'color': day2_color, 'amount': self.day2_score},
+            {'text': 'Day 3', 'color': day3_color, 'amount': self.day3_score},
+            {'text': 'Day 4', 'color': day4_color, 'amount': self.day4_score},
+            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score},
+            {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
         ]
 
         self.score_title_list = []
         for score in self.score_list:
-            text = utils.get_text(text=score['text'], font=fonts.lf2, size='smaller', color=colors.white)
+            text = utils.get_text(text=score['text'], font=fonts.lf2, size='smaller', color=score['color'])
             self.score_title_list.append(text)
+
+        self.score_amount_list = []
+        for score in self.score_list:
+            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='smaller', color=score['color'])
+            self.score_amount_list.append(amount)
 
         self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.lf2, size='small', color=colors.white)
         self.left_box_task = utils.get_text(text='Current task', font=fonts.lf2, size='small', color=colors.white)
@@ -155,9 +194,57 @@ class PlayState(BaseState):
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
 
+        # Update deck remaining
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
+
+        # Update day/score color and amount
+        ## check color of score
+        if self.day1:
+            day1_color = colors.yellow_light
+            day2_color = colors.mono_100
+            day3_color = colors.mono_100
+            day4_color = colors.mono_100
+        elif self.day2:
+            day1_color = colors.white
+            day2_color = colors.yellow_light
+            day3_color = colors.mono_100
+            day4_color = colors.mono_100
+        elif self.day3:
+            day1_color = colors.white
+            day2_color = colors.white
+            day3_color = colors.yellow_light
+            day4_color = colors.mono_100
+        elif self.day4:
+            day1_color = colors.white
+            day2_color = colors.white
+            day3_color = colors.white
+            day4_color = colors.yellow_light
+        else: # for any bug that every day is False
+            day1_color = colors.mono_100
+            day2_color = colors.mono_100
+            day3_color = colors.mono_100
+            day4_color = colors.mono_100
+
+        self.score_list = [
+            {'text': 'Day 1', 'color': day1_color, 'amount': self.day1_score},
+            {'text': 'Day 2', 'color': day2_color, 'amount': self.day2_score},
+            {'text': 'Day 3', 'color': day3_color, 'amount': self.day3_score},
+            {'text': 'Day 4', 'color': day4_color, 'amount': self.day4_score},
+            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score},
+            {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
+        ]
+
+        self.score_title_list = []
+        for score in self.score_list:
+            text = utils.get_text(text=score['text'], font=fonts.lf2, size='smaller', color=score['color'])
+            self.score_title_list.append(text)
+
+        self.score_amount_list = []
+        for score in self.score_list:
+            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='smaller', color=score['color'])
+            self.score_amount_list.append(amount)
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
@@ -221,20 +308,8 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=scaled_seasonal_fruit_image, pos=(40, 275), pos_anchor='center')
 
             # Render value in left white box
-            self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
-
-            self.day1_score_amount = utils.get_text(text=str(self.day1_score), font=fonts.lf2, size='smaller', color=colors.white)
-            utils.blit(dest=canvas, source=self.day1_score_amount, pos=(240, 80), pos_anchor='topright')
-            self.day2_score_amount = utils.get_text(text=str(self.day2_score), font=fonts.lf2, size='smaller', color=colors.white)
-            utils.blit(dest=canvas, source=self.day2_score_amount, pos=(240, 125), pos_anchor='topright')
-            self.day3_score_amount = utils.get_text(text=str(self.day3_score), font=fonts.lf2, size='smaller', color=colors.white)
-            utils.blit(dest=canvas, source=self.day3_score_amount, pos=(240, 170), pos_anchor='topright')
-            self.day4_score_amount = utils.get_text(text=str(self.day4_score), font=fonts.lf2, size='smaller', color=colors.white)
-            utils.blit(dest=canvas, source=self.day4_score_amount, pos=(240, 215), pos_anchor='topright')
-            self.seasonal_score_amount = utils.get_text(text=str(self.seasonal_score), font=fonts.lf2, size='smaller', color=colors.white)
-            utils.blit(dest=canvas, source=self.seasonal_score_amount, pos=(240, 260), pos_anchor='topright')
-            self.total_score_amount = utils.get_text(text=str(self.total_score), font=fonts.lf2, size='smaller', color=colors.white)
-            utils.blit(dest=canvas, source=self.total_score_amount, pos=(240, 305), pos_anchor='topright')
+            for i, score in enumerate(self.score_amount_list):
+                utils.blit(dest=canvas, source=score, pos=(240, 80 + i*45), pos_anchor='topleft')
             
             # Render right white box
             utils.draw_rect(dest=canvas,
