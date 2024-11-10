@@ -358,37 +358,37 @@ fruit_16x16 = {
     'file': 'fruits_16x16.png',
     'shared_data': {},
     'sprites': {
-        'orange': {
+        'fruit_orange': {
             'x': 0,
             'y': 0,
             'width': 16,
             'height': 16,
         },
-        'blueberry': {
+        'fruit_blueberry': {
             'x': 16,
             'y': 0,
             'width': 16,
             'height': 16,
         },
-        'grape': {
+        'fruit_grape': {
             'x': 32,
             'y': 0,
             'width': 16,
             'height': 16,
         },
-        'strawberry': {
+        'fruit_strawberry': {
             'x': 48,
             'y': 0,
             'width': 16,
             'height': 16,
         },
-        'peach': {
+        'fruit_peach': {
             'x': 64,
             'y': 0,
             'width': 16,
             'height': 16,
         },
-        'coconut': {
+        'fruit_coconut': {
             'x': 80,
             'y': 0,
             'width': 16,

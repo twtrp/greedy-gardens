@@ -21,6 +21,7 @@ class PlayState(BaseState):
         self.deck_path = Deck('path')
         self.deck_event = Deck('event')
 
+        # idk will this be use
         self.drawn_cards_fruit = []
         self.drawn_cards_path = []
         self.drawn_cards_event = []
