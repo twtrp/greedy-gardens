@@ -1,9 +1,9 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
-from src.library.card import card
-from src.library.deck import deck
-from src.library.GameBoard import GameBoard
+from src.classes.Cards import Cards
+from src.classes.Deck import Deck
+from src.classes.GameBoard import GameBoard
 import tween
 
 class PlayState(BaseState):
@@ -17,9 +17,9 @@ class PlayState(BaseState):
         self.box_width = 272
 
         # create deck
-        self.deck_fruit = deck('fruit', ['blueberry', 'coconut', 'grape', 'orange', 'peach', 'strawberry'])
-        self.deck_path = deck('path', ['Card 1', 'Card 2'])
-        self.deck_event = deck('event', ['Card 1', 'Card 2'])
+        self.deck_fruit = Deck('fruit')
+        self.deck_path = Deck('path')
+        self.deck_event = Deck('event')
 
         self.drawn_cards_fruit = []
         self.drawn_cards_path = []
@@ -31,9 +31,9 @@ class PlayState(BaseState):
         self.day3_score = 2
         self.day4_score = 3
         self.seasonal_score = 4
-        self.fruit_deck_remaining = deck.remaining_cards(self.deck_fruit)
-        self.path_deck_remaining = deck.remaining_cards(self.deck_path)
-        self.event_deck_remaining = deck.remaining_cards(self.deck_event)
+        self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
+        self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
+        self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
 
         self.day1_fruit = None
         self.day2_fruit = None
@@ -193,9 +193,9 @@ class PlayState(BaseState):
 
             #/test grid
 
-        self.fruit_deck_remaining = deck.remaining_cards(self.deck_fruit)
-        self.path_deck_remaining = deck.remaining_cards(self.deck_path)
-        self.event_deck_remaining = deck.remaining_cards(self.deck_event)
+        self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
+        self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
+        self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
 
         
         

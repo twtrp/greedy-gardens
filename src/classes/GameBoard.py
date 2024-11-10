@@ -1,4 +1,4 @@
-from src.library.Cell import Cell
+from src.classes.Cell import Cell
 
 class GameBoard():
     def __init__(self):
