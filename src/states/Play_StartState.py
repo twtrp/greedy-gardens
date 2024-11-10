@@ -1,8 +1,8 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.classes.Button import Button
-from src.library.deck import Deck
-from src.library.card import Card
+from src.classes.Deck import Deck
+from src.classes.Cards import Cards
 
 class Play_StartState(BaseState):
     def __init__(self, game, parent, stack):

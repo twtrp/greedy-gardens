@@ -1,7 +1,7 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
-from src.classes.Card import Card
+from src.classes.Cards import Cards
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 import tween
