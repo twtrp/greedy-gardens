@@ -264,8 +264,9 @@ def effect_pixelate(
     return scaled_up_surface
 
 
-def effect_grayscale(surface: pygame.Surface
-                    ) -> pygame.Surface:
+def effect_grayscale(
+        surface: pygame.Surface
+    ) -> pygame.Surface:
     '''
     Use this to grayscale a surface
     Returns Surface
@@ -275,9 +276,10 @@ def effect_grayscale(surface: pygame.Surface
     return pygame.transform.grayscale(surface)
 
 
-def effect_silhouette(surface: pygame.Surface, 
-                      color: pygame.Color = (0, 0, 0)
-                     ) -> pygame.Surface:
+def effect_silhouette(
+        surface: pygame.Surface, 
+        color: pygame.Color = (0, 0, 0)
+    ) -> pygame.Surface:
     '''
     Use this to create a silhouette of a surface
     Returns Surface
@@ -379,8 +381,10 @@ def effect_outline(
 
 # Sound functions
 
-def music_load(music_channel: pygame.mixer.music,
-               name: str):
+def music_load(
+        music_channel: pygame.mixer.music,
+        name: str
+    ) -> None:
     '''
     Use this to load music if the queue is empty
     Returns nothing
