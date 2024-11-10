@@ -4,6 +4,7 @@ from src.states.Play_StartState import Play_StartState
 from src.classes.Cards import Cards
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
+from src.classes.Cell import Cell
 import tween
 
 class PlayState(BaseState):
@@ -91,18 +92,17 @@ class PlayState(BaseState):
         
         # Create hit boxes for each cell
         self.grid_hitboxes = []
-        index = 0
+        index=0
         for row in range(8):
             for col in range(8):
                 cell_x = self.grid_start_x + (col * self.cell_size)
                 cell_y = self.grid_start_y + (row * self.cell_size)
                 rect = pygame.Rect(cell_x, cell_y, self.cell_size, self.cell_size)
                 self.grid_hitboxes.append(rect)
-                
-                # self.game_board.set_cell(index)  # Set up the cell in game board
-                # self.game_board.board[index] = rect  # Assign the hitbox rect to the cell
-                
+                self.game_board.board.append(Cell(index))
                 index += 1
+
+ 
         #/test grid
         
         # Load background
@@ -225,11 +225,9 @@ class PlayState(BaseState):
                 for i, rect in enumerate(self.grid_hitboxes):
                     if rect.collidepoint(mouse_pos):
                         print(f"Hit box {i} clicked!")
-                        row = i // 8
-                        col = i % 8
-                        #self.game_board.board[i].show_detail(i)
-                        
-                        
+                        clicked_cell = self.game_board.board[i]
+                        clicked_cell.show_detail()
+
 
             #/test grid
 

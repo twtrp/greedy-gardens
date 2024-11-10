@@ -7,7 +7,10 @@ class Cell():
         self.magic_fruit=0
 
     def set_path(self, path_type):
-        self.path_type = path_type
+        if self.path_type is None:
+            self.path_type = path_type
+        else:
+            pass
 
     def add_fruit(self, fruit_type, value):
         for i in range(len(self.fruit)):
