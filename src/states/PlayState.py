@@ -73,6 +73,30 @@ class PlayState(BaseState):
 
     def load_assets(self):
         
+        #test grid
+        self.cell_size = 80
+        total_grid_width = self.cell_size * 8
+        total_grid_height = self.cell_size * 8
+        available_width = constants.canvas_width - (self.box_width * 2)
+        self.grid_start_x = self.box_width + (available_width - total_grid_width) // 2
+        self.grid_start_y = 10 + (constants.canvas_height - total_grid_height) // 2
+        
+        # Create hit boxes for each cell
+        self.grid_hitboxes = []
+        index = 0
+        for row in range(8):
+            for col in range(8):
+                cell_x = self.grid_start_x + (col * self.cell_size)
+                cell_y = self.grid_start_y + (row * self.cell_size)
+                rect = pygame.Rect(cell_x, cell_y, self.cell_size, self.cell_size)
+                self.grid_hitboxes.append(rect)
+                
+                # self.game_board.set_cell(index)  # Set up the cell in game board
+                # self.game_board.board[index] = rect  # Assign the hitbox rect to the cell
+                
+                index += 1
+        #/test grid
+        
         # Load background
         self.landscape_list = [
             {
@@ -154,23 +178,48 @@ class PlayState(BaseState):
                     self.started = True
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
+                        
+            #test grid
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                for i, rect in enumerate(self.grid_hitboxes):
+                    if rect.collidepoint(mouse_pos):
+                        print(f"Hit box {i} clicked!")
+                        row = i // 8
+                        col = i % 8
+                        #self.game_board.board[i].show_detail(i)
+                        
+                        
+
+            #/test grid
 
         self.fruit_deck_remaining = deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = deck.remaining_cards(self.deck_event)
 
+        
+        
+        
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 
     def render(self, canvas):
         
+        
+            
         if self.ready:
+            
+            for layer in self.landscape_list:
+                utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
+                
+            #test grid
+            # for rect in self.grid_hitboxes:
+            #     pygame.draw.rect(canvas, (255, 0, 0), rect, 2)
+            #/test grid
 
             # Build background
 
             ## Render landscape to menu_bg
-            for layer in self.landscape_list:
-                utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
                 
             # Render gui
 
