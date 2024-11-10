@@ -20,7 +20,7 @@ class Play_PlacePathState(BaseState):
             self.cell_pos = -1
             for i, rect in enumerate(self.parent.grid_hitboxes):
                 if rect.collidepoint(self.mouse_pos):
-                    self.cell_pos = int(i)
+                    self.cell_pos = i
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if "N" in self.parent.current_path:
                             self.parent.game_board.board[i].north = True
@@ -33,6 +33,8 @@ class Play_PlacePathState(BaseState):
                         # for debug
                         print(f"Hit box {i} clicked!")
                         self.parent.game_board.board[i].show_detail()
+                        self.parent.drawing = True
+                        self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
