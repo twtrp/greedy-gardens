@@ -1,7 +1,7 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
-from src.classes.Cards import Cards
+from src.states.Play_DrawPathState import Play_DrawPathState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -47,6 +47,8 @@ class PlayState(BaseState):
         self.magic_fruit1_event = None
         self.magic_fruit2_event = None
         self.magic_fruit3_event = None
+
+        self.current_path = None
         
         # define board
         self.game_board = GameBoard()
@@ -61,6 +63,7 @@ class PlayState(BaseState):
 
         #state
         self.started = False
+        self.drawing = False
         self.day1 = True
         self.day2 = False
         self.day3 = False
@@ -214,12 +217,16 @@ class PlayState(BaseState):
             # Update tweens
             tween.update(passed_time=dt)
 
+        # State change and loop
+        if not self.started:
+            Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.started = True
+        elif self.drawing:
+            Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.drawing = False
+
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN and not self.started:
-                    # for testing
-                    Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-                    self.started = True
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
                         
@@ -339,9 +346,11 @@ class PlayState(BaseState):
             scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
             for i in range(3):
                     utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
-                ## placeholder for current task image
-            scaled_card_pathtest_back = pygame.transform.scale_by(surface=self.card_path_back_image, factor=0.875)
-            utils.blit(dest=canvas, source=scaled_card_pathtest_back, pos=(self.box_width/2, 640), pos_anchor='center')
+                ## Render current task image
+            if self.current_path:
+                self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
+                scaled_current_path_image = pygame.transform.scale_by(surface=self.current_path_image, factor=0.875)
+                utils.blit(dest=canvas, source=scaled_current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
 
                 ## Render Day's Fruit
             if self.day1_fruit:
