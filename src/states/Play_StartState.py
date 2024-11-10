@@ -18,9 +18,9 @@ class Play_StartState(BaseState):
         self.seasonal_not_drawn = True
         self.day1_not_drawn = True
         self.day2_not_drawn = True
-        self.magic1_not_drawn = True
-        self.magic2_not_drawn = True
-        self.magic3_not_drawn = True
+        self.magic_fruit1_not_drawn = True
+        self.magic_fruit2_not_drawn = True
+        self.magic_fruit3_not_drawn = True
 
         self.load_assets()
 
@@ -51,17 +51,23 @@ class Play_StartState(BaseState):
                             self.parent.drawn_cards_fruit.append(self.card_drawn)
                             self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
                             self.day2_not_drawn = False
-                    elif self.magic3_not_drawn:
+                    elif self.magic_fruit3_not_drawn:
                         self.card_drawn = self.parent.deck_event.draw_card()
-                        if self.card_drawn and self.magic1_not_drawn:
+                        if self.card_drawn and self.magic_fruit1_not_drawn:
+                            self.parent.magic_fruit1_event = self.card_drawn.card_name
                             self.parent.drawn_cards_event.append(self.card_drawn)
                             self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.card_drawn.card_name}")
-                        elif self.card_drawn and self.magic2_not_drawn:
+                            self.magic_fruit1_not_drawn = False
+                        elif self.card_drawn and self.magic_fruit2_not_drawn:
+                            self.parent.magic_fruit2_event = self.card_drawn.card_name
                             self.parent.drawn_cards_event.append(self.card_drawn)
                             self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.card_drawn.card_name}")
-                        elif self.card_drawn and self.magic3_not_drawn:
+                            self.magic_fruit2_not_drawn = False
+                        elif self.card_drawn and self.magic_fruit3_not_drawn:
+                            self.parent.magic_fruit3_event = self.card_drawn.card_name
                             self.parent.drawn_cards_event.append(self.card_drawn)
                             self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.card_drawn.card_name}")
+                            self.magic_fruit3_not_drawn = False
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

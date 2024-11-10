@@ -44,6 +44,10 @@ class PlayState(BaseState):
         self.day4_fruit = None
         self.seasonal_fruit = None
         
+        self.magic_fruit1_event = None
+        self.magic_fruit2_event = None
+        self.magic_fruit3_event = None
+        
         # define board
         self.game_board = GameBoard()
         #function and example for use in gen map and place path
@@ -335,10 +339,11 @@ class PlayState(BaseState):
             scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
             for i in range(3):
                     utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
+                ## placeholder for current task image
             scaled_card_pathtest_back = pygame.transform.scale_by(surface=self.card_path_back_image, factor=0.875)
             utils.blit(dest=canvas, source=scaled_card_pathtest_back, pos=(self.box_width/2, 640), pos_anchor='center')
 
-            ## Render Day's Fruit
+                ## Render Day's Fruit
             if self.day1_fruit:
                 if self.day1:
                     self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
@@ -391,7 +396,6 @@ class PlayState(BaseState):
             for i, deck in enumerate(self.deck_title_list):
                 utils.blit(dest=canvas, source=deck, pos=(1150, 85 + i*125), pos_anchor='topleft')
                 utils.blit(dest=canvas, source=self.right_remaining, pos=(1150, 110 + i*125), pos_anchor='topleft')
-                # utils.blit(dest=canvas, source=, pos=(1150, 135 + i*125), pos_anchor='topleft') # card amount
             utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 475), pos_anchor='center')
 
             # Render image in right white box
@@ -401,6 +405,20 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=scaled_card_path_back, pos=(1079, 250), pos_anchor='center')
             scaled_card_event_back = pygame.transform.scale_by(surface=self.card_event_back_image, factor=0.875)
             utils.blit(dest=canvas, source=scaled_card_event_back, pos=(1079, 375), pos_anchor='center')
+
+                ## Render Magic Fruit Event
+            if self.magic_fruit1_event:
+                self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
+                scaled_card_event = pygame.transform.scale_by(surface=self.magic_fruit1_event_image, factor=0.875)
+                utils.blit(dest=canvas, source=scaled_card_event, pos=(1015, 550), pos_anchor='topleft')
+            if self.magic_fruit2_event:
+                self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
+                scaled_card_event = pygame.transform.scale_by(surface=self.magic_fruit2_event_image, factor=0.875)
+                utils.blit(dest=canvas, source=scaled_card_event, pos=(1102, 550), pos_anchor='topleft')
+            if self.magic_fruit3_event:
+                self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
+                scaled_card_event = pygame.transform.scale_by(surface=self.magic_fruit3_event_image, factor=0.875)
+                utils.blit(dest=canvas, source=scaled_card_event, pos=(1189, 550), pos_anchor='topleft')
 
             # Render value in right white box
             self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='smaller', color=colors.white)
