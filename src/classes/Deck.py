@@ -1,4 +1,4 @@
-from src.library.card import Card
+from src.classes.Card import Card
 import pygame
 import random
 

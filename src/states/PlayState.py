@@ -1,9 +1,9 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
-from src.library.card import Card
-from src.library.deck import Deck
-from src.library.GameBoard import GameBoard
+from src.classes.Card import Card
+from src.classes.Deck import Deck
+from src.classes.GameBoard import GameBoard
 import tween
 
 class PlayState(BaseState):
