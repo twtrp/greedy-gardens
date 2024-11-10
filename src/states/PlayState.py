@@ -22,7 +22,7 @@ class PlayState(BaseState):
         self.deck_path = Deck('path')
         self.deck_event = Deck('event')
 
-        # idk will this be use
+        # idk will this be use or not. Maybe for logging?
         self.drawn_cards_fruit = []
         self.drawn_cards_path = []
         self.drawn_cards_event = []
@@ -68,6 +68,7 @@ class PlayState(BaseState):
         self.day2 = False
         self.day3 = False
         self.day4 = False
+        self.strikes = 0
 
         self.ready = False
         self.load_assets()
@@ -185,6 +186,7 @@ class PlayState(BaseState):
         self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
+        self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
 
         # right gui
         self.right_box_title = utils.get_text(text='Cards', font=fonts.lf2, size='small', color=colors.white)
@@ -343,9 +345,12 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 550), pos_anchor='center')
 
             # Render image in left white box
+            scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
+            for i in range(self.strikes):
+                    utils.blit(dest=canvas, source=scaled_live_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
             scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
-            for i in range(3):
-                    utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
+            for i in range(3 - self.strikes):
+                    utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 420), pos_anchor='topleft')
                 ## Render current task image
             if self.current_path:
                 self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")

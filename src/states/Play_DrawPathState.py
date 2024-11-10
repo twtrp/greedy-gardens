@@ -20,6 +20,8 @@ class Play_DrawPathState(BaseState):
                     self.parent.drawn_cards_fruit.append(self.card_drawn)
                     self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_drawn.card_name}")
                     self.parent.current_path = self.card_drawn.card_name
+                    if "strike" in self.parent.current_path:
+                        self.parent.strikes += 1
                     self.not_drawn = False
                 else:
                     self.exit_state()
