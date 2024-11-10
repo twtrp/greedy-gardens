@@ -443,6 +443,25 @@ class PlayState(BaseState):
             self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.lf2, size='smaller', color=colors.white)
             utils.blit(dest=canvas, source=self.event_deck_remaining_amount, pos=(1150, 385), pos_anchor='topleft')
 
+            # Render path on board
+
+            ## Render path on placed tile
+
+            for i, rect in enumerate(self.parent.grid_hitboxes):
+                    if (self.parent.game_board.board[i].north or 
+                        self.parent.game_board.board[i].west or 
+                        self.parent.game_board.board[i].east or 
+                        self.parent.game_board.board[i].south):
+                        pass
+                    if self.parent.game_board.board[i].north:
+                        pass
+                    if self.parent.game_board.board[i].west:
+                        pass
+                    if self.parent.game_board.board[i].east:
+                        pass
+                    if self.parent.game_board.board[i].south:
+                        pass 
+
             if not self.substate_stack:
 
                 # ## Render menu options

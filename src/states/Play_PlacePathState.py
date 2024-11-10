@@ -22,9 +22,17 @@ class Play_PlacePathState(BaseState):
                 if rect.collidepoint(self.mouse_pos):
                     self.cell_pos = int(i)
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        if "N" in self.parent.current_path:
+                            self.parent.game_board.board[i].north = True
+                        if "W" in self.parent.current_path:
+                            self.parent.game_board.board[i].west = True
+                        if "E" in self.parent.current_path:
+                            self.parent.game_board.board[i].east = True
+                        if "S" in self.parent.current_path:
+                            self.parent.game_board.board[i].south = True
+                        # for debug
                         print(f"Hit box {i} clicked!")
-                        clicked_cell = self.parent.game_board.board[i]
-                        clicked_cell.show_detail()
+                        self.parent.game_board.board[i].show_detail()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

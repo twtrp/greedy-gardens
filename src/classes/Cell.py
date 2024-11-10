@@ -5,6 +5,10 @@ class Cell():
         self.fruit = [("strawberry", 0), ("orange",0 ),("blueberry",0),("kiwi",0),("coconut",0),("peach",0)]
         self.home=False
         self.magic_fruit=0
+        self.north=False
+        self.west=False
+        self.east=False
+        self.south=False
 
     def set_path(self, path_type):
         if self.path_type is None:
@@ -23,3 +27,4 @@ class Cell():
         print(self.fruit)
         print(self.home)
         print(self.magic_fruit)
+        print(f"N: {self.north}, W: {self.west}, E: {self.east}, S: {self.south}")
