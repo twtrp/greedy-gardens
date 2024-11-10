@@ -10,8 +10,13 @@ class Cell():
         self.path_type = path_type
 
     def add_fruit(self, fruit_type, value):
-        for i in self.fruit:
-            if self.fruit[i,0]==fruit_type:
-                self.fruit[i,0]+=value
-                pass
-    
+        for i in range(len(self.fruit)):
+            if self.fruit[i][0] == fruit_type:
+                self.fruit[i] = (self.fruit[i][0], self.fruit[i][1] + value)
+                break
+            
+    def show_detail(self):
+        print(self.path_type)
+        print(self.fruit)
+        print(self.home)
+        print(self.magic_fruit)

@@ -4,9 +4,12 @@ class GameBoard():
     def __init__(self):
         self.board = []
         
-        for i in range(64):
-            self.board.append(Cell(i))
-    
+        # for i in range(64):
+        #     self.board.append(Cell(i))
+        
+    def set_cell(self, index):
+        self.board[index] = Cell(index)
+        
     def set_path(self,index, path_type):
         self.board[index].set_path(path_type)
     
@@ -19,3 +22,6 @@ class GameBoard():
     
     def set_magic_fruit(self,index,num):
         self.board[index].magic_fruit=num
+        
+    def show_detail(self, index):
+        self.board[index].show_detail()
