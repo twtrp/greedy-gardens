@@ -2,6 +2,7 @@ from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
 from src.states.Play_DrawPathState import Play_DrawPathState
+from src.states.Play_PlacePathState import Play_PlacePathState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -64,6 +65,7 @@ class PlayState(BaseState):
         #state
         self.started = False
         self.drawing = False
+        self.placing = False
         self.day1 = True
         self.day2 = False
         self.day3 = False
@@ -109,8 +111,6 @@ class PlayState(BaseState):
                 self.grid_hitboxes.append(rect)
                 self.game_board.board.append(Cell(index))
                 index += 1
-
- 
         #/test grid
         
         # Load background
@@ -226,6 +226,9 @@ class PlayState(BaseState):
         elif self.drawing:
             Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.drawing = False
+        elif self.placing:
+            Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.placing = False
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -233,15 +236,13 @@ class PlayState(BaseState):
                         self.exit_state()
                         
             #test grid
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                for i, rect in enumerate(self.grid_hitboxes):
-                    if rect.collidepoint(mouse_pos):
-                        print(f"Hit box {i} clicked!")
-                        clicked_cell = self.game_board.board[i]
-                        clicked_cell.show_detail()
-
-
+            # elif event.type == pygame.MOUSEBUTTONDOWN:
+            #     mouse_pos = pygame.mouse.get_pos()
+            #     for i, rect in enumerate(self.grid_hitboxes):
+            #         if rect.collidepoint(mouse_pos):
+            #             print(f"Hit box {i} clicked!")
+            #             clicked_cell = self.game_board.board[i]
+            #             clicked_cell.show_detail()
             #/test grid
 
         # Update deck remaining

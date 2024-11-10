@@ -24,6 +24,7 @@ class Play_DrawPathState(BaseState):
                         self.parent.strikes += 1
                     self.not_drawn = False
                 else:
+                    self.parent.placing = True
                     self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

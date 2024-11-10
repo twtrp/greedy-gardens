@@ -108,6 +108,12 @@ gui = {
             'width': 96,
             'height': 96,
         },
+        'selecting_tile': {
+            'x': 0,
+            'y': 272,
+            'width': 64,
+            'height': 64,
+        },
     }
 }
 
