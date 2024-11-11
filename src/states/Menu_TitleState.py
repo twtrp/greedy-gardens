@@ -16,7 +16,7 @@ class Menu_TitleState(BaseState):
                                            width=300,
                                            height=80,
                                            pos=(constants.canvas_width/2, 340 + i*80),
-                                           pos_anchor='center'))
+                                           pos_anchor=posanchors.center))
 
 
     #Main methods
@@ -38,12 +38,16 @@ class Menu_TitleState(BaseState):
             
             if button.clicked:
                 if button.id == 'play':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     Menu_PlayState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'records':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     Menu_RecordsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'settings':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     Menu_SettingsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                 elif button.id == 'quit':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     pygame.mixer.stop()
                     pygame.quit()
                     sys.exit()
@@ -54,9 +58,9 @@ class Menu_TitleState(BaseState):
 
     def render(self, canvas):
         # Render game logo
-        utils.blit(dest=canvas, source=self.parent.game_logo, pos=(constants.canvas_width/2, 150), pos_anchor='center')
+        utils.blit(dest=canvas, source=self.parent.game_logo, pos=(constants.canvas_width/2, 150), pos_anchor=posanchors.center)
         # Render menu options
         for i, option in enumerate(self.parent.title_button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor=posanchors.center)
         

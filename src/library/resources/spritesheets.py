@@ -77,6 +77,9 @@ cursors = {
         'cursor_bonk': {
             'x': 96,
         },
+        'cursor_scroll': {
+            'x': 128,
+        },
     }
 }
 

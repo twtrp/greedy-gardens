@@ -41,7 +41,7 @@ class Menu_PlayState(BaseState):
                                            width=300,
                                            height=80,
                                            pos=(constants.canvas_width/2, 280 + i*300),
-                                           pos_anchor='center'))
+                                           pos_anchor=posanchors.center))
             
         self.textbox_label = utils.get_text(text='Seed', font=fonts.lf2, size='small', color=colors.white)
         self.textbox_mode = 'inactive'
@@ -58,10 +58,10 @@ class Menu_PlayState(BaseState):
                                                   long_shadow=False, outline=False)
         self.button_list.append(Button(game=self.game,
                                        id='textbox',
-                                       width=220,
-                                       height=60,
+                                       width=140,
+                                       height=50,
                                        pos=(constants.canvas_width/2, 420),
-                                       pos_anchor='center'))
+                                       pos_anchor=posanchors.center))
 
 
     def update(self, dt, events):
@@ -117,11 +117,13 @@ class Menu_PlayState(BaseState):
             
             if button.clicked:
                 if button.id == 'start':
+                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                     PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=self.textbox_text).enter_state()
                     self.exit_state()      
                 elif button.id == 'textbox':
                     self.textbox_mode = 'active'            
                 elif button.id == 'back':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
@@ -129,41 +131,41 @@ class Menu_PlayState(BaseState):
 
 
     def render(self, canvas):
-        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
+        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
         for i, option in enumerate(self.button_option_surface_list):
             processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 280 + i*300), pos_anchor='center')
+            utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 280 + i*300), pos_anchor=posanchors.center)
 
-        utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 368), pos_anchor='center')
+        utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 373), pos_anchor=posanchors.center)
         if self.textbox_mode == 'inactive':
             utils.draw_rect(dest=canvas,
                             size=(140, 50),
                             pos=(constants.canvas_width/2, 420), 
-                            pos_anchor='center',
+                            pos_anchor=posanchors.center,
                             color=(*colors.white, 200),
                             inner_border_width=3)
             if self.textbox_text == '':
-                utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
             else:
-                utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
         elif self.textbox_mode == 'hovered':
             utils.draw_rect(dest=canvas,
                             size=(140, 50),
                             pos=(constants.canvas_width/2, 420), 
-                            pos_anchor='center',
+                            pos_anchor=posanchors.center,
                             color=(*colors.white, 200),
                             inner_border_width=3,
                             outer_border_width=3,
                             outer_border_color=colors.white)
             if self.textbox_text == '':
-                utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
             else:
-                utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
         elif self.textbox_mode == 'active':
             utils.draw_rect(dest=canvas,
                             size=(140, 50),
                             pos=(constants.canvas_width/2, 420), 
-                            pos_anchor='center',
+                            pos_anchor=posanchors.center,
                             color=(*colors.white, 200),
                             inner_border_width=3,
                             outer_border_width=3,
@@ -171,5 +173,5 @@ class Menu_PlayState(BaseState):
                             outest_border_width=3,
                             outest_border_color=colors.white)
             if self.textbox_text != '':
-                utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
             
