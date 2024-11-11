@@ -122,623 +122,442 @@ gui = {
 
 cards_fruit = {
     'file': 'cards_fruit.png',
-    'shared_data': {},
+    'shared_data': {
+        'width': 96,
+        'height': 128,
+    },
     'sprites': {
         'card_fruit_blueberry': {
             'x': 0,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_fruit_coconut': {
             'x': 96,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_fruit_grape': {
             'x': 192,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_fruit_orange': {
             'x': 0,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_fruit_peach': {
             'x': 96,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_fruit_strawberry': {
             'x': 192,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_fruit_back': {
             'x': 0,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
     }
 }
 
 cards_path = {
     'file': 'cards_path.png',
-    'shared_data': {},
+    'shared_data': {
+        'width': 96,
+        'height': 128,
+    },
     'sprites': {
         'card_path_WS': {
             'x': 0,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_path_ES': {
             'x': 96,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_path_WE': {
             'x': 192,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_path_NS': {
             'x': 288,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_path_NW': {
             'x': 384,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_path_NE': {
             'x': 0,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_path_WES': {
             'x': 96,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_path_NWS': {
             'x': 192,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_path_NES': {
             'x': 288,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_path_NWE': {
             'x': 384,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_WS': {
             'x': 0,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_ES': {
             'x': 96,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_WE': {
             'x': 192,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_NS': {
             'x': 288,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_NW': {
             'x': 384,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_NE': {
             'x': 0,
             'y': 384,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_WES': {
             'x': 96,
             'y': 384,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_NWS': {
             'x': 192,
             'y': 384,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_NES': {
             'x': 288,
             'y': 384,
-            'width': 96,
-            'height': 128,
         },
         'card_path_strike_NWE': {
             'x': 384,
             'y': 384,
-            'width': 96,
-            'height': 128,
         },
         'card_path_back': {
             'x': 0,
             'y': 512,
-            'width': 96,
-            'height': 128,
         },
     }
 }
 
 cards_event = {
     'file': 'cards_event.png',
-    'shared_data': {},
+    'shared_data': {
+        'width': 96,
+        'height': 128,
+    },
     'sprites': {
         'card_event_free': {
             'x': 0,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_event_keep': {
             'x': 96,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_event_merge': {
             'x': 192,
             'y': 0,
-            'width': 96,
-            'height': 128,
         },
         'card_event_point': {
             'x': 0,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_event_redraw': {
             'x': 96,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_event_remove': {
             'x': 192,
             'y': 128,
-            'width': 96,
-            'height': 128,
         },
         'card_event_reveal': {
             'x': 0,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_event_swap': {
             'x': 96,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
         'card_event_back': {
             'x': 192,
             'y': 256,
-            'width': 96,
-            'height': 128,
         },
     }
 }
 
 fruit_16x16 = {
     'file': 'fruits_16x16.png',
-    'shared_data': {},
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
     'sprites': {
         'fruit_orange': {
             'x': 0,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'fruit_blueberry': {
             'x': 16,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'fruit_grape': {
             'x': 32,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'fruit_strawberry': {
             'x': 48,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'fruit_peach': {
             'x': 64,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'fruit_coconut': {
             'x': 80,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'magic_fruit_1': {
             'x': 96,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'magic_fruit_2': {
             'x': 112,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'magic_fruit_3': {
             'x': 128,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
     }
 }
 
 tileset = {
     'file': 'tileset.png',
-    'shared_data': {},
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
     'sprites': {
         'dirt_1': {
             'x': 0,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_2': {
             'x': 16,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_3': {
             'x': 32,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_4': {
             'x': 48,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_5': {
             'x': 64,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_6': {
             'x': 80,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_7': {
             'x': 96,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_8': {
             'x': 112,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'dirt_9': {
             'x': 128,
             'y': 0,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_1': {
             'x': 0,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_2': {
             'x': 16,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_3': {
             'x': 32,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_4': {
             'x': 48,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_5': {
             'x': 64,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_6': {
             'x': 80,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_7': {
             'x': 96,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_8': {
             'x': 112,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_9': {
             'x': 128,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_10': {
             'x': 144,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_11': {
             'x': 160,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_12': {
             'x': 176,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_13': {
             'x': 192,
             'y': 32,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_ES': {
             'x': 48,
             'y': 80,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_WE': {
             'x': 64,
             'y': 80,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_WS': {
             'x': 80,
             'y': 80,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_S': {
             'x': 128,
             'y': 80,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NWES': {
             'x': 16,
             'y': 96,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NS': {
             'x': 48,
             'y': 96,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_E': {
             'x': 96,
             'y': 96,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_WES': {
             'x': 112,
             'y': 96,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NWS': {
             'x': 128,
             'y': 96,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NE': {
             'x': 48,
             'y': 112,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NW': {
             'x': 80,
             'y': 112,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NES': {
             'x': 112,
             'y': 112,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_NWE': {
             'x': 128,
             'y': 112,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_W': {
             'x': 144,
             'y': 112,
-            'width': 16,
-            'height': 16,
         },
         'grass_light_path_N': {
             'x': 112,
             'y': 128,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_ES': {
             'x': 48,
             'y': 144,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_WE': {
             'x': 64,
             'y': 144,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_WS': {
             'x': 80,
             'y': 144,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_S': {
             'x': 128,
             'y': 144,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NWES': {
             'x': 16,
             'y': 160,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NS': {
             'x': 48,
             'y': 160,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_E': {
             'x': 96,
             'y': 160,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_WES': {
             'x': 112,
             'y': 160,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NWS': {
             'x': 128,
             'y': 160,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NE': {
             'x': 48,
             'y': 176,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NW': {
             'x': 80,
             'y': 176,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NES': {
             'x': 112,
             'y': 176,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_NWE': {
             'x': 128,
             'y': 176,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_W': {
             'x': 144,
             'y': 176,
-            'width': 16,
-            'height': 16,
         },
         'grass_dark_path_N': {
             'x': 112,
             'y': 192,
-            'width': 16,
-            'height': 16,
         },
     }
 }

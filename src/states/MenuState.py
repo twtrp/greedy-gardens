@@ -1,6 +1,6 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
-from src.entities.Wind import Wind
+from src.classes.Wind import Wind
 from src.states.Menu_TitleState import Menu_TitleState
 import tween
 

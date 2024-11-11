@@ -27,7 +27,7 @@ class PlayState(BaseState):
         self.drawn_cards_fruit = []
         self.drawn_cards_path = []
         self.drawn_cards_event = []
-
+ 
         # value
         self.day1_score = 0
         self.day2_score = 1
@@ -135,29 +135,29 @@ class PlayState(BaseState):
         # check color of score
         if self.day1:
             day1_color = colors.yellow_light
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+            day2_color = colors.mono_150
+            day3_color = colors.mono_150
+            day4_color = colors.mono_150
         elif self.day2:
             day1_color = colors.white
             day2_color = colors.yellow_light
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+            day3_color = colors.mono_150
+            day4_color = colors.mono_150
         elif self.day3:
             day1_color = colors.white
             day2_color = colors.white
             day3_color = colors.yellow_light
-            day4_color = colors.mono_100
+            day4_color = colors.mono_150
         elif self.day4:
             day1_color = colors.white
             day2_color = colors.white
             day3_color = colors.white
             day4_color = colors.yellow_light
         else: # for any bug that every day is False
-            day1_color = colors.mono_100
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+            day1_color = colors.mono_150
+            day2_color = colors.mono_150
+            day3_color = colors.mono_150
+            day4_color = colors.mono_150
 
         # left gui
         self.left_box_title = utils.get_text(text='Score', font=fonts.lf2, size='small', color=colors.white)
@@ -308,14 +308,14 @@ class PlayState(BaseState):
         ## check color of score
         if self.day1:
             day1_color = colors.yellow_light
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+            day2_color = colors.mono_150
+            day3_color = colors.mono_150
+            day4_color = colors.mono_150
         elif self.day2:
             day1_color = colors.white
             day2_color = colors.yellow_light
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+            day3_color = colors.mono_150
+            day4_color = colors.mono_150
             if self.day1_fruit:
                 self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
                 self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
@@ -327,17 +327,17 @@ class PlayState(BaseState):
             day1_color = colors.white
             day2_color = colors.white
             day3_color = colors.yellow_light
-            day4_color = colors.mono_100
+            day4_color = colors.mono_150
         elif self.day4:
             day1_color = colors.white
             day2_color = colors.white
             day3_color = colors.white
             day4_color = colors.yellow_light
         else: # for any bug that every day is False
-            day1_color = colors.mono_100
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+            day1_color = colors.mono_150
+            day2_color = colors.mono_150
+            day3_color = colors.mono_150
+            day4_color = colors.mono_150
 
         self.score_list = [
             {'text': 'Day 1', 'color': day1_color, 'amount': self.day1_score},
