@@ -11,12 +11,14 @@ class Menu_TitleState(BaseState):
 
         self.button_list = []
         for i, option in enumerate(self.parent.title_button_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           width=300,
-                                           height=80,
-                                           pos=(constants.canvas_width/2, 340 + i*80),
-                                           pos_anchor=posanchors.center))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=80,
+                pos=(constants.canvas_width/2, 340 + i*80),
+                pos_anchor=posanchors.center
+            ))
 
 
     #Main methods

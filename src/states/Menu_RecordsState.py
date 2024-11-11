@@ -160,21 +160,25 @@ class Menu_RecordsState(BaseState):
                 'scale': 1.0
             })
         for i, option in enumerate(self.button_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           width=300,
-                                           height=80,
-                                           pos=(constants.canvas_width/2, 580),
-                                           pos_anchor=posanchors.center))
-            
-        self.button_list.append(Button(game=self.game,
-                                       id='table',
-                                       width=self.table_width,
-                                       height=self.table_height,
-                                       pos=(constants.canvas_width/2, 380),
-                                       pos_anchor=posanchors.center,
-                                       enable_click=False,
-                                       hover_cursor=cursors.scroll))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=80,
+                pos=(constants.canvas_width/2, 580),
+                pos_anchor=posanchors.center
+            ))
+
+        self.button_list.append(Button(
+            game=self.game,
+            id='table',
+            width=self.table_width,
+            height=self.table_height,
+            pos=(constants.canvas_width/2, 380),
+            pos_anchor=posanchors.center,
+            enable_click=False,
+            hover_cursor=cursors.scroll
+        ))
 
     def update(self, dt, events):
         for event in events:
@@ -229,9 +233,11 @@ class Menu_RecordsState(BaseState):
                                 arrow_surface = utils.get_text(text=' ^', font=fonts.lf2, size='small', color=colors.white, long_shadow=False, outline=False)
                                 flipped_arrow_surface = pygame.transform.flip(surface=arrow_surface, flip_x=False, flip_y=True)
                                 deco_distance = utils.get_font_deco_distance(font=fonts.lf2, size='small')
-                                deco_arrow_surface = utils.effect_long_shadow(surface=flipped_arrow_surface,
-                                                                              distance=deco_distance,
-                                                                              color=utils.color_darken(color=colors.white, factor=0.5))
+                                deco_arrow_surface = utils.effect_long_shadow(
+                                    surface=flipped_arrow_surface,
+                                    distance=deco_distance,
+                                    color=utils.color_darken(color=colors.white, factor=0.5
+                                ))
                                 deco_arrow_surface = utils.effect_outline(surface=deco_arrow_surface, distance=deco_distance)
                                 utils.blit(dest=header_surface, source=deco_arrow_surface, pos=(header_surface.get_width(), 3), pos_anchor=posanchors.topright)
                             elif self.parent.records_sorter['order'] == 'DESC':
@@ -273,32 +279,40 @@ class Menu_RecordsState(BaseState):
             scaled_surface = pygame.transform.scale_by(surface=header['surface'], factor=header['scale'])
             utils.blit(dest=canvas, source=scaled_surface, pos=(header['x'], 200), pos_anchor=posanchors.center)
 
-        utils.draw_rect(dest=canvas,
-                        size=(self.table_width, self.table_height),
-                        pos=(constants.canvas_width/2, 380),
-                        pos_anchor=posanchors.center,
-                        color=(*colors.white, 200),
-                        inner_border_width=3)
+        utils.draw_rect(
+            dest=canvas,
+            size=(self.table_width, self.table_height),
+            pos=(constants.canvas_width/2, 380),
+            pos_anchor=posanchors.center,
+            color=(*colors.white, 200),
+            inner_border_width=3
+        )
         
         table_surface = pygame.Surface(size=(constants.canvas_width, self.table_height), flags=pygame.SRCALPHA)
         if not self.ordered_row_ids:
-            no_records_text = utils.get_text(text="No games played yet",
-                                             font=fonts.lf2,
-                                             size='small',
-                                             color=colors.mono_50,
-                                             long_shadow=False,
-                                             outline=False)
-            utils.blit(dest=table_surface,
-                       source=no_records_text,
-                       pos=(constants.canvas_width / 2, self.table_height / 2),
-                       pos_anchor=posanchors.center)
+            no_records_text = utils.get_text(
+                text="No games played yet",
+                font=fonts.lf2,
+                size='small',
+                color=colors.mono_50,
+                long_shadow=False,
+                outline=False
+            )
+            utils.blit(
+                dest=table_surface,
+                source=no_records_text,
+                pos=(constants.canvas_width / 2, self.table_height / 2),
+                pos_anchor=posanchors.center
+            )
         else:
             for i, rowid in enumerate(self.ordered_row_ids):
                 row_surface = self.table_row_surface_dict[rowid]
-                utils.blit(dest=table_surface,
-                           source=row_surface,
-                           pos=(0, 7 + i*self.table_row_height + self.table_scroll_offset),
-                           pos_anchor=posanchors.topleft)
+                utils.blit(
+                    dest=table_surface,
+                    source=row_surface,
+                    pos=(0, 7 + i*self.table_row_height + self.table_scroll_offset),
+                    pos_anchor=posanchors.topleft
+                )
         utils.blit(dest=canvas, source=table_surface, pos=(constants.canvas_width/2, 380), pos_anchor=posanchors.center)
 
         for i, option in enumerate(self.button_option_surface_list):

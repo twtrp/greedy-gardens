@@ -36,32 +36,40 @@ class Menu_PlayState(BaseState):
                 'scale': 1.0
             })
         for i, option in enumerate(self.button_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           width=300,
-                                           height=80,
-                                           pos=(constants.canvas_width/2, 280 + i*300),
-                                           pos_anchor=posanchors.center))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=80,
+                pos=(constants.canvas_width/2, 280 + i*300),
+                pos_anchor=posanchors.center
+            ))
             
         self.textbox_label = utils.get_text(text='Seed', font=fonts.lf2, size='small', color=colors.white)
         self.textbox_mode = 'inactive'
         self.textbox_text = ''
         self.textbox_limit = 8
-        self.textbox_text_surface = utils.get_text(text=self.textbox_text,
-                                                   font=fonts.lf2,
-                                                   size='small',
-                                                   color=colors.mono_50,
-                                                   long_shadow=False,
-                                                   outline=False)
+        self.textbox_text_surface = utils.get_text(
+            text=self.textbox_text,
+            font=fonts.lf2,
+            size='small',
+            color=colors.mono_50,
+            long_shadow=False,
+            outline=False
+        )
 
-        self.textbox_placeholder_surface = utils.get_text(text='Random', font=fonts.lf2, size='small', color=colors.mono_100,
-                                                  long_shadow=False, outline=False)
-        self.button_list.append(Button(game=self.game,
-                                       id='textbox',
-                                       width=140,
-                                       height=50,
-                                       pos=(constants.canvas_width/2, 420),
-                                       pos_anchor=posanchors.center))
+        self.textbox_placeholder_surface = utils.get_text(
+            text='Random', font=fonts.lf2, size='small', color=colors.mono_100,
+            long_shadow=False, outline=False
+        )
+        self.button_list.append(Button(
+            game=self.game,
+            id='textbox',
+            width=140,
+            height=50,
+            pos=(constants.canvas_width/2, 420),
+            pos_anchor=posanchors.center
+        ))
 
 
     def update(self, dt, events):
@@ -73,23 +81,27 @@ class Menu_PlayState(BaseState):
                 if self.textbox_mode == 'active':
                     if event.key == pygame.K_BACKSPACE:
                         self.textbox_text = self.textbox_text[:-1]
-                        self.textbox_text_surface = utils.get_text(text=self.textbox_text,
-                                                                   font=fonts.lf2,
-                                                                   size='small',
-                                                                   color=colors.mono_50,
-                                                                   long_shadow=False,
-                                                                   outline=False)
+                        self.textbox_text_surface = utils.get_text(
+                            text=self.textbox_text,
+                            font=fonts.lf2,
+                            size='small',
+                            color=colors.mono_50,
+                            long_shadow=False,
+                            outline=False
+                        )
                     elif event.key == pygame.K_RETURN:
                         self.textbox_mode = 'inactive'
                     else:
                         if len(self.textbox_text) < self.textbox_limit and event.unicode.isdigit():
                             self.textbox_text += event.unicode
-                            self.textbox_text_surface = utils.get_text(text=self.textbox_text,
-                                                                       font=fonts.lf2,
-                                                                       size='small',
-                                                                       color=colors.mono_50,
-                                                                       long_shadow=False,
-                                                                       outline=False)
+                            self.textbox_text_surface = utils.get_text(
+                                text=self.textbox_text,
+                                font=fonts.lf2,
+                                size='small',
+                                color=colors.mono_50,
+                                long_shadow=False,
+                                outline=False
+                            )
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.textbox_mode == 'active':
@@ -138,40 +150,46 @@ class Menu_PlayState(BaseState):
 
         utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 373), pos_anchor=posanchors.center)
         if self.textbox_mode == 'inactive':
-            utils.draw_rect(dest=canvas,
-                            size=(140, 50),
-                            pos=(constants.canvas_width/2, 420), 
-                            pos_anchor=posanchors.center,
-                            color=(*colors.white, 200),
-                            inner_border_width=3)
+            utils.draw_rect(
+                dest=canvas,
+                size=(140, 50),
+                pos=(constants.canvas_width/2, 420), 
+                pos_anchor=posanchors.center,
+                color=(*colors.white, 200),
+                inner_border_width=3
+            )
             if self.textbox_text == '':
                 utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
             else:
                 utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
         elif self.textbox_mode == 'hovered':
-            utils.draw_rect(dest=canvas,
-                            size=(140, 50),
-                            pos=(constants.canvas_width/2, 420), 
-                            pos_anchor=posanchors.center,
-                            color=(*colors.white, 200),
-                            inner_border_width=3,
-                            outer_border_width=3,
-                            outer_border_color=colors.white)
+            utils.draw_rect(
+                dest=canvas,
+                size=(140, 50),
+                pos=(constants.canvas_width/2, 420), 
+                pos_anchor=posanchors.center,
+                color=(*colors.white, 200),
+                inner_border_width=3,
+                outer_border_width=3,
+                outer_border_color=colors.white
+            )
             if self.textbox_text == '':
                 utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
             else:
                 utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
         elif self.textbox_mode == 'active':
-            utils.draw_rect(dest=canvas,
-                            size=(140, 50),
-                            pos=(constants.canvas_width/2, 420), 
-                            pos_anchor=posanchors.center,
-                            color=(*colors.white, 200),
-                            inner_border_width=3,
-                            outer_border_width=3,
-                            outer_border_color=colors.mono_175,
-                            outest_border_width=3,
-                            outest_border_color=colors.white)
+            utils.draw_rect(
+                dest=canvas,
+                size=(140, 50),
+                pos=(constants.canvas_width/2, 420), 
+                pos_anchor=posanchors.center,
+                color=(*colors.white, 200),
+                inner_border_width=3,
+                outer_border_width=3,
+                outer_border_color=colors.mono_175,
+                outest_border_width=3,
+                outest_border_color=colors.white
+            )
             if self.textbox_text != '':
                 utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
             

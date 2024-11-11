@@ -35,29 +35,35 @@ class Menu_SettingsState(BaseState):
                 'right_arrow_scale': 0
             })
         for i, option in enumerate(self.settings_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           group='setting',
-                                           width=500,
-                                           height=50,
-                                           pos=(constants.canvas_width/2, 200 + i*50),
-                                           pos_anchor=posanchors.center,
-                                           hover_cursor=None,
-                                           enable_click=False))
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id']+'_left',
-                                           group='arrow',
-                                           width=48,
-                                           height=50,
-                                           pos=(constants.canvas_width/2 - 180, 200 + i*50),
-                                           pos_anchor=posanchors.center))
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id']+'_right',
-                                           group='arrow',
-                                           width=48,
-                                           height=50,
-                                           pos=(constants.canvas_width/2 + 180, 200 + i*50),
-                                           pos_anchor=posanchors.center))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                group='setting',
+                width=500,
+                height=50,
+                pos=(constants.canvas_width/2, 200 + i*50),
+                pos_anchor=posanchors.center,
+                hover_cursor=None,
+                enable_click=False
+            ))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id']+'_left',
+                group='arrow',
+                width=48,
+                height=50,
+                pos=(constants.canvas_width/2 - 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            ))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id']+'_right',
+                group='arrow',
+                width=48,
+                height=50,
+                pos=(constants.canvas_width/2 + 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            ))
             
         self.button_option_list = [
             {
@@ -78,12 +84,14 @@ class Menu_SettingsState(BaseState):
                 'scale': 1.0
             })
         for i, option in enumerate(self.button_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           width=300,
-                                           height=60,
-                                           pos=(constants.canvas_width/2, 515 + i*65),
-                                           pos_anchor=posanchors.center))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=60,
+                pos=(constants.canvas_width/2, 515 + i*65),
+                pos_anchor=posanchors.center
+            ))
 
 
     def update(self, dt, events):
@@ -179,14 +187,18 @@ class Menu_SettingsState(BaseState):
             utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 200 + i*50), pos_anchor=posanchors.center)
             scaled_left_arrow = pygame.transform.scale_by(surface=self.arrow_left, factor=option['left_arrow_scale'])
             scaled_right_arrow = pygame.transform.scale_by(surface=self.arrow_right, factor=option['right_arrow_scale'])
-            utils.blit(dest=canvas,
-                        source=scaled_left_arrow,
-                        pos=(constants.canvas_width/2 - 180, 200 + i*50),
-                        pos_anchor=posanchors.center)
-            utils.blit(dest=canvas,
-                        source=scaled_right_arrow,
-                        pos=(constants.canvas_width/2 + 180, 200 + i*50),
-                        pos_anchor=posanchors.center)
+            utils.blit(
+                dest=canvas,
+                source=scaled_left_arrow,
+                pos=(constants.canvas_width/2 - 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            )
+            utils.blit(
+                dest=canvas,
+                source=scaled_right_arrow,
+                pos=(constants.canvas_width/2 + 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            )
             
         for i, option in enumerate(self.button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
