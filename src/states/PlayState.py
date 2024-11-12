@@ -69,6 +69,7 @@ class PlayState(BaseState):
         self.drawing = False
         self.placing = False
         self.is_strike = False
+        self.is_3_strike = False
         # self.day1 = True
         # self.day2 = False
         # self.day3 = False
@@ -280,8 +281,9 @@ class PlayState(BaseState):
         elif self.is_strike:
             Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_strike = False
-        elif self.strikes >= 3: # RN is fucking broken
+        elif self.is_3_strike:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.is_3_strike = False
         
 
         for event in events:

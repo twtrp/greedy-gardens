@@ -23,6 +23,9 @@ class Play_DrawEventState(BaseState):
                         self.parent.current_event = self.card_drawn.card_name
                         self.not_drawn = False
                     else:
+                        if self.parent.strikes >= 3:
+                            self.parent.is_3_strike = True
+                            self.parent.strikes = 0
                         # self.parent.eventing = True
                         self.parent.is_strike = False
                         self.parent.drawing = True
