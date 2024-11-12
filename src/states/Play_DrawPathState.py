@@ -26,8 +26,9 @@ class Play_DrawPathState(BaseState):
                         self.parent.placing = True
                         if "strike" in self.parent.current_path:
                             self.parent.strikes += 1
+                        print("exiting draw path")
                         self.exit_state()
-
+ 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 

@@ -14,37 +14,37 @@ class Play_PlacePathState(BaseState):
         pos_y = 0
 
         #state
-        self.is_not_placed = True
+        self.is_placed = False
 
     def update(self, dt, events):
 
         for event in events:
             self.mouse_pos = pygame.mouse.get_pos()
             self.cell_pos = -1
-            if self.is_not_placed:
-                for i, rect in enumerate(self.parent.grid_hitboxes):
-                    if rect.collidepoint(self.mouse_pos):
-                        self.cell_pos = i
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            if "N" in self.parent.current_path:
-                                self.parent.game_board.board[i].north = True
-                            if "W" in self.parent.current_path:
-                                self.parent.game_board.board[i].west = True
-                            if "E" in self.parent.current_path:
-                                self.parent.game_board.board[i].east = True
-                            if "S" in self.parent.current_path:
-                                self.parent.game_board.board[i].south = True
-                            self.is_not_placed = False
-                            # # for debug
-                            # print(f"Hit box {i} clicked!")
-                            # self.parent.game_board.board[i].show_detail()
+            for i, rect in enumerate(self.parent.grid_hitboxes):
+                if rect.collidepoint(self.mouse_pos):
+                    self.cell_pos = i
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if "N" in self.parent.current_path:
+                            self.parent.game_board.board[i].north = True
+                        if "W" in self.parent.current_path:
+                            self.parent.game_board.board[i].west = True 
+                        if "E" in self.parent.current_path:
+                            self.parent.game_board.board[i].east = True
+                        if "S" in self.parent.current_path:
+                            self.parent.game_board.board[i].south = True
+                        self.is_placed = True
+                        # # for debug
+                        # print(f"Hit box {i} clicked!")
+                        # self.parent.game_board.board[i].show_detail()
                     
-            else:
-                if "strike" in self.parent.current_path:
-                    self.parent.is_strike = True
-                else: 
-                    self.parent.drawing = True
-                self.exit_state()
+        if self.is_placed:
+            if "strike" in self.parent.current_path:
+                self.parent.is_strike = True
+            else: 
+                self.parent.drawing = True
+            print("exiting place")
+            self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

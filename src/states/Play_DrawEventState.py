@@ -26,6 +26,7 @@ class Play_DrawEventState(BaseState):
                         # self.parent.eventing = True
                         self.parent.is_strike = False
                         self.parent.drawing = True
+                        print("exiting draw event") 
                         self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
