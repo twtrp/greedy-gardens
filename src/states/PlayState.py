@@ -66,10 +66,12 @@ class PlayState(BaseState):
         self.started = False
         self.drawing = False
         self.placing = False
-        self.day1 = True
-        self.day2 = False
-        self.day3 = False
-        self.day4 = False
+        # self.day1 = True
+        # self.day2 = False
+        # self.day3 = False
+        # self.day4 = False
+        self.day = 4
+        self.current_day = 1
         self.strikes = 0
 
         self.ready = False
@@ -132,32 +134,11 @@ class PlayState(BaseState):
             },
         ]
 
-        # check color of score
-        if self.day1:
-            day1_color = colors.yellow_light
-            day2_color = colors.mono_150
-            day3_color = colors.mono_150
-            day4_color = colors.mono_150
-        elif self.day2:
-            day1_color = colors.white
-            day2_color = colors.yellow_light
-            day3_color = colors.mono_150
-            day4_color = colors.mono_150
-        elif self.day3:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.yellow_light
-            day4_color = colors.mono_150
-        elif self.day4:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.white
-            day4_color = colors.yellow_light
-        else: # for any bug that every day is False
-            day1_color = colors.mono_150
-            day2_color = colors.mono_150
-            day3_color = colors.mono_150
-            day4_color = colors.mono_150
+        # color of score
+        day1_color = colors.mono_150
+        day2_color = colors.mono_150
+        day3_color = colors.mono_150
+        day4_color = colors.mono_150
 
         # left gui
         self.left_box_title = utils.get_text(text='Score', font=fonts.lf2, size='small', color=colors.white)
@@ -306,44 +287,27 @@ class PlayState(BaseState):
 
         # Update day/score color and amount
         ## check color of score
-        if self.day1:
-            day1_color = colors.yellow_light
-            day2_color = colors.mono_150
-            day3_color = colors.mono_150
-            day4_color = colors.mono_150
-        elif self.day2:
-            day1_color = colors.white
-            day2_color = colors.yellow_light
-            day3_color = colors.mono_150
-            day4_color = colors.mono_150
-            if self.day1_fruit:
-                self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
-                self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
-            if self.day2_fruit:
-                self.day2_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit))
-                self.gray_day2_fruit_image = utils.effect_grayscale(surface=self.day2_fruit_image)
-                self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.gray_day2_fruit_image, factor=1.25)
-        elif self.day3:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.yellow_light
-            day4_color = colors.mono_150
-        elif self.day4:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.white
-            day4_color = colors.yellow_light
-        else: # for any bug that every day is False
-            day1_color = colors.mono_150
-            day2_color = colors.mono_150
-            day3_color = colors.mono_150
-            day4_color = colors.mono_150
+        day_colors = {
+            "day1_color": colors.mono_150,
+            "day2_color": colors.mono_150,
+            "day3_color": colors.mono_150,
+            "day4_color": colors.mono_150
+        }
+
+        for i in range(self.day):
+            print(i)
+            if i < self.current_day:
+                day_colors[f"day{i}_color"] = colors.white
+            elif i == self.current_day:
+                day_colors[f"day{i}_color"] = colors.yellow_light
+            else:
+                day_colors[f"day{i}_color"] = colors.mono_150
 
         self.score_list = [
-            {'text': 'Day 1', 'color': day1_color, 'amount': self.day1_score},
-            {'text': 'Day 2', 'color': day2_color, 'amount': self.day2_score},
-            {'text': 'Day 3', 'color': day3_color, 'amount': self.day3_score},
-            {'text': 'Day 4', 'color': day4_color, 'amount': self.day4_score},
+            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.day1_score},
+            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.day2_score},
+            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.day3_score},
+            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.day4_score},
             {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score},
             {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
         ]
@@ -414,28 +378,28 @@ class PlayState(BaseState):
 
                 ## Render Day's Fruit
             if self.day1_fruit:
-                if self.day1:
+                if self.current_day == 1:
                     self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
                 else:
                     self.day1_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit))
                 self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day1_fruit_image, pos=(40, 95), pos_anchor='center')
             if self.day2_fruit:
-                if self.day2:
+                if self.current_day == 2:
                     self.day2_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit)
                 else:
                     self.day2_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit))
                 self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day2_fruit_image, pos=(40, 140), pos_anchor='center')
             if self.day3_fruit:
-                if self.day3:
+                if self.current_day == 3:
                     self.day3_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit)
                 else:
                     self.day3_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit))
                 self.scaled_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day3_fruit_image, pos=(40, 185), pos_anchor='center')
             if self.day4_fruit:
-                if self.day4:
+                if self.current_day == 4:
                     self.day4_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit)
                 else:
                     self.day4_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit))
