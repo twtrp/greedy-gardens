@@ -111,6 +111,42 @@ gui = {
             'width': 96,
             'height': 96,
         },
+        'path_WE': {
+            'x': 0,
+            'y': 144,
+            'width': 64,
+            'height': 64,
+        },
+        'path_NS': {
+            'x': 64,
+            'y': 144,
+            'width': 64,
+            'height': 64,
+        },
+        'path_NW': {
+            'x': 128,
+            'y': 144,
+            'width': 64,
+            'height': 64,
+        },
+        'path_NE': {
+            'x': 0,
+            'y': 208,
+            'width': 64,
+            'height': 64,
+        },
+        'path_WS': {
+            'x': 64,
+            'y': 208,
+            'width': 64,
+            'height': 64,
+        },
+        'path_ES': {
+            'x': 128,
+            'y': 208,
+            'width': 64,
+            'height': 64,
+        },
         'selecting_tile': {
             'x': 0,
             'y': 272,
@@ -463,6 +499,10 @@ tileset = {
             'x': 48,
             'y': 96,
         },
+        'grass_light_path_none': {
+            'x': 64,
+            'y': 96,
+        },
         'grass_light_path_E': {
             'x': 96,
             'y': 96,
@@ -521,6 +561,10 @@ tileset = {
         },
         'grass_dark_path_NS': {
             'x': 48,
+            'y': 160,
+        },
+        'grass_dark_path_none': {
+            'x': 64,
             'y': 160,
         },
         'grass_dark_path_E': {

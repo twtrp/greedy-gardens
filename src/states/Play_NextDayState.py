@@ -17,6 +17,17 @@ class Play_NextDayState(BaseState):
         self.card_drawn_image = None
 
     def update(self, dt, events):
+        # clear free(temp) path
+        for i, rect in enumerate(self.parent.grid_hitboxes):
+            if self.parent.game_board.board[i].temp:
+                self.parent.game_board.board[i].north = False
+                self.parent.game_board.board[i].west = False
+                self.parent.game_board.board[i].east = False
+                self.parent.game_board.board[i].south = False
+                self.parent.game_board.board[i].temp = False
+                self.parent.game_board.board[i].path = False
+
+        # draw fruit for next next day
         if self.parent.current_day < self.parent.day:
             for event in events:
                 if event.type == pygame.KEYDOWN:
@@ -29,7 +40,11 @@ class Play_NextDayState(BaseState):
                                 self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
                                 self.fruit_not_drawn = False
                         else:
+                            self.parent.drawing = True
                             self.exit_state()
+        elif self.parent.current_day == self.parent.day:
+            self.parent.drawing = True
+            self.exit_state()
         
 
     def render(self, canvas):

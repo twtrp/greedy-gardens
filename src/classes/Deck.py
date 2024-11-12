@@ -111,5 +111,12 @@ class Deck:
             if card.strike:
                 strike_indices.append(i)
         return strike_indices
-                        
+
+    def not_all_duplicate(self):
+        for i in range(1,len(self)):
+            card1 = self[0].card_name
+            card2 = self[i].card_name
+            if card1[-3:] != card2[-3:]:
+                return True
+        return False                
         

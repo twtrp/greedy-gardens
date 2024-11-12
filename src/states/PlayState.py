@@ -4,6 +4,7 @@ from src.states.Play_StartState import Play_StartState
 from src.states.Play_DrawPathState import Play_DrawPathState
 from src.states.Play_DrawEventState import Play_DrawEventState
 from src.states.Play_PlacePathState import Play_PlacePathState
+from src.states.Play_PlayEventState import Play_PlayEventState
 from src.states.Play_NextDayState import Play_NextDayState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
@@ -52,6 +53,7 @@ class PlayState(BaseState):
         self.magic_fruit3_event = None
 
         self.current_path = None
+        self.current_event = None
         
         # define board
         self.game_board = GameBoard()
@@ -68,6 +70,7 @@ class PlayState(BaseState):
         self.started = False
         self.drawing = False
         self.placing = False
+        self.eventing = False
         self.is_strike = False
         self.is_3_strike = False
         # self.day1 = True
@@ -215,15 +218,15 @@ class PlayState(BaseState):
             self.dirt_sprites_8.append(self.random_dirt())
             self.dirt_sprites_9.append(self.random_dirt())
         for i, rect in enumerate(self.grid_hitboxes):
-                self.dirt_sprite_1 = self.dirt_sprites_1[i]
-                self.dirt_sprite_2 = self.dirt_sprites_2[i]
-                self.dirt_sprite_3 = self.dirt_sprites_3[i]
-                self.dirt_sprite_4 = self.dirt_sprites_4[i]
-                self.dirt_sprite_5 = self.dirt_sprites_5[i]
-                self.dirt_sprite_6 = self.dirt_sprites_6[i]
-                self.dirt_sprite_7 = self.dirt_sprites_7[i]
-                self.dirt_sprite_8 = self.dirt_sprites_8[i]
-                self.dirt_sprite_9 = self.dirt_sprites_9[i]
+            self.dirt_sprite_1 = self.dirt_sprites_1[i]
+            self.dirt_sprite_2 = self.dirt_sprites_2[i]
+            self.dirt_sprite_3 = self.dirt_sprites_3[i]
+            self.dirt_sprite_4 = self.dirt_sprites_4[i]
+            self.dirt_sprite_5 = self.dirt_sprites_5[i]
+            self.dirt_sprite_6 = self.dirt_sprites_6[i]
+            self.dirt_sprite_7 = self.dirt_sprites_7[i]
+            self.dirt_sprite_8 = self.dirt_sprites_8[i]
+            self.dirt_sprite_9 = self.dirt_sprites_9[i]
 
         # grass path
         self.grass_light_path_N = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_N')
@@ -241,6 +244,7 @@ class PlayState(BaseState):
         self.grass_light_path_NES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_NES')
         self.grass_light_path_WES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_WES')
         self.grass_light_path_NWES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_NWES')
+        self.grass_light_path_none = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_none')
         
         self.grass_dark_path_N = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_N')
         self.grass_dark_path_W = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_W')
@@ -257,6 +261,7 @@ class PlayState(BaseState):
         self.grass_dark_path_NES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_NES')
         self.grass_dark_path_WES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_WES')
         self.grass_dark_path_NWES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_NWES')
+        self.grass_dark_path_none = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_none')
 
         # magic fruit
         self.magic_fruit1_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite='magic_fruit_1')
@@ -289,6 +294,9 @@ class PlayState(BaseState):
         elif self.is_strike:
             Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_strike = False
+        elif self.eventing:
+            Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.eventing = False
         elif self.is_3_strike:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_3_strike = False
@@ -323,7 +331,7 @@ class PlayState(BaseState):
             "day4_color": colors.mono_150
         }
 
-        for i in range(self.day):
+        for i in range(1,self.day + 1):
             if i < self.current_day:
                 day_colors[f"day{i}_color"] = colors.white
             elif i == self.current_day:
@@ -494,171 +502,219 @@ class PlayState(BaseState):
             ## Render path on placed tile
             for i, rect in enumerate(self.grid_hitboxes):
                 if ((i // 8) + (i % 2)) % 2 == 0:
-                    if self.game_board.board[i].north:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                        if i >= 8 and self.game_board.board[i-8].south == True:
-                            utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                        else:
-                            utils.blit(dest=canvas, source=self.grass_light_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
-                    if self.game_board.board[i].west:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        if self.game_board.board[i//8] == self.game_board.board[(i-1)//8] and self.game_board.board[i-1].east == True:
-                            utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        else: 
-                            utils.blit(dest=canvas, source=self.grass_light_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    if self.game_board.board[i].east:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        if self.game_board.board[i//8] == self.game_board.board[(i+1)//8] and self.game_board.board[i+1].west == True:
-                            utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        else:
-                            utils.blit(dest=canvas, source=self.grass_light_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    if self.game_board.board[i].south:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                        if i <= 55 and self.game_board.board[i+8].north == True:
-                            utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                        else:
-                            utils.blit(dest=canvas, source=self.grass_light_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                    if (self.game_board.board[i].north and 
-                        self.game_board.board[i].west and
-                        self.game_board.board[i].east and
-                        self.game_board.board[i].south):
+                    if self.game_board.board[i].temp:
+                        if self.game_board.board[i].north:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                        if self.game_board.board[i].west:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].east:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].south:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NWES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].west and
-                        self.game_board.board[i].east):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NWE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].west and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NWS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].east and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].west and
-                        self.game_board.board[i].east and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_WES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].west):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].east):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].west and
-                        self.game_board.board[i].east):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].west and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_WS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].east and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_light_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                    else:
+                        if self.game_board.board[i].north:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            if i >= 8 and self.game_board.board[i-8].south == True and self.game_board.board[i-8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_light_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                        if self.game_board.board[i].west:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i-1)//8] and self.game_board.board[i-1].east == True and self.game_board.board[i-1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else: 
+                                utils.blit(dest=canvas, source=self.grass_light_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].east:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i+1)//8] and self.game_board.board[i+1].west == True and self.game_board.board[i+1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_light_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].south:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            if i <= 55 and self.game_board.board[i+8].north == True and self.game_board.board[i+8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_light_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                        if (self.game_board.board[i].north and 
+                            self.game_board.board[i].west and
+                            self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NWES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].west and
+                            self.game_board.board[i].east):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NWE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].west and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NWS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].west and
+                            self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_WES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].west):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].east):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].west and
+                            self.game_board.board[i].east):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].west and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_WS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                 else:
-                    if self.game_board.board[i].north:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                        if i >= 8 and self.game_board.board[i-8].south == True:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                        else:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
-                    if self.game_board.board[i].west:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        if self.game_board.board[i//8] == self.game_board.board[(i-1)//8] and self.game_board.board[i-1].east == True:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        else:    
-                            utils.blit(dest=canvas, source=self.grass_dark_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    if self.game_board.board[i].east:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        if self.game_board.board[i//8] == self.game_board.board[(i+1)//8] and self.game_board.board[i+1].west == True:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        else:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    if self.game_board.board[i].south:
-                        utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                        if i <= 55 and self.game_board.board[i+8].north == True:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                        else:
-                            utils.blit(dest=canvas, source=self.grass_dark_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                    if (self.game_board.board[i].north and 
-                        self.game_board.board[i].west and
-                        self.game_board.board[i].east and
-                        self.game_board.board[i].south):
+                    if self.game_board.board[i].temp:
+                        if self.game_board.board[i].north:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                        if self.game_board.board[i].west:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].east:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].south:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NWES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].west and
-                        self.game_board.board[i].east):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NWE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].west and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NWS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].east and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].west and
-                        self.game_board.board[i].east and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_WES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].west):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].east):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].north and 
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].west and
-                        self.game_board.board[i].east):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].west and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_WS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif (self.game_board.board[i].east and
-                        self.game_board.board[i].south):
-                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                        utils.blit(dest=canvas, source=self.grass_dark_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                    else:
+                        if self.game_board.board[i].north:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            if i >= 8 and self.game_board.board[i-8].south == True and self.game_board.board[i-8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                        if self.game_board.board[i].west:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i-1)//8] and self.game_board.board[i-1].east == True and self.game_board.board[i-1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else:    
+                                utils.blit(dest=canvas, source=self.grass_dark_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].east:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i+1)//8] and self.game_board.board[i+1].west == True and self.game_board.board[i+1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].south:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            if i <= 55 and self.game_board.board[i+8].north == True and self.game_board.board[i+8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                        if (self.game_board.board[i].north and 
+                            self.game_board.board[i].west and
+                            self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NWES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].west and
+                            self.game_board.board[i].east):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NWE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].west and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NWS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].west and
+                            self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_WES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].west):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].east):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].north and 
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].west and
+                            self.game_board.board[i].east):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].west and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_WS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        elif (self.game_board.board[i].east and
+                            self.game_board.board[i].south):
+                            utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_dark_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
 
             if not self.substate_stack:
 
@@ -675,6 +731,7 @@ class PlayState(BaseState):
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
+    
 
     #Class methods
   
