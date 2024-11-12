@@ -1,12 +1,12 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 
-class Play_DrawPathState(BaseState):
+class Play_DrawEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
         self.parent = parent
 
-        print("Drawing path")
+        print("Drawing event")
 
         # state
         self.not_drawn = True
@@ -17,16 +17,15 @@ class Play_DrawPathState(BaseState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if self.not_drawn:
-                        self.card_drawn = self.parent.deck_path.draw_card()
-                        self.parent.drawn_cards_path.append(self.card_drawn)
-                        self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_drawn.card_name}")
-                        self.parent.current_path = self.card_drawn.card_name
+                        self.card_drawn = self.parent.deck_event.draw_card()
+                        self.parent.drawn_cards_event.append(self.card_drawn)
+                        self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.card_drawn.card_name}")
+                        self.parent.current_event = self.card_drawn.card_name
                         self.not_drawn = False
                     else:
-                        if "strike" in self.parent.current_path:
-                            self.parent.strikes += 1
-                            self.parent.is_strike = True
-                        self.parent.placing = True
+                        # self.parent.eventing = True
+                        self.parent.is_strike = False
+                        self.parent.drawing = True
                         self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

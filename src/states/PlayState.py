@@ -2,7 +2,9 @@ from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
 from src.states.Play_DrawPathState import Play_DrawPathState
+from src.states.Play_DrawEventState import Play_DrawEventState
 from src.states.Play_PlacePathState import Play_PlacePathState
+from src.states.Play_NextDayState import Play_NextDayState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -66,6 +68,7 @@ class PlayState(BaseState):
         self.started = False
         self.drawing = False
         self.placing = False
+        self.is_strike = False
         # self.day1 = True
         # self.day2 = False
         # self.day3 = False
@@ -261,9 +264,15 @@ class PlayState(BaseState):
         elif self.drawing:
             Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.drawing = False
+        elif self.is_strike:
+            Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.is_strike = False
         elif self.placing:
             Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.placing = False
+        elif self.strikes >= 3: # RN is fucking broken
+            Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+        
 
         for event in events:
             if event.type == pygame.KEYDOWN:
