@@ -23,10 +23,9 @@ class Play_DrawPathState(BaseState):
                         self.parent.current_path = self.card_drawn.card_name
                         self.not_drawn = False
                     else:
+                        self.parent.placing = True
                         if "strike" in self.parent.current_path:
                             self.parent.strikes += 1
-                            self.parent.is_strike = True
-                        self.parent.placing = True
                         self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

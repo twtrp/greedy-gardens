@@ -40,7 +40,9 @@ class Play_PlacePathState(BaseState):
                             # self.parent.game_board.board[i].show_detail()
                     
             else:
-                if not self.parent.is_strike:
+                if "strike" in self.parent.current_path:
+                    self.parent.is_strike = True
+                else: 
                     self.parent.drawing = True
                 self.exit_state()
 

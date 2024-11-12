@@ -264,12 +264,12 @@ class PlayState(BaseState):
         elif self.drawing:
             Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.drawing = False
-        elif self.is_strike:
-            Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.is_strike = False
         elif self.placing:
             Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.placing = False
+        elif self.is_strike:
+            Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.is_strike = False
         elif self.strikes >= 3: # RN is fucking broken
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
         
