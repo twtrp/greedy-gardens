@@ -4,6 +4,7 @@
 3. When prompted if you want to select the new environment for the workspace folder, click Yes.
 4. Enter in terminal: `pip install -r .\requirements.txt` when terminal is in (venv)
 5. Enter in terminal: `python .\main.py` when terminal is in (venv)
+6. If the code can't run because of missing file or directory Enter in terminal: `mkdir data` and try step 5 again
 
 ### Coding tips and guides
 - This project uses pygame-ce (community edition), a better fork of pygame. All of original pygame functions are still usable, the fork just provides more functions. Documentation: https://pyga.me/docs/
