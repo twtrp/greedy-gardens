@@ -65,6 +65,11 @@ class Deck:
                 name.append('event_remove')
                 name.append('event_reveal')
                 name.append('event_swap')
+        # For Testing cards
+        elif self.deck_type == 'test':
+            self.deck_type = 'event'
+            for i in range(16):
+                name.append('event_merge')
         for i in name:
             if not 'strike' in i:
                 self.cards.append(Cards(self.deck_type, i, False))
