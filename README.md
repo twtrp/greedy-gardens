@@ -4,6 +4,7 @@
 3. When prompted if you want to select the new environment for the workspace folder, click Yes.
 4. Enter in terminal: `pip install -r .\requirements.txt` when terminal is in (venv)
 5. Enter in terminal: `python .\main.py` when terminal is in (venv)
+6. If the code can't run because of missing file or directory Enter in terminal: `mkdir data` and try step 5 again
 
 ### Coding tips and guides
 - This project uses pygame-ce (community edition), a better fork of pygame. All of original pygame functions are still usable, the fork just provides more functions. Documentation: https://pyga.me/docs/
@@ -19,8 +20,8 @@
 - Main menu music:
     - https://youtu.be/TFmNW8lMITk?si=m1rsfmZrYmwVY0nk
     - https://youtu.be/B1zg9b4L88Q?si=K6Zwds-xZUdMJflR
-- Farm Ambience
-    - https://youtu.be/LFEGXjJhryY?si=TTUe2R5A281_xcYV
+- Ambience
+    - https://youtu.be/xNN7iTA57jM?si=TWThsI-VghS7OrgR
 - End music
     - https://youtu.be/29QaQuQnOqQ?si=8WHmnpmR2BA4yZ-4
 - Fonts
@@ -54,3 +55,5 @@
     - https://free-game-assets.itch.io/free-skill-3232-icons-for-cyberpunk-game
 - Some UI elements
     - https://crusenho.itch.io/complete-ui-essential-pack
+    - https://danieldiggle.itch.io/sunnyside
+    

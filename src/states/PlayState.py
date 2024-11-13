@@ -2,7 +2,10 @@ from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.states.Play_StartState import Play_StartState
 from src.states.Play_DrawPathState import Play_DrawPathState
+from src.states.Play_DrawEventState import Play_DrawEventState
 from src.states.Play_PlacePathState import Play_PlacePathState
+from src.states.Play_PlayEventState import Play_PlayEventState
+from src.states.Play_NextDayState import Play_NextDayState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -27,7 +30,7 @@ class PlayState(BaseState):
         self.drawn_cards_fruit = []
         self.drawn_cards_path = []
         self.drawn_cards_event = []
-
+ 
         # value
         self.day1_score = 0
         self.day2_score = 1
@@ -50,6 +53,7 @@ class PlayState(BaseState):
         self.magic_fruit3_event = None
 
         self.current_path = None
+        self.current_event = None
         
         # define board
         self.game_board = GameBoard()
@@ -66,10 +70,15 @@ class PlayState(BaseState):
         self.started = False
         self.drawing = False
         self.placing = False
-        self.day1 = True
-        self.day2 = False
-        self.day3 = False
-        self.day4 = False
+        self.eventing = False
+        self.is_strike = False
+        self.is_3_strike = False
+        # self.day1 = True
+        # self.day2 = False
+        # self.day3 = False
+        # self.day4 = False
+        self.day = 4
+        self.current_day = 1
         self.strikes = 0
 
         self.ready = False
@@ -132,32 +141,11 @@ class PlayState(BaseState):
             },
         ]
 
-        # check color of score
-        if self.day1:
-            day1_color = colors.yellow_light
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
-        elif self.day2:
-            day1_color = colors.white
-            day2_color = colors.yellow_light
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
-        elif self.day3:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.yellow_light
-            day4_color = colors.mono_100
-        elif self.day4:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.white
-            day4_color = colors.yellow_light
-        else: # for any bug that every day is False
-            day1_color = colors.mono_100
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+        # color of score
+        day1_color = colors.mono_150
+        day2_color = colors.mono_150
+        day3_color = colors.mono_150
+        day4_color = colors.mono_150
 
         # left gui
         self.left_box_title = utils.get_text(text='Score', font=fonts.lf2, size='small', color=colors.white)
@@ -229,6 +217,16 @@ class PlayState(BaseState):
             self.dirt_sprites_7.append(self.random_dirt())
             self.dirt_sprites_8.append(self.random_dirt())
             self.dirt_sprites_9.append(self.random_dirt())
+        for i, rect in enumerate(self.grid_hitboxes):
+            self.dirt_sprite_1 = self.dirt_sprites_1[i]
+            self.dirt_sprite_2 = self.dirt_sprites_2[i]
+            self.dirt_sprite_3 = self.dirt_sprites_3[i]
+            self.dirt_sprite_4 = self.dirt_sprites_4[i]
+            self.dirt_sprite_5 = self.dirt_sprites_5[i]
+            self.dirt_sprite_6 = self.dirt_sprites_6[i]
+            self.dirt_sprite_7 = self.dirt_sprites_7[i]
+            self.dirt_sprite_8 = self.dirt_sprites_8[i]
+            self.dirt_sprite_9 = self.dirt_sprites_9[i]
 
         # grass path
         self.grass_light_path_N = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_N')
@@ -246,6 +244,7 @@ class PlayState(BaseState):
         self.grass_light_path_NES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_NES')
         self.grass_light_path_WES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_WES')
         self.grass_light_path_NWES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_NWES')
+        self.grass_light_path_none = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_none')
         
         self.grass_dark_path_N = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_N')
         self.grass_dark_path_W = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_W')
@@ -262,6 +261,15 @@ class PlayState(BaseState):
         self.grass_dark_path_NES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_NES')
         self.grass_dark_path_WES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_WES')
         self.grass_dark_path_NWES = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_NWES')
+        self.grass_dark_path_none = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_dark_path_none')
+
+        # magic fruit
+        self.magic_fruit1_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite='magic_fruit_1')
+        self.scaled_magic_fruit1_image = pygame.transform.scale_by(surface=self.magic_fruit1_image, factor=2)
+        self.magic_fruit2_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite='magic_fruit_2')
+        self.scaled_magic_fruit2_image = pygame.transform.scale_by(surface=self.magic_fruit2_image, factor=2)
+        self.magic_fruit3_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite='magic_fruit_3')
+        self.scaled_magic_fruit3_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=2)
 
     def update(self, dt, events):
         if self.ready:
@@ -283,6 +291,16 @@ class PlayState(BaseState):
         elif self.placing:
             Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.placing = False
+        elif self.is_strike:
+            Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.is_strike = False
+        elif self.eventing:
+            Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.eventing = False
+        elif self.is_3_strike:
+            Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.is_3_strike = False
+        
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -306,44 +324,26 @@ class PlayState(BaseState):
 
         # Update day/score color and amount
         ## check color of score
-        if self.day1:
-            day1_color = colors.yellow_light
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
-        elif self.day2:
-            day1_color = colors.white
-            day2_color = colors.yellow_light
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
-            if self.day1_fruit:
-                self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
-                self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
-            if self.day2_fruit:
-                self.day2_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit))
-                self.gray_day2_fruit_image = utils.effect_grayscale(surface=self.day2_fruit_image)
-                self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.gray_day2_fruit_image, factor=1.25)
-        elif self.day3:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.yellow_light
-            day4_color = colors.mono_100
-        elif self.day4:
-            day1_color = colors.white
-            day2_color = colors.white
-            day3_color = colors.white
-            day4_color = colors.yellow_light
-        else: # for any bug that every day is False
-            day1_color = colors.mono_100
-            day2_color = colors.mono_100
-            day3_color = colors.mono_100
-            day4_color = colors.mono_100
+        day_colors = {
+            "day1_color": colors.mono_150,
+            "day2_color": colors.mono_150,
+            "day3_color": colors.mono_150,
+            "day4_color": colors.mono_150
+        }
+
+        for i in range(1,self.day + 1):
+            if i < self.current_day:
+                day_colors[f"day{i}_color"] = colors.white
+            elif i == self.current_day:
+                day_colors[f"day{i}_color"] = colors.yellow_light
+            else:
+                day_colors[f"day{i}_color"] = colors.mono_150
 
         self.score_list = [
-            {'text': 'Day 1', 'color': day1_color, 'amount': self.day1_score},
-            {'text': 'Day 2', 'color': day2_color, 'amount': self.day2_score},
-            {'text': 'Day 3', 'color': day3_color, 'amount': self.day3_score},
-            {'text': 'Day 4', 'color': day4_color, 'amount': self.day4_score},
+            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.day1_score},
+            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.day2_score},
+            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.day3_score},
+            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.day4_score},
             {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score},
             {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
         ]
@@ -414,28 +414,28 @@ class PlayState(BaseState):
 
                 ## Render Day's Fruit
             if self.day1_fruit:
-                if self.day1:
+                if self.current_day == 1:
                     self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
                 else:
                     self.day1_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit))
                 self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day1_fruit_image, pos=(40, 95), pos_anchor='center')
             if self.day2_fruit:
-                if self.day2:
+                if self.current_day == 2:
                     self.day2_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit)
                 else:
                     self.day2_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit))
                 self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day2_fruit_image, pos=(40, 140), pos_anchor='center')
             if self.day3_fruit:
-                if self.day3:
+                if self.current_day == 3:
                     self.day3_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit)
                 else:
                     self.day3_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit))
                 self.scaled_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day3_fruit_image, pos=(40, 185), pos_anchor='center')
             if self.day4_fruit:
-                if self.day4:
+                if self.current_day == 4:
                     self.day4_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit)
                 else:
                     self.day4_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit))
@@ -478,16 +478,16 @@ class PlayState(BaseState):
                 ## Render Magic Fruit Event
             if self.magic_fruit1_event:
                 self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
-                scaled_card_event = pygame.transform.scale_by(surface=self.magic_fruit1_event_image, factor=0.875)
-                utils.blit(dest=canvas, source=scaled_card_event, pos=(1015, 550), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(1040, 530), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.scaled_magic_fruit1_image, pos=(1072, 510), pos_anchor='topleft')
             if self.magic_fruit2_event:
                 self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
-                scaled_card_event = pygame.transform.scale_by(surface=self.magic_fruit2_event_image, factor=0.875)
-                utils.blit(dest=canvas, source=scaled_card_event, pos=(1102, 550), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=(1100, 550), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.scaled_magic_fruit2_image, pos=(1132, 530), pos_anchor='topleft')
             if self.magic_fruit3_event:
                 self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
-                scaled_card_event = pygame.transform.scale_by(surface=self.magic_fruit3_event_image, factor=0.875)
-                utils.blit(dest=canvas, source=scaled_card_event, pos=(1189, 550), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=(1160, 570), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.scaled_magic_fruit3_image, pos=(1192, 550), pos_anchor='topleft')
 
             # Render value in right white box
             self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='smaller', color=colors.white)
@@ -501,34 +501,61 @@ class PlayState(BaseState):
 
             ## Render path on placed tile
             for i, rect in enumerate(self.grid_hitboxes):
-                    self.dirt_sprite_1 = self.dirt_sprites_1[i]
-                    self.dirt_sprite_2 = self.dirt_sprites_2[i]
-                    self.dirt_sprite_3 = self.dirt_sprites_3[i]
-                    self.dirt_sprite_4 = self.dirt_sprites_4[i]
-                    self.dirt_sprite_5 = self.dirt_sprites_5[i]
-                    self.dirt_sprite_6 = self.dirt_sprites_6[i]
-                    self.dirt_sprite_7 = self.dirt_sprites_7[i]
-                    self.dirt_sprite_8 = self.dirt_sprites_8[i]
-                    self.dirt_sprite_9 = self.dirt_sprites_9[i]
-                    if ((i // 8) + (i % 2)) % 2 == 0:
+                if ((i // 8) + (i % 2)) % 2 == 0:
+                    if self.game_board.board[i].temp:
                         if self.game_board.board[i].north:
                             utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_light_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                        if self.game_board.board[i].west:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].east:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].south:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                    else:
+                        if self.game_board.board[i].north:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            if i >= 8 and self.game_board.board[i-8].south == True and self.game_board.board[i-8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_light_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                         if self.game_board.board[i].west:
                             utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_light_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i-1)//8] and self.game_board.board[i-1].east == True and self.game_board.board[i-1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else: 
+                                utils.blit(dest=canvas, source=self.grass_light_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         if self.game_board.board[i].east:
                             utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_light_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i+1)//8] and self.game_board.board[i+1].west == True and self.game_board.board[i+1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_light_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         if self.game_board.board[i].south:
                             utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_light_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            if i <= 55 and self.game_board.board[i+8].north == True and self.game_board.board[i+8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_light_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         if (self.game_board.board[i].north and 
@@ -581,25 +608,61 @@ class PlayState(BaseState):
                             self.game_board.board[i].south):
                             utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                else:
+                    if self.game_board.board[i].temp:
+                        if self.game_board.board[i].north:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                        if self.game_board.board[i].west:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].east:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        if self.game_board.board[i].south:
+                            utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                        utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                        utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                     else:
                         if self.game_board.board[i].north:
                             utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_dark_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            if i >= 8 and self.game_board.board[i-8].south == True and self.game_board.board[i-8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_S, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                         if self.game_board.board[i].west:
                             utils.blit(dest=canvas, source=self.dirt_sprite_3, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_dark_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i-1)//8] and self.game_board.board[i-1].east == True and self.game_board.board[i-1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else:    
+                                utils.blit(dest=canvas, source=self.grass_dark_path_E, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_4, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         if self.game_board.board[i].east:
                             utils.blit(dest=canvas, source=self.dirt_sprite_5, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_dark_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            if self.game_board.board[i//8] == self.game_board.board[(i+1)//8] and self.game_board.board[i+1].west == True and self.game_board.board[i+1].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_W, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 64, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_6, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_WE, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         if self.game_board.board[i].south:
                             utils.blit(dest=canvas, source=self.dirt_sprite_7, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
-                            utils.blit(dest=canvas, source=self.grass_dark_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            if i <= 55 and self.game_board.board[i+8].north == True and self.game_board.board[i+8].temp == False:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
+                            else:
+                                utils.blit(dest=canvas, source=self.grass_dark_path_N, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.dirt_sprite_8, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_NS, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         if (self.game_board.board[i].north and 
@@ -659,7 +722,7 @@ class PlayState(BaseState):
                 # for i, option in enumerate(self.title_button_option_surface_list):
                 #     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                 #     processed_option.set_alpha(option['alpha'])
-                #     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor='center')
+                #     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor=posanchors.center)
 
                 pass
 
@@ -668,6 +731,7 @@ class PlayState(BaseState):
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
+    
 
     #Class methods
   

@@ -6,6 +6,7 @@ from src.classes.SettingsManager import SettingsManager
 class Menu_SettingsState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
+        
         self.settings_manager = SettingsManager()
         self.current_settings_index = self.settings_manager.load_all_settings_index()
         self.setting_index = 0
@@ -14,7 +15,7 @@ class Menu_SettingsState(BaseState):
         self.load_assets()
 
         
-    #Main methods
+    # Main methods
 
     def load_assets(self):
 
@@ -25,14 +26,44 @@ class Menu_SettingsState(BaseState):
         
         self.settings_option_surface_list = []
         for i, setting in enumerate(self.settings_manager.settings_list):
-            text_string = setting['label']+':  '+setting['value_label'][self.current_settings_index[i]]
+            text_string = setting['label'] + ':  ' + setting['value_label'][self.current_settings_index[i]]
             text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
             self.settings_option_surface_list.append({
                 'id': setting['id'],
                 'surface': text,
                 'left_arrow_scale': 0,
-                'right_arrow_scale': 0,
+                'right_arrow_scale': 0
             })
+        for i, option in enumerate(self.settings_option_surface_list):
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                group='setting',
+                width=500,
+                height=50,
+                pos=(constants.canvas_width/2, 200 + i*50),
+                pos_anchor=posanchors.center,
+                hover_cursor=None,
+                enable_click=False
+            ))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id']+'_left',
+                group='arrow',
+                width=48,
+                height=50,
+                pos=(constants.canvas_width/2 - 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            ))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id']+'_right',
+                group='arrow',
+                width=48,
+                height=50,
+                pos=(constants.canvas_width/2 + 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            ))
             
         self.button_option_list = [
             {
@@ -52,35 +83,15 @@ class Menu_SettingsState(BaseState):
                 'surface': text,
                 'scale': 1.0
             })
-        
-        for i, option in enumerate(self.settings_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           width=500,
-                                           height=50,
-                                           pos=(constants.canvas_width/2, 200 + i*50),
-                                           pos_anchor='center',
-                                           hover_cursor=None,
-                                           enable_click=False))
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id']+'_left',
-                                           width=48,
-                                           height=50,
-                                           pos=(constants.canvas_width/2 - 180, 200 + i*50),
-                                           pos_anchor='center'))
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id']+'_right',
-                                           width=48,
-                                           height=50,
-                                           pos=(constants.canvas_width/2 + 180, 200 + i*50),
-                                           pos_anchor='center'))
         for i, option in enumerate(self.button_option_surface_list):
-            self.button_list.append(Button(game=self.game,
-                                           id=option['id'],
-                                           width=300,
-                                           height=60,
-                                           pos=(constants.canvas_width/2, 515 + i*65),
-                                           pos_anchor='center'))
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=60,
+                pos=(constants.canvas_width/2, 515 + i*65),
+                pos_anchor=posanchors.center
+            ))
 
 
     def update(self, dt, events):
@@ -116,10 +127,10 @@ class Menu_SettingsState(BaseState):
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
             
-            """
-            UGLIEST CODE EVER!! DON'T LOOK!!!!!
-            """
             if button.clicked:
+                """
+                UGLIEST CODE EVER!! DON'T LOOK!!!!!
+                """
                 if button.id.endswith('_left') or button.id.endswith('_right'):
                     if button.id.endswith('_left'):
                         self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] - 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
@@ -137,8 +148,9 @@ class Menu_SettingsState(BaseState):
                         'id': self.settings_manager.settings_list[self.setting_index]['id'],
                         'surface': text,
                         'left_arrow_scale': left_arrow_scale,
-                        'right_arrow_scale': right_arrow_scale,
+                        'right_arrow_scale': right_arrow_scale
                     }
+                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                     self.game.apply_settings(self.setting_index)
 
                 if button.id == 'reset':
@@ -149,40 +161,45 @@ class Menu_SettingsState(BaseState):
                             'id': self.settings_manager.settings_list[i]['id'],
                             'surface': text,
                             'left_arrow_scale': 0,
-                            'right_arrow_scale': 0,
+                            'right_arrow_scale': 0
                         }
                     self.settings_manager.reset_settings()
                     for i in range(len(self.settings_manager.settings_list)):
                         if self.current_settings_index[i] != self.settings_manager.settings_list[i]['value_default_index']:
                             self.game.apply_settings(i)
                     self.current_settings_index = self.settings_manager.load_all_settings_index()
+                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                    """
+                    UGLIEST CODE EVER!! DON'T LOOK!!!!!
+                    """
 
                 elif button.id == 'back':
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
-            """
-            UGLIEST CODE EVER!! DON'T LOOK!!!!!
-            """
                     
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 
 
     def render(self, canvas):
-        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
+        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
         for i, option in enumerate(self.settings_option_surface_list):
-            utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 200 + i*50), pos_anchor='center')
+            utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 200 + i*50), pos_anchor=posanchors.center)
             scaled_left_arrow = pygame.transform.scale_by(surface=self.arrow_left, factor=option['left_arrow_scale'])
             scaled_right_arrow = pygame.transform.scale_by(surface=self.arrow_right, factor=option['right_arrow_scale'])
-            utils.blit(dest=canvas,
-                        source=scaled_left_arrow,
-                        pos=(constants.canvas_width/2 - 180, 200 + i*50),
-                        pos_anchor='center')
-            utils.blit(dest=canvas,
-                        source=scaled_right_arrow,
-                        pos=(constants.canvas_width/2 + 180, 200 + i*50),
-                        pos_anchor='center')
+            utils.blit(
+                dest=canvas,
+                source=scaled_left_arrow,
+                pos=(constants.canvas_width/2 - 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            )
+            utils.blit(
+                dest=canvas,
+                source=scaled_right_arrow,
+                pos=(constants.canvas_width/2 + 180, 200 + i*50),
+                pos_anchor=posanchors.center
+            )
             
         for i, option in enumerate(self.button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 515 + i*65), pos_anchor='center')
-            
+            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 515 + i*65), pos_anchor=posanchors.center)
