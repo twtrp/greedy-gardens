@@ -16,7 +16,7 @@ class Play_PlayEventState(BaseState):
         self.cell_pos = -1
 
         self.choice = 0
-        self.choices = ['path_WE', 'path_NS', 'path_NW', 'path_NE', 'path_WS', 'path_WS']
+        self.choices = ['path_WE', 'path_NS', 'path_NW', 'path_NE', 'path_WS', 'path_ES']
 
         # state
         self.played_event = False
@@ -69,7 +69,7 @@ class Play_PlayEventState(BaseState):
                 print('event_keep')
                 self.played_event = True
             elif self.parent.current_event == 'event_merge':
-                print('event_merge')
+                # print('event_merge')
                 if len(self.parent.drawn_cards_path) >= 2 and Deck.not_all_duplicate(self.parent.drawn_cards_path):
                     for event in events:
                         self.mouse_pos = pygame.mouse.get_pos()

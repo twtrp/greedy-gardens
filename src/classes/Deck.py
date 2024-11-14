@@ -8,6 +8,7 @@ class Deck:
 
         self.build_deck()
         random.shuffle(self.cards)
+
         if self.deck_type == 'path':
             self.organize_deck()
 
@@ -65,11 +66,17 @@ class Deck:
                 name.append('event_remove')
                 name.append('event_reveal')
                 name.append('event_swap')
-        # For Testing cards
-        elif self.deck_type == 'test':
-            self.deck_type = 'event'
-            for i in range(16):
-                name.append('event_merge')
+
+        # # For Testing cards
+        # elif self.deck_type == 'path':
+        #     for i in range(50):
+        #         print('adding path')
+        #         name.append('path_strike_WS')
+        # elif self.deck_type == 'event':
+        #     for i in range(16):
+        #         print('adding event')
+        #         name.append('event_free')
+
         for i in name:
             if not 'strike' in i:
                 self.cards.append(Cards(self.deck_type, i, False))
