@@ -23,18 +23,14 @@ class Play_PlayEventState(BaseState):
         self.load_assets()
 
     def load_assets(self):
+        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+
         self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
-        self.scaled_path_WE_image = pygame.transform.scale_by(surface=self.path_WE_image, factor=0.875)
         self.path_NS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS')
-        self.scaled_path_NS_image = pygame.transform.scale_by(surface=self.path_NS_image, factor=0.875)
         self.path_NW_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW')
-        self.scaled_path_NW_image = pygame.transform.scale_by(surface=self.path_NW_image, factor=0.875)
         self.path_NE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE')
-        self.scaled_path_NE_image = pygame.transform.scale_by(surface=self.path_NE_image, factor=0.875)
         self.path_WS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS')
-        self.scaled_path_WS_image = pygame.transform.scale_by(surface=self.path_WS_image, factor=0.875)
         self.path_ES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES')
-        self.scaled_path_ES_image = pygame.transform.scale_by(surface=self.path_ES_image, factor=0.875)
 
     def update(self, dt, events):
         if not self.played_event:
@@ -136,19 +132,15 @@ class Play_PlayEventState(BaseState):
                                     outer_border_width=0,
                                     outer_border_color=colors.black)
             
-            utils.blit(dest=canvas, source=self.scaled_path_WE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.scaled_path_NS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 262), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.scaled_path_NW_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 204), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.scaled_path_NE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 146), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.scaled_path_WS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 88), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.scaled_path_ES_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 30), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.path_WE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.path_NS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 262), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.path_NW_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 204), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.path_NE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 146), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.path_WS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 88), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.path_ES_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 30), pos_anchor='center')
 
         if self.cell_pos >= 0:
-            self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
-            scaled_selecting_tile = pygame.transform.scale_by(surface=self.selecting_tile, factor=1.25)
-            utils.blit(dest=canvas, source=scaled_selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
+            utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.selected_cell:
-            self.selected_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
-            scaled_selected_tile = pygame.transform.scale_by(surface=self.selected_tile, factor=1.25)
-            utils.blit(dest=canvas, source=scaled_selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+            utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')

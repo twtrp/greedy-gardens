@@ -14,6 +14,11 @@ class Play_PlacePathState(BaseState):
         #state
         self.is_placed = False
 
+        self.load_assets()
+
+    def load_assets(self):
+        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+
     def update(self, dt, events):
 
         for event in events:
@@ -51,6 +56,4 @@ class Play_PlacePathState(BaseState):
 
     def render(self, canvas):
         if self.cell_pos >= 0:
-            self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
-            scaled_selecting_tile = pygame.transform.scale_by(surface=self.selecting_tile, factor=1.25)
-            utils.blit(dest=canvas, source=scaled_selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
+            utils.blit(dest=canvas, source=self.selecting_tile , pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
