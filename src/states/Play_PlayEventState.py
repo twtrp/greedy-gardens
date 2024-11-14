@@ -15,6 +15,9 @@ class Play_PlayEventState(BaseState):
 
         self.cell_pos = -1
 
+        self.choice = 0
+        self.choices = ['path_WE', 'path_NS', 'path_NW', 'path_NE', 'path_WS', 'path_WS']
+
         # state
         self.played_event = False
         self.selecting_path = False
@@ -25,6 +28,7 @@ class Play_PlayEventState(BaseState):
     def load_assets(self):
         self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
 
+        self.small_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='small_selecting_tile')
         self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
         self.path_NS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS')
         self.path_NW_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW')
@@ -43,15 +47,20 @@ class Play_PlayEventState(BaseState):
                     for i, rect in enumerate(self.parent.grid_hitboxes):
                         if rect.collidepoint(self.mouse_pos):
                             self.cell_pos = i
+                            if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_w and self.choice > 0:
+                                    self.choice -= 1
+                                elif event.key == pygame.K_s and self.choice < 5:
+                                    self.choice += 1
                             if event.type == pygame.MOUSEBUTTONDOWN:
                                 if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                    if "N" in self.parent.current_path:
+                                    if "N" in self.choices[self.choice]:
                                         self.parent.game_board.board[i].north = True
-                                    if "W" in self.parent.current_path:
+                                    if "W" in self.choices[self.choice]:
                                         self.parent.game_board.board[i].west = True 
-                                    if "E" in self.parent.current_path:
+                                    if "E" in self.choices[self.choice]:
                                         self.parent.game_board.board[i].east = True
-                                    if "S" in self.parent.current_path:
+                                    if "S" in self.choices[self.choice]:
                                         self.parent.game_board.board[i].south = True
                                     self.parent.game_board.board[i].temp = True
                                     self.parent.game_board.board[i].path = True
@@ -139,6 +148,7 @@ class Play_PlayEventState(BaseState):
             utils.blit(dest=canvas, source=self.path_NE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 146), pos_anchor='center')
             utils.blit(dest=canvas, source=self.path_WS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 88), pos_anchor='center')
             utils.blit(dest=canvas, source=self.path_ES_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 30), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.small_selecting_tile, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320 + 58*self.choice), pos_anchor='center')
 
         if self.cell_pos >= 0:
             utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')

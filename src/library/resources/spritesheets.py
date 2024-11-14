@@ -129,6 +129,12 @@ gui = {
             'width': 48,
             'height': 48,
         },
+        'small_selecting_tile': {
+            'x': 144,
+            'y': 144,
+            'width': 48,
+            'height': 48,
+        },
         'path_NE': {
             'x': 0,
             'y': 192,
