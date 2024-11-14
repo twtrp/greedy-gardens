@@ -1,6 +1,7 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.classes.Deck import Deck
+from src.classes.Cell import Cell
 
 class Play_PlayEventState(BaseState):
     def __init__(self, game, parent, stack):
@@ -65,9 +66,11 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[i].temp = True
                                     self.parent.game_board.board[i].path = True
                                     self.played_event = True
+
             elif self.parent.current_event == 'event_keep':
                 print('event_keep')
                 self.played_event = True
+
             elif self.parent.current_event == 'event_merge':
                 # print('event_merge')
                 if len(self.parent.drawn_cards_path) >= 2 and Deck.not_all_duplicate(self.parent.drawn_cards_path):
@@ -104,18 +107,46 @@ class Play_PlayEventState(BaseState):
             elif self.parent.current_event == 'event_point':
                 print('event_point')
                 self.played_event = True
+
             elif self.parent.current_event == 'event_redraw':
                 print('event_redraw')
                 self.played_event = True
+
             elif self.parent.current_event == 'event_remove':
                 print('event_remove')
                 self.played_event = True
             elif self.parent.current_event == 'event_reveal':
                 print('event_reveal')
                 self.played_event = True
+
             elif self.parent.current_event == 'event_swap':
                 print('event_swap')
-                self.played_event = True
+                if len(self.parent.drawn_cards_path) >= 2 and Deck.not_all_duplicate(self.parent.drawn_cards_path):
+                    for event in events:
+                        self.mouse_pos = pygame.mouse.get_pos()
+                        cell_pos = -1
+                        for i, rect in enumerate(self.parent.grid_hitboxes):
+                            if rect.collidepoint(self.mouse_pos):
+                                self.cell_pos = i
+                                if event.type == pygame.MOUSEBUTTONDOWN:
+                                    if self.selected_cell is None:
+                                        if self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
+                                            self.selected_cell = i
+                                    else:
+                                        if (i != self.selected_cell and 
+                                            self.parent.game_board.board[i].path and
+                                            not self.parent.game_board.board[i].home and
+                                            not self.parent.game_board.board[i].is_the_same(self.parent.game_board.board[self.selected_cell])):
+                                            
+                                            Cell.swap_path(self.parent.game_board.board[i], self.parent.game_board.board[self.selected_cell])
+                                            self.selected_cell = None
+                                            self.played_event = True
+                                        elif i == self.selected_cell:
+                                            self.selected_cell = None
+                else:
+                    print("No swap possible")
+                    self.played_event = True
+
             else: # for any bug
                 print(f"There is no such event {self.parent.current_event}")
                 self.played_event = True

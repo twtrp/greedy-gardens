@@ -45,8 +45,28 @@ class Cell():
         
         return True
     
+    def is_the_same(self, other_cell):
+        directions = ['north', 'west', 'east', 'south']
+        
+        for direction in directions:
+            current_value = getattr(self, direction)
+            another_value = getattr(other_cell, direction)
+            
+            if another_value != current_value:
+                return False
+        
+        return True
+    
     def combine_directions(self, other_cell):
         directions = ['north', 'west', 'east', 'south']
         
         for direction in directions:
             setattr(self, direction, getattr(self, direction) or getattr(other_cell, direction))
+
+    def swap_path(cell1, cell2):
+        cell1.north, cell2.north = cell2.north, cell1.north
+        cell1.south, cell2.south = cell2.south, cell1.south
+        cell1.east, cell2.east = cell2.east, cell1.east
+        cell1.west, cell2.west = cell2.west, cell1.west
+        
+        cell1.temp, cell2.temp = cell2.temp, cell1.temp

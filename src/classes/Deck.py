@@ -9,6 +9,7 @@ class Deck:
         self.build_deck()
         random.shuffle(self.cards)
 
+        # comment if want to test card or deck
         if self.deck_type == 'path':
             self.organize_deck()
 
@@ -69,13 +70,12 @@ class Deck:
 
         # # For Testing cards
         # elif self.deck_type == 'path':
-        #     for i in range(50):
-        #         print('adding path')
+        #     for i in range(25):
         #         name.append('path_strike_WS')
+        #         name.append('path_strike_WES')
         # elif self.deck_type == 'event':
         #     for i in range(16):
-        #         print('adding event')
-        #         name.append('event_free')
+        #         name.append('event_swap')
 
         for i in name:
             if not 'strike' in i:
