@@ -1,5 +1,6 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
+from src.classes.Button import Button
 from src.classes.Deck import Deck
 from src.classes.Cell import Cell
 
@@ -16,6 +17,8 @@ class Play_PlayEventState(BaseState):
 
         self.cell_pos = -1
 
+        self.button_list = []
+
         self.choice = 0
         self.choices = ['path_WE', 'path_NS', 'path_NW', 'path_NE', 'path_WS', 'path_ES']
 
@@ -23,10 +26,49 @@ class Play_PlayEventState(BaseState):
         self.played_event = False
         self.selecting_path = False
         self.selected_cell = None
+        self.choosing = False
 
         self.load_assets()
 
     def load_assets(self):
+        # Load text
+        self.choice_title = utils.get_text(text='choose', font=fonts.lf2, size='large', color=colors.mono_175)
+
+        # Load Button
+        self.point_button_option_list = [
+            {
+                'id': 'add today',
+            },
+            {
+                'id': 'lose today',
+            }
+        ]
+        self.point_button_option_surface_list = []
+        for option in self.point_button_option_list:
+            text1 = utils.get_text(text='Get 1 point today,', font=fonts.lf2, size='medium', color=colors.white)
+            text2 = utils.get_text(text='Lose 1 point next day', font=fonts.lf2, size='medium', color=colors.white)
+            self.point_button_option_surface_list.append({
+                'id': option['id'],
+                'surface': text1,
+                'scale': 1.0
+            })
+            self.point_button_option_surface_list.append({
+                'id': option['id'],
+                'surface': text2,
+                'scale': 1.0
+            })
+        for i, option in enumerate(self.point_button_option_surface_list):
+            self.button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=60,
+                pos=(constants.canvas_width/2, 515 + i*65),
+                pos_anchor=posanchors.center
+            ))
+
+
+        # Load image/sprite
         self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
 
         self.small_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='small_selecting_tile')
@@ -105,8 +147,9 @@ class Play_PlayEventState(BaseState):
                     self.played_event = True
                                     
             elif self.parent.current_event == 'event_point':
-                print('event_point')
-                self.played_event = True
+                # print('event_point')
+                self.choosing = True
+                # self.played_event = True
 
             elif self.parent.current_event == 'event_redraw':
                 print('event_redraw')
@@ -159,10 +202,46 @@ class Play_PlayEventState(BaseState):
             print("exiting play event")
             self.exit_state()
 
+        # Update Button
+        for button in self.button_list:
+            button.update(dt=dt, events=events)
+            
+            if button.hovered:
+                if button.hover_cursor is not None:
+                    self.cursor = button.hover_cursor
+
+                for option in self.point_button_option_surface_list:
+                    if button.id == option['id']:
+                        option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+
+            else:
+                for option in self.point_button_option_surface_list:
+                    if button.id == option['id']:
+                        option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
 
     def render(self, canvas):
+        if self.choosing:
+            utils.draw_rect(dest=canvas,
+                                    size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+                                    pos=(self.parent.box_width, 0),
+                                    pos_anchor='topleft',
+                                    color=(*colors.black, 128), # 50% transparency
+                                    inner_border_width=0,
+                                    outer_border_width=0,
+                                    outer_border_color=colors.black)
+            
+            utils.blit(dest=canvas, source=self.choice_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+            for i, option in enumerate(self.point_button_option_surface_list):
+                scaled_point_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 200 + i*50), pos_anchor=posanchors.center)
+            
+            # show button hit box
+            for button in self.button_list:
+                button.render(canvas)
+
         if self.selecting_path:
             utils.draw_rect(dest=canvas,
                                     size=(self.box_width, self.box_height),
