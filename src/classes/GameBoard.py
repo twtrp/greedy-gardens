@@ -16,6 +16,11 @@ class GameBoard():
     def set_home(self, index):
         self.board[index].set_path("home")
         self.board[index].home = True
+        self.north=True
+        self.west=True
+        self.east=True
+        self.south=True
+        self.path=True
     
     def set_magic_fruit(self,index,num):
         self.board[index].magic_fruit=num
