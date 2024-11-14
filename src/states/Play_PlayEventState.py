@@ -44,7 +44,7 @@ class Play_PlayEventState(BaseState):
                         if rect.collidepoint(self.mouse_pos):
                             self.cell_pos = i
                             if event.type == pygame.MOUSEBUTTONDOWN:
-                                if not self.parent.game_board.board[i].path:
+                                if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
                                     if "N" in self.parent.current_path:
                                         self.parent.game_board.board[i].north = True
                                     if "W" in self.parent.current_path:
@@ -70,11 +70,12 @@ class Play_PlayEventState(BaseState):
                                 self.cell_pos = i
                                 if event.type == pygame.MOUSEBUTTONDOWN:
                                     if self.selected_cell is None:
-                                        if self.parent.game_board.board[i].path:
+                                        if self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
                                             self.selected_cell = i
                                     else:
                                         if (i != self.selected_cell and 
                                             self.parent.game_board.board[i].path and
+                                            not self.parent.game_board.board[i].home and
                                             not self.parent.game_board.board[i].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                             
                                             self.parent.game_board.board[i].combine_directions(self.parent.game_board.board[self.selected_cell])

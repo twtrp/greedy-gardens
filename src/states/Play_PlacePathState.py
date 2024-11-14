@@ -28,7 +28,7 @@ class Play_PlacePathState(BaseState):
                 if rect.collidepoint(self.mouse_pos):
                     self.cell_pos = i
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if not self.parent.game_board.board[i].path:
+                        if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
                             if "N" in self.parent.current_path:
                                 self.parent.game_board.board[i].north = True
                             if "W" in self.parent.current_path:
