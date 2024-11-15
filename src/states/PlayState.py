@@ -12,12 +12,12 @@ from src.classes.Cell import Cell
 import tween
 
 class PlayState(BaseState):
-    def __init__(self, game, parent, stack, seed="namsom"):
+    def __init__(self, game, parent, stack, seed):
         BaseState.__init__(self, game, parent, stack, seed)
 
         self.game.canvas.fill((0, 0, 0))
         self.seed = seed
-        print(seed)
+        print("seed="+seed)
 
         # config of gui
         self.box_width = 272

@@ -88,28 +88,28 @@ class GameBoard():
             if current_quadrant == 1:
                 while loop: 
                     # index = row * 8 + column
-                    mfruitindex = random.randint(1, 4) * 8 + random.randint(4, 7)
+                    mfruitindex = random.randint(1, 3) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
                         loop = False
             elif current_quadrant == 2:
                 while loop: 
                     # index = row * 8 + column
-                    mfruitindex = random.randint(1, 4) * 8 + random.randint(1, 4)
+                    mfruitindex = random.randint(1, 3) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
                         loop = False
             elif current_quadrant == 3:
                 while loop: 
                     # index = row * 8 + column
-                    mfruitindex = random.randint(4, 7) * 8 + random.randint(1, 4)
+                    mfruitindex = random.randint(4, 6) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
                         loop = False
             elif current_quadrant == 4:
                 while loop: 
                     # index = row * 8 + column
-                    mfruitindex = random.randint(4, 7) * 8 + random.randint(4, 7)
+                    mfruitindex = random.randint(4, 6) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
                         loop = False
@@ -142,13 +142,13 @@ class GameBoard():
                 fruit_quadrant = random.choice(available_quadrant)
                 quadrant_index = fruit_quadrant - 1
                 if fruit_quadrant == 1:
-                    fruit_index = random.randint(0, 4) * 8 + random.randint(4, 8)
+                    fruit_index = random.randint(0, 3) * 8 + random.randint(4, 7)
                 elif fruit_quadrant == 2:
-                    fruit_index = random.randint(0, 4) * 8 + random.randint(0, 4)
+                    fruit_index = random.randint(0, 3) * 8 + random.randint(0, 3)
                 elif current_quadrant == 3:
-                    fruit_index = random.randint(4, 8) * 8 + random.randint(0, 4)
+                    fruit_index = random.randint(4, 7) * 8 + random.randint(0, 3)
                 elif current_quadrant == 4:
-                    fruit_index = random.randint(4, 8) * 8 + random.randint(4, 7)
+                    fruit_index = random.randint(4, 7) * 8 + random.randint(4, 7)
                 
                 if ((board_fruit[quadrant_index] < max_fruit_each_quadrant) and 
                     (self.board[fruit_index].sum_fruit() < max_fruit_cell) and
