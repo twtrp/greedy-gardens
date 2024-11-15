@@ -1,8 +1,10 @@
+from collections import Counter
+
 class Cell():
     def __init__(self, index):
         self.position = index
         self.path_type = None
-        self.fruit = [("strawberry", 0), ("orange",0 ),("blueberry",0),("kiwi",0),("coconut",0),("peach",0)]
+        self.fruit = []
         self.home=False
         self.magic_fruit=0
         # for direction
@@ -20,11 +22,8 @@ class Cell():
         else:
             pass
 
-    def add_fruit(self, fruit_type, value):
-        for i in range(len(self.fruit)):
-            if self.fruit[i][0] == fruit_type:
-                self.fruit[i] = (self.fruit[i][0], self.fruit[i][1] + value)
-                break
+    def add_fruit(self, fruit_type):
+        self.fruit.append(fruit_type)
             
     def show_detail(self):
         print(self.path_type)
@@ -70,3 +69,10 @@ class Cell():
         cell1.west, cell2.west = cell2.west, cell1.west
         
         cell1.temp, cell2.temp = cell2.temp, cell1.temp
+
+    def sum_fruit(self):
+        return len(self.fruit)
+    
+    def valid_fruit_cell(self, max_per_type):
+        fruit_counts = Counter(self.fruit)
+        return all(count <= 2 for count in fruit_counts.values())

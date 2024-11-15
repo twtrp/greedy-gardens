@@ -4,7 +4,6 @@ import random
 class GameBoard():
     def __init__(self, seed):
         self.board = []
-        self.num_fruit = 15 # Might move this to constant
         self.seed = seed
 
         random.seed(self.seed)
@@ -12,13 +11,14 @@ class GameBoard():
         for i in range(64):
             self.board.append(Cell(i))
 
+        # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
         
     def set_path(self,index, path_type):
         self.board[index].set_path(path_type)
     
-    def add_fruit(self,index, fruit_type, value):
-        self.board[index].add_fruit(fruit_type, value)
+    def add_fruit(self,index, fruit_type):
+        self.board[index].add_fruit(fruit_type)
         
     def set_home(self, index):
         self.board[index].set_path("home")
@@ -72,7 +72,7 @@ class GameBoard():
         return diamond_indices
     
     def set_board(self):
-        # Start by setting home location
+        # Set home location
         home_index = random.randint(1, 6) * 8 + random.randint(1, 6) # index = row*8 + column with home not at the edge
         home_quadrant = self.check_quadrant(home_index)
         self.set_home(home_index)
@@ -114,3 +114,48 @@ class GameBoard():
                         self.set_magic_fruit(mfruitindex, mfruitnum)
                         loop = False
 
+        # Set fruit location
+        # current fruit number in each quadrant
+        board_fruit = [0, 0, 0, 0]
+
+        # available quadrant for fruit placement
+        available_quadrant = [1, 2, 3, 4]
+
+        # max number of fruit per cell
+        max_fruit_cell = 3
+
+        # max fruit per type per cell
+        max_type_cell = 2
+
+        # number of fruit for each type
+        fruit_each_type = 16
+
+        # max number of fruit per quadrant
+        max_fruit_each_quadrant = (fruit_each_type * 6) / 4
+
+        # all fruit types
+        all_fruit = ["strawberry", "orange", "blueberry", "kiwi", "coconut", "peach"]
+
+        for fruit in all_fruit:
+            placed = 0
+            while placed < fruit_each_type:
+                fruit_quadrant = random.choice(available_quadrant)
+                quadrant_index = fruit_quadrant - 1
+                if fruit_quadrant == 1:
+                    fruit_index = random.randint(0, 4) * 8 + random.randint(4, 8)
+                elif fruit_quadrant == 2:
+                    fruit_index = random.randint(0, 4) * 8 + random.randint(0, 4)
+                elif current_quadrant == 3:
+                    fruit_index = random.randint(4, 8) * 8 + random.randint(0, 4)
+                elif current_quadrant == 4:
+                    fruit_index = random.randint(4, 8) * 8 + random.randint(4, 7)
+                
+                if ((board_fruit[quadrant_index] < max_fruit_each_quadrant) and 
+                    (self.board[fruit_index].sum_fruit() < max_fruit_cell) and
+                    (self.board[fruit_index].valid_fruit_cell(max_type_cell))):
+                    self.add_fruit(fruit_index, fruit)
+                    placed += 1
+                    board_fruit[quadrant_index] += 1
+                    if board_fruit[quadrant_index] == max_fruit_each_quadrant:
+                        available_quadrant.remove(fruit_quadrant)
+                
