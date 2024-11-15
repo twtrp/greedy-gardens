@@ -8,7 +8,7 @@ sql_cursor = sql_conn.cursor()
 sql_cursor.execute('''
     CREATE TABLE IF NOT EXISTS `records` (
         `score` INTEGER,
-        `seed` INTEGER,
+        `seed` TEXT,
         `seed_type` TEXT
     )
 ''')
