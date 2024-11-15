@@ -14,6 +14,11 @@ class Play_PlacePathState(BaseState):
         #state
         self.is_placed = False
 
+        self.load_assets()
+
+    def load_assets(self):
+        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+
     def update(self, dt, events):
 
         for event in events:
@@ -22,8 +27,9 @@ class Play_PlacePathState(BaseState):
             for i, rect in enumerate(self.parent.grid_hitboxes):
                 if rect.collidepoint(self.mouse_pos):
                     self.cell_pos = i
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if not self.parent.game_board.board[i].path:
+                    if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
+                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                        if event.type == pygame.MOUSEBUTTONDOWN:
                             if "N" in self.parent.current_path:
                                 self.parent.game_board.board[i].north = True
                             if "W" in self.parent.current_path:
@@ -34,6 +40,8 @@ class Play_PlacePathState(BaseState):
                                 self.parent.game_board.board[i].south = True
                             self.parent.game_board.board[i].path = True
                             self.is_placed = True
+                    else:
+                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
                         # # for debug
                         # print(f"Hit box {i} clicked!")
                         # self.parent.game_board.board[i].show_detail()
@@ -51,6 +59,4 @@ class Play_PlacePathState(BaseState):
 
     def render(self, canvas):
         if self.cell_pos >= 0:
-            self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
-            scaled_selecting_tile = pygame.transform.scale_by(surface=self.selecting_tile, factor=1.25)
-            utils.blit(dest=canvas, source=scaled_selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
+            utils.blit(dest=canvas, source=self.selecting_tile , pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
