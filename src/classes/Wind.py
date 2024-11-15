@@ -43,8 +43,10 @@ class Wind(BaseEntity):
             sprite = self.sprites[f'wind_{self.current_stage}'] 
             if self.flip:
                 sprite = pygame.transform.flip(surface=sprite, flip_x=False, flip_y=True)
-            utils.blit(dest=self.surface,
-                               source=sprite,
-                               pos=(self.x - self.x_step*self.current_stage, self.y + self.y_offset), pos_anchor=posanchors.topleft)
+            utils.blit(
+                dest=self.surface,
+                source=sprite,
+                pos=(self.x - self.x_step*self.current_stage, self.y + self.y_offset), pos_anchor=posanchors.topleft
+            )
 
         

@@ -1,5 +1,7 @@
 from src.library.core import *
 from src.library.resource_loader import *
+import tween
+from typing import List
 
 
 # Color functions
@@ -457,3 +459,58 @@ def set_cursor(
         pygame.mouse.set_cursor(cursor)
     except pygame.error:
         cursor = cursors.normal
+
+
+# Tween functions
+
+def multitween(
+        tween_list: list,
+        container: object,
+        keys: List[str],
+        end_values: List[float],
+        time: float,
+        ease_type: callable,
+        delay: float = 0,
+        on_complete: callable = None
+    ) -> None:
+    '''
+    Use this to tween multiple values
+    Returns nothing
+
+    tween_list = list to append the tween to
+    container = object to tween
+    key = list of keys to tween
+    end_value = list of end values
+    time = time to tween
+    ease_type = easing function
+    delay = delay before tweening
+    on_complete = function to call when tween is complete
+    '''
+    if on_complete is None:
+        for i in range(len(keys)):
+            tween_list.append(tween.to(
+                container=container,
+                key=keys[i],
+                end_value=end_values[i],
+                time=time,
+                ease_type=ease_type,
+                delay=delay
+            ))
+    else:
+        for i in range(len(keys) - 1):
+            tween_list.append(tween.to(
+                container=container,
+                key=keys[i],
+                end_value=end_values[i],
+                time=time,
+                ease_type=ease_type,
+                delay=delay
+            ))
+        tween_list.append(tween.to(
+            container=container,
+            key=keys[-1],
+            end_value=end_values[-1],
+            time=time,
+            ease_type=ease_type,
+            delay=delay
+        ).on_complete(on_complete))
