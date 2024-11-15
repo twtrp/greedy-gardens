@@ -16,15 +16,16 @@ class PlayState(BaseState):
         BaseState.__init__(self, game, parent, stack, seed)
 
         self.game.canvas.fill((0, 0, 0))
-        print(seed)
+        self.seed = seed
+        print("seed="+seed)
 
         # config of gui
         self.box_width = 272
 
         # create deck
-        self.deck_fruit = Deck('fruit')
-        self.deck_path = Deck('path')
-        self.deck_event = Deck('event')
+        self.deck_fruit = Deck('fruit', seed)
+        self.deck_path = Deck('path', seed)
+        self.deck_event = Deck('event', seed)
 
         # drawn card
         self.drawn_cards_fruit = []
@@ -56,7 +57,7 @@ class PlayState(BaseState):
         self.current_event = None
         
         # define board
-        self.game_board = GameBoard()
+        self.game_board = GameBoard(seed)
         #function and example for use in gen map and place path
         #self.game_board.set_path(index, path_type)
         #self.game_board.add_fruit(index, fruit_type, value)
