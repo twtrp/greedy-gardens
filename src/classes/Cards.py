@@ -5,4 +5,4 @@ class Cards:
         self.strike = isStrike
 
     def __repr__(self):
-        return f"Card({self.card_type})"
+        return f"Card(type={self.card_type}, name={self.card_name}, strike={self.strike})\n"
