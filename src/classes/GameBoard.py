@@ -23,6 +23,10 @@ class GameBoard():
     def set_home(self, index):
         self.board[index].set_path("home")
         self.board[index].home = True
+        self.board[index].north = True
+        self.board[index].west = True
+        self.board[index].east = True
+        self.board[index].south = True
     
     def set_magic_fruit(self,index,num):
         self.board[index].magic_fruit=num
@@ -72,14 +76,18 @@ class GameBoard():
         return diamond_indices
     
     def set_board(self):
+        # This list keep index of house and magic fruits. Used in fruits generation logic
+        unique_index = []
+
         # Set home location
         home_index = random.randint(1, 6) * 8 + random.randint(1, 6) # index = row*8 + column with home not at the edge
         home_quadrant = self.check_quadrant(home_index)
         self.set_home(home_index)
 
-        no_mfruit_index = self.diamond_radius(home_index)
+        unique_index.append(home_index)
 
         # Set Magic Fruits Location
+        no_mfruit_index = self.diamond_radius(home_index)
         mfruitquadrant = [1, 2, 3, 4]
         mfruitquadrant.remove(home_quadrant) # Possible location of magic fruit by quadrant
         for mfruitnum in range(1, 4):
@@ -91,6 +99,7 @@ class GameBoard():
                     mfruitindex = random.randint(1, 3) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 2:
                 while loop: 
@@ -98,6 +107,7 @@ class GameBoard():
                     mfruitindex = random.randint(1, 3) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 3:
                 while loop: 
@@ -105,6 +115,7 @@ class GameBoard():
                     mfruitindex = random.randint(4, 6) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 4:
                 while loop: 
@@ -112,6 +123,7 @@ class GameBoard():
                     mfruitindex = random.randint(4, 6) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
 
         # Set fruit location
@@ -150,9 +162,19 @@ class GameBoard():
                 elif current_quadrant == 4:
                     fruit_index = random.randint(4, 7) * 8 + random.randint(4, 7)
                 
+                '''
+                Fruits generation has 4 conditions
+                1. The number of fruit in that quadrant must not exceed max_fruit_each_quadrant.
+                2. The number of fruit in a cell must not exceed max_fruit_cell.
+                3. In that cell, there must be no more than max_type_cell instances of the same fruit type.
+                4. The index of the fruit must not be that of home and magic fruits.
+                Note: There are 6 types of fruits, each has fruit_each_type instances.
+                '''
+
                 if ((board_fruit[quadrant_index] < max_fruit_each_quadrant) and 
                     (self.board[fruit_index].sum_fruit() < max_fruit_cell) and
-                    (self.board[fruit_index].valid_fruit_cell(max_type_cell))):
+                    (self.board[fruit_index].valid_fruit_cell(max_type_cell)) and
+                    (fruit_index not in unique_index)):
                     self.add_fruit(fruit_index, fruit)
                     placed += 1
                     board_fruit[quadrant_index] += 1
