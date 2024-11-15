@@ -73,7 +73,8 @@ class Play_PlayEventState(BaseState):
                 ))
 
         # Load image/sprite
-        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+        self.selected_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selected_tile')
+        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
 
         self.small_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='small_selecting_tile')
         self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
@@ -101,7 +102,7 @@ class Play_PlayEventState(BaseState):
                                 elif event.key == pygame.K_s and self.choice < 5:
                                     self.choice += 1
                             if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                 if event.type == pygame.MOUSEBUTTONDOWN:
                                     if "N" in self.choices[self.choice]:
                                         self.parent.game_board.board[i].north = True
@@ -115,7 +116,7 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[i].path = True
                                     self.played_event = True
                             else:
-                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
 
             elif self.parent.current_event == 'event_keep':
                 # print('event_keep')
@@ -189,17 +190,17 @@ class Play_PlayEventState(BaseState):
                                 self.cell_pos = i
                                 if self.selected_cell is None:
                                     if self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.selected_cell = i
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                                 else:
                                     if (i != self.selected_cell and
                                         self.parent.game_board.board[i].path and
                                         not self.parent.game_board.board[i].home and
                                         not self.parent.game_board.board[i].would_be_same(self.parent.game_board.board[self.selected_cell])):
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')   
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')   
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.parent.game_board.board[i].combine_directions(self.parent.game_board.board[self.selected_cell])
                                             self.parent.game_board.board[self.selected_cell].north = False
@@ -210,11 +211,11 @@ class Play_PlayEventState(BaseState):
                                             self.selected_cell = None
                                             self.played_event = True
                                     elif i == self.selected_cell:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.selected_cell = None
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
                     print("No merge possible")
                     self.played_event = True
@@ -274,27 +275,27 @@ class Play_PlayEventState(BaseState):
                                 self.cell_pos = i
                                 if self.selected_cell is None:
                                     if self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.selected_cell = i
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                                 else:
                                     if (i != self.selected_cell and 
                                         self.parent.game_board.board[i].path and
                                         not self.parent.game_board.board[i].home and
                                         not self.parent.game_board.board[i].is_the_same(self.parent.game_board.board[self.selected_cell])):
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             Cell.swap_path(self.parent.game_board.board[i], self.parent.game_board.board[self.selected_cell])
                                             self.selected_cell = None
                                             self.played_event = True
                                     elif i == self.selected_cell:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:    
                                             self.selected_cell = None
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
                     print("No swap possible")
                     self.played_event = True
@@ -372,8 +373,10 @@ class Play_PlayEventState(BaseState):
             utils.blit(dest=canvas, source=self.path_ES_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 30), pos_anchor='center')
             utils.blit(dest=canvas, source=self.small_selecting_tile, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320 + 58*self.choice), pos_anchor='center')
 
+        if self.selected_cell:
+            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+            
         if self.cell_pos >= 0:
             utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
-        if self.selected_cell:
-            utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+        

@@ -17,7 +17,7 @@ class Play_PlacePathState(BaseState):
         self.load_assets()
 
     def load_assets(self):
-        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
 
     def update(self, dt, events):
 
@@ -28,7 +28,7 @@ class Play_PlacePathState(BaseState):
                 if rect.collidepoint(self.mouse_pos):
                     self.cell_pos = i
                     if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             if "N" in self.parent.current_path:
                                 self.parent.game_board.board[i].north = True
@@ -41,7 +41,7 @@ class Play_PlacePathState(BaseState):
                             self.parent.game_board.board[i].path = True
                             self.is_placed = True
                     else:
-                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                         # # for debug
                         # print(f"Hit box {i} clicked!")
                         # self.parent.game_board.board[i].show_detail()
