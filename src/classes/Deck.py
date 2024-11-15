@@ -2,9 +2,12 @@ from src.classes.Cards import Cards
 import random
 
 class Deck:
-    def __init__(self, card_type):
+    def __init__(self, card_type, seed):
         self.deck_type = card_type
+        self.seed = seed
         self.cards = []
+
+        random.seed(self.seed)
 
         self.build_deck()
         random.shuffle(self.cards)
