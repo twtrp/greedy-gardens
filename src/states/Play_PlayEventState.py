@@ -27,47 +27,54 @@ class Play_PlayEventState(BaseState):
         self.selecting_path = False
         self.selected_cell = None
         self.choosing = False
+        self.drawn_keep = False
+        self.card_path1_image = None
+        self.card_path2_image = None
+        self.card_path3_image = None
 
         self.load_assets()
 
     def load_assets(self):
         # Load text
+        self.choice_keep_title = utils.get_text(text='choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_175)
         self.choice_title = utils.get_text(text='choose', font=fonts.lf2, size='large', color=colors.mono_175)
 
         # Load Button
-        self.point_button_option_list = [
-            {
-                'id': 'add today',
-                'text1': 'Get 1 point today,',
-                'text2': 'Lose 1 point next day',
-            },
-            {
-                'id': 'lose today',
-                'text1': 'Lose 1 point today,',
-                'text2': 'Get 1 point next day',
-            }
-        ]
-        self.point_button_option_surface_list = []
-        for i, option in enumerate(self.point_button_option_list):
-            text1 = utils.get_text(text=option['text1'], font=fonts.lf2, size='medium', color=colors.white)
-            text2 = utils.get_text(text=option['text2'], font=fonts.lf2, size='medium', color=colors.white)
-            self.point_button_option_surface_list.append({
-                'id': option['id'],
-                'surface1': text1,
-                'surface2': text2,
-                'scale': 1.0
-            })
-            self.button_list.append(Button(
-                game=self.game,
-                id=option['id'],
-                width=400,
-                height=95,
-                pos=(constants.canvas_width/2, 290 + (i*2)*75),
-                pos_anchor=posanchors.center
-            ))
+        if self.parent.current_event == 'event_point':
+            self.point_button_option_list = [
+                {
+                    'id': 'add today',
+                    'text1': 'Get 1 point today,',
+                    'text2': 'Lose 1 point next day',
+                },
+                {
+                    'id': 'lose today',
+                    'text1': 'Lose 1 point today,',
+                    'text2': 'Get 1 point next day',
+                }
+            ]
+            self.point_button_option_surface_list = []
+            for i, option in enumerate(self.point_button_option_list):
+                text1 = utils.get_text(text=option['text1'], font=fonts.lf2, size='medium', color=colors.white)
+                text2 = utils.get_text(text=option['text2'], font=fonts.lf2, size='medium', color=colors.white)
+                self.point_button_option_surface_list.append({
+                    'id': option['id'],
+                    'surface1': text1,
+                    'surface2': text2,
+                    'scale': 1.0
+                })
+                self.button_list.append(Button(
+                    game=self.game,
+                    id=option['id'],
+                    width=400,
+                    height=95,
+                    pos=(constants.canvas_width/2, 290 + (i*2)*75),
+                    pos_anchor=posanchors.center
+                ))
 
         # Load image/sprite
-        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+        self.selected_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selected_tile')
+        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
 
         self.small_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='small_selecting_tile')
         self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
@@ -95,7 +102,7 @@ class Play_PlayEventState(BaseState):
                                 elif event.key == pygame.K_s and self.choice < 5:
                                     self.choice += 1
                             if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                 if event.type == pygame.MOUSEBUTTONDOWN:
                                     if "N" in self.choices[self.choice]:
                                         self.parent.game_board.board[i].north = True
@@ -109,11 +116,68 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[i].path = True
                                     self.played_event = True
                             else:
-                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
 
             elif self.parent.current_event == 'event_keep':
-                print('event_keep')
-                self.played_event = True
+                # print('event_keep')
+                self.choosing = True
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            if not self.drawn_keep:
+                                self.card_path1 = self.parent.deck_path.draw_card()
+                                self.card_path2 = self.parent.deck_path.draw_card()
+                                self.card_path3 = self.parent.deck_path.draw_card()
+                                self.card_path1_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_path1.card_name}")
+                                self.card_path2_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_path2.card_name}")
+                                self.card_path3_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_path3.card_name}")
+                                self.card_path_button_option_list = [
+                                    {
+                                        'id': 'path 1',
+                                    },
+                                    {
+                                        'id': 'path 2',
+                                    },
+                                    {
+                                        'id': 'path 3',
+                                    },
+                                ]
+                                for i, option in enumerate(self.card_path_button_option_list):
+                                    self.button_list.append(Button(
+                                        game=self.game,
+                                        id=option['id'],
+                                        width=192,
+                                        height=256,
+                                        pos=(constants.canvas_width/2 - 210 + i*210, constants.canvas_height/2),
+                                        pos_anchor=posanchors.center
+                                    ))
+                                # self.parent.current_path = self.card_drawn.card_name
+                                self.drawn_keep = True
+                if self.drawn_keep:
+                    for button in self.button_list:
+                        button.update(dt=dt, events=events)
+                        if button.hovered:
+                            if button.hover_cursor is not None:
+                                self.cursor = button.hover_cursor
+                        if button.clicked:
+                            if button.id == 'path 1':
+                                print(f'select path 1')
+                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                self.parent.deck_path.cards.append(self.card_path1)
+                                self.choosing = False
+                                self.played_event = True
+                            elif button.id == 'path 2':
+                                print(f'select path 2')
+                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                self.parent.deck_path.cards.append(self.card_path2)
+                                self.choosing = False
+                                self.played_event = True
+                            elif button.id == 'path 3':
+                                print(f'select path 3')
+                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                self.parent.deck_path.cards.append(self.card_path3)
+                                self.choosing = False
+                                self.played_event = True
 
             elif self.parent.current_event == 'event_merge':
                 # print('event_merge')
@@ -126,17 +190,17 @@ class Play_PlayEventState(BaseState):
                                 self.cell_pos = i
                                 if self.selected_cell is None:
                                     if self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.selected_cell = i
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                                 else:
                                     if (i != self.selected_cell and
                                         self.parent.game_board.board[i].path and
                                         not self.parent.game_board.board[i].home and
                                         not self.parent.game_board.board[i].would_be_same(self.parent.game_board.board[self.selected_cell])):
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')   
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')   
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.parent.game_board.board[i].combine_directions(self.parent.game_board.board[self.selected_cell])
                                             self.parent.game_board.board[self.selected_cell].north = False
@@ -147,11 +211,11 @@ class Play_PlayEventState(BaseState):
                                             self.selected_cell = None
                                             self.played_event = True
                                     elif i == self.selected_cell:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.selected_cell = None
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
                     print("No merge possible")
                     self.played_event = True
@@ -161,32 +225,27 @@ class Play_PlayEventState(BaseState):
                 self.choosing = True
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
-                    
                     if button.hovered:
                         if button.hover_cursor is not None:
                             self.cursor = button.hover_cursor
-
                         for option in self.point_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
-
                     else:
                         for option in self.point_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
-
                     if button.clicked:
                         if button.id == 'add today':
-                            print(f'adding score day {self.parent.current_day}')
+                            # print(f'adding score day {self.parent.current_day}')
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') + 1)
                             if (self.parent.current_day < self.parent.day):
                                 setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') - 1)
                             self.choosing = False
                             self.played_event = True
-
                         elif button.id == 'lose today':
-                            print(f'losing score day {self.parent.current_day}')
+                            # print(f'losing score day {self.parent.current_day}')
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') - 1)
                             if (self.parent.current_day < self.parent.day):
@@ -216,27 +275,27 @@ class Play_PlayEventState(BaseState):
                                 self.cell_pos = i
                                 if self.selected_cell is None:
                                     if self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             self.selected_cell = i
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                                 else:
                                     if (i != self.selected_cell and 
                                         self.parent.game_board.board[i].path and
                                         not self.parent.game_board.board[i].home and
                                         not self.parent.game_board.board[i].is_the_same(self.parent.game_board.board[self.selected_cell])):
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:
                                             Cell.swap_path(self.parent.game_board.board[i], self.parent.game_board.board[self.selected_cell])
                                             self.selected_cell = None
                                             self.played_event = True
                                     elif i == self.selected_cell:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
                                         if event.type == pygame.MOUSEBUTTONDOWN:    
                                             self.selected_cell = None
                                     else:
-                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
+                                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
                     print("No swap possible")
                     self.played_event = True
@@ -269,16 +328,32 @@ class Play_PlayEventState(BaseState):
                                     outer_border_width=0,
                                     outer_border_color=colors.black)
             
-            utils.blit(dest=canvas, source=self.choice_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
-            for i, option in enumerate(self.point_button_option_surface_list):
-                scaled_point_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
-                utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 265 + (i*2)*75), pos_anchor=posanchors.center)
-                scaled_point_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
-                utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 315 + (i*2)*75), pos_anchor=posanchors.center)
-            
-            # # show button hit box
-            # for button in self.button_list:
-            #     button.render(canvas)
+            if self.parent.current_event == 'event_keep':
+                utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                if self.card_path3_image:
+                    scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2)
+                    scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2)
+                    scaled_card_path3 = pygame.transform.scale_by(surface=self.card_path3_image, factor=2)
+                    utils.blit(dest=canvas, source=scaled_card_path1, pos=(constants.canvas_width/2 - 210, constants.canvas_height/2), pos_anchor='center')
+                    utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                    utils.blit(dest=canvas, source=scaled_card_path3, pos=(constants.canvas_width/2 + 210, constants.canvas_height/2), pos_anchor='center')
+
+                # # show button hit box
+                # for button in self.button_list:
+                #     button.render(canvas)
+
+            elif self.parent.current_event == 'event_point':
+                utils.blit(dest=canvas, source=self.choice_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                for i, option in enumerate(self.point_button_option_surface_list):
+                    scaled_point_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
+                    utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 265 + (i*2)*75), pos_anchor=posanchors.center)
+                    scaled_point_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
+                    utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 315 + (i*2)*75), pos_anchor=posanchors.center)
+                
+                # # show button hit box
+                # for button in self.button_list:
+                #     button.render(canvas)
+
 
         if self.selecting_path:
             utils.draw_rect(dest=canvas,
@@ -298,8 +373,10 @@ class Play_PlayEventState(BaseState):
             utils.blit(dest=canvas, source=self.path_ES_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 30), pos_anchor='center')
             utils.blit(dest=canvas, source=self.small_selecting_tile, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320 + 58*self.choice), pos_anchor='center')
 
+        if self.selected_cell:
+            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+            
         if self.cell_pos >= 0:
             utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
-        if self.selected_cell:
-            utils.blit(dest=canvas, source=self.selecting_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+        
