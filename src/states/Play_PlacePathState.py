@@ -27,8 +27,9 @@ class Play_PlacePathState(BaseState):
             for i, rect in enumerate(self.parent.grid_hitboxes):
                 if rect.collidepoint(self.mouse_pos):
                     self.cell_pos = i
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
+                    if not self.parent.game_board.board[i].path and not self.parent.game_board.board[i].home:
+                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile')
+                        if event.type == pygame.MOUSEBUTTONDOWN:
                             if "N" in self.parent.current_path:
                                 self.parent.game_board.board[i].north = True
                             if "W" in self.parent.current_path:
@@ -39,6 +40,8 @@ class Play_PlacePathState(BaseState):
                                 self.parent.game_board.board[i].south = True
                             self.parent.game_board.board[i].path = True
                             self.is_placed = True
+                    else:
+                        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile')
                         # # for debug
                         # print(f"Hit box {i} clicked!")
                         # self.parent.game_board.board[i].show_detail()

@@ -204,5 +204,6 @@ class Menu_SettingsState(BaseState):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
             utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 515 + i*65), pos_anchor=posanchors.center)
 
+        # show button hit box
         for button in self.button_list:
             button.render(canvas)

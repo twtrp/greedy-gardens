@@ -75,7 +75,7 @@ class Deck:
                 name.append('path_strike_WES')
         elif self.deck_type == 'event':
             for i in range(16):
-                name.append('event_point')
+                name.append('event_free')
 
         for i in name:
             if not 'strike' in i:
