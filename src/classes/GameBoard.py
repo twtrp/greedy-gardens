@@ -12,7 +12,6 @@ class GameBoard():
             self.board.append(Cell(i))
 
         self.home_index = 0
-        self.connected_indices = []
 
         # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
@@ -209,20 +208,31 @@ class GameBoard():
         east_index = center_index + 1
         south_index = center_index + 8
         if 0 <= west_index <= 63:
-            if self.board[west_index].east and west_index not in connected_indices:
+            if (self.board[center_index].west and 
+                center_index // 8 == west_index // 8 and
+                self.board[west_index].east and 
+                west_index not in connected_indices):
                 self.check_connection(connected_indices, west_index)
         if 0 <= north_index <= 63:
-            if self.board[north_index].south and north_index not in connected_indices:
+            if (self.board[center_index].north and 
+                self.board[north_index].south and 
+                north_index not in connected_indices):
                 self.check_connection(connected_indices, north_index)
         if 0 <= east_index <= 63:
-            if self.board[east_index].west and east_index not in connected_indices:
+            if (self.board[center_index].east and 
+                center_index // 8 == east_index // 8 and
+                self.board[east_index].west and 
+                east_index not in connected_indices):
                 self.check_connection(connected_indices, east_index)
         if 0 <= south_index <= 63:
-            if self.board[south_index].north and south_index not in connected_indices:
+            if (self.board[center_index].south and 
+                self.board[south_index].north and 
+                south_index not in connected_indices):
                 self.check_connection(connected_indices, south_index)
         
 
     def board_eval(self, today_fruit):
+        self.connected_indices = []
         self.check_connection(self.connected_indices, self.home_index)
         score = 0
         for i in self.connected_indices:
