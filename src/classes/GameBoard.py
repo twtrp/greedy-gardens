@@ -223,9 +223,9 @@ class GameBoard():
         
 
     def board_eval(self, today_fruit):
-        connected_indices = self.check_connection(self.connected_indices,self.home_index)
+        self.check_connection(self.connected_indices, self.home_index)
         score = 0
-        for i in connected_indices:
+        for i in self.connected_indices:
             cell_fruit = self.board[i].fruit
             if cell_fruit:
                 for fruit in cell_fruit:
