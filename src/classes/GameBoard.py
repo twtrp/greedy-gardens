@@ -12,7 +12,6 @@ class GameBoard():
             self.board.append(Cell(i))
 
         self.home_index = 0
-        self.connected_indices = []
 
         # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
@@ -223,6 +222,7 @@ class GameBoard():
         
 
     def board_eval(self, today_fruit):
+        self.connected_indices = []
         self.check_connection(self.connected_indices, self.home_index)
         score = 0
         for i in self.connected_indices:

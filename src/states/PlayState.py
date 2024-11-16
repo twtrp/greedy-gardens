@@ -40,6 +40,11 @@ class PlayState(BaseState):
         self.day3_score = 0
         self.day4_score = 0
         self.seasonal_score = 0
+        self.final_day1_score = 0
+        self.final_day2_score = 0
+        self.final_day3_score = 0
+        self.final_day4_score = 0
+        self.final_seasonal_score = 0
         self.total_score = 0
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
@@ -327,9 +332,7 @@ class PlayState(BaseState):
         # self.light_fruit_hole = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='light_green_hole')
         # self.dark_fruit_hole = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='dark_green_hole')
         
-        # gui
-        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
-        self.cant_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
+        
 
     def update(self, dt, events):
         
@@ -405,19 +408,25 @@ class PlayState(BaseState):
                 day_colors[f"day{i}_color"] = colors.yellow_light
             else:
                 day_colors[f"day{i}_color"] = colors.mono_150
+        
+        if self.current_day < 2:
+            self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
+        if self.current_day < 3:
+            self.final_day2_score = self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
+        if self.current_day < 4:
+            self.final_day3_score = self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
+        if self.current_day < 5:
+            self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
+        self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
+        self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
 
         self.score_list = [
-            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)},
-            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)},
-            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)},
-            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)},
-            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)},
-            {'text': 'Total', 'color': colors.white, 'amount': (self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
-                                                                + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
-                                                                + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
-                                                                + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
-                                                                + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
-                                                                + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0))},
+            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.final_day1_score},
+            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.final_day2_score},
+            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.final_day3_score},
+            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.final_day4_score},
+            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.final_seasonal_score},
+            {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
         ]
 
         self.score_title_list = []
@@ -429,10 +438,6 @@ class PlayState(BaseState):
         for score in self.score_list:
             amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='smaller', color=score['color'])
             self.score_amount_list.append(amount)
-
-        utils.set_cursor(cursor=self.cursor)
-        self.cursor = cursors.normal
-
 
     def render(self, canvas):     
         if self.ready:
@@ -943,11 +948,11 @@ class PlayState(BaseState):
 
                 # Render Magic Fruit
                 if self.game_board.board[i].magic_fruit == 1:
-                    utils.blit(dest=canvas, source=self.magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 24, self.grid_start_y + ((i // 8) * self.cell_size) + 24), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                 if self.game_board.board[i].magic_fruit == 2:
-                    utils.blit(dest=canvas, source=self.magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 24, self.grid_start_y + ((i // 8) * self.cell_size) + 24), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                 if self.game_board.board[i].magic_fruit == 3:
-                    utils.blit(dest=canvas, source=self.magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 24, self.grid_start_y + ((i // 8) * self.cell_size) + 24), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
 
                 # Render Fruits
                 if self.game_board.board[i].fruit:
