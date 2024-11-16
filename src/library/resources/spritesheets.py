@@ -705,3 +705,15 @@ tileset = {
         },
     }
 }
+
+home = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 48,
+        'height': 64
+    },
+    'sprites': {
+        'home': {
+            'x': 1,
+            'y': 465,
+        }}}
