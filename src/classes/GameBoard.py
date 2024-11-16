@@ -189,4 +189,44 @@ class GameBoard():
                         available_quadrant.remove(fruit_quadrant)
                 
                 # loopnumber+=1
+    
+    '''
+    Check Connected Path
+    - Recursively checking West -> North -> East -> South for the connection
+    - Have additional condition to check if the index is already included in the connected path to prevent infinite cycle
+    '''
+
+    def check_connection(self, connected_indices, center_index):
+        connected_indices.append(center_index)
+        west_index = center_index - 1
+        north_index = center_index - 8
+        east_index = center_index + 1
+        south_index = center_index + 8
+        if 0 <= west_index <= 63:
+            if self.board[west_index].east and west_index not in connected_indices:
+                self.check_connection(connected_indices, west_index)
+        if 0 <= north_index <= 63:
+            if self.board[north_index].south and north_index not in connected_indices:
+                self.check_connection(connected_indices, north_index)
+        if 0 <= east_index <= 63:
+            if self.board[east_index].west and east_index not in connected_indices:
+                self.check_connection(connected_indices, east_index)
+        if 0 <= south_index <= 63:
+            if self.board[south_index].north and south_index not in connected_indices:
+                self.check_connection(connected_indices, south_index)
+        
+
+    def board_eval(self, home_index, today_fruit):
+        connected_indices = self.check_connection(home_index)
+        score = 0
+        for i in connected_indices:
+            cell_fruit = self.board[i].fruit
+            if cell_fruit:
+                for fruit in cell_fruit:
+                    # Will change this condition later after asking Three how the fruit name is passed
+                    if fruit in today_fruit or today_fruit in fruit or fruit == today_fruit:
+                        score += 1
+        return score
+
+        
                 
