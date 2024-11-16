@@ -570,15 +570,15 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 500), pos_anchor='center')
             if self.magic_fruit1_event:
                 self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
-                utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(1040, 530), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=self.magic_fruit1_card_location, pos_anchor='topleft')
                 utils.blit(dest=canvas, source=self.magic_fruit1_image, pos=self.magic_fruit1_card_location, pos_anchor='topleft')
             if self.magic_fruit2_event:
                 self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
-                utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=(1100, 550), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=self.magic_fruit2_card_location, pos_anchor='topleft')
                 utils.blit(dest=canvas, source=self.magic_fruit2_image, pos=self.magic_fruit2_card_location, pos_anchor='topleft')
             if self.magic_fruit3_event:
                 self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
-                utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=(1160, 570), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=self.magic_fruit3_card_location, pos_anchor='topleft')
                 utils.blit(dest=canvas, source=self.magic_fruit3_image, pos=self.magic_fruit3_card_location, pos_anchor='topleft')
 
             # Render path on board
