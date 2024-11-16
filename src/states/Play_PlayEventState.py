@@ -5,6 +5,7 @@ from src.classes.Deck import Deck
 from src.classes.Cards import Cards
 from src.classes.Cell import Cell
 
+
 class Play_PlayEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
@@ -510,7 +511,7 @@ class Play_PlayEventState(BaseState):
                     if button.clicked:
                         if button.id == 'reveal path':
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                            self.parent.revealed_path = self.parent.deck_path.cards[-3:]
+                            self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
                             for card in self.parent.revealed_path:
                                 if "strike_" in card.card_name:
                                     card.card_name = card.card_name.replace("strike_", "")
@@ -518,8 +519,8 @@ class Play_PlayEventState(BaseState):
                             self.played_event = True
                         if button.id == 'reveal event':
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                            print(self.parent.deck_event.cards[-4:])
                             self.parent.revealed_event = self.parent.deck_event.cards[-4:]
+                            print(self.parent.revealed_event)
                             self.played_event = True
                 # self.played_event = True
 

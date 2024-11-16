@@ -212,6 +212,10 @@ class PlayState(BaseState):
         self.card_path_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite='card_path_back')
         self.card_event_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite='card_event_back')
 
+        self.next_text = utils.get_text(text='Next', font=fonts.lf2, size='smaller', color=colors.white)
+        self.event_text = utils.get_text(text='event', font=fonts.lf2, size='smaller', color=colors.white)
+        self.path_text = utils.get_text(text='path', font=fonts.lf2, size='smaller', color=colors.white)
+
         # dirt path
         self.dirt_sprites_1 = []
         self.dirt_sprites_2 = []
@@ -298,6 +302,20 @@ class PlayState(BaseState):
         self.path_NE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE')
         self.path_WS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS')
         self.path_ES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES')
+        self.path_NWE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NWE')
+        self.path_NWS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NWS')
+        self.path_NES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NES')
+        self.path_WES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WES')
+        self.path_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_strike')
+
+        self.event_free_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free')
+        self.event_keep_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_keep')
+        self.event_merge_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_merge')
+        self.event_point_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_point')
+        self.event_redraw_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_redraw')
+        self.event_remove_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_remove')
+        self.event_reveal_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_reveal')
+        self.event_swap_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_swap')
 
         # fruits
         self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
@@ -785,6 +803,25 @@ class PlayState(BaseState):
                 
                 for i, card in enumerate(self.revealed_path):
                     utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 4, constants.canvas_height - 6 - i*58), pos_anchor='bottomright')
+                    if card.strike:
+                        utils.blit(dest=canvas, source=self.path_strike_image, pos=(constants.canvas_width - self.box_width - 4, constants.canvas_height - 6 - i*58), pos_anchor='bottomright')
+                utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 94), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.path_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 74), pos_anchor='center')
+            
+            if len(self.revealed_event) > 0:
+                utils.draw_rect(dest=canvas,
+                                    size=(64, len(self.revealed_event)*60),
+                                    pos=(constants.canvas_width - self.box_width + 4, 0),
+                                    pos_anchor='topright',
+                                    color=(*colors.white, 191), # 75% transparency
+                                    inner_border_width=4,
+                                    outer_border_width=0,
+                                    outer_border_color=colors.black)
+                
+                for i, card in enumerate(self.revealed_event):
+                    utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 4, 6 + i*58), pos_anchor='topright')
+                utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, 6 + i*58 + 72), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.event_text, pos=(constants.canvas_width - self.box_width - 28, 6 + i*58 + 92), pos_anchor='center')
 
             if not self.substate_stack:
 
