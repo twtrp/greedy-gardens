@@ -473,9 +473,67 @@ fruit_16x16 = {
             'x': 128,
             'y': 0,
         },
+        'light_green_hole': {
+            'x': 0,
+            'y': 16,
+        },
+        'dark_green_hole': {
+            'x': 16,
+            'y': 16,
+        },
+        'fruit_shadow': {
+            'x': 64,
+            'y': 64,
+        },
         'nothing': {
             'x': 128,
             'y': 16,
+        },
+    }
+}
+
+fruit_32x32 = {
+    'file': 'fruits_32x32.png',
+    'shared_data': {
+        'width': 32,
+        'height': 32,
+    },
+    'sprites': {
+        'fruit_orange': {
+            'x': 0,
+            'y': 0,
+        },
+        'fruit_blueberry': {
+            'x': 32,
+            'y': 0,
+        },
+        'fruit_grape': {
+            'x': 64,
+            'y': 0,
+        },
+        'fruit_strawberry': {
+            'x': 96,
+            'y': 0,
+        },
+        'fruit_peach': {
+            'x': 128,
+            'y': 0,
+        },
+        'fruit_coconut': {
+            'x': 160,
+            'y': 0,
+        },
+        'magic_fruit_1': {
+            'x': 0,
+            'y': 32,
+        },
+        'magic_fruit_2': {
+            'x': 32,
+            'y': 32,
+        },
+        'magic_fruit_3': {
+            'x': 64,
+            'y': 32,
         },
     }
 }
