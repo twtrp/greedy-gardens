@@ -14,21 +14,16 @@ class Play_PlacePathState(BaseState):
         #state
         self.is_placed = False
 
-        self.load_assets()
-
-        self.select_frame = self.selecting_tile
-
-    def load_assets(self):
-        self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
-        self.cant_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
+        self.select_frame = self.parent.selecting_tile
 
     def update(self, dt, events):
+        
         self.cell_pos = -1
         for button in self.parent.grid_buttons:
             if button.hovered:
                 self.cell_pos = button.id
                 if not self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
-                    self.select_frame = self.selecting_tile
+                    self.select_frame = self.parent.selecting_tile
                     if button.clicked:
                         if "N" in self.parent.current_path:
                             self.parent.game_board.board[button.id].north = True
@@ -41,7 +36,7 @@ class Play_PlacePathState(BaseState):
                         self.parent.game_board.board[button.id].path = True
                         self.is_placed = True
                 else:
-                    self.select_frame = self.cant_selecting_tile
+                    self.select_frame = self.parent.cant_selecting_tile
                     # for debug
                     # print(f"Hit box {button.id} clicked!")
                     # self.parent.game_board.board[button.id].show_detail()
