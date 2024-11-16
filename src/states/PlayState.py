@@ -97,16 +97,6 @@ class PlayState(BaseState):
 
         self.finished_boot_up = False
         
-        # utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
-        # utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
-        # self.game.music_channel.play()
-
-        # self.tween_list = []
-        # if not self.finished_boot_up:
-        #     self.bootup_tween_chain(skip=self.game.settings['skip_bootup'])
-        # else:
-        #     self.bootup_tween_chain(skip=True)
-
     #Main methods
 
     def load_assets(self):
@@ -370,7 +360,7 @@ class PlayState(BaseState):
         elif self.endDayState:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.endDayState = False
-        elif self.is_3_strike:
+        elif self.is_3_strike and self.current_day < self.day:
             Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_3_strike = False 
 
@@ -378,16 +368,6 @@ class PlayState(BaseState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
-                        
-            #test grid
-            # elif event.type == pygame.MOUSEBUTTONDOWN:
-            #     mouse_pos = pygame.mouse.get_pos()
-            #     for i, rect in enumerate(self.grid_hitboxes):
-            #         if rect.collidepoint(mouse_pos):
-            #             print(f"Hit box {i} clicked!")
-            #             clicked_cell = self.game_board.board[i]
-            #             clicked_cell.show_detail()
-            #/test grid
 
         # Update deck remaining
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
@@ -446,11 +426,6 @@ class PlayState(BaseState):
             
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
-                
-            #test grid
-            # for rect in self.grid_hitboxes:
-            #     pygame.draw.rect(canvas, (255, 0, 0), rect, 2)
-            #/test grid
 
             # Build background
 
@@ -1001,13 +976,6 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=self.event_text, pos=(constants.canvas_width - self.box_width - 28, 6 + i*58 + 92), pos_anchor='center')
 
             if not self.substate_stack:
-
-                # ## Render menu options
-                # for i, option in enumerate(self.title_button_option_surface_list):
-                #     processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                #     processed_option.set_alpha(option['alpha'])
-                #     utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor=posanchors.center)
-
                 pass
 
             else:
@@ -1017,106 +985,3 @@ class PlayState(BaseState):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
     
 
-    #Class methods
-  
-    # def bootup_tween_chain(self, skip=False):
-    #     if not skip:
-    #         delay = 0
-    #         self.tween_list.append(tween.to(container=self.surface_logo_props,
-    #                                         key='alpha',
-    #                                         end_value=255,
-    #                                         time=2,
-    #                                         ease_type=tweencurves.easeOutCubic,
-    #                                         delay=delay))
-    #         self.tween_list.append(tween.to(container=self.surface_logo_props,
-    #                                         key='scale',
-    #                                         end_value=1,
-    #                                         time=3,
-    #                                         ease_type=tweencurves.easeOutCubic,
-    #                                         delay=delay))
-
-    #         delay = 1.75
-    #         self.tween_list.append(tween.to(container=self.overlay_props,
-    #                                         key='alpha',
-    #                                         end_value=0,
-    #                                         time=2,
-    #                                         ease_type=tweencurves.easeOutQuad,
-    #                                         delay=delay))
-    #         for layer in self.landscape_list:
-    #             self.tween_list.append(tween.to(container=layer,
-    #                                             key='y_offset',
-    #                                             end_value=0,
-    #                                             time=3.25,
-    #                                             ease_type=tweencurves.easeOutQuint,
-    #                                             delay=delay))
-                
-    #         self.tween_list.append(tween.to(container=self.winds_props,
-    #                                         key='y_offset',
-    #                                         end_value=0,
-    #                                         time=3.25,
-    #                                         ease_type=tweencurves.easeOutQuint,
-    #                                         delay=delay))
-    #         self.tween_list.append(tween.to(container=self.surface_logo_props,
-    #                                         key='y_offset',
-    #                                         end_value=-500,
-    #                                         time=3.25,
-    #                                         ease_type=tweencurves.easeOutQuint,
-    #                                         delay=delay).on_complete(self.finish_bootup))
-            
-    #         delay = 4
-    #         self.tween_list.append(tween.to(container=self.game_logo_props,
-    #                                         key='scale',
-    #                                         end_value=1,
-    #                                         time=0.75,
-    #                                         ease_type=tweencurves.easeOutElastic,
-    #                                         delay=delay))
-    #         self.tween_list.append(tween.to(container=self.game_logo_props,
-    #                                         key='alpha',
-    #                                         end_value=255,
-    #                                         time=0.1,
-    #                                         ease_type=tweencurves.easeOutCirc,
-    #                                         delay=delay))
-            
-    #         for option in self.title_button_option_surface_list:
-    #             delay += 0.125
-    #             self.tween_list.append(tween.to(container=option,
-    #                                             key='scale',
-    #                                             end_value=1,
-    #                                             time=0.5,
-    #                                             ease_type=tweencurves.easeOutElastic,
-    #                                             delay=delay))
-    #             self.tween_list.append(tween.to(container=option,
-    #                                             key='alpha',
-    #                                             end_value=255,
-    #                                             time=0.1,
-    #                                             ease_type=tweencurves.easeOutCirc,
-    #                                             delay=delay))
-                
-    #     else:
-    #         self.finish_bootup()
-
-
-    # def finish_bootup(self):
-    #     self.finished_boot_up = True
-
-    #     # Clear intro assets
-    #     del self.overlay
-    #     del self.overlay_props
-
-    #     # Set props to final values
-    #     for layer in self.landscape_list:
-    #         layer['y_offset'] = 0
-    #         self.winds_props['y_offset'] = 0
-    #         self.game_logo_props['scale'] = 1
-    #         self.game_logo_props['alpha'] = 255
-    #         for option in self.title_button_option_surface_list:
-    #             option['scale'] = 1
-    #             option['alpha'] = 255
-
-    #     # Convert surfaces to static
-    #     self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-    #     for option in self.title_button_option_surface_list:
-    #         option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-        
-    #     # Initiate substate
-    #     Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
