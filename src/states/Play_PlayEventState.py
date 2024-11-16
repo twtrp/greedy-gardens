@@ -50,7 +50,7 @@ class Play_PlayEventState(BaseState):
         self.choice_point_title = utils.get_text(text='choose', font=fonts.lf2, size='large', color=colors.mono_175)
         self.choice_redraw_title = utils.get_text(text='choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_175)
         self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
-
+        
         # Load Button
         if self.parent.current_event == 'event_point':
             self.point_button_option_list = [
@@ -152,6 +152,34 @@ class Play_PlayEventState(BaseState):
                     width=200,
                     height=40,
                     pos=(constants.canvas_width/2, 690),
+                    pos_anchor=posanchors.center
+                ))
+
+        elif self.parent.current_event == 'event_reveal':
+            self.reveal_button_option_list = [
+                {
+                    'id': 'reveal path',
+                    'text': 'Reveal top 3 path cards',
+                },
+                {
+                    'id': 'reveal event',
+                    'text': 'Reveal top 4 event cards',
+                },
+            ]
+            self.reveal_button_option_surface_list = []
+            for i, option in enumerate(self.reveal_button_option_list):
+                text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
+                self.reveal_button_option_surface_list.append({
+                    'id': option['id'],
+                    'surface': text,
+                    'scale': 1.0
+                })
+                self.button_list.append(Button(
+                    game=self.game,
+                    id=option['id'],
+                    width=500,
+                    height=40,
+                    pos=(constants.canvas_width/2, 250 + i*65),
                     pos_anchor=posanchors.center
                 ))
             
@@ -467,7 +495,33 @@ class Play_PlayEventState(BaseState):
 
             elif self.parent.current_event == 'event_reveal':
                 # print('event_reveal')
-                self.played_event = True
+                for button in self.button_list:
+                    button.update(dt=dt, events=events)
+                    if button.hovered:
+                        for option in self.reveal_button_option_surface_list:
+                            if button.hover_cursor is not None:
+                                self.cursor = button.hover_cursor
+                            if button.id == option['id']:
+                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                    else:
+                        for option in self.reveal_button_option_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+                    if button.clicked:
+                        if button.id == 'reveal path':
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            self.parent.revealed_path = self.parent.deck_path.cards[-3:]
+                            for card in self.parent.revealed_path:
+                                if "strike_" in card.card_name:
+                                    card.card_name = card.card_name.replace("strike_", "")
+                            print(self.parent.revealed_path)
+                            self.played_event = True
+                        if button.id == 'reveal event':
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            print(self.parent.deck_event.cards[-4:])
+                            self.parent.revealed_event = self.parent.deck_event.cards[-4:]
+                            self.played_event = True
+                # self.played_event = True
 
             elif self.parent.current_event == 'event_swap':
                 # print('event_swap')
@@ -570,6 +624,16 @@ class Play_PlayEventState(BaseState):
                 # # show button hit box
                 # for button in self.button_list:
                 #     button.render(canvas)
+
+            elif self.parent.current_event == 'event_reveal':
+                utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                for i, option in enumerate(self.reveal_button_option_surface_list):
+                    scaled_reveal_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                    utils.blit(dest=canvas, source=scaled_reveal_button, pos=(constants.canvas_width/2, 250 + i*65), pos_anchor=posanchors.center)
+
+                # show button hit box
+                for button in self.button_list:
+                    button.render(canvas)
 
         if self.parent.current_event == 'event_remove':
             for i, option in enumerate(self.remove_button_option_surface_list):

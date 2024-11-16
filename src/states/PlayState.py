@@ -43,6 +43,8 @@ class PlayState(BaseState):
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
 
+        self.revealed_path = []
+        self.revealed_event = []
         self.day1_fruit = None
         self.day2_fruit = None
         self.day3_fruit = None
@@ -278,6 +280,14 @@ class PlayState(BaseState):
         self.scaled_magic_fruit1_board_image = pygame.transform.scale_by(surface=self.magic_fruit1_image, factor=3)
         self.scaled_magic_fruit2_board_image = pygame.transform.scale_by(surface=self.magic_fruit2_image, factor=3)
         self.scaled_magic_fruit3_board_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=3)
+
+        # path
+        self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
+        self.path_NS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS')
+        self.path_NW_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW')
+        self.path_NE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE')
+        self.path_WS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS')
+        self.path_ES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES')
 
     def update(self, dt, events):
         if self.ready:
@@ -743,6 +753,20 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 56, self.grid_start_y + ((i // 8) * self.cell_size) + 8), pos_anchor='topleft')
                         if pos == 2:
                             utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 8, self.grid_start_y + ((i // 8) * self.cell_size) + 56), pos_anchor='topleft')
+
+            # Render Revealed card
+            if len(self.revealed_path) > 0:
+                utils.draw_rect(dest=canvas,
+                                    size=(64, len(self.revealed_path)*60),
+                                    pos=(constants.canvas_width - self.box_width + 4, constants.canvas_height),
+                                    pos_anchor='bottomright',
+                                    color=(*colors.white, 191), # 75% transparency
+                                    inner_border_width=4,
+                                    outer_border_width=0,
+                                    outer_border_color=colors.black)
+                
+                for i, card in enumerate(self.revealed_path):
+                    utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 4, constants.canvas_height - 6 - i*58), pos_anchor='bottomright')
 
             if not self.substate_stack:
 
