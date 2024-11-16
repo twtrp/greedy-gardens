@@ -17,6 +17,7 @@ class Play_PlacePathState(BaseState):
         self.select_frame = self.parent.selecting_tile
 
     def update(self, dt, events):
+        
         self.cell_pos = -1
         for button in self.parent.grid_buttons:
             if button.hovered:
