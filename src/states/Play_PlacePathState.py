@@ -51,6 +51,7 @@ class Play_PlacePathState(BaseState):
                 self.parent.is_strike = True
             else: 
                 self.parent.drawing = True
+            self.parent.current_path = None
             print("exiting place")
             self.exit_state()
 

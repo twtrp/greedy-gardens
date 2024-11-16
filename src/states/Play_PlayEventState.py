@@ -414,10 +414,9 @@ class Play_PlayEventState(BaseState):
                             self.parent.strikes = 0
             else:
                 self.parent.drawing = True
+            self.parent.current_event = None
             print("exiting play event")
             self.exit_state()
-
-        
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

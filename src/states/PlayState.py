@@ -173,6 +173,8 @@ class PlayState(BaseState):
         self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.lf2, size='small', color=colors.white)
         self.left_box_task = utils.get_text(text='Current task', font=fonts.lf2, size='small', color=colors.white)
         self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_draw_text = utils.get_text(text='Draw a card', font=fonts.lf2, size='tiny', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
@@ -397,7 +399,6 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=score, pos=(60, 80 + i*45), pos_anchor='topleft')
             utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 390), pos_anchor='center')
             utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 510), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 550), pos_anchor='center')
 
             # Render image in left white box
             scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
@@ -411,6 +412,14 @@ class PlayState(BaseState):
                 self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
                 scaled_current_path_image = pygame.transform.scale_by(surface=self.current_path_image, factor=0.875)
                 utils.blit(dest=canvas, source=scaled_current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 550), pos_anchor='center')
+            elif self.current_event:
+                self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
+                scaled_current_event_image = pygame.transform.scale_by(surface=self.current_event_image, factor=0.875)
+                utils.blit(dest=canvas, source=scaled_current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_event_text, pos=(self.box_width/2, 550), pos_anchor='center')
+            else:
+                utils.blit(dest=canvas, source=self.left_box_draw_text, pos=(self.box_width/2, 550), pos_anchor='center')
 
                 ## Render Day's Fruit
             if self.day1_fruit:
