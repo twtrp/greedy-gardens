@@ -146,20 +146,25 @@ class GameBoard():
         max_fruit_each_quadrant = (fruit_each_type * 6) / 4
 
         # all fruit types
-        all_fruit = ["strawberry", "orange", "blueberry", "kiwi", "coconut", "peach"]
+        all_fruit = ["fruit_strawberry", "fruit_orange", "fruit_blueberry", "fruit_grape", "fruit_coconut", "fruit_peach"]
+
+        # debug
+        # loopnumber = 0
+        # test_fruit = ["fruit_strawberry"]
 
         for fruit in all_fruit:
             placed = 0
             while placed < fruit_each_type:
+                # print(loopnumber)
                 fruit_quadrant = random.choice(available_quadrant)
                 quadrant_index = fruit_quadrant - 1
                 if fruit_quadrant == 1:
                     fruit_index = random.randint(0, 3) * 8 + random.randint(4, 7)
                 elif fruit_quadrant == 2:
                     fruit_index = random.randint(0, 3) * 8 + random.randint(0, 3)
-                elif current_quadrant == 3:
+                elif fruit_quadrant == 3:
                     fruit_index = random.randint(4, 7) * 8 + random.randint(0, 3)
-                elif current_quadrant == 4:
+                elif fruit_quadrant == 4:
                     fruit_index = random.randint(4, 7) * 8 + random.randint(4, 7)
                 
                 '''
@@ -170,14 +175,18 @@ class GameBoard():
                 4. The index of the fruit must not be that of home and magic fruits.
                 Note: There are 6 types of fruits, each has fruit_each_type instances.
                 '''
+                fruit_cond1 = board_fruit[quadrant_index] < max_fruit_each_quadrant
+                fruit_cond2 = self.board[fruit_index].sum_fruit() < max_fruit_cell
+                fruit_cond3 = self.board[fruit_index].valid_fruit_cell(max_type_cell)
+                fruit_cond4 = fruit_index not in unique_index
 
-                if ((board_fruit[quadrant_index] < max_fruit_each_quadrant) and 
-                    (self.board[fruit_index].sum_fruit() < max_fruit_cell) and
-                    (self.board[fruit_index].valid_fruit_cell(max_type_cell)) and
-                    (fruit_index not in unique_index)):
+                if fruit_cond1 and fruit_cond2 and fruit_cond3 and fruit_cond4:
                     self.add_fruit(fruit_index, fruit)
                     placed += 1
+                    # print(f"Placed {fruit} at index {fruit_index}. Total placed: {placed}")
                     board_fruit[quadrant_index] += 1
                     if board_fruit[quadrant_index] == max_fruit_each_quadrant:
                         available_quadrant.remove(fruit_quadrant)
+                
+                # loopnumber+=1
                 

@@ -75,4 +75,4 @@ class Cell():
     
     def valid_fruit_cell(self, max_per_type):
         fruit_counts = Counter(self.fruit)
-        return all(count <= 2 for count in fruit_counts.values())
+        return all(count < max_per_type for count in fruit_counts.values())

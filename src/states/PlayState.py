@@ -272,6 +272,11 @@ class PlayState(BaseState):
         self.magic_fruit3_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite='magic_fruit_3')
         self.scaled_magic_fruit3_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=2)
 
+        # magic fruit on board
+        self.scaled_magic_fruit1_board_image = pygame.transform.scale_by(surface=self.magic_fruit1_image, factor=3)
+        self.scaled_magic_fruit2_board_image = pygame.transform.scale_by(surface=self.magic_fruit2_image, factor=3)
+        self.scaled_magic_fruit3_board_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=3)
+
     def update(self, dt, events):
         if self.ready:
 
@@ -359,10 +364,7 @@ class PlayState(BaseState):
             amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='smaller', color=score['color'])
             self.score_amount_list.append(amount)
 
-    def render(self, canvas):
-        
-        
-            
+    def render(self, canvas):     
         if self.ready:
             
             for layer in self.landscape_list:
@@ -473,7 +475,7 @@ class PlayState(BaseState):
             scaled_card_event_back = pygame.transform.scale_by(surface=self.card_event_back_image, factor=0.875)
             utils.blit(dest=canvas, source=scaled_card_event_back, pos=(1079, 375), pos_anchor='center')
 
-                ## Render Magic Fruit Event
+            ## Render Magic Fruit Event
             if self.magic_fruit1_event:
                 self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
                 utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(1040, 530), pos_anchor='topleft')
@@ -713,6 +715,25 @@ class PlayState(BaseState):
                             self.game_board.board[i].south):
                             utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
+
+                # Render Magic Fruit
+                if self.game_board.board[i].magic_fruit == 1:
+                    utils.blit(dest=canvas, source=self.scaled_magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                if self.game_board.board[i].magic_fruit == 2:
+                    utils.blit(dest=canvas, source=self.scaled_magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                if self.game_board.board[i].magic_fruit == 3:
+                    utils.blit(dest=canvas, source=self.scaled_magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+
+                # Render Fruits
+                if self.game_board.board[i].fruit:
+                    for pos, fruit in enumerate(self.game_board.board[i].fruit):
+                        fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=fruit)
+                        if pos == 0:
+                            utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 8, self.grid_start_y + ((i // 8) * self.cell_size) + 8), pos_anchor='topleft')
+                        if pos == 1:
+                            utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 56, self.grid_start_y + ((i // 8) * self.cell_size) + 8), pos_anchor='topleft')
+                        if pos == 2:
+                            utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 8, self.grid_start_y + ((i // 8) * self.cell_size) + 56), pos_anchor='topleft')
 
             if not self.substate_stack:
 
