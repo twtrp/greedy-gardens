@@ -344,7 +344,7 @@ class PlayState(BaseState):
             self.endDayState = True
         elif self.endDayState:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.is_3_strike = False
+            self.is_3_strike = False 
             self.endDayState = False
         
 
