@@ -21,6 +21,8 @@ class Play_DrawEventState(BaseState):
                         self.parent.drawn_cards_event.append(self.card_drawn)
                         self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.card_drawn.card_name}")
                         self.parent.current_event = self.card_drawn.card_name
+                        if len(self.parent.revealed_event) > 0:
+                            self.parent.revealed_event.pop()
                         self.not_drawn = False
                     else:
                         self.parent.is_strike = False

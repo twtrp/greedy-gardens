@@ -21,6 +21,8 @@ class Play_DrawPathState(BaseState):
                         self.parent.drawn_cards_path.append(self.card_drawn)
                         self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_drawn.card_name}")
                         self.parent.current_path = self.card_drawn.card_name
+                        if len(self.parent.revealed_path) > 0:
+                            self.parent.revealed_path.pop()
                         self.not_drawn = False
                     else:
                         self.parent.placing = True

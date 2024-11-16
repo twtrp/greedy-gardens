@@ -5,6 +5,7 @@ from src.classes.Deck import Deck
 from src.classes.Cards import Cards
 from src.classes.Cell import Cell
 
+
 class Play_PlayEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
@@ -312,12 +313,48 @@ class Play_PlayEventState(BaseState):
                                         not self.parent.game_board.board[i].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                         self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')   
                                         if event.type == pygame.MOUSEBUTTONDOWN:
+                                            old_path1 = "_"
+                                            if self.parent.game_board.board[i].north:
+                                                old_path1 += "N"
+                                            if self.parent.game_board.board[i].west:
+                                                old_path1 += "W"
+                                            if self.parent.game_board.board[i].east:
+                                                old_path1 += "E"
+                                            if self.parent.game_board.board[i].south:
+                                                old_path1 += "S"
+                                            old_path2 = "_"
+                                            if self.parent.game_board.board[self.selected_cell].north:
+                                                old_path2 += "N"
+                                            if self.parent.game_board.board[self.selected_cell].west:
+                                                old_path2 += "W"
+                                            if self.parent.game_board.board[self.selected_cell].east:
+                                                old_path2 += "E"
+                                            if self.parent.game_board.board[self.selected_cell].south:
+                                                old_path2 += "S"
                                             self.parent.game_board.board[i].combine_directions(self.parent.game_board.board[self.selected_cell])
+                                            new_path = "path_"
+                                            if self.parent.game_board.board[i].north:
+                                                new_path += "N"
+                                            if self.parent.game_board.board[i].west:
+                                                new_path += "W"
+                                            if self.parent.game_board.board[i].east:
+                                                new_path += "E"
+                                            if self.parent.game_board.board[i].south:
+                                                new_path += "S"
                                             self.parent.game_board.board[self.selected_cell].north = False
                                             self.parent.game_board.board[self.selected_cell].west = False
                                             self.parent.game_board.board[self.selected_cell].east = False
                                             self.parent.game_board.board[self.selected_cell].south = False
                                             self.parent.game_board.board[self.selected_cell].path = False
+                                            for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                                if old_path1 in self.parent.drawn_cards_path[n].card_name:
+                                                    self.parent.drawn_cards_path.pop(n)  
+                                                    break
+                                            for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                                if old_path2 in self.parent.drawn_cards_path[m].card_name:
+                                                    self.parent.drawn_cards_path.pop(m)  
+                                                    break
+                                            self.parent.drawn_cards_path.append(Cards("path", new_path, False))
                                             self.selected_cell = None
                                             self.played_event = True
                                     elif i == self.selected_cell:
@@ -379,7 +416,7 @@ class Play_PlayEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                                 option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
-                    if button.clicked:
+                    if button.clicked and self.choosing:
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
@@ -479,17 +516,44 @@ class Play_PlayEventState(BaseState):
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                                 if self.selected_cell:
+                                    old_path1 = "_"
+                                    if self.parent.game_board.board[i].north:
+                                        old_path1 += "N"
+                                    if self.parent.game_board.board[i].west:
+                                        old_path1 += "W"
+                                    if self.parent.game_board.board[i].east:
+                                        old_path1 += "E"
+                                    if self.parent.game_board.board[i].south:
+                                        old_path1 += "S"
                                     self.parent.game_board.board[self.selected_cell].north = False
                                     self.parent.game_board.board[self.selected_cell].west = False
                                     self.parent.game_board.board[self.selected_cell].east = False
                                     self.parent.game_board.board[self.selected_cell].south = False
                                     self.parent.game_board.board[self.selected_cell].path = False
+                                    for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                        if old_path1 in self.parent.drawn_cards_path[n].card_name:
+                                            self.parent.drawn_cards_path.pop(n)  
+                                            break
                                 if self.selected_cell_2:
+                                    old_path2 = "_"
+                                    if self.parent.game_board.board[i].north:
+                                        old_path2 += "N"
+                                    if self.parent.game_board.board[i].west:
+                                        old_path2 += "W"
+                                    if self.parent.game_board.board[i].east:
+                                        old_path2 += "E"
+                                    if self.parent.game_board.board[i].south:
+                                        old_path2 += "S"
                                     self.parent.game_board.board[self.selected_cell_2].north = False
                                     self.parent.game_board.board[self.selected_cell_2].west = False
                                     self.parent.game_board.board[self.selected_cell_2].east = False
                                     self.parent.game_board.board[self.selected_cell_2].south = False
                                     self.parent.game_board.board[self.selected_cell_2].path = False
+                                    for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                        if old_path2 in self.parent.drawn_cards_path[m].card_name:
+                                            self.parent.drawn_cards_path.pop(m)  
+                                            break
+                                print(self.parent.drawn_cards_path)
                                 self.played_event = True
                                 
 
@@ -510,7 +574,7 @@ class Play_PlayEventState(BaseState):
                     if button.clicked:
                         if button.id == 'reveal path':
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                            self.parent.revealed_path = self.parent.deck_path.cards[-3:]
+                            self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
                             for card in self.parent.revealed_path:
                                 if "strike_" in card.card_name:
                                     card.card_name = card.card_name.replace("strike_", "")
@@ -518,8 +582,8 @@ class Play_PlayEventState(BaseState):
                             self.played_event = True
                         if button.id == 'reveal event':
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                            print(self.parent.deck_event.cards[-4:])
                             self.parent.revealed_event = self.parent.deck_event.cards[-4:]
+                            print(self.parent.revealed_event)
                             self.played_event = True
                 # self.played_event = True
 
@@ -576,6 +640,11 @@ class Play_PlayEventState(BaseState):
         self.cursor = cursors.normal
 
     def render(self, canvas):
+
+        # # show button hit box
+        # for button in self.button_list:
+        #     button.render(canvas)
+
         if self.choosing:
             utils.draw_rect(dest=canvas,
                                     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
@@ -596,10 +665,6 @@ class Play_PlayEventState(BaseState):
                     utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     utils.blit(dest=canvas, source=scaled_card_path3, pos=(constants.canvas_width/2 + 210, constants.canvas_height/2), pos_anchor='center')
 
-                # # show button hit box
-                # for button in self.button_list:
-                #     button.render(canvas)
-
             elif self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.point_button_option_surface_list):
@@ -607,10 +672,6 @@ class Play_PlayEventState(BaseState):
                     utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 265 + (i*2)*75), pos_anchor=posanchors.center)
                     scaled_point_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
                     utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 315 + (i*2)*75), pos_anchor=posanchors.center)
-                
-                # # show button hit box
-                # for button in self.button_list:
-                #     button.render(canvas)
 
             elif self.parent.current_event == 'event_redraw':
                 utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
@@ -621,19 +682,11 @@ class Play_PlayEventState(BaseState):
                     self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
                     utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575 - (i//2)*30, 265 + i*75), pos_anchor='center')
 
-                # # show button hit box
-                # for button in self.button_list:
-                #     button.render(canvas)
-
             elif self.parent.current_event == 'event_reveal':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.reveal_button_option_surface_list):
                     scaled_reveal_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     utils.blit(dest=canvas, source=scaled_reveal_button, pos=(constants.canvas_width/2, 250 + i*65), pos_anchor=posanchors.center)
-
-                # show button hit box
-                for button in self.button_list:
-                    button.render(canvas)
 
         if self.parent.current_event == 'event_remove':
             for i, option in enumerate(self.remove_button_option_surface_list):
@@ -642,10 +695,6 @@ class Play_PlayEventState(BaseState):
                 else:
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
                 utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
-
-            # show button hit box
-            for button in self.button_list:
-                button.render(canvas)
 
 
         if self.selecting_path:
