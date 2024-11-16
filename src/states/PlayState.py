@@ -422,6 +422,10 @@ class PlayState(BaseState):
             amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='smaller', color=score['color'])
             self.score_amount_list.append(amount)
 
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
+
+
     def render(self, canvas):     
         if self.ready:
             
