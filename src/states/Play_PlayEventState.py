@@ -43,7 +43,7 @@ class Play_PlayEventState(BaseState):
         self.card_path3_image = None
         self.fruit_drawn_image = None
 
-        self.select_frame = self.pa
+        self.select_frame = self.parent.selecting_tile
 
         self.load_assets()
 
