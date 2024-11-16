@@ -1,9 +1,6 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
-from src.library import utils
-from src.library.resources import spritesheets
-from src.library.essentials import constants
-import pygame
+from src.classes.Button import Button
 
 class Play_EndDayState(BaseState):
     def __init__(self, game, parent, stack):
@@ -27,35 +24,47 @@ class Play_EndDayState(BaseState):
             self.current_score = self.parent.day4_score
             self.current_fruit = self.parent.day4_fruit
             
+        self.button_list = []
+            
     def load_assets(self):
         self.title_font = pygame.font.Font(None, 48)
         self.text_font = pygame.font.Font(None, 36)
 
     def update(self, dt, events):
-        mouse_pos = pygame.mouse.get_pos()
+        self.button_list.append(Button(
+            game=self.game,
+            id=['bg'],
+            width=constants.canvas_width - 2 * self.parent.box_width,
+            height=constants.canvas_height,
+            pos=((self.parent.box_width, 0)),
+            pos_anchor='topleft'
+        ))
         
-        # Check if mouse is in game board area (not in GUI areas)
-        if (mouse_pos[0] > self.parent.box_width and 
-            mouse_pos[0] < constants.canvas_width - self.parent.box_width):
-            
-            if pygame.mouse.get_pressed()[0]:  # Left click
-                self.parent.drawing = False
-                self.parent.placing = False
-                self.parent.eventing = False
-                self.exit_state()
+        for button in self.button_list:
+            button.update(dt=dt, events=events)
+            if button.hovered:
+                if button.hover_cursor is not None:
+                    self.cursor = button.hover_cursor
+            if button.clicked:
+                if button.id == 'bg':
+                    self.exit_state()
 
     def render(self, canvas):
-        # Draw translucent black rectangle
-        utils.draw_rect(dest=canvas,
-            size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
-            pos=(self.parent.box_width, 0),
-            pos_anchor='topleft',
-            color=(*colors.black, 128),
-            inner_border_width=0,
-            outer_border_width=0,
-            outer_border_color=colors.black)
+        for button in self.button_list:
+                button.render(canvas)
         
-        # Title
+        # utils.draw_rect(
+        #     dest=canvas,
+        #     size=(background_button.rect.width, background_button.rect.height),
+        #     pos=background_button.rect.topleft,
+        #     pos_anchor='topleft',
+        #     color=(*colors.black, 128),
+        #     inner_border_width=0,
+        #     outer_border_width=0,
+        #     outer_border_color=colors.black
+        # )
+
+        # Title text
         title_text = self.title_font.render(f"Day {self.current_day} Result", True, (255, 255, 255))
         title_x = (constants.canvas_width - title_text.get_width()) // 2
         canvas.blit(title_text, (title_x, 150))
@@ -75,7 +84,8 @@ class Play_EndDayState(BaseState):
             score_x = (constants.canvas_width // 2) + 20
             canvas.blit(score_text, (score_x, center_y - score_text.get_height() // 2))
         
-        # Click text only at bottom
+        # Click to continue text
         continue_text = self.text_font.render("Click anywhere to continue", True, (255, 255, 255))
         continue_x = (constants.canvas_width - continue_text.get_width()) // 2
         canvas.blit(continue_text, (continue_x, constants.canvas_height - 100))
+        
