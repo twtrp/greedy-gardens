@@ -27,12 +27,7 @@ class Play_EndDayState(BaseState):
         self.load_assets()
             
     def load_assets(self):
-<<<<<<< HEAD
         self.result_title = utils.get_text(text=f'Day {self.current_day} Result', font=fonts.lf2, size='large', color=colors.white)
-=======
-        self.title_font = fonts.lf2
-        self.text_font = fonts.lf2
->>>>>>> 0d3e087c77ba28f4d2d09230ac17f546da6c64df
 
         self.result_list = [
                 {
@@ -81,31 +76,19 @@ class Play_EndDayState(BaseState):
                         size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
                         pos=(self.parent.box_width, 0),
                         pos_anchor='topleft',
-                        color=(*colors.black, 128),
+                        color=(*colors.black, 128), # 50% transparency
                         inner_border_width=0,
                         outer_border_width=0,
                         outer_border_color=colors.black)
 
         # Title text
-<<<<<<< HEAD
         utils.blit(dest=canvas, source=self.result_title, pos=(constants.canvas_width/2, constants.canvas_height/2 - 100), pos_anchor='center')
-=======
-        title_text = utils.get_text(
-            text=f"Day {self.current_day} Result", 
-            font=fonts.lf2, 
-            size='huge', 
-            color=colors.white
-        )
-        title_x = (constants.canvas_width - title_text.get_width()) // 2
-        canvas.blit(title_text, (title_x, 150))
->>>>>>> 0d3e087c77ba28f4d2d09230ac17f546da6c64df
         
         # Fruit and score
         for i, option in enumerate(self.result_sureface_list):
             utils.blit(dest=canvas, source=option['surface_fruit'], pos=(constants.canvas_width/2 - 25, constants.canvas_height/2), pos_anchor='center')
             utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2 + 25, constants.canvas_height/2), pos_anchor='center')
         
-<<<<<<< HEAD
         # if self.current_fruit:
         #     # Fruit sprite on left side
         #     fruit_sprite = utils.get_sprite(spritesheets.fruit_16x16, self.current_fruit)
@@ -122,32 +105,4 @@ class Play_EndDayState(BaseState):
         # continue_text = self.text_font.render("Click anywhere to continue", True, (255, 255, 255))
         # continue_x = (constants.canvas_width - continue_text.get_width()) // 2
         # canvas.blit(continue_text, (continue_x, constants.canvas_height - 100))
-=======
-        if self.current_fruit:
-            # Fruit sprite on left side
-            big_fruit_name = self.current_fruit.replace('fruit_', 'fruit_big_')
-            fruit_sprite = utils.get_sprite(spritesheets.fruit_32x32, big_fruit_name)
-            scaled_fruit_sprite = pygame.transform.scale_by(surface=fruit_sprite, factor=2)
-            fruit_x = (constants.canvas_width // 2) - scaled_fruit_sprite.get_width() - 20
-            canvas.blit(scaled_fruit_sprite, (fruit_x, center_y - scaled_fruit_sprite.get_height() // 2))
-            
-            score_text = utils.get_text(
-                text=f"Score: {self.current_score}", 
-                font=fonts.lf2, 
-                size='medium', 
-                color=colors.white
-            )
-            score_x = (constants.canvas_width // 2) + 20
-            canvas.blit(score_text, (score_x, center_y - score_text.get_height() // 2))
-        
-        # Click to continue text
-        continue_text = utils.get_text(
-            text="Click anywhere to continue", 
-            font=fonts.lf1, 
-            size='small', 
-            color=colors.white
-        )
-        continue_x = (constants.canvas_width - continue_text.get_width()) // 2
-        canvas.blit(continue_text, (continue_x, constants.canvas_height - 100))
->>>>>>> 0d3e087c77ba28f4d2d09230ac17f546da6c64df
         
