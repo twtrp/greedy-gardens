@@ -36,10 +36,10 @@ class PlayState(BaseState):
  
         # value
         self.day1_score = 0
-        self.day2_score = 1
-        self.day3_score = 2
-        self.day4_score = 3
-        self.seasonal_score = 4
+        self.day2_score = 0
+        self.day3_score = 0
+        self.day4_score = 0
+        self.seasonal_score = 0
         self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
@@ -295,9 +295,9 @@ class PlayState(BaseState):
         
         self.endDayState=False
         # magic fruit on board
-        self.scaled_magic_fruit1_board_image = pygame.transform.scale_by(surface=self.magic_fruit1_image, factor=3)
-        self.scaled_magic_fruit2_board_image = pygame.transform.scale_by(surface=self.magic_fruit2_image, factor=3)
-        self.scaled_magic_fruit3_board_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=3)
+        self.magic_fruit1_board_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1')
+        self.magic_fruit2_board_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_2')
+        self.magic_fruit3_board_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3')
 
         # path
         self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
@@ -323,6 +323,9 @@ class PlayState(BaseState):
 
         # fruits
         self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
+        # self.fruit_shadow = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='fruit_shadow')
+        # self.light_fruit_hole = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='light_green_hole')
+        # self.dark_fruit_hole = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='dark_green_hole')
         
         
 
@@ -404,11 +407,11 @@ class PlayState(BaseState):
                 day_colors[f"day{i}_color"] = colors.mono_150
 
         self.score_list = [
-            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.day1_score},
-            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.day2_score},
-            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.day3_score},
-            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.day4_score},
-            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score},
+            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)},
+            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)},
+            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)},
+            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)},
+            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)},
             {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
         ]
 
@@ -935,11 +938,11 @@ class PlayState(BaseState):
 
                 # Render Magic Fruit
                 if self.game_board.board[i].magic_fruit == 1:
-                    utils.blit(dest=canvas, source=self.scaled_magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                 if self.game_board.board[i].magic_fruit == 2:
-                    utils.blit(dest=canvas, source=self.scaled_magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
                 if self.game_board.board[i].magic_fruit == 3:
-                    utils.blit(dest=canvas, source=self.scaled_magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
 
                 # Render Fruits
                 if self.game_board.board[i].fruit:
