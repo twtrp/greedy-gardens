@@ -11,6 +11,9 @@ class GameBoard():
         for i in range(64):
             self.board.append(Cell(i))
 
+        self.home_index = 0
+        self.connected_indices = []
+
         # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
         
@@ -84,6 +87,8 @@ class GameBoard():
         home_index = random.randint(1, 6) * 8 + random.randint(1, 6) # index = row*8 + column with home not at the edge
         home_quadrant = self.check_quadrant(home_index)
         self.set_home(home_index)
+
+        self.home_index = home_index
 
         unique_index.append(home_index)
 
@@ -217,8 +222,8 @@ class GameBoard():
                 self.check_connection(connected_indices, south_index)
         
 
-    def board_eval(self, home_index, today_fruit):
-        connected_indices = self.check_connection(home_index)
+    def board_eval(self, today_fruit):
+        connected_indices = self.check_connection(self.connected_indices,self.home_index)
         score = 0
         for i in connected_indices:
             cell_fruit = self.board[i].fruit
