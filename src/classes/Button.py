@@ -1,30 +1,31 @@
 from src.library.essentials import *
+import pygame
 
 class Button:
-    def __init__(self,
-                 game: object,
-                 id: str,
-                 group: str = 'default',
-                 surface: pygame.Surface = None,
-                 width: int = 0,
-                 height: int = 0,
-                 pos: tuple = (0, 0),
-                 pos_anchor: str = posanchors.topleft,
-                 padding_x: int = 0,
-                 padding_y: int = 0,
-                 enable_click: bool = True,
-                 hover_cursor: dict = cursors.hand):
+    def __init__(
+            self,
+            game: object,
+            id: str,
+            group: str = 'default',
+            surface: pygame.Surface = None,
+            width: int = 0,
+            height: int = 0,
+            pos: tuple = (0, 0),
+            pos_anchor: str = 'topleft',
+            padding_x: int = 0,
+            padding_y: int = 0,
+            enable_click: bool = True,
+            hover_cursor: dict = cursors.hand
+        ):
         self.game = game
         self.id = id
         self.group = group
-
         self.para_width = width
         self.para_height = height
         self.para_padding_x = padding_x
         self.para_padding_y = padding_y
         self.pos = pos
         self.pos_anchor = pos_anchor
-
         self.hovered = False
         self.pressed = False
         self.clicked = False
@@ -46,7 +47,7 @@ class Button:
 
         self.surface = pygame.Surface((actual_width, actual_height), pygame.SRCALPHA)
         button_surface = surface if surface is not None else pygame.Surface((self.para_width, self.para_height))
-        scaled_button_surface = pygame.transform.scale(button_surface, (actual_width - 2 * self.padding_x, actual_height - 2 * self.padding_y))
+        scaled_button_surface = pygame.transform.scale(button_surface, (int(actual_width - 2 * self.padding_x), int(actual_height - 2 * self.padding_y)))
         self.surface.blit(scaled_button_surface, (self.padding_x, self.padding_y))
 
         self.rect = self.surface.get_rect()
@@ -94,3 +95,4 @@ class Button:
 
     def render(self, canvas):
         pygame.draw.rect(canvas, (255, 0, 0), self.rect, 2)
+        canvas.blit(self.surface, self.rect.topleft)

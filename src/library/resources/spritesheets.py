@@ -84,7 +84,7 @@ cursors = {
 }
 
 gui = {
-    'file': 'gui_new.png',
+    'file': 'gui.png',
     'shared_data': {},
     'sprites': {
         'arrow_left': {
@@ -155,19 +155,19 @@ gui = {
         },
         'selecting_tile': {
             'x': 0,
-            'y': 336,
+            'y': 384,
             'width': 80,
             'height': 80,
         },
         'cant_selecting_tile': {
             'x': 80,
-            'y': 336,
+            'y': 384,
             'width': 80,
             'height': 80,
         },
         'selected_tile': {
             'x': 0,
-            'y': 416,
+            'y': 464,
             'width': 80,
             'height': 80,
         },

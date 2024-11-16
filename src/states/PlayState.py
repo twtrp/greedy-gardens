@@ -9,6 +9,7 @@ from src.states.Play_NextDayState import Play_NextDayState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
+from src.classes.Button import Button
 import tween
 
 class PlayState(BaseState):
@@ -112,6 +113,7 @@ class PlayState(BaseState):
         
         # Create hit boxes for each cell
         self.grid_hitboxes = []
+        self.grid_buttons = []
         index=0
         for row in range(8):
             for col in range(8):
@@ -119,6 +121,14 @@ class PlayState(BaseState):
                 cell_y = self.grid_start_y + (row * self.cell_size)
                 rect = pygame.Rect(cell_x, cell_y, self.cell_size, self.cell_size)
                 self.grid_hitboxes.append(rect)
+                self.grid_buttons.append(Button(
+                    game=self.game,
+                    id=index,
+                    width=self.cell_size,
+                    height=self.cell_size,
+                    pos=(cell_x, cell_y),
+                    pos_anchor='topleft'
+                ))
                 self.game_board.board.append(Cell(index))
                 index += 1
         #/test grid
@@ -279,7 +289,12 @@ class PlayState(BaseState):
         self.scaled_magic_fruit2_board_image = pygame.transform.scale_by(surface=self.magic_fruit2_image, factor=3)
         self.scaled_magic_fruit3_board_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=3)
 
+        # load fruit sprites
+        self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
+        print(self.fruit_sprites)
+
     def update(self, dt, events):
+        
         if self.ready:
 
             # Update substates
@@ -288,6 +303,10 @@ class PlayState(BaseState):
 
             # Update tweens
             tween.update(passed_time=dt)
+
+            # Update buttons
+            for button in self.grid_buttons:
+                button.update(dt=dt, events=events)
 
         # State change and loop
         if not self.started:
@@ -736,7 +755,7 @@ class PlayState(BaseState):
                 # Render Fruits
                 if self.game_board.board[i].fruit:
                     for pos, fruit in enumerate(self.game_board.board[i].fruit):
-                        fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=fruit)
+                        fruit_image = self.fruit_sprites[fruit]
                         if pos == 0:
                             utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 8, self.grid_start_y + ((i // 8) * self.cell_size) + 8), pos_anchor='topleft')
                         if pos == 1:
@@ -755,7 +774,10 @@ class PlayState(BaseState):
                 pass
 
             else:
-                self.substate_stack[-1].render(canvas=canvas)          
+                self.substate_stack[-1].render(canvas=canvas)    
+
+        for button in self.grid_buttons:
+            button.render(canvas)      
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
