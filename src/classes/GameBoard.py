@@ -77,14 +77,18 @@ class GameBoard():
         return diamond_indices
     
     def set_board(self):
+        # This list keep index of house and magic fruits. Used in fruits generation logic
+        unique_index = []
+
         # Set home location
         home_index = random.randint(1, 6) * 8 + random.randint(1, 6) # index = row*8 + column with home not at the edge
         home_quadrant = self.check_quadrant(home_index)
         self.set_home(home_index)
 
-        no_mfruit_index = self.diamond_radius(home_index)
+        unique_index.append(home_index)
 
         # Set Magic Fruits Location
+        no_mfruit_index = self.diamond_radius(home_index)
         mfruitquadrant = [1, 2, 3, 4]
         mfruitquadrant.remove(home_quadrant) # Possible location of magic fruit by quadrant
         for mfruitnum in range(1, 4):
@@ -96,6 +100,7 @@ class GameBoard():
                     mfruitindex = random.randint(1, 3) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 2:
                 while loop: 
@@ -103,6 +108,7 @@ class GameBoard():
                     mfruitindex = random.randint(1, 3) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 3:
                 while loop: 
@@ -110,6 +116,7 @@ class GameBoard():
                     mfruitindex = random.randint(4, 6) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 4:
                 while loop: 
@@ -117,6 +124,7 @@ class GameBoard():
                     mfruitindex = random.randint(4, 6) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        unique_index.append(mfruitindex)
                         loop = False
 
         # Set fruit location
@@ -139,28 +147,87 @@ class GameBoard():
         max_fruit_each_quadrant = (fruit_each_type * 6) / 4
 
         # all fruit types
-        all_fruit = ["strawberry", "orange", "blueberry", "kiwi", "coconut", "peach"]
+        all_fruit = ["fruit_strawberry", "fruit_orange", "fruit_blueberry", "fruit_grape", "fruit_coconut", "fruit_peach"]
+
+        # debug
+        # loopnumber = 0
+        # test_fruit = ["fruit_strawberry"]
 
         for fruit in all_fruit:
             placed = 0
             while placed < fruit_each_type:
+                # print(loopnumber)
                 fruit_quadrant = random.choice(available_quadrant)
                 quadrant_index = fruit_quadrant - 1
                 if fruit_quadrant == 1:
                     fruit_index = random.randint(0, 3) * 8 + random.randint(4, 7)
                 elif fruit_quadrant == 2:
                     fruit_index = random.randint(0, 3) * 8 + random.randint(0, 3)
-                elif current_quadrant == 3:
+                elif fruit_quadrant == 3:
                     fruit_index = random.randint(4, 7) * 8 + random.randint(0, 3)
-                elif current_quadrant == 4:
+                elif fruit_quadrant == 4:
                     fruit_index = random.randint(4, 7) * 8 + random.randint(4, 7)
                 
-                if ((board_fruit[quadrant_index] < max_fruit_each_quadrant) and 
-                    (self.board[fruit_index].sum_fruit() < max_fruit_cell) and
-                    (self.board[fruit_index].valid_fruit_cell(max_type_cell))):
+                '''
+                Fruits generation has 4 conditions
+                1. The number of fruit in that quadrant must not exceed max_fruit_each_quadrant.
+                2. The number of fruit in a cell must not exceed max_fruit_cell.
+                3. In that cell, there must be no more than max_type_cell instances of the same fruit type.
+                4. The index of the fruit must not be that of home and magic fruits.
+                Note: There are 6 types of fruits, each has fruit_each_type instances.
+                '''
+                fruit_cond1 = board_fruit[quadrant_index] < max_fruit_each_quadrant
+                fruit_cond2 = self.board[fruit_index].sum_fruit() < max_fruit_cell
+                fruit_cond3 = self.board[fruit_index].valid_fruit_cell(max_type_cell)
+                fruit_cond4 = fruit_index not in unique_index
+
+                if fruit_cond1 and fruit_cond2 and fruit_cond3 and fruit_cond4:
                     self.add_fruit(fruit_index, fruit)
                     placed += 1
+                    # print(f"Placed {fruit} at index {fruit_index}. Total placed: {placed}")
                     board_fruit[quadrant_index] += 1
                     if board_fruit[quadrant_index] == max_fruit_each_quadrant:
                         available_quadrant.remove(fruit_quadrant)
+                
+                # loopnumber+=1
+    
+    '''
+    Check Connected Path
+    - Recursively checking West -> North -> East -> South for the connection
+    - Have additional condition to check if the index is already included in the connected path to prevent infinite cycle
+    '''
+
+    def check_connection(self, connected_indices, center_index):
+        connected_indices.append(center_index)
+        west_index = center_index - 1
+        north_index = center_index - 8
+        east_index = center_index + 1
+        south_index = center_index + 8
+        if 0 <= west_index <= 63:
+            if self.board[west_index].east and west_index not in connected_indices:
+                self.check_connection(connected_indices, west_index)
+        if 0 <= north_index <= 63:
+            if self.board[north_index].south and north_index not in connected_indices:
+                self.check_connection(connected_indices, north_index)
+        if 0 <= east_index <= 63:
+            if self.board[east_index].west and east_index not in connected_indices:
+                self.check_connection(connected_indices, east_index)
+        if 0 <= south_index <= 63:
+            if self.board[south_index].north and south_index not in connected_indices:
+                self.check_connection(connected_indices, south_index)
+        
+
+    def board_eval(self, home_index, today_fruit):
+        connected_indices = self.check_connection(home_index)
+        score = 0
+        for i in connected_indices:
+            cell_fruit = self.board[i].fruit
+            if cell_fruit:
+                for fruit in cell_fruit:
+                    # Will change this condition later after asking Three how the fruit name is passed
+                    if fruit in today_fruit or today_fruit in fruit or fruit == today_fruit:
+                        score += 1
+        return score
+
+        
                 
