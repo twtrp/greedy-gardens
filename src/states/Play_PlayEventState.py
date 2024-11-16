@@ -218,13 +218,13 @@ class Play_PlayEventState(BaseState):
                         if not self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                             self.select_frame = self.parent.selecting_tile
                             if button.clicked:
-                                if "N" in self.parent.current_path:
+                                if "N" in self.choices[self.choice]:
                                     self.parent.game_board.board[button.id].north = True
-                                if "W" in self.parent.current_path:
+                                if "W" in self.choices[self.choice]:
                                     self.parent.game_board.board[button.id].west = True 
-                                if "E" in self.parent.current_path:
+                                if "E" in self.choices[self.choice]:
                                     self.parent.game_board.board[button.id].east = True
-                                if "S" in self.parent.current_path:
+                                if "S" in self.choices[self.choice]:
                                     self.parent.game_board.board[button.id].south = True
                                 self.parent.game_board.board[button.id].temp = True
                                 self.parent.game_board.board[button.id].path = True

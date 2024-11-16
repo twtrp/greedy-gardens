@@ -940,11 +940,11 @@ class PlayState(BaseState):
 
                 # Render Magic Fruit
                 if self.game_board.board[i].magic_fruit == 1:
-                    utils.blit(dest=canvas, source=self.magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit1_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 24, self.grid_start_y + ((i // 8) * self.cell_size) + 24), pos_anchor='topleft')
                 if self.game_board.board[i].magic_fruit == 2:
-                    utils.blit(dest=canvas, source=self.magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit2_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 24, self.grid_start_y + ((i // 8) * self.cell_size) + 24), pos_anchor='topleft')
                 if self.game_board.board[i].magic_fruit == 3:
-                    utils.blit(dest=canvas, source=self.magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 16, self.grid_start_y + ((i // 8) * self.cell_size) + 16), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.magic_fruit3_board_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 24, self.grid_start_y + ((i // 8) * self.cell_size) + 24), pos_anchor='topleft')
 
                 # Render Fruits
                 if self.game_board.board[i].fruit:
