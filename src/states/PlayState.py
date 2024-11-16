@@ -108,9 +108,9 @@ class PlayState(BaseState):
         #     self.bootup_tween_chain(skip=True)
 
         # magic fruit card locations
-        self.magic_fruit1_card_location = (1072, 510)
-        self.magic_fruit2_card_location = (1132, 530)
-        self.magic_fruit3_card_location = (1192, 550)
+        self.magic_fruit1_card_location = (1040, 530)
+        self.magic_fruit2_card_location = (1100, 550)
+        self.magic_fruit3_card_location = (1160, 570)
 
     #Main methods
 
