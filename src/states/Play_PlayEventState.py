@@ -380,7 +380,7 @@ class Play_PlayEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                                 option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
-                    if button.clicked:
+                    if button.clicked and self.choosing:
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
