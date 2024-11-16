@@ -6,8 +6,6 @@ class Play_EndDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
         self.parent = parent
-
-        self.load_assets()
         
         # Get current day's info
         self.current_day = self.parent.current_day
@@ -25,20 +23,23 @@ class Play_EndDayState(BaseState):
             self.current_fruit = self.parent.day4_fruit
             
         self.button_list = []
+
+        self.load_assets()
             
     def load_assets(self):
         self.title_font = pygame.font.Font(None, 48)
         self.text_font = pygame.font.Font(None, 36)
 
-    def update(self, dt, events):
         self.button_list.append(Button(
             game=self.game,
-            id=['bg'],
+            id='bg',
             width=constants.canvas_width - 2 * self.parent.box_width,
             height=constants.canvas_height,
             pos=((self.parent.box_width, 0)),
             pos_anchor='topleft'
         ))
+
+    def update(self, dt, events):
         
         for button in self.button_list:
             button.update(dt=dt, events=events)
@@ -47,22 +48,22 @@ class Play_EndDayState(BaseState):
                     self.cursor = button.hover_cursor
             if button.clicked:
                 if button.id == 'bg':
+                    print("exiting end day")
+                    self.parent.endDayState = True
                     self.exit_state()
 
     def render(self, canvas):
         for button in self.button_list:
                 button.render(canvas)
         
-        # utils.draw_rect(
-        #     dest=canvas,
-        #     size=(background_button.rect.width, background_button.rect.height),
-        #     pos=background_button.rect.topleft,
-        #     pos_anchor='topleft',
-        #     color=(*colors.black, 128),
-        #     inner_border_width=0,
-        #     outer_border_width=0,
-        #     outer_border_color=colors.black
-        # )
+        utils.draw_rect(dest=canvas,
+                        size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+                        pos=(self.parent.box_width, 0),
+                        pos_anchor='topleft',
+                        color=(*colors.black, 128), # 50% transparency
+                        inner_border_width=0,
+                        outer_border_width=0,
+                        outer_border_color=colors.black)
 
         # Title text
         title_text = self.title_font.render(f"Day {self.current_day} Result", True, (255, 255, 255))

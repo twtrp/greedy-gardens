@@ -40,7 +40,7 @@ class PlayState(BaseState):
         self.day3_score = 0
         self.day4_score = 0
         self.seasonal_score = 0
-        self.total_score = self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
+        self.total_score = 0
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
@@ -360,14 +360,12 @@ class PlayState(BaseState):
         elif self.eventing:
             Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.eventing = False
-        elif self.is_3_strike and not self.endDayState:
-            Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.endDayState = True
         elif self.endDayState:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.is_3_strike = False 
             self.endDayState = False
-        
+        elif self.is_3_strike:
+            Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.is_3_strike = False 
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -412,7 +410,12 @@ class PlayState(BaseState):
             {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)},
             {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)},
             {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)},
-            {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
+            {'text': 'Total', 'color': colors.white, 'amount': (self.day1_score + self.day2_score + self.day3_score + self.day4_score + self.seasonal_score
+                                                                + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
+                                                                + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
+                                                                + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
+                                                                + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
+                                                                + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0))},
         ]
 
         self.score_title_list = []

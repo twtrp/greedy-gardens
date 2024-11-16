@@ -628,8 +628,8 @@ class Play_PlayEventState(BaseState):
                 self.played_event = True
         else:
             if self.parent.strikes >= 3:
-                            self.parent.is_3_strike = True
-                            self.parent.strikes = 0
+                self.parent.is_3_strike = True
+                self.parent.strikes = 0
             else:
                 self.parent.drawing = True
             self.parent.current_event = None
@@ -647,13 +647,13 @@ class Play_PlayEventState(BaseState):
 
         if self.choosing:
             utils.draw_rect(dest=canvas,
-                                    size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
-                                    pos=(self.parent.box_width, 0),
-                                    pos_anchor='topleft',
-                                    color=(*colors.black, 128), # 50% transparency
-                                    inner_border_width=0,
-                                    outer_border_width=0,
-                                    outer_border_color=colors.black)
+                            size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+                            pos=(self.parent.box_width, 0),
+                            pos_anchor='topleft',
+                            color=(*colors.black, 128), # 50% transparency
+                            inner_border_width=0,
+                            outer_border_width=0,
+                            outer_border_color=colors.black)
             
             if self.parent.current_event == 'event_keep':
                 utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
