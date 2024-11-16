@@ -272,6 +272,7 @@ class PlayState(BaseState):
         self.magic_fruit3_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite='magic_fruit_3')
         self.scaled_magic_fruit3_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=2)
 
+        self.home = utils.get_sprite(sprite_sheet=spritesheets.home, target_sprite='home', mode='alpha')
     def update(self, dt, events):
         if self.ready:
 
@@ -362,7 +363,6 @@ class PlayState(BaseState):
     def render(self, canvas):
         
         
-            
         if self.ready:
             
             for layer in self.landscape_list:
@@ -523,8 +523,7 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    else:
-                        if self.game_board.board[i].home:
+                    elif self.game_board.board[i].home:
                             #home render
                             #render dirt and grass
                             #1*1
@@ -595,6 +594,8 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size)+64), pos_anchor='topleft')
                         
+                            utils.blit(dest=canvas, source=self.home, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+16, self.grid_start_y + ((i // 8) * self.cell_size)+16), pos_anchor='topleft')
+                    else:
                         #path 2 directions
                         if self.game_board.board[i].north:
                             utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
@@ -704,8 +705,7 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.grass_dark_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.dirt_sprite_9, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.grass_dark_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    else:
-                        if self.game_board.board[i].home:
+                    elif self.game_board.board[i].home:
                             #render dirt and grass
                             #1*1
                             utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
@@ -775,6 +775,9 @@ class PlayState(BaseState):
                             #5*5
                             utils.blit(dest=canvas, source=self.dirt_sprite_2, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size)+64), pos_anchor='topleft')
+                        
+                            utils.blit(dest=canvas, source=self.home, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+16, self.grid_start_y + ((i // 8) * self.cell_size)+16), pos_anchor='topleft')
+                    else:
                         
                         if self.game_board.board[i].north:
                             utils.blit(dest=canvas, source=self.dirt_sprite_1, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
