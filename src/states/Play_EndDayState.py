@@ -9,41 +9,40 @@ class Play_EndDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
         self.parent = parent
-        
-        # Load assets and setup UI elements
+
         self.load_assets()
         
-        # Calculate current day number
-        if self.parent.day1_score:
-            self.current_day = 1
+        # Get current day's info
+        self.current_day = self.parent.current_day
+        if self.current_day == 1:
             self.current_score = self.parent.day1_score
             self.current_fruit = self.parent.day1_fruit
-        elif self.parent.day2_score:
-            self.current_day = 2
+        elif self.current_day == 2:
             self.current_score = self.parent.day2_score
             self.current_fruit = self.parent.day2_fruit
-        elif self.parent.day3_score:
-            self.current_day = 3
+        elif self.current_day == 3:
             self.current_score = self.parent.day3_score
             self.current_fruit = self.parent.day3_fruit
         else:
-            self.current_day = 4
             self.current_score = self.parent.day4_score
             self.current_fruit = self.parent.day4_fruit
-
+            
     def load_assets(self):
         self.title_font = pygame.font.Font(None, 48)
         self.text_font = pygame.font.Font(None, 36)
 
     def update(self, dt, events):
-        if pygame.mouse.get_pressed()[0]:
-            mouse_pos = pygame.mouse.get_pos()
-            if mouse_pos[0] > self.parent.box_width and mouse_pos[0] < constants.canvas_width - self.parent.box_width:
+        mouse_pos = pygame.mouse.get_pos()
+        
+        # Check if mouse is in game board area (not in GUI areas)
+        if (mouse_pos[0] > self.parent.box_width and 
+            mouse_pos[0] < constants.canvas_width - self.parent.box_width):
+            
+            if pygame.mouse.get_pressed()[0]:  # Left click
                 self.parent.drawing = False
                 self.parent.placing = False
                 self.parent.eventing = False
-                self.stack.pop()
-                self.parent.is_3_strike = True
+                self.exit_state()
 
     def render(self, canvas):
         # Draw translucent black rectangle

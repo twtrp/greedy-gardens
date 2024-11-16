@@ -6,6 +6,7 @@ from src.states.Play_DrawEventState import Play_DrawEventState
 from src.states.Play_PlacePathState import Play_PlacePathState
 from src.states.Play_PlayEventState import Play_PlayEventState
 from src.states.Play_NextDayState import Play_NextDayState
+from src.states.Play_EndDayState import Play_EndDayState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -273,6 +274,8 @@ class PlayState(BaseState):
         self.scaled_magic_fruit3_image = pygame.transform.scale_by(surface=self.magic_fruit3_image, factor=2)
 
         self.home = utils.get_sprite(sprite_sheet=spritesheets.home, target_sprite='home', mode='alpha')
+        
+        self.endDayState=False
     def update(self, dt, events):
         if self.ready:
 
@@ -299,9 +302,13 @@ class PlayState(BaseState):
         elif self.eventing:
             Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.eventing = False
-        elif self.is_3_strike:
+        elif self.is_3_strike and not self.endDayState:
+            Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.endDayState = True
+        elif self.is_3_strike and self.endDayState:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_3_strike = False
+            self.endDayState = False
         
 
         for event in events:
