@@ -299,6 +299,9 @@ class PlayState(BaseState):
         self.path_WS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS')
         self.path_ES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES')
 
+        # fruits
+        self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
+
     def update(self, dt, events):
         
         if self.ready:
@@ -794,10 +797,7 @@ class PlayState(BaseState):
                 pass
 
             else:
-                self.substate_stack[-1].render(canvas=canvas)    
-
-        for button in self.grid_buttons:
-            button.render(canvas)      
+                self.substate_stack[-1].render(canvas=canvas)       
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
