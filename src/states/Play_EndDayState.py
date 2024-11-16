@@ -27,8 +27,8 @@ class Play_EndDayState(BaseState):
         self.load_assets()
             
     def load_assets(self):
-        self.title_font = pygame.font.Font(None, 48)
-        self.text_font = pygame.font.Font(None, 36)
+        self.title_font = fonts.lf2
+        self.text_font = fonts.lf2
 
         self.button_list.append(Button(
             game=self.game,
@@ -60,13 +60,18 @@ class Play_EndDayState(BaseState):
                         size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
                         pos=(self.parent.box_width, 0),
                         pos_anchor='topleft',
-                        color=(*colors.black, 128), # 50% transparency
+                        color=(*colors.black, 128),
                         inner_border_width=0,
                         outer_border_width=0,
                         outer_border_color=colors.black)
 
         # Title text
-        title_text = self.title_font.render(f"Day {self.current_day} Result", True, (255, 255, 255))
+        title_text = utils.get_text(
+            text=f"Day {self.current_day} Result", 
+            font=fonts.lf2, 
+            size='huge', 
+            color=colors.white
+        )
         title_x = (constants.canvas_width - title_text.get_width()) // 2
         canvas.blit(title_text, (title_x, 150))
         
@@ -75,18 +80,28 @@ class Play_EndDayState(BaseState):
         
         if self.current_fruit:
             # Fruit sprite on left side
-            fruit_sprite = utils.get_sprite(spritesheets.fruit_16x16, self.current_fruit)
+            big_fruit_name = self.current_fruit.replace('fruit_', 'fruit_big_')
+            fruit_sprite = utils.get_sprite(spritesheets.fruit_32x32, big_fruit_name)
             scaled_fruit_sprite = pygame.transform.scale_by(surface=fruit_sprite, factor=2)
             fruit_x = (constants.canvas_width // 2) - scaled_fruit_sprite.get_width() - 20
             canvas.blit(scaled_fruit_sprite, (fruit_x, center_y - scaled_fruit_sprite.get_height() // 2))
             
-            # Score text on right side
-            score_text = self.text_font.render(f"Score: {self.current_score}", True, (255, 255, 255))
+            score_text = utils.get_text(
+                text=f"Score: {self.current_score}", 
+                font=fonts.lf2, 
+                size='medium', 
+                color=colors.white
+            )
             score_x = (constants.canvas_width // 2) + 20
             canvas.blit(score_text, (score_x, center_y - score_text.get_height() // 2))
         
         # Click to continue text
-        continue_text = self.text_font.render("Click anywhere to continue", True, (255, 255, 255))
+        continue_text = utils.get_text(
+            text="Click anywhere to continue", 
+            font=fonts.lf1, 
+            size='small', 
+            color=colors.white
+        )
         continue_x = (constants.canvas_width - continue_text.get_width()) // 2
         canvas.blit(continue_text, (continue_x, constants.canvas_height - 100))
         
