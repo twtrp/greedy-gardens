@@ -51,7 +51,7 @@ class Play_EndDayState(BaseState):
         self.result_sureface_list = []
         for i, option in enumerate(self.result_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
-                fruit = self.parent.fruit_16x16_sprites[option['fruit']]
+                fruit = self.parent.fruit_sprites[option['fruit']]
                 scaled_fruit_image = pygame.transform.scale_by(surface=fruit, factor=3)
                 glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.white)
                 self.result_sureface_list.append({
@@ -69,7 +69,11 @@ class Play_EndDayState(BaseState):
         ))
 
     def update(self, dt, events):
-        
+        for index in self.parent.game_board.connected_indices:
+            cell = self.parent.game_board.board[index]
+            if self.current_fruit in cell.fruit:
+                cell.fruit = [None if item == self.current_fruit else item for item in cell.fruit]
+            
         for button in self.button_list:
             button.update(dt=dt, events=events)
             if button.hovered:

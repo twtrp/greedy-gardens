@@ -119,7 +119,7 @@ class Play_PlayMagicEventState(BaseState):
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
-                fruit = self.parent.fruit_16x16_sprites[option['fruit']]
+                fruit = self.parent.fruit_sprites[option['fruit']]
                 self.redraw_button_option_surface_list.append({
                     'id': option['id'],
                     'surface': text,
