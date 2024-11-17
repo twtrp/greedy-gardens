@@ -24,17 +24,12 @@ class Play_PlayMagicEventState(BaseState):
         self.choices = ['path_WE', 'path_NS', 'path_NW', 'path_NE', 'path_WS', 'path_ES']
 
         # state
+        self.shown_event = False
         self.played_event = False
         self.selecting_path = False
         self.selected_cell = None
         self.selected_cell_2 = None
-        if (self.parent.current_event == 'event_keep' or
-            self.parent.current_event == 'event_point' or
-            self.parent.current_event == 'event_redraw' or
-            self.parent.current_event == 'event_reveal'):
-            self.choosing = True
-        else:
-            self.choosing = False
+        self.choosing = False
         self.drawn_keep = False
 
         self.card_path1_image = None
@@ -220,6 +215,9 @@ class Play_PlayMagicEventState(BaseState):
                 ))
             
         # Load image/sprite
+        self.card_magic_event = self.parent.cards_event_sprites[f"card_{self.parent.current_event}"]
+        self.scaled_card_magic_event = pygame.transform.scale_by(surface=self.card_magic_event, factor=2)
+
         self.selected_tile = self.parent.selected_tile
         self.small_selecting_tile = self.parent.small_selecting_tile
         self.path_WE_image = self.parent.path_WE_image
@@ -230,8 +228,19 @@ class Play_PlayMagicEventState(BaseState):
         self.path_ES_image = self.parent.path_ES_image
 
     def update(self, dt, events):
+        if not self.shown_event:
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        if (self.parent.current_event == 'event_keep' or
+                            self.parent.current_event == 'event_point' or
+                            self.parent.current_event == 'event_redraw' or
+                            self.parent.current_event == 'event_reveal'):
+                            self.choosing = True
+                        self.shown_event = True
+
         # Each event
-        if not self.played_event:
+        elif not self.played_event and self.shown_event:
             if self.parent.current_event == 'event_free':
                 # print('event_free')
                 self.selecting_path = True
@@ -885,6 +894,9 @@ class Play_PlayMagicEventState(BaseState):
         # # show button hit box
         # for button in self.button_list:
         #     button.render(canvas)
+        if not self.shown_event:
+            
+            utils.blit(dest=canvas, source=self.scaled_card_magic_event, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
 
         if self.selected_cell:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
