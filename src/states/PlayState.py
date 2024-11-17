@@ -151,6 +151,14 @@ class PlayState(BaseState):
         #/test grid
         
         # Load background
+        self.landscape_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
+        self.light_grass_sprites = list(utils.get_sprite_sheet(sprite_sheet=spritesheets.light_grass).values())
+        self.dark_grass_sprites = list(utils.get_sprite_sheet(sprite_sheet=spritesheets.dark_grass).values())
+        start = (0, 0)
+        for x in range(start[0] + 0, start[1] + 272, 16):
+            for y in range(start[0] + 0, start[1] + 336, 16):
+                utils.blit(dest=self.landscape_surface, source=random.choice(self.light_grass_sprites), pos=(x, y))
+
         self.landscape_list = [
             {
                 'image': utils.get_image(dir=dir.play_bg, name='grass_pattern.png', mode='colorkey'),
@@ -471,6 +479,8 @@ class PlayState(BaseState):
 
     def render(self, canvas):     
         if self.ready:
+
+            # utils.blit(dest=canvas, source=self.landscape_surface)
             
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))

@@ -615,38 +615,6 @@ tileset = {
             'x': 128,
             'y': 0,
         },
-        'grass_light_1': {
-            'x': 48,
-            'y': 16,
-        },
-        'grass_light_2': {
-            'x': 64,
-            'y': 16,
-        },
-        'grass_light_3': {
-            'x': 80,
-            'y': 16,
-        },
-        'grass_light_4': {
-            'x': 96,
-            'y': 16,
-        },
-        'grass_dark_1': {
-            'x': 48,
-            'y': 48,
-        },
-        'grass_dark_2': {
-            'x': 64,
-            'y': 48,
-        },
-        'grass_dark_3': {
-            'x': 80,
-            'y': 48,
-        },
-        'grass_dark_4': {
-            'x': 96,
-            'y': 48,
-        },
         'grass_light_path_ES': {
             'x': 48,
             'y': 80,
@@ -789,3 +757,123 @@ home = {
             'x': 1,
             'y': 465,
         }}}
+
+light_grass = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
+    'sprites': {
+        'grass_light_1': {
+            'x': 48,
+            'y': 16,
+        },
+        'grass_light_2': {
+            'x': 64,
+            'y': 16,
+        },
+        'grass_light_3': {
+            'x': 80,
+            'y': 16,
+        },
+        'grass_light_4': {
+            'x': 96,
+            'y': 16,
+        },
+    }
+}
+
+light_grass_flowers = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
+    'sprites': {
+        'grass_light_flowers_1': {
+            'x': 112,
+            'y': 48,
+        },
+        'grass_light_flowers_2': {
+            'x': 128,
+            'y': 48,
+        },
+        'grass_light_flowers_3': {
+            'x': 144,
+            'y': 48,
+        },
+        'grass_light_flowers_4': {
+            'x': 160,
+            'y': 48,
+        },
+        'grass_light_flowers_5': {
+            'x': 176,
+            'y': 48,
+        }, 
+        'grass_light_flowers_6': {
+            'x': 192,
+            'y': 48,
+        },    
+    }
+}
+
+dark_grass = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
+    'sprites': {
+        'grass_dark_1': {
+            'x': 48,
+            'y': 48,
+        },
+        'grass_dark_2': {
+            'x': 64,
+            'y': 48,
+        },
+        'grass_dark_3': {
+            'x': 80,
+            'y': 48,
+        },
+        'grass_dark_4': {
+            'x': 96,
+            'y': 48,
+        },
+    }
+}
+
+dark_grass_flowers = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
+    'sprites': {
+        'grass_light_flowers_1': {
+            'x': 112,
+            'y': 48,
+        },
+        'grass_light_flowers_2': {
+            'x': 128,
+            'y': 48,
+        },
+        'grass_light_flowers_3': {
+            'x': 144,
+            'y': 48,
+        },
+        'grass_light_flowers_4': {
+            'x': 160,
+            'y': 48,
+        },
+        'grass_light_flowers_5': {
+            'x': 176,
+            'y': 48,
+        }, 
+        'grass_light_flowers_6': {
+            'x': 192,
+            'y': 48,
+        },    
+    }
+}
