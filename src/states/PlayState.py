@@ -412,7 +412,7 @@ class PlayState(BaseState):
             pos_anchor='center',
             hover_cursor=cursors.hand,))
         #fix
-        self.end_game=True
+        self.end_game=False
 
     def update(self, dt, events):
                 
