@@ -256,9 +256,9 @@ class GameBoard():
                 if i in self.connected_indices:
                     print("Found the magic fruit")
                     self.magic_fruit_index.remove(i)
-                    return (True, self.board[i].magic_fruit)
+                    return (True, self.board[i].magic_fruit, i)
         
-        return (False, -1)
+        return (False, -1, -1)
     
     def eval_new_tile(self, center_index):
         self.check_connection(self.connected_indices, center_index)

@@ -87,6 +87,7 @@ class PlayState(BaseState):
         self.day = 4
         self.current_day = 1
         self.strikes = 0
+        self.is_striking = False
 
         self.ready = False
         self.load_assets()
@@ -367,7 +368,7 @@ class PlayState(BaseState):
         elif self.is_strike and not self.magic_eventing:
             Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_strike = False
-        elif self.eventing and not self.magic_eventing:
+        elif self.eventing:
             Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.eventing = False
         elif self.endDayState:

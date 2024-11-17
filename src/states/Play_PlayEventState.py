@@ -228,6 +228,18 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[button.id].south = True
                                 self.parent.game_board.board[button.id].temp = True
                                 self.parent.game_board.board[button.id].path = True
+                                if self.parent.game_board.magic_fruit_index:
+                                    self.parent.game_board.eval_new_tile(button.id)
+                                    self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+                                    if self.parent.magic_eventing:
+                                        if magic_number == 1:
+                                            self.parent.current_event = self.parent.magic_fruit1_event
+                                        elif magic_number == 2:
+                                            self.parent.current_event = self.parent.magic_fruit2_event
+                                        elif magic_number == 3:
+                                            self.parent.current_event = self.parent.magic_fruit3_event
+                                        self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                        self.exit_state()
                                 self.played_event = True
                         else:
                             self.select_frame = self.parent.cant_selecting_tile

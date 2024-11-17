@@ -70,7 +70,7 @@ class Play_PlacePathState(BaseState):
                     
         if self.is_placed:
             if self.parent.game_board.magic_fruit_index:
-                self.parent.magic_eventing, magic_number = self.parent.game_board.magic_fruit_found()
+                self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
                 if self.parent.magic_eventing:
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
@@ -78,15 +78,17 @@ class Play_PlacePathState(BaseState):
                         self.parent.current_event = self.parent.magic_fruit2_event
                     elif magic_number == 3:
                         self.parent.current_event = self.parent.magic_fruit3_event
+                    self.parent.game_board.board[cell_pos].magic_fruit = 0
+                    self.exit_state()
 
-            if not self.parent.magic_eventing:
-                if "strike" in self.parent.current_path:
-                    self.parent.is_strike = True
-                else: 
-                    self.parent.drawing = True
-                self.parent.current_path = None
-                print("exiting place")
-                self.exit_state()
+                elif not self.parent.magic_eventing:
+                    if "strike" in self.parent.current_path:
+                        self.parent.is_strike = True
+                    else: 
+                        self.parent.drawing = True
+                    self.parent.current_path = None
+                    print("exiting place")
+                    self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
