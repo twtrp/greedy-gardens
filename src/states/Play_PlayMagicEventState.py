@@ -227,6 +227,7 @@ class Play_PlayMagicEventState(BaseState):
                                     self.parent.game_board.board[button.id].south = True
                                 self.parent.game_board.board[button.id].temp = True
                                 self.parent.game_board.board[button.id].path = True
+                                # self.parent.game_board.eval_new_tile(button.id)
                                 self.played_event = True
                         else:
                             self.select_frame = self.parent.cant_selecting_tile
