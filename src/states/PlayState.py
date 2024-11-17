@@ -8,6 +8,7 @@ from src.states.Play_PlayEventState import Play_PlayEventState
 from src.states.Play_PlayMagicEventState import Play_PlayMagicEventState
 from src.states.Play_NextDayState import Play_NextDayState
 from src.states.Play_EndDayState import Play_EndDayState
+from src.states.Play_ResultState import Play_ResultStage
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -366,6 +367,7 @@ class PlayState(BaseState):
             pos=(self.box_width/2, 640),
             pos_anchor='center',
             hover_cursor=cursors.hand,))
+        self.end_game=False
 
     def update(self, dt, events):
                 
@@ -408,6 +410,9 @@ class PlayState(BaseState):
         elif self.is_3_strike and self.current_day < self.day:
             Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_3_strike = False 
+        elif self.end_game:
+            Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -447,6 +452,7 @@ class PlayState(BaseState):
             self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
         self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
         self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
+        
 
         self.score_list = [
             {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.final_day1_score},

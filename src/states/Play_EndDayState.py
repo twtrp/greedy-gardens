@@ -71,6 +71,7 @@ class Play_EndDayState(BaseState):
         self.continue_text = utils.get_text(text="Click anywhere to continue", font=fonts.lf2, size='small', color=colors.white)
         
     def update(self, dt, events):
+        
         for index in self.parent.game_board.connected_indices:
             cell = self.parent.game_board.board[index]
             if self.current_fruit in cell.fruit:
@@ -85,6 +86,8 @@ class Play_EndDayState(BaseState):
                 if button.id == 'bg':
                     print("exiting end day")
                     self.parent.endDayState = True
+                    if self.parent.current_day == 4:
+                        self.parent.end_game=True
                     self.exit_state()
 
     def render(self, canvas):
