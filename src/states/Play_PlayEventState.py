@@ -88,7 +88,7 @@ class Play_PlayEventState(BaseState):
                     {
                         'id': 'add today',
                         'text1': 'Get 1 point today,',
-                        'text2': 'Lose 1 point next day',
+                        'text2': '',
                     },
                     {
                         'id': 'do nothing',
