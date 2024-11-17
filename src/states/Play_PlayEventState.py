@@ -266,6 +266,7 @@ class Play_PlayEventState(BaseState):
                                         elif magic_number == 3:
                                             self.parent.current_event = self.parent.magic_fruit3_event
                                         self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                        self.parent.magicing_number = magic_number
                                         self.parent.play_event_state= False
                                         self.exit_state()
                                 self.played_event = True
