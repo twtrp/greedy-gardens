@@ -198,7 +198,6 @@ class GameBoard():
 
     def fruit_shuffling(self):
         for cell in self.board:
-            print(cell.position)
             while True:
                 if 0 < len(cell.fruit) < 4:
                     cell.fruit.append(None)

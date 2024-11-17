@@ -18,7 +18,7 @@ class PlayState(BaseState):
     def __init__(self, game, parent, stack, seed):
         BaseState.__init__(self, game, parent, stack, seed)
 
-        if seed == "":
+        if seed == '':
             self.set_seed = True
             self.seed = random.randint(10000000, 99999999)
         else:
