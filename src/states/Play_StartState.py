@@ -60,6 +60,7 @@ class Play_StartState(BaseState):
                             self.magic_fruit3_not_drawn = False
                     else: 
                         self.parent.drawing = True
+                        self.parent.setup_start_state=True
                         self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

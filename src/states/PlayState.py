@@ -97,6 +97,9 @@ class PlayState(BaseState):
 
         self.finished_boot_up = False
         
+        
+        
+        
         # utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
         # utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
         # self.game.music_channel.play()
@@ -111,6 +114,9 @@ class PlayState(BaseState):
 
     def load_assets(self):
         
+        self.button_list = []
+        
+        self.setup_start_state=False
         #test grid
         self.cell_size = 80
         total_grid_width = self.cell_size * 8
@@ -335,9 +341,46 @@ class PlayState(BaseState):
         # gui
         self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
         self.cant_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
+        
+        #hover function
+        # self.button_option_list = [
+        #     {
+        #         'id': 'event_card_1',
+        #     },
+        #     {
+        #         'id': 'event_card_2',
+        #     },
+        #     {
+        #         'id': 'event_card_3',
+        #     }]
+        # self.button_option_surface_list = []
+        # for option in self.button_option_list:
+        #     self.button_option_surface_list.append({
+        #         'id': option['id'],
+        #         'scale': 1.0
+        #     })
+        # for i, option in enumerate(self.button_option_surface_list):
+        #     self.button_list.append(Button(
+        #         game=self.game,
+        #         id=option['id'],
+        #         width=300,
+        #         height=80,
+        #         pos=(constants.canvas_width/2, 280 + i*300),
+        #         pos_anchor=posanchors.center
+        #     ))
+        #if self.setup_start_state == True:
+        for i in range(3):
+            self.button_list.append(Button(
+                game=self.game,
+                id=f'revealed_event_{i+1}',
+                surface=self.card_fruit_back_image,
+                pos=(1040+i*60, 530+i*20),
+                pos_anchor='topleft',
+                hover_cursor=cursors.hand,
+            ))
 
     def update(self, dt, events):
-        
+                
         if self.ready:
 
             # Update substates
@@ -379,16 +422,6 @@ class PlayState(BaseState):
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
                         
-            #test grid
-            # elif event.type == pygame.MOUSEBUTTONDOWN:
-            #     mouse_pos = pygame.mouse.get_pos()
-            #     for i, rect in enumerate(self.grid_hitboxes):
-            #         if rect.collidepoint(mouse_pos):
-            #             print(f"Hit box {i} clicked!")
-            #             clicked_cell = self.game_board.board[i]
-            #             clicked_cell.show_detail()
-            #/test grid
-
         # Update deck remaining
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
@@ -441,24 +474,32 @@ class PlayState(BaseState):
             amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='smaller', color=score['color'])
             self.score_amount_list.append(amount)
 
+        # hover function 
+        if self.setup_start_state==True:
+            top_card = None
+            for button in self.button_list:
+                button.update(dt=dt,events=events)
+            for button in reversed(self.button_list):
+                if button.hovered:
+                    if button.id == 'revealed_event_3':
+                        top_card = 3
+                        print(f"button {button.id} is holding")
+                        break
+                    elif button.id == 'revealed_event_2'and top_card != 3:
+                        top_card = 2
+                        print(f"button {button.id} is holding")
+                        break
+                    elif button.id == 'revealed_event_1' and top_card != 2:
+                        top_card = 1
+                        print(f"button {button.id} is holding")
+                        break
+
     def render(self, canvas):     
         if self.ready:
             
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
                 
-            #test grid
-            # for rect in self.grid_hitboxes:
-            #     pygame.draw.rect(canvas, (255, 0, 0), rect, 2)
-            #/test grid
-
-            # Build background
-
-            ## Render landscape to menu_bg
-                
-            # Render gui
-
-            # Render left white box
             utils.draw_rect(dest=canvas,
                                 size=(self.box_width, constants.canvas_height),
                                 pos=(0, 0),
@@ -1012,6 +1053,51 @@ class PlayState(BaseState):
 
             else:
                 self.substate_stack[-1].render(canvas=canvas)       
+            
+            #hover function
+            if self.setup_start_state == True:
+                for button in self.button_list:
+                    button.render(canvas=canvas)
+        # if len(self.revealed_event) > 0:
+        #     utils.draw_rect(dest=canvas,
+        #             size=(64, len(self.revealed_event)*60),
+        #             pos=(constants.canvas_width - self.box_width + 4, 0),
+        #             pos_anchor='topright',
+        #             color=(*colors.white, 191),
+        #             inner_border_width=4,
+        #             outer_border_width=0,
+        #             outer_border_color=colors.black)
+            
+        #     # Render cards from back to front
+        #     for i, card in enumerate(self.revealed_event):
+        #         button = self.button_list[i]
+                
+        #         # Debug visualization of button hitbox
+        #         pygame.draw.rect(canvas, (255, 0, 0), button.rect, 2)
+                
+        #         if button.hovered:
+        #             # Render enlarged card
+        #             scaled_card = pygame.transform.scale_by(
+        #                 getattr(self, f'{card.card_name}_image'),
+        #                 2.0
+        #             )
+        #             utils.blit(
+        #                 dest=canvas,
+        #                 source=scaled_card,
+        #                 pos=(button.rect.right - 8, button.rect.top),
+        #                 pos_anchor='topright'
+        #             )
+        #         else:
+        #             # Render normal card
+        #             utils.blit(
+        #                 dest=canvas,
+        #                 source=getattr(self, f'{card.card_name}_image'),
+        #                 pos=(constants.canvas_width - self.box_width - 4, 6 + i*58),
+        #                 pos_anchor='topright'
+        #             )
+
+
+
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
