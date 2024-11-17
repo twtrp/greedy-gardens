@@ -47,6 +47,12 @@ class Play_PlayMagicEventState(BaseState):
         self.load_assets()
 
     def load_assets(self):
+        # update state
+        if self.parent.current_path:
+            if "strike" in self.parent.current_path:
+                self.parent.is_striking = True
+        self.parent.current_path = None
+
         # Load text
         self.choice_keep_title = utils.get_text(text='choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_175)
         self.choice_point_title = utils.get_text(text='choose', font=fonts.lf2, size='large', color=colors.mono_175)
@@ -227,7 +233,18 @@ class Play_PlayMagicEventState(BaseState):
                                     self.parent.game_board.board[button.id].south = True
                                 self.parent.game_board.board[button.id].temp = True
                                 self.parent.game_board.board[button.id].path = True
-                                # self.parent.game_board.eval_new_tile(button.id)
+                                if self.parent.game_board.magic_fruit_index:
+                                    self.parent.game_board.eval_new_tile(button.id)
+                                    self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+                                    if self.parent.magic_eventing:
+                                        if magic_number == 1:
+                                            self.parent.current_event = self.parent.magic_fruit1_event
+                                        elif magic_number == 2:
+                                            self.parent.current_event = self.parent.magic_fruit2_event
+                                        elif magic_number == 3:
+                                            self.parent.current_event = self.parent.magic_fruit3_event
+                                        self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                        self.exit_state()
                                 self.played_event = True
                         else:
                             self.select_frame = self.parent.cant_selecting_tile
@@ -801,6 +818,14 @@ class Play_PlayMagicEventState(BaseState):
                 print(f"There is no such event {self.parent.current_event}")
                 self.played_event = True
         else:
+            if self.parent.is_striking:
+                self.parent.is_strike = True
+            elif self.parent.strikes >= 3:
+                self.parent.is_3_strike = True
+                self.parent.strikes = 0
+            else: 
+                self.parent.drawing = True
+            self.parent.is_striking = False
             self.parent.current_event = None
             print("exiting play magic event")
             self.exit_state()
