@@ -62,6 +62,7 @@ class PlayState(BaseState):
         self.magic_fruit1_event = None
         self.magic_fruit2_event = None
         self.magic_fruit3_event = None
+        self.magicing_number = 0
 
         self.current_path = None
         self.current_event = None

@@ -217,6 +217,8 @@ class Play_PlayMagicEventState(BaseState):
         # Load image/sprite
         self.card_magic_event = self.parent.cards_event_sprites[f"card_{self.parent.current_event}"]
         self.scaled_card_magic_event = pygame.transform.scale_by(surface=self.card_magic_event, factor=2)
+        if self.parent.magicing_number > 0:
+            self.scaled_magic_fruit = pygame.transform.scale_by(surface=getattr(self.parent, f'magic_fruit{self.parent.magicing_number}_image'), factor=2)
 
         self.selected_tile = self.parent.selected_tile
         self.small_selecting_tile = self.parent.small_selecting_tile
@@ -895,8 +897,9 @@ class Play_PlayMagicEventState(BaseState):
         # for button in self.button_list:
         #     button.render(canvas)
         if not self.shown_event:
-            
             utils.blit(dest=canvas, source=self.scaled_card_magic_event, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+            if self.parent.magicing_number > 0:
+                utils.blit(dest=canvas, source=self.scaled_magic_fruit, pos=(constants.canvas_width/2, constants.canvas_height/2 - 128 - 16), pos_anchor='center')
 
         if self.selected_cell:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
@@ -980,5 +983,6 @@ class Play_PlayMagicEventState(BaseState):
             utils.blit(dest=canvas, source=self.small_selecting_tile, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320 + 58*self.choice), pos_anchor='center')
 
         if self.fruit_drawn_image:
-                    scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
-                    utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+            scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
+            utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+            
