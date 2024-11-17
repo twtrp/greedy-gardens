@@ -168,6 +168,7 @@ class Play_ResultStage(BaseState):
                       pos=(constants.canvas_width/2, 500),pos_anchor=posanchors.center)
             #utils.blit(dest=canvas, source=self.high_score_value_text,pos=(constants.canvas_width/2 + 150, 500), pos_anchor=posanchors.center)
             
+            # self.continue_button.render(canvas=canvas)
 
         # Always render hover text
         utils.blit(dest=canvas, source=self.hover_text,

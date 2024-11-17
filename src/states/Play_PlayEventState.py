@@ -705,8 +705,8 @@ class Play_PlayEventState(BaseState):
     def render(self, canvas):
 
         # show button hit box
-        for button in self.button_list:
-            button.render(canvas)
+        # for button in self.button_list:
+        #     button.render(canvas)
 
         if self.selected_cell:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
