@@ -158,14 +158,9 @@ class GameBoard():
         # all fruit types
         all_fruit = ["fruit_strawberry", "fruit_orange", "fruit_blueberry", "fruit_grape", "fruit_coconut", "fruit_peach"]
 
-        # debug
-        # loopnumber = 0
-        # test_fruit = ["fruit_strawberry"]
-
         for fruit in all_fruit:
             placed = 0
             while placed < fruit_each_type:
-                # print(loopnumber)
                 fruit_quadrant = random.choice(available_quadrant)
                 quadrant_index = fruit_quadrant - 1
                 if fruit_quadrant == 1:
@@ -197,8 +192,19 @@ class GameBoard():
                     board_fruit[quadrant_index] += 1
                     if board_fruit[quadrant_index] == max_fruit_each_quadrant:
                         available_quadrant.remove(fruit_quadrant)
-                
-                # loopnumber+=1
+        
+        # comment this to make all tile look the same position wise
+        self.fruit_shuffling()
+
+    def fruit_shuffling(self):
+        for cell in self.board:
+            print(cell.position)
+            while True:
+                if 0 < len(cell.fruit) < 4:
+                    cell.fruit.append(None)
+                else:
+                    break
+            random.shuffle(cell.fruit)
     
     '''
     Check Connected Path
@@ -245,7 +251,7 @@ class GameBoard():
             if cell_fruit:
                 for fruit in cell_fruit:
                     # Will change this condition later after asking Three how the fruit name is passed
-                    if fruit in today_fruit or today_fruit in fruit or fruit == today_fruit:
+                    if fruit == today_fruit and fruit != None:
                         score += 1
         return score
 
