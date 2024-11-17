@@ -138,6 +138,9 @@ class MenuState(BaseState):
                 'scale': 0.5,
                 'alpha': 0,
             })
+
+        self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
+        self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
         
 
     def update(self, dt, events):

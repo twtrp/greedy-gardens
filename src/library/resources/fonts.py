@@ -51,8 +51,7 @@ lf1 = {
 lf2 = {
     'file': 'LazyFox Pixel Font 2.ttf',
     'sizes': {
-        'tiny': 16,
-        'smaller': 20,
+        'tiny': 18,
         'small': 24,
         'medium': 32,
         'large': 40,
