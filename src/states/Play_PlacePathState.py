@@ -35,7 +35,8 @@ class Play_PlacePathState(BaseState):
                         if "S" in self.parent.current_path:
                             self.parent.game_board.board[button.id].south = True
                         self.parent.game_board.board[button.id].path = True
-                        self.parent.game_board.eval_new_tile(button.id)
+                        # self.parent.game_board.eval_new_tile(button.id)
+                        self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
                         self.is_placed = True
                 else:
                     self.select_frame = self.parent.cant_selecting_tile
