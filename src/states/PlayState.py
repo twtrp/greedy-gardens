@@ -18,9 +18,13 @@ class PlayState(BaseState):
     def __init__(self, game, parent, stack, seed):
         BaseState.__init__(self, game, parent, stack, seed)
 
+        if seed == "":
+            self.set_seed = True
+            self.seed = random.randint(10000000, 99999999)
+        else:
+            self.seed = seed
+
         self.game.canvas.fill((0, 0, 0))
-        self.seed = seed
-        print("seed="+seed)
 
         # config of gui
         self.box_width = 272
