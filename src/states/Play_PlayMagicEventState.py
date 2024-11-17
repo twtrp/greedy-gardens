@@ -898,8 +898,8 @@ class Play_PlayMagicEventState(BaseState):
     def render(self, canvas):
 
         # show button hit box
-        for button in self.button_list:
-            button.render(canvas)
+        # for button in self.button_list:
+        #     button.render(canvas)
             
         if not self.shown_event:
             utils.blit(dest=canvas, source=self.scaled_card_magic_event, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')

@@ -534,26 +534,28 @@ fruit_32x32 = {
         'magic_fruit_3': {
             'x': 160,
             'y': 64,
-        },'fruit_big_orange': {
+        },
+        'big_fruit_orange': {
             'x': 0,
             'y': 32,
         },
-        'fruit_big_blueberry': {
+        'big_fruit_blueberry': {
             'x': 32,
             'y': 32,
         },
-        'fruit_big_grape': {
+        'big_fruit_grape': {
             'x': 64,
             'y': 32,
-        },'fruit_big_strawberry': {
+        },
+        'big_fruit_strawberry': {
             'x': 96,
             'y': 32,
         },
-        'fruit_big_peach': {
+        'big_fruit_peach': {
             'x': 128,
             'y': 32,
         },
-        'fruit_big_coconut': {
+        'big_fruit_coconut': {
             'x': 160,
             'y': 32,
         },

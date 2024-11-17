@@ -116,7 +116,7 @@ class PlayState(BaseState):
         # magic fruit card locations
         self.magic_fruit1_card_location = (1025, 555)
         self.magic_fruit2_card_location = (1095, 565)
-        self.magic_fruit3_card_location = (1165, 575) #fix from 1165 to 1175
+        self.magic_fruit3_card_location = (1165, 575)
 
     #Main methods
 
@@ -237,7 +237,7 @@ class PlayState(BaseState):
             {'text': 'Day 3', 'color': day3_color, 'amount': self.day3_score},
             {'text': 'Day 4', 'color': day4_color, 'amount': self.day4_score},
             {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.seasonal_score},
-            {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
+            {'text': 'Total', 'color': colors.green_light, 'amount': self.total_score},
         ]
 
         self.score_title_list = []
@@ -247,7 +247,7 @@ class PlayState(BaseState):
 
         self.score_amount_list = []
         for score in self.score_list:
-            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='tiny', color=score['color'])
+            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
             self.score_amount_list.append(amount)
 
         self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.lf2, size='small', color=colors.white)
@@ -258,6 +258,8 @@ class PlayState(BaseState):
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
+        self.scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
+        self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
 
         # right gui
         self.right_box_title = utils.get_text(text='Cards', font=fonts.lf2, size='small', color=colors.white)
@@ -409,6 +411,7 @@ class PlayState(BaseState):
             pos=(self.box_width/2, 640),
             pos_anchor='center',
             hover_cursor=cursors.hand,))
+        #fix
         self.end_game=False
 
     def update(self, dt, events):
@@ -502,7 +505,7 @@ class PlayState(BaseState):
             {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.final_day3_score},
             {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.final_day4_score},
             {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.final_seasonal_score},
-            {'text': 'Total', 'color': colors.white, 'amount': self.total_score},
+            {'text': 'Total', 'color': colors.green_light, 'amount': self.total_score},
         ]
 
         self.score_title_list = []
@@ -512,7 +515,7 @@ class PlayState(BaseState):
 
         self.score_amount_list = []
         for score in self.score_list:
-            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='tiny', color=score['color'])
+            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
             self.score_amount_list.append(amount)
 
         # hover function 
@@ -562,68 +565,60 @@ class PlayState(BaseState):
             # Render text in left white box
             utils.blit(dest=canvas, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
             for i, score in enumerate(self.score_title_list):
-                utils.blit(dest=canvas, source=score, pos=(60, 80 + i*45), pos_anchor='topleft')
-            utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 390), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 510), pos_anchor='center')
+                utils.blit(dest=canvas, source=score, pos=(70, 83 + i*45), pos_anchor='midleft')
+            utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
-            # Render image in left white box
-            scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
+            # Render value in left white box
+            for i, score in enumerate(self.score_amount_list):
+                utils.blit(dest=canvas, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
+
+            # Render strike in left white box
             for i in range(self.strikes):
-                    utils.blit(dest=canvas, source=scaled_live_strike, pos=(40 + i*64, 420), pos_anchor='topleft')
-            scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
+                    utils.blit(dest=canvas, source=self.scaled_live_strike, pos=(40 + i*64, 400), pos_anchor='topleft')
             for i in range(3 - self.strikes):
-                    utils.blit(dest=canvas, source=scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 420), pos_anchor='topleft')
-                ## Render current task image
+                    utils.blit(dest=canvas, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 400), pos_anchor='topleft')
+            ## Render current task image
             if self.current_path:
                 self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
-                scaled_current_path_image = pygame.transform.scale_by(surface=self.current_path_image, factor=0.875)
-                utils.blit(dest=canvas, source=scaled_current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
-                utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 550), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 535), pos_anchor='center')
             elif self.current_event:
                 self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
-                scaled_current_event_image = pygame.transform.scale_by(surface=self.current_event_image, factor=0.875)
-                utils.blit(dest=canvas, source=scaled_current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
-                utils.blit(dest=canvas, source=self.left_box_event_text, pos=(self.box_width/2, 550), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_event_text, pos=(self.box_width/2, 535), pos_anchor='center')
             else:
-                utils.blit(dest=canvas, source=self.left_box_draw_text, pos=(self.box_width/2, 550), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_draw_text, pos=(self.box_width/2, 535), pos_anchor='center')
 
                 ## Render Day's Fruit
             if self.day1_fruit:
                 if self.current_day == 1:
-                    self.day1_fruit_image = self.fruit_sprites[self.day1_fruit]
+                    self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
                 else:
-                    self.day1_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day1_fruit])
-                self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
-                utils.blit(dest=canvas, source=self.scaled_day1_fruit_image, pos=(40, 95), pos_anchor='center')
+                    self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
+                utils.blit(dest=canvas, source=self.day1_fruit_image, pos=(45, 83), pos_anchor='center')
             if self.day2_fruit:
                 if self.current_day == 2:
-                    self.day2_fruit_image = self.fruit_sprites[self.day2_fruit]
+                    self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
                 else:
-                    self.day2_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day2_fruit])
-                self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=1.25)
-                utils.blit(dest=canvas, source=self.scaled_day2_fruit_image, pos=(40, 140), pos_anchor='center')
+                    self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
+                utils.blit(dest=canvas, source=self.day2_fruit_image, pos=(45, 128), pos_anchor='center')
             if self.day3_fruit:
                 if self.current_day == 3:
-                    self.day3_fruit_image = self.fruit_sprites[self.day3_fruit]
+                    self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
                 else:
-                    self.day3_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day3_fruit])
-                self.scaled_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=1.25)
-                utils.blit(dest=canvas, source=self.scaled_day3_fruit_image, pos=(40, 185), pos_anchor='center')
+                    self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
+                utils.blit(dest=canvas, source=self.day3_fruit_image, pos=(45, 173), pos_anchor='center')
             if self.day4_fruit:
                 if self.current_day == 4:
-                    self.day4_fruit_image = self.fruit_sprites[self.day4_fruit]
+                    self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
                 else:
-                    self.day4_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day4_fruit])
-                self.scaled_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=1.25)
-                utils.blit(dest=canvas, source=self.scaled_day4_fruit_image, pos=(40, 230), pos_anchor='center')
+                    self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
+                utils.blit(dest=canvas, source=self.day4_fruit_image, pos=(45, 218), pos_anchor='center')
             if self.seasonal_fruit:
-                self.seasonal_fruit_image = self.fruit_sprites[self.seasonal_fruit]
-                scaled_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=1.25)
-                utils.blit(dest=canvas, source=scaled_seasonal_fruit_image, pos=(40, 275), pos_anchor='center')
+                self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
+                utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
 
-            # Render value in left white box
-            for i, score in enumerate(self.score_amount_list):
-                utils.blit(dest=canvas, source=score, pos=(240, 80 + i*45), pos_anchor='topright')
             
             # Render right white box
             utils.draw_rect(dest=canvas,
@@ -1120,8 +1115,8 @@ class PlayState(BaseState):
             
             #hover function
             if self.setup_start_state == True:
-                for button in self.button_list:
-                    button.render(canvas=canvas)
+                # for button in self.button_list:
+                #     button.render(canvas=canvas)
                 if self.pop_up_revealed_event_card == 3:
                     self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
                     scaled_image = pygame.transform.scale_by(surface=self.magic_fruit3_event_image, factor=3)
