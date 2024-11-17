@@ -576,13 +576,13 @@ class Play_PlayEventState(BaseState):
                                 utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                                 if self.selected_cell:
                                     old_path1 = "_"
-                                    if self.parent.game_board.board[i].north:
+                                    if self.parent.game_board.board[button.id].north:
                                         old_path1 += "N"
-                                    if self.parent.game_board.board[i].west:
+                                    if self.parent.game_board.board[button.id].west:
                                         old_path1 += "W"
-                                    if self.parent.game_board.board[i].east:
+                                    if self.parent.game_board.board[button.id].east:
                                         old_path1 += "E"
-                                    if self.parent.game_board.board[i].south:
+                                    if self.parent.game_board.board[button.id].south:
                                         old_path1 += "S"
                                     self.parent.game_board.board[self.selected_cell].north = False
                                     self.parent.game_board.board[self.selected_cell].west = False
@@ -595,13 +595,13 @@ class Play_PlayEventState(BaseState):
                                             break
                                 if self.selected_cell_2:
                                     old_path2 = "_"
-                                    if self.parent.game_board.board[i].north:
+                                    if self.parent.game_board.board[button.id].north:
                                         old_path2 += "N"
-                                    if self.parent.game_board.board[i].west:
+                                    if self.parent.game_board.board[button.id].west:
                                         old_path2 += "W"
-                                    if self.parent.game_board.board[i].east:
+                                    if self.parent.game_board.board[button.id].east:
                                         old_path2 += "E"
-                                    if self.parent.game_board.board[i].south:
+                                    if self.parent.game_board.board[button.id].south:
                                         old_path2 += "S"
                                     self.parent.game_board.board[self.selected_cell_2].north = False
                                     self.parent.game_board.board[self.selected_cell_2].west = False
@@ -704,9 +704,9 @@ class Play_PlayEventState(BaseState):
 
     def render(self, canvas):
 
-        # # show button hit box
-        # for button in self.button_list:
-        #     button.render(canvas)
+        # show button hit box
+        for button in self.button_list:
+            button.render(canvas)
 
         if self.selected_cell:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
