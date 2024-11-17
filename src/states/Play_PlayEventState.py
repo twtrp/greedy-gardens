@@ -238,6 +238,7 @@ class Play_PlayEventState(BaseState):
                                         elif magic_number == 3:
                                             self.parent.current_event = self.parent.magic_fruit3_event
                                         self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                        self.parent.play_event_state= False
                                         self.exit_state()
                                 self.played_event = True
                         else:
@@ -646,6 +647,7 @@ class Play_PlayEventState(BaseState):
                 self.parent.drawing = True
             self.parent.current_event = None
             print("exiting play event")
+            self.parent.play_event_state= False
             self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

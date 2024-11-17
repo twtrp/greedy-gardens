@@ -54,7 +54,8 @@ class Play_EndDayState(BaseState):
             pos=((self.parent.box_width, 0)),
             pos_anchor='topleft'
         ))
-
+        self.continue_text = utils.get_text(text="Click anywhere to continue", font=fonts.lf2, size='small', color=colors.white)
+        
     def update(self, dt, events):
         
         for button in self.button_list:
@@ -89,20 +90,6 @@ class Play_EndDayState(BaseState):
             utils.blit(dest=canvas, source=option['surface_fruit'], pos=(constants.canvas_width/2 - 25, constants.canvas_height/2), pos_anchor='center')
             utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2 + 25, constants.canvas_height/2), pos_anchor='center')
         
-        # if self.current_fruit:
-        #     # Fruit sprite on left side
-        #     fruit_sprite = utils.get_sprite(spritesheets.fruit_16x16, self.current_fruit)
-        #     scaled_fruit_sprite = pygame.transform.scale_by(surface=fruit_sprite, factor=2)
-        #     fruit_x = (constants.canvas_width // 2) - scaled_fruit_sprite.get_width() - 20
-        #     canvas.blit(scaled_fruit_sprite, (fruit_x, center_y - scaled_fruit_sprite.get_height() // 2))
-            
-        #     # Score text on right side
-        #     score_text = self.text_font.render(f"Score: {self.current_score}", True, (255, 255, 255))
-        #     score_x = (constants.canvas_width // 2) + 20
-        #     canvas.blit(score_text, (score_x, center_y - score_text.get_height() // 2))
-        
-        # # Click to continue text
-        # continue_text = self.text_font.render("Click anywhere to continue", True, (255, 255, 255))
-        # continue_x = (constants.canvas_width - continue_text.get_width()) // 2
-        # canvas.blit(continue_text, (continue_x, constants.canvas_height - 100))
+        # Continue text
+        utils.blit(dest=canvas, source=self.continue_text, pos=(constants.canvas_width/2, constants.canvas_height-self.continue_text.get_height()+5), pos_anchor='center')
         
