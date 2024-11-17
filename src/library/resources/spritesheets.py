@@ -556,6 +556,18 @@ fruit_32x32 = {
         'fruit_big_coconut': {
             'x': 160,
             'y': 32,
+        },
+        'fruit_hole_light_green': {
+            'x': 0,
+            'y': 96,
+        },
+        'fruit_hole_dark_green': {
+            'x': 32,
+            'y': 96,
+        },
+        'fruit_shadow': {
+            'x': 64,
+            'y': 96,
         }
     }
 }
