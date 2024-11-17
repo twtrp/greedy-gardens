@@ -12,6 +12,7 @@ class GameBoard():
             self.board.append(Cell(i))
 
         self.home_index = 0
+        self.magic_fruit_index = []
 
         # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
@@ -104,6 +105,7 @@ class GameBoard():
                     mfruitindex = random.randint(1, 3) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        self.magic_fruit_index.append(mfruitindex)
                         unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 2:
@@ -112,6 +114,7 @@ class GameBoard():
                     mfruitindex = random.randint(1, 3) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        self.magic_fruit_index.append(mfruitindex)
                         unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 3:
@@ -120,6 +123,7 @@ class GameBoard():
                     mfruitindex = random.randint(4, 6) * 8 + random.randint(1, 3)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        self.magic_fruit_index.append(mfruitindex)
                         unique_index.append(mfruitindex)
                         loop = False
             elif current_quadrant == 4:
@@ -128,6 +132,7 @@ class GameBoard():
                     mfruitindex = random.randint(4, 6) * 8 + random.randint(4, 6)
                     if mfruitindex not in no_mfruit_index:
                         self.set_magic_fruit(mfruitindex, mfruitnum)
+                        self.magic_fruit_index.append(mfruitindex)
                         unique_index.append(mfruitindex)
                         loop = False
 
@@ -244,5 +249,19 @@ class GameBoard():
                         score += 1
         return score
 
+    def magic_fruit_found(self):
+        # Intersection Check
+        if self.magic_fruit_index:
+            for i in self.magic_fruit_index:
+                if i in self.connected_indices:
+                    print("Found the magic fruit")
+                    self.magic_fruit_index.remove(i)
+                    return (True, self.board[i].magic_fruit)
         
+        return (False, -1)
+    
+    def eval_new_tile(self, center_index):
+        self.check_connection(self.connected_indices, center_index)
+                
+            
                 

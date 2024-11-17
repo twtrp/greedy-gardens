@@ -5,6 +5,7 @@ from src.states.Play_DrawPathState import Play_DrawPathState
 from src.states.Play_DrawEventState import Play_DrawEventState
 from src.states.Play_PlacePathState import Play_PlacePathState
 from src.states.Play_PlayEventState import Play_PlayEventState
+from src.states.Play_PlayMagicEventState import Play_PlayMagicEventState
 from src.states.Play_NextDayState import Play_NextDayState
 from src.states.Play_EndDayState import Play_EndDayState
 from src.classes.Deck import Deck
@@ -67,11 +68,6 @@ class PlayState(BaseState):
         
         # define board
         self.game_board = GameBoard(seed)
-        #function and example for use in gen map and place path
-        #self.game_board.set_path(index, path_type)
-        #self.game_board.add_fruit(index, fruit_type, value)
-        #self.game_board.set_home(index)
-        #self.game_board.set_magic_fruit(index,num)
 
         # stack
         self.substate_stack = []
@@ -83,6 +79,7 @@ class PlayState(BaseState):
         self.eventing = False
         self.is_strike = False
         self.is_3_strike = False
+        self.magic_eventing = False
         # self.day1 = True
         # self.day2 = False
         # self.day3 = False
@@ -361,10 +358,13 @@ class PlayState(BaseState):
         elif self.placing:
             Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.placing = False
-        elif self.is_strike:
+        elif self.magic_eventing:
+            Play_PlayMagicEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.magic_eventing = False
+        elif self.is_strike and not self.magic_eventing:
             Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_strike = False
-        elif self.eventing:
+        elif self.eventing and not self.magic_eventing:
             Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.eventing = False
         elif self.endDayState:
@@ -1015,108 +1015,3 @@ class PlayState(BaseState):
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
-    
-
-    #Class methods
-  
-    # def bootup_tween_chain(self, skip=False):
-    #     if not skip:
-    #         delay = 0
-    #         self.tween_list.append(tween.to(container=self.surface_logo_props,
-    #                                         key='alpha',
-    #                                         end_value=255,
-    #                                         time=2,
-    #                                         ease_type=tweencurves.easeOutCubic,
-    #                                         delay=delay))
-    #         self.tween_list.append(tween.to(container=self.surface_logo_props,
-    #                                         key='scale',
-    #                                         end_value=1,
-    #                                         time=3,
-    #                                         ease_type=tweencurves.easeOutCubic,
-    #                                         delay=delay))
-
-    #         delay = 1.75
-    #         self.tween_list.append(tween.to(container=self.overlay_props,
-    #                                         key='alpha',
-    #                                         end_value=0,
-    #                                         time=2,
-    #                                         ease_type=tweencurves.easeOutQuad,
-    #                                         delay=delay))
-    #         for layer in self.landscape_list:
-    #             self.tween_list.append(tween.to(container=layer,
-    #                                             key='y_offset',
-    #                                             end_value=0,
-    #                                             time=3.25,
-    #                                             ease_type=tweencurves.easeOutQuint,
-    #                                             delay=delay))
-                
-    #         self.tween_list.append(tween.to(container=self.winds_props,
-    #                                         key='y_offset',
-    #                                         end_value=0,
-    #                                         time=3.25,
-    #                                         ease_type=tweencurves.easeOutQuint,
-    #                                         delay=delay))
-    #         self.tween_list.append(tween.to(container=self.surface_logo_props,
-    #                                         key='y_offset',
-    #                                         end_value=-500,
-    #                                         time=3.25,
-    #                                         ease_type=tweencurves.easeOutQuint,
-    #                                         delay=delay).on_complete(self.finish_bootup))
-            
-    #         delay = 4
-    #         self.tween_list.append(tween.to(container=self.game_logo_props,
-    #                                         key='scale',
-    #                                         end_value=1,
-    #                                         time=0.75,
-    #                                         ease_type=tweencurves.easeOutElastic,
-    #                                         delay=delay))
-    #         self.tween_list.append(tween.to(container=self.game_logo_props,
-    #                                         key='alpha',
-    #                                         end_value=255,
-    #                                         time=0.1,
-    #                                         ease_type=tweencurves.easeOutCirc,
-    #                                         delay=delay))
-            
-    #         for option in self.title_button_option_surface_list:
-    #             delay += 0.125
-    #             self.tween_list.append(tween.to(container=option,
-    #                                             key='scale',
-    #                                             end_value=1,
-    #                                             time=0.5,
-    #                                             ease_type=tweencurves.easeOutElastic,
-    #                                             delay=delay))
-    #             self.tween_list.append(tween.to(container=option,
-    #                                             key='alpha',
-    #                                             end_value=255,
-    #                                             time=0.1,
-    #                                             ease_type=tweencurves.easeOutCirc,
-    #                                             delay=delay))
-                
-    #     else:
-    #         self.finish_bootup()
-
-
-    # def finish_bootup(self):
-    #     self.finished_boot_up = True
-
-    #     # Clear intro assets
-    #     del self.overlay
-    #     del self.overlay_props
-
-    #     # Set props to final values
-    #     for layer in self.landscape_list:
-    #         layer['y_offset'] = 0
-    #         self.winds_props['y_offset'] = 0
-    #         self.game_logo_props['scale'] = 1
-    #         self.game_logo_props['alpha'] = 255
-    #         for option in self.title_button_option_surface_list:
-    #             option['scale'] = 1
-    #             option['alpha'] = 255
-
-    #     # Convert surfaces to static
-    #     self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-    #     for option in self.title_button_option_surface_list:
-    #         option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-        
-    #     # Initiate substate
-    #     Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
