@@ -44,9 +44,9 @@ class GameBoard():
         column = index % 8
 
         # Determine the quadrant based on row and column
-        if row < 4 and column < 4:
+        if row < 4 and column >= 4:
             return 1  # Quadrant 1
-        elif row < 4 and column >= 4:
+        elif row < 4 and column < 4:
             return 2  # Quadrant 2
         elif row >= 4 and column < 4:
             return 3  # Quadrant 3

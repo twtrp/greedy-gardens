@@ -128,17 +128,17 @@ class Play_PlayEventState(BaseState):
                     'text': f'Day {self.parent.current_day + 1}',
                     'fruit': getattr(self.parent, f'day{self.parent.current_day + 1}_fruit'),
                 })
-            else:
+            if self.parent.current_day != self.parent.day:
                 self.redraw_button_option_list.append({
-                    'id': 'do nothing',
-                    'text': '',
-                    'fruit': 'nothing',
-                })
-            self.redraw_button_option_list.append({
                 'id': 'seasonal fruit',
                 'text': 'Seasonal',
                 'fruit': self.parent.seasonal_fruit,
             })
+                self.redraw_button_option_list.append({
+                        'id': 'do nothing',
+                        'text': 'Do Nothing',
+                        'fruit': 'nothing',
+                    })
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
@@ -458,19 +458,19 @@ class Play_PlayEventState(BaseState):
                 # print('event_redraw')
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
-                    if button.hovered:
-                        if button.id == 'view board':
-                                self.choosing = False
-                        if button.id != 'do nothing':
+                    if not self.fruit_drawn_image:
+                        if button.hovered:
+                            if button.id == 'view board':
+                                    self.choosing = False
                             if button.hover_cursor is not None:
                                 self.cursor = button.hover_cursor
-                        for option in self.redraw_button_option_surface_list:
-                            if button.id == option['id']:
-                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
-                                option['scale_fruit'] = min(option['scale_fruit'] + 7.2*dt, 3.6)
-                    else:
-                        if button.id == 'view board':
-                                self.choosing = True
+                            for option in self.redraw_button_option_surface_list:
+                                if button.id == option['id']:
+                                    option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                                    option['scale_fruit'] = min(option['scale_fruit'] + 7.2*dt, 3.6)
+                        else:
+                            if button.id == 'view board':
+                                    self.choosing = True
                         for option in self.redraw_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
@@ -506,6 +506,10 @@ class Play_PlayEventState(BaseState):
                             random.shuffle(self.parent.deck_fruit.cards)
                             self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
+                        elif button.id == 'do nothing':
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            self.choosing = False
+                            self.played_event = True
                 if self.fruit_drawn_image:
                     for event in events:
                         if event.type == pygame.KEYDOWN:
@@ -514,7 +518,6 @@ class Play_PlayEventState(BaseState):
 
             elif self.parent.current_event == 'event_remove':
                 # print('event_remove')
-
                 self.cell_pos = -1
                 for button in self.parent.grid_buttons:
                     if button.hovered:
@@ -751,10 +754,13 @@ class Play_PlayEventState(BaseState):
                 utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.redraw_button_option_surface_list):
                     scaled_redraw_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                    utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
-                    self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
-                    self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
-                    utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575 - (i//2)*30, 265 + i*75), pos_anchor='center')
+                    if option["id"] == "do nothing":
+                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2, 265 + i*75), pos_anchor=posanchors.center)
+                    else:
+                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
+                        self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
+                        self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
+                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575 - (i//2)*30, 265 + i*75), pos_anchor='center')
 
             elif self.parent.current_event == 'event_reveal':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
@@ -790,5 +796,5 @@ class Play_PlayEventState(BaseState):
             utils.blit(dest=canvas, source=self.small_selecting_tile, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320 + 58*self.choice), pos_anchor='center')
 
         if self.fruit_drawn_image:
-                    scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
-                    utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+            scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
+            utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
