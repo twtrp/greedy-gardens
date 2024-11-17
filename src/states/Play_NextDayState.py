@@ -8,6 +8,11 @@ class Play_NextDayState(BaseState):
 
         print("Next Day")
 
+        # Update score if fail to make more than yesterday
+        if self.parent.current_day > 1:
+            if getattr(self.parent, f'final_day{self.parent.current_day}_score') <= getattr(self.parent, f'final_day{self.parent.current_day - 1}_score'):
+                setattr(self.parent, f'final_day{self.parent.current_day}_score', getattr(self.parent, f'final_day{self.parent.current_day}_score') if getattr(self.parent, f'final_day{self.parent.current_day}_score') < 0 else 0)
+
         # update parent value
         self.parent.strikes = 0
         self.parent.current_day += 1
