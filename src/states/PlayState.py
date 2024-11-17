@@ -163,8 +163,8 @@ class PlayState(BaseState):
         self.dark_grass_textured_sprites = list(utils.get_sprite_sheet(sprite_sheet=spritesheets.dark_grass_textured).values())
         self.dark_grass_flowers_sprites = list(utils.get_sprite_sheet(sprite_sheet=spritesheets.dark_grass_flowers).values())
         
-        self.plain_grass_frequency = math.ceil(70 / len(self.light_grass_sprites))
-        self.textured_grass_frequency = math.ceil(12 / len(self.light_grass_textured_sprites))
+        self.plain_grass_frequency = math.ceil(10 / len(self.light_grass_sprites))
+        self.textured_grass_frequency = math.ceil(3 / len(self.light_grass_textured_sprites))
         self.flowers_frequency = math.ceil(4 / len(self.light_grass_flowers_sprites))
 
         self.light_grass_choices = (self.plain_grass_frequency * self.light_grass_sprites
@@ -179,6 +179,18 @@ class PlayState(BaseState):
                 for x in range(i, i + 272, 16):
                     for y in range(j, j + 336, 16):
                         utils.blit(dest=self.landscape_surface, source=random.choice(self.light_grass_choices), pos=(x, y))
+
+        self.plain_grass_frequency = math.ceil(140 / len(self.light_grass_sprites))
+        self.textured_grass_frequency = math.ceil(24 / len(self.light_grass_textured_sprites))
+        self.flowers_frequency = math.ceil(4 / len(self.light_grass_flowers_sprites))
+
+        self.light_grass_choices = (self.plain_grass_frequency * self.light_grass_sprites
+                                    + self.textured_grass_frequency * self.light_grass_textured_sprites
+                                    + self.flowers_frequency * self.light_grass_flowers_sprites)
+        self.dark_grass_choices = (self.plain_grass_frequency * self.dark_grass_sprites
+                                    + self.textured_grass_frequency * self.dark_grass_textured_sprites
+                                    + self.flowers_frequency * self.dark_grass_flowers_sprites)
+
 
         for x in range(304, 976, 16):
             for y in range(32, 704, 16):
