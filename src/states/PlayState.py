@@ -116,7 +116,7 @@ class PlayState(BaseState):
         # magic fruit card locations
         self.magic_fruit1_card_location = (1025, 555)
         self.magic_fruit2_card_location = (1095, 565)
-        self.magic_fruit3_card_location = (1175, 575) #fix from 1165 to 1175
+        self.magic_fruit3_card_location = (1165, 575) #fix from 1165 to 1175
 
     #Main methods
 

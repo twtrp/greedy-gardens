@@ -128,16 +128,17 @@ class Play_PlayEventState(BaseState):
                     'text': f'Day {self.parent.current_day + 1}',
                     'fruit': getattr(self.parent, f'day{self.parent.current_day + 1}_fruit'),
                 })
+            else:
+                self.redraw_button_option_list.append({
+                    'id': 'do nothing',
+                    'text': '',
+                    'fruit': 'nothing',
+                })
             self.redraw_button_option_list.append({
                 'id': 'seasonal fruit',
                 'text': 'Seasonal',
                 'fruit': self.parent.seasonal_fruit,
             })
-            self.redraw_button_option_list.append({
-                    'id': 'do nothing',
-                    'text': '',
-                    'fruit': 'nothing',
-                })
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
@@ -504,9 +505,6 @@ class Play_PlayEventState(BaseState):
                             self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
                             random.shuffle(self.parent.deck_fruit.cards)
                             self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.choosing = False
-                        elif button.id == 'do nothing':
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.choosing = False
                 if self.fruit_drawn_image:
                     for event in events:
