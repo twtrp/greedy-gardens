@@ -71,11 +71,6 @@ class Play_EndDayState(BaseState):
         self.continue_text = utils.get_text(text="Click anywhere to continue", font=fonts.lf2, size='small', color=colors.white)
         
     def update(self, dt, events):
-        
-        for index in self.parent.game_board.connected_indices:
-            cell = self.parent.game_board.board[index]
-            if self.current_fruit in cell.fruit:
-                cell.fruit = [None if item == self.current_fruit else item for item in cell.fruit]
             
         for button in self.button_list:
             button.update(dt=dt, events=events)

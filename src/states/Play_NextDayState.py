@@ -25,6 +25,11 @@ class Play_NextDayState(BaseState):
         self.parent.set_start_state=False
 
     def update(self, dt, events):
+        for index in self.parent.game_board.connected_indices:
+            cell = self.parent.game_board.board[index]
+            if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
+                cell.fruit = [None if item == getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') else item for item in cell.fruit]
+
         # clear free(temp) path
         for i, rect in enumerate(self.parent.grid_hitboxes):
             if self.parent.game_board.board[i].temp:
