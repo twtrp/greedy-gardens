@@ -247,16 +247,6 @@ class PlayState(BaseState):
             self.dirt_sprite_7.append(self.random_dirt())
             self.dirt_sprite_8.append(self.random_dirt())
             self.dirt_sprite_9.append(self.random_dirt())
-        # for i, rect in enumerate(self.grid_hitboxes):
-        #     self.dirt_sprite_1 = self.dirt_sprites_1[i]
-        #     self.dirt_sprite_2 = self.dirt_sprites_2[i]
-        #     self.dirt_sprite_3 = self.dirt_sprites_3[i]
-        #     self.dirt_sprite_4 = self.dirt_sprites_4[i]
-        #     self.dirt_sprite_5 = self.dirt_sprites_5[i]
-        #     self.dirt_sprite_6 = self.dirt_sprites_6[i]
-        #     self.dirt_sprite_7 = self.dirt_sprites_7[i]
-        #     self.dirt_sprite_8 = self.dirt_sprites_8[i]
-        #     self.dirt_sprite_9 = self.dirt_sprites_9[i]
 
         # grass path
         self.grass_light_path_N = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_N')
