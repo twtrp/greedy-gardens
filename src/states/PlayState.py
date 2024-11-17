@@ -31,9 +31,9 @@ class PlayState(BaseState):
         self.box_width = 272
 
         # create deck
-        self.deck_fruit = Deck('fruit', seed)
-        self.deck_path = Deck('path', seed)
-        self.deck_event = Deck('event', seed)
+        self.deck_fruit = Deck('fruit', self.seed)
+        self.deck_path = Deck('path', self.seed)
+        self.deck_event = Deck('event', self.seed)
 
         # drawn card
         self.drawn_cards_fruit = []
@@ -72,7 +72,7 @@ class PlayState(BaseState):
         self.current_event = None
         
         # define board
-        self.game_board = GameBoard(seed)
+        self.game_board = GameBoard(self.seed)
 
         # stack
         self.substate_stack = []

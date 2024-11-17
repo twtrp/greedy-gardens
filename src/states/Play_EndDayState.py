@@ -72,7 +72,7 @@ class Play_EndDayState(BaseState):
         
     def update(self, dt, events):
             
-        for button in self.button_list:
+         for button in self.button_list:
             button.update(dt=dt, events=events)
             if button.hovered:
                 if button.hover_cursor is not None:
