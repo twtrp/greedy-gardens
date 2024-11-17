@@ -8,6 +8,11 @@ class Play_NextDayState(BaseState):
 
         print("Next Day")
 
+        # Update score if fail to make more than yesterday
+        if self.parent.current_day > 1:
+            if getattr(self.parent, f'final_day{self.parent.current_day}_score') <= getattr(self.parent, f'final_day{self.parent.current_day - 1}_score'):
+                setattr(self.parent, f'final_day{self.parent.current_day}_score', getattr(self.parent, f'final_day{self.parent.current_day}_score') if getattr(self.parent, f'final_day{self.parent.current_day}_score') < 0 else 0)
+
         # update parent value
         self.parent.strikes = 0
         self.parent.current_day += 1
@@ -37,7 +42,7 @@ class Play_NextDayState(BaseState):
                             if self.card_drawn:
                                 setattr(self.parent, f"day{self.parent.current_day + 1}_fruit", self.card_drawn.card_name)
                                 self.parent.drawn_cards_fruit.append(self.card_drawn)
-                                self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
+                                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                                 self.fruit_not_drawn = False
                         else:
                             self.parent.drawing = True

@@ -95,6 +95,9 @@ class PlayState(BaseState):
 
         self.finished_boot_up = False
         
+        
+        
+        
         # utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
         # utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
         # self.game.music_channel.play()
@@ -114,6 +117,9 @@ class PlayState(BaseState):
 
     def load_assets(self):
         
+        self.button_list = []
+        
+        self.setup_start_state=False
         #test grid
         self.cell_size = 80
         total_grid_width = self.cell_size * 8
@@ -216,10 +222,6 @@ class PlayState(BaseState):
 
         self.right_remaining = utils.get_text(text='Remaining', font=fonts.lf2, size='tiny', color=colors.white)
         self.right_magic_fruits = utils.get_text(text='Magic Fruits', font=fonts.lf2, size='small', color=colors.white)
-
-        self.card_fruit_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite='card_fruit_back')
-        self.card_path_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite='card_path_back')
-        self.card_event_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite='card_event_back')
 
         self.next_text = utils.get_text(text='Next', font=fonts.lf2, size='tiny', color=colors.white)
         self.event_text = utils.get_text(text='event', font=fonts.lf2, size='tiny', color=colors.white)
@@ -331,9 +333,35 @@ class PlayState(BaseState):
         # gui
         self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
         self.cant_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
+        self.selected_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selected_tile')
+        self.small_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='small_selecting_tile')
+        self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
+        self.path_NS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS')
+        self.path_NW_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW')
+        self.path_NE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE')
+        self.path_WS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS')
+        self.path_ES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES')
+        
+        # cards
+        self.card_fruit_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite='card_fruit_back')
+        self.card_path_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite='card_path_back')
+        self.card_event_back_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite='card_event_back')
+        self.cards_fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_fruit)
+        self.cards_path_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_path)
+        self.cards_event_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_event)
+
+        for i in range(3):
+            self.button_list.append(Button(
+                game=self.game,
+                id=f'revealed_event_{i+1}',
+                surface=self.card_fruit_back_image,
+                pos=(1040+i*60, 530+i*20),
+                pos_anchor='topleft',
+                hover_cursor=cursors.hand,
+            ))
 
     def update(self, dt, events):
-        
+                
         if self.ready:
 
             # Update substates
@@ -377,6 +405,7 @@ class PlayState(BaseState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                         self.exit_state()
+                        
 
         # Update deck remaining
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
@@ -430,19 +459,32 @@ class PlayState(BaseState):
             amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='tiny', color=score['color'])
             self.score_amount_list.append(amount)
 
+        # hover function 
+        if self.setup_start_state==True:
+            top_card = None
+            for button in self.button_list:
+                button.update(dt=dt,events=events)
+            for button in reversed(self.button_list):
+                if button.hovered:
+                    if button.id == 'revealed_event_3':
+                        top_card = 3
+                        print(f"button {button.id} is holding")
+                        break
+                    elif button.id == 'revealed_event_2'and top_card != 3:
+                        top_card = 2
+                        print(f"button {button.id} is holding")
+                        break
+                    elif button.id == 'revealed_event_1' and top_card != 2:
+                        top_card = 1
+                        print(f"button {button.id} is holding")
+                        break
+
     def render(self, canvas):     
         if self.ready:
             
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
-
-            # Build background
-
-            ## Render landscape to menu_bg
                 
-            # Render gui
-
-            # Render left white box
             utils.draw_rect(dest=canvas,
                                 size=(self.box_width, constants.canvas_height),
                                 pos=(0, 0),
@@ -483,34 +525,34 @@ class PlayState(BaseState):
                 ## Render Day's Fruit
             if self.day1_fruit:
                 if self.current_day == 1:
-                    self.day1_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit)
+                    self.day1_fruit_image = self.fruit_16x16_sprites[self.day1_fruit]
                 else:
-                    self.day1_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day1_fruit))
+                    self.day1_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day1_fruit])
                 self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day1_fruit_image, pos=(40, 95), pos_anchor='center')
             if self.day2_fruit:
                 if self.current_day == 2:
-                    self.day2_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit)
+                    self.day2_fruit_image = self.fruit_16x16_sprites[self.day2_fruit]
                 else:
-                    self.day2_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day2_fruit))
+                    self.day2_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day2_fruit])
                 self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day2_fruit_image, pos=(40, 140), pos_anchor='center')
             if self.day3_fruit:
                 if self.current_day == 3:
-                    self.day3_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit)
+                    self.day3_fruit_image = self.fruit_16x16_sprites[self.day3_fruit]
                 else:
-                    self.day3_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day3_fruit))
+                    self.day3_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day3_fruit])
                 self.scaled_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day3_fruit_image, pos=(40, 185), pos_anchor='center')
             if self.day4_fruit:
                 if self.current_day == 4:
-                    self.day4_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit)
+                    self.day4_fruit_image = self.fruit_16x16_sprites[self.day4_fruit]
                 else:
-                    self.day4_fruit_image = utils.effect_grayscale(utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.day4_fruit))
+                    self.day4_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day4_fruit])
                 self.scaled_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day4_fruit_image, pos=(40, 230), pos_anchor='center')
             if self.seasonal_fruit:
-                self.seasonal_fruit_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=self.seasonal_fruit)
+                self.seasonal_fruit_image = self.fruit_16x16_sprites[self.seasonal_fruit]
                 scaled_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=scaled_seasonal_fruit_image, pos=(40, 275), pos_anchor='center')
 
@@ -1011,6 +1053,51 @@ class PlayState(BaseState):
 
             else:
                 self.substate_stack[-1].render(canvas=canvas)       
+            
+            #hover function
+            if self.setup_start_state == True:
+                for button in self.button_list:
+                    button.render(canvas=canvas)
+        # if len(self.revealed_event) > 0:
+        #     utils.draw_rect(dest=canvas,
+        #             size=(64, len(self.revealed_event)*60),
+        #             pos=(constants.canvas_width - self.box_width + 4, 0),
+        #             pos_anchor='topright',
+        #             color=(*colors.white, 191),
+        #             inner_border_width=4,
+        #             outer_border_width=0,
+        #             outer_border_color=colors.black)
+            
+        #     # Render cards from back to front
+        #     for i, card in enumerate(self.revealed_event):
+        #         button = self.button_list[i]
+                
+        #         # Debug visualization of button hitbox
+        #         pygame.draw.rect(canvas, (255, 0, 0), button.rect, 2)
+                
+        #         if button.hovered:
+        #             # Render enlarged card
+        #             scaled_card = pygame.transform.scale_by(
+        #                 getattr(self, f'{card.card_name}_image'),
+        #                 2.0
+        #             )
+        #             utils.blit(
+        #                 dest=canvas,
+        #                 source=scaled_card,
+        #                 pos=(button.rect.right - 8, button.rect.top),
+        #                 pos_anchor='topright'
+        #             )
+        #         else:
+        #             # Render normal card
+        #             utils.blit(
+        #                 dest=canvas,
+        #                 source=getattr(self, f'{card.card_name}_image'),
+        #                 pos=(constants.canvas_width - self.box_width - 4, 6 + i*58),
+        #                 pos_anchor='topright'
+        #             )
+
+
+
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")

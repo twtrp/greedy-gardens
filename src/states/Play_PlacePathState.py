@@ -35,8 +35,8 @@ class Play_PlacePathState(BaseState):
                         if "S" in self.parent.current_path:
                             self.parent.game_board.board[button.id].south = True
                         self.parent.game_board.board[button.id].path = True
-                        # self.parent.game_board.eval_new_tile(button.id)
-                        self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
+                        self.parent.game_board.eval_new_tile(button.id)
+                        # self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
                         self.is_placed = True
                 else:
                     self.select_frame = self.parent.cant_selecting_tile
@@ -72,6 +72,7 @@ class Play_PlacePathState(BaseState):
         if self.is_placed:
             if self.parent.game_board.magic_fruit_index:
                 self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+                print(self.parent.game_board.magic_fruit_found())
                 if self.parent.magic_eventing:
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event

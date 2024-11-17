@@ -13,7 +13,7 @@ class GameBoard():
 
         self.home_index = 0
         self.magic_fruit_index = []
-        
+
         # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
         
@@ -275,7 +275,6 @@ class GameBoard():
                     self.check_connection(self.connected_indices, check_index)
             elif direction == 1:
                 if (self.board[center_index].north and 
-                    center_index // 8 == check_index // 8 and
                     self.board[check_index].south):
                     self.check_connection(self.connected_indices, check_index)
             elif direction == 2:
@@ -285,7 +284,6 @@ class GameBoard():
                     self.check_connection(self.connected_indices, check_index)
             elif direction == 3:
                 if (self.board[center_index].south and 
-                    center_index // 8 == check_index // 8 and
                     self.board[check_index].north):
                     self.check_connection(self.connected_indices, check_index)
 
