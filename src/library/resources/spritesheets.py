@@ -603,57 +603,37 @@ tileset = {
             'x': 128,
             'y': 0,
         },
+        'grass_light_1': {
+            'x': 48,
+            'y': 16,
+        },
+        'grass_light_2': {
+            'x': 64,
+            'y': 16,
+        },
+        'grass_light_3': {
+            'x': 80,
+            'y': 16,
+        },
+        'grass_light_4': {
+            'x': 96,
+            'y': 16,
+        },
         'grass_dark_1': {
-            'x': 0,
-            'y': 32,
+            'x': 48,
+            'y': 48,
         },
         'grass_dark_2': {
-            'x': 16,
-            'y': 32,
+            'x': 64,
+            'y': 48,
         },
         'grass_dark_3': {
-            'x': 32,
-            'y': 32,
+            'x': 80,
+            'y': 48,
         },
         'grass_dark_4': {
-            'x': 48,
-            'y': 32,
-        },
-        'grass_dark_5': {
-            'x': 64,
-            'y': 32,
-        },
-        'grass_dark_6': {
-            'x': 80,
-            'y': 32,
-        },
-        'grass_dark_7': {
             'x': 96,
-            'y': 32,
-        },
-        'grass_dark_8': {
-            'x': 112,
-            'y': 32,
-        },
-        'grass_dark_9': {
-            'x': 128,
-            'y': 32,
-        },
-        'grass_dark_10': {
-            'x': 144,
-            'y': 32,
-        },
-        'grass_dark_11': {
-            'x': 160,
-            'y': 32,
-        },
-        'grass_dark_12': {
-            'x': 176,
-            'y': 32,
-        },
-        'grass_dark_13': {
-            'x': 192,
-            'y': 32,
+            'y': 48,
         },
         'grass_light_path_ES': {
             'x': 48,

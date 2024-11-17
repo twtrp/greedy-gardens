@@ -1,5 +1,7 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
+ 
+
 
 class Play_DrawEventState(BaseState):
     def __init__(self, game, parent, stack):
@@ -19,7 +21,7 @@ class Play_DrawEventState(BaseState):
                     if self.not_drawn:
                         self.card_drawn = self.parent.deck_event.draw_card()
                         self.parent.drawn_cards_event.append(self.card_drawn)
-                        self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.card_drawn.card_name}")
+                        self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
                         self.parent.current_event = self.card_drawn.card_name
                         if len(self.parent.revealed_event) > 0:
                             self.parent.revealed_event.pop()

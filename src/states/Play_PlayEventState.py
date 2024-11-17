@@ -114,7 +114,7 @@ class Play_PlayEventState(BaseState):
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
-                fruit = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=option['fruit'])
+                fruit = self.parent.fruit_16x16_sprites[option['fruit']]
                 self.redraw_button_option_surface_list.append({
                     'id': option['id'],
                     'surface': text,
@@ -187,15 +187,14 @@ class Play_PlayEventState(BaseState):
                 ))
             
         # Load image/sprite
-        self.selected_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selected_tile')
-
-        self.small_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='small_selecting_tile')
-        self.path_WE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE')
-        self.path_NS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS')
-        self.path_NW_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW')
-        self.path_NE_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE')
-        self.path_WS_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS')
-        self.path_ES_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES')
+        self.selected_tile = self.parent.selected_tile
+        self.small_selecting_tile = self.parent.small_selecting_tile
+        self.path_WE_image = self.parent.path_WE_image
+        self.path_NS_image = self.parent.path_NS_image
+        self.path_NW_image = self.parent.path_NW_image
+        self.path_NE_image = self.parent.path_NE_image
+        self.path_WS_image = self.parent.path_WS_image
+        self.path_ES_image = self.parent.path_ES_image
 
     def update(self, dt, events):
         # Each event
@@ -253,9 +252,9 @@ class Play_PlayEventState(BaseState):
                                 self.card_path1 = self.parent.deck_path.draw_card()
                                 self.card_path2 = self.parent.deck_path.draw_card()
                                 self.card_path3 = self.parent.deck_path.draw_card()
-                                self.card_path1_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_path1.card_name}")
-                                self.card_path2_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_path2.card_name}")
-                                self.card_path3_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.card_path3.card_name}")
+                                self.card_path1_image = self.parent.cards_path_sprites[f"card_{self.card_path1.card_name}"]
+                                self.card_path2_image = self.parent.cards_path_sprites[f"card_{self.card_path2.card_name}"]
+                                self.card_path3_image = self.parent.cards_path_sprites[f"card_{self.card_path3.card_name}"]
                                 self.card_path_button_option_list = [
                                     {
                                         'id': 'path 1',
@@ -439,7 +438,7 @@ class Play_PlayEventState(BaseState):
                             setattr(self.parent, f'day{self.parent.current_day}_fruit', self.card_drawn.card_name)
                             self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
                             random.shuffle(self.parent.deck_fruit.cards)
-                            self.fruit_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
+                            self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
                         elif button.id == 'tomorrow fruit':
                             # print('redraw tomorrow fruit')
@@ -449,7 +448,7 @@ class Play_PlayEventState(BaseState):
                             setattr(self.parent, f'day{self.parent.current_day + 1}_fruit', self.card_drawn.card_name)
                             self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
                             random.shuffle(self.parent.deck_fruit.cards)
-                            self.fruit_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
+                            self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
                         elif button.id == 'seasonal fruit':
                             # print('redraw seasonal fruit')
@@ -459,7 +458,7 @@ class Play_PlayEventState(BaseState):
                             self.parent.seasonal_fruit = self.card_drawn.card_name
                             self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
                             random.shuffle(self.parent.deck_fruit.cards)
-                            self.fruit_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
+                            self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
                 if self.fruit_drawn_image:
                     for event in events:

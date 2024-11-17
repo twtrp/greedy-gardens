@@ -37,7 +37,7 @@ class Play_NextDayState(BaseState):
                             if self.card_drawn:
                                 setattr(self.parent, f"day{self.parent.current_day + 1}_fruit", self.card_drawn.card_name)
                                 self.parent.drawn_cards_fruit.append(self.card_drawn)
-                                self.card_drawn_image = utils.get_sprite(sprite_sheet=spritesheets.cards_fruit, target_sprite=f"card_{self.card_drawn.card_name}")
+                                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                                 self.fruit_not_drawn = False
                         else:
                             self.parent.drawing = True

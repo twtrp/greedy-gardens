@@ -21,8 +21,8 @@ class Menu_SettingsState(BaseState):
 
         self.page_title = utils.get_text(text='Settings', font=fonts.lf2, size='huge', color=colors.yellow_light)
         
-        self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
-        self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
+        self.arrow_left = self.parent.arrow_left
+        self.arrow_right = self.parent.arrow_right
         
         self.settings_option_surface_list = []
         for i, setting in enumerate(self.settings_manager.settings_list):

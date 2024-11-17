@@ -38,7 +38,7 @@ class Play_EndDayState(BaseState):
         self.result_sureface_list = []
         for i, option in enumerate(self.result_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
-                fruit = utils.get_sprite(sprite_sheet=spritesheets.fruit_16x16, target_sprite=option['fruit'])
+                fruit = self.parent.fruit_16x16_sprites[option['fruit']]
                 scaled_fruit_image = pygame.transform.scale_by(surface=fruit, factor=3)
                 glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.white)
                 self.result_sureface_list.append({
