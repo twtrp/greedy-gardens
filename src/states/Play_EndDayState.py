@@ -18,7 +18,7 @@ class Play_EndDayState(BaseState):
         elif self.current_day == 3:
             self.current_score = self.parent.day3_score
             self.current_fruit = self.parent.day3_fruit
-        else:
+        elif self.current_day == 4:
             self.current_score = self.parent.day4_score
             self.current_fruit = self.parent.day4_fruit
             
@@ -39,7 +39,7 @@ class Play_EndDayState(BaseState):
                                     'text': str(getattr(self.parent, f'final_day{self.parent.current_day}_score')),
                                     'fruit': getattr(self.parent, f'day{self.parent.current_day}_fruit'),
                                     })
-        elif self.parent.current_day < self.parent.day:
+        elif self.parent.current_day <= self.parent.day:
             self.result_list.append({
                                     'text': str(getattr(self.parent, f'final_day{self.parent.current_day - 1}_score')),
                                     'fruit': getattr(self.parent, f'day{self.parent.current_day - 1}_fruit'),

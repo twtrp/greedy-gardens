@@ -449,7 +449,7 @@ class PlayState(BaseState):
         elif self.endDayState:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.endDayState = False
-        elif self.is_3_strike and self.current_day < self.day:
+        elif self.is_3_strike and self.current_day <= self.day:
             Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_3_strike = False 
         elif self.end_game:
