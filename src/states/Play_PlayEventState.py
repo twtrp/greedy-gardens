@@ -349,7 +349,7 @@ class Play_PlayEventState(BaseState):
                             if self.selected_cell is None:
                                 if self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                                     self.select_frame = self.parent.selecting_tile
-                                    if event.type == pygame.MOUSEBUTTONDOWN:
+                                    if button.clicked:
                                         self.selected_cell = button.id
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -359,7 +359,7 @@ class Play_PlayEventState(BaseState):
                                     not self.parent.game_board.board[button.id].home and
                                     not self.parent.game_board.board[button.id].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
-                                    if event.type == pygame.MOUSEBUTTONDOWN:
+                                    if button.clicked:
                                         old_path1 = "_"
                                         if self.parent.game_board.board[button.id].north:
                                             old_path1 += "N"
@@ -406,7 +406,7 @@ class Play_PlayEventState(BaseState):
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
                                     self.select_frame = self.parent.selecting_tile
-                                    if event.type == pygame.MOUSEBUTTONDOWN:
+                                    if button.clicked:
                                         self.selected_cell = None
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
