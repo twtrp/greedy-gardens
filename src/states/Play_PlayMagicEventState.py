@@ -58,8 +58,22 @@ class Play_PlayMagicEventState(BaseState):
         self.choice_point_title = utils.get_text(text='choose', font=fonts.lf2, size='large', color=colors.mono_175)
         self.choice_redraw_title = utils.get_text(text='choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_175)
         self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
+        self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.white)
+        self.hover_to_view_surface = [{
+                    'id': 'view board',
+                    'surface': self.hover_to_view_title,
+                    'scale': 1.0,
+                },]
         
         # Load Button
+        self.button_list.append(Button(
+                    game=self.game,
+                    id='view board',
+                    width=400,
+                    height=50,
+                    pos=(constants.canvas_width/2, 695),
+                    pos_anchor=posanchors.center
+                ))
         if self.parent.current_event == 'event_point':
             self.point_button_option_list = [
                 {
@@ -314,8 +328,13 @@ class Play_PlayMagicEventState(BaseState):
                     for button in self.button_list:
                         button.update(dt=dt, events=events)
                         if button.hovered:
+                            if button.id == 'view board':
+                                self.choosing = False
                             if button.hover_cursor is not None:
                                 self.cursor = button.hover_cursor
+                        else:
+                            if button.id == 'view board':
+                                self.choosing = False
                         if button.clicked:
                             if button.id == 'path 1':
                                 print(f'select path 1')
@@ -489,12 +508,16 @@ class Play_PlayMagicEventState(BaseState):
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
                     if button.hovered:
+                        if button.id == 'view board':
+                                self.choosing = False
                         if button.hover_cursor is not None:
                             self.cursor = button.hover_cursor
                         for option in self.point_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                     else:
+                        if button.id == 'view board':
+                                self.choosing = False
                         for option in self.point_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
@@ -723,12 +746,16 @@ class Play_PlayMagicEventState(BaseState):
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
                     if button.hovered:
+                        if button.id == 'view board':
+                                self.choosing = False
                         for option in self.reveal_button_option_surface_list:
                             if button.hover_cursor is not None:
                                 self.cursor = button.hover_cursor
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                     else:
+                        if button.id == 'view board':
+                                self.choosing = False
                         for option in self.reveal_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
@@ -855,6 +882,8 @@ class Play_PlayMagicEventState(BaseState):
                             inner_border_width=0,
                             outer_border_width=0,
                             outer_border_color=colors.black)
+            scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
+            utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
             
             if self.parent.current_event == 'event_keep':
                 utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
