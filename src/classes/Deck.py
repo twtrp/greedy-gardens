@@ -74,7 +74,7 @@ class Deck:
         # For Testing cards
         elif self.deck_type == 'path':
             for i in range(25):
-                name.append('path_WS')
+                # name.append('path_WS')
                 name.append('path_strike_WES')
         elif self.deck_type == 'event':
             for i in range(16):
