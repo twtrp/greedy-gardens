@@ -13,8 +13,8 @@ class Deck:
         random.shuffle(self.cards)
 
         # # comment if want to test card or deck
-        if self.deck_type == 'path':
-            self.organize_deck()
+        # if self.deck_type == 'path':
+        #     self.organize_deck()
 
     def draw_card(self):
         if self.cards:
@@ -37,47 +37,36 @@ class Deck:
         name = []
         if self.deck_type == 'fruit':
             name = ['fruit_blueberry', 'fruit_coconut', 'fruit_grape', 'fruit_orange', 'fruit_peach', 'fruit_strawberry']
-        elif self.deck_type == 'path':
-            for i in range(6):
-                name.append('path_WS')
-                name.append('path_ES')
-                name.append('path_WE')
-                name.append('path_NS')
-                name.append('path_NW')
-                name.append('path_NE')
-            for i in range(3):
-                name.append('path_strike_WS')
-                name.append('path_strike_ES')
-                name.append('path_strike_WE')
-                name.append('path_strike_NS')
-                name.append('path_strike_NW')
-                name.append('path_strike_NE')
-            name.append('path_WES')
-            name.append('path_NWS')
-            name.append('path_NES')
-            name.append('path_NWE')
-            name.append('path_strike_WE')
-            name.append('path_strike_NWS')
-            name.append('path_strike_NES')
-            name.append('path_strike_NWE')
-        elif self.deck_type == 'event':
-            for i in range(2):
-                name.append('event_free')
-                name.append('event_keep')
-                name.append('event_merge')
-                name.append('event_point')
-                name.append('event_redraw')
-                name.append('event_remove')
-                name.append('event_reveal')
-                name.append('event_swap')
-
-        # For Testing cards
         # elif self.deck_type == 'path':
-        #     for i in range(25):
+        #     for i in range(6):
+        #         name.append('path_WS')
+        #         name.append('path_ES')
+        #         name.append('path_WE')
         #         name.append('path_NS')
-        #         name.append('path_strike_WES')
+        #         name.append('path_NW')
+        #         name.append('path_NE')
+        #     for i in range(3):
+        #         name.append('path_strike_WS')
+        #         name.append('path_strike_ES')
+        #         name.append('path_strike_WE')
+        #         name.append('path_strike_NS')
+        #         name.append('path_strike_NW')
+        #         name.append('path_strike_NE')
+        #     name.append('path_WES')
+        #     name.append('path_NWS')
+        #     name.append('path_NES')
+        #     name.append('path_NWE')
+        #     name.append('path_strike_WE')
+        #     name.append('path_strike_NWS')
+        #     name.append('path_strike_NES')
+        #     name.append('path_strike_NWE')
         # elif self.deck_type == 'event':
-        #     for i in range(16):
+        #     for i in range(2):
+        #         name.append('event_free')
+        #         name.append('event_keep')
+        #         name.append('event_merge')
+        #         name.append('event_point')
+        #         name.append('event_redraw')
         #         name.append('event_remove')
         #         name.append('event_reveal')
         #         name.append('event_swap')
@@ -89,7 +78,16 @@ class Deck:
                 name.append('path_strike_WES')
         elif self.deck_type == 'event':
             for i in range(16):
-                name.append('event_merge')
+                name.append('event_redraw')
+
+        # For Testing cards
+        # elif self.deck_type == 'path':
+        #     for i in range(25):
+        #         name.append('path_NS')
+        #         name.append('path_strike_WES')
+        # elif self.deck_type == 'event':
+        #     for i in range(16):
+        #         name.append('event_merge')
 
         for i in name:
             if not 'strike' in i:
