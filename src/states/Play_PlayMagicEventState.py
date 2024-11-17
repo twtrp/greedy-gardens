@@ -61,18 +61,32 @@ class Play_PlayMagicEventState(BaseState):
         
         # Load Button
         if self.parent.current_event == 'event_point':
-            self.point_button_option_list = [
-                {
-                    'id': 'add today',
-                    'text1': 'Get 1 point today,',
-                    'text2': 'Lose 1 point next day',
-                },
-                {
-                    'id': 'lose today',
-                    'text1': 'Lose 1 point today,',
-                    'text2': 'Get 1 point next day',
-                },
-            ]
+            if self.parent.current_day < self.parent.day:
+                self.point_button_option_list = [
+                    {
+                        'id': 'add today',
+                        'text1': 'Get 1 point today,',
+                        'text2': 'Lose 1 point next day',
+                    },
+                    {
+                        'id': 'lose today',
+                        'text1': 'Lose 1 point today,',
+                        'text2': 'Get 1 point next day',
+                    },
+                ]
+            else:
+                self.point_button_option_list = [
+                    {
+                        'id': 'add today',
+                        'text1': 'Get 1 point today,',
+                        'text2': 'Lose 1 point next day',
+                    },
+                    {
+                        'id': 'do nothing',
+                        'text1': '',
+                        'text2': '',
+                    },
+                ]
             self.point_button_option_surface_list = []
             for i, option in enumerate(self.point_button_option_list):
                 text1 = utils.get_text(text=option['text1'], font=fonts.lf2, size='medium', color=colors.white)
@@ -119,7 +133,7 @@ class Play_PlayMagicEventState(BaseState):
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
-                fruit = self.parent.fruit_16x16_sprites[option['fruit']]
+                fruit = self.parent.fruit_sprites[option['fruit']]
                 self.redraw_button_option_surface_list.append({
                     'id': option['id'],
                     'surface': text,
@@ -489,8 +503,11 @@ class Play_PlayMagicEventState(BaseState):
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
                     if button.hovered:
-                        if button.hover_cursor is not None:
-                            self.cursor = button.hover_cursor
+                        if button.id == 'view board':
+                                self.choosing = False
+                        if button.id != 'do nothing':
+                            if button.hover_cursor is not None:
+                                self.cursor = button.hover_cursor
                         for option in self.point_button_option_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
@@ -903,7 +920,7 @@ class Play_PlayMagicEventState(BaseState):
                                     size=(self.box_width, self.box_height),
                                     pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),
                                     pos_anchor='topleft',
-                                    color=(*colors.white, 191), # 75% transparency
+                                    color=(*colors.white, 166), # 75% transparency
                                     inner_border_width=4,
                                     outer_border_width=0,
                                     outer_border_color=colors.black)
