@@ -13,8 +13,8 @@ class Deck:
         random.shuffle(self.cards)
 
         # # comment if want to test card or deck
-        # if self.deck_type == 'path':
-        #     self.organize_deck()
+        if self.deck_type == 'path':
+            self.organize_deck()
 
     def draw_card(self):
         if self.cards:
