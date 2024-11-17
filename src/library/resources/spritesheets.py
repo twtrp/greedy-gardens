@@ -765,19 +765,29 @@ light_grass = {
         'height': 16,
     },
     'sprites': {
-        'grass_light_1': {
+        'grass_light': {
             'x': 48,
             'y': 16,
-        },
-        'grass_light_2': {
+        }
+    }
+}
+
+light_grass_textured = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 16,
+        'height': 16,
+    },
+    'sprites': {
+        'grass_light_texture_1': {
             'x': 64,
             'y': 16,
         },
-        'grass_light_3': {
+        'grass_light_textured_2': {
             'x': 80,
             'y': 16,
         },
-        'grass_light_4': {
+        'grass_light_textured_3': {
             'x': 96,
             'y': 16,
         },
@@ -793,28 +803,20 @@ light_grass_flowers = {
     'sprites': {
         'grass_light_flowers_1': {
             'x': 112,
-            'y': 48,
-        },
-        'grass_light_flowers_2': {
-            'x': 128,
-            'y': 48,
+            'y': 16,
         },
         'grass_light_flowers_3': {
             'x': 144,
-            'y': 48,
+            'y': 16,
         },
         'grass_light_flowers_4': {
             'x': 160,
-            'y': 48,
+            'y': 16,
         },
         'grass_light_flowers_5': {
             'x': 176,
-            'y': 48,
-        }, 
-        'grass_light_flowers_6': {
-            'x': 192,
-            'y': 48,
-        },    
+            'y': 16,
+        },   
     }
 }
 
@@ -825,19 +827,29 @@ dark_grass = {
         'height': 16,
     },
     'sprites': {
-        'grass_dark_1': {
+        'grass_dark': {
             'x': 48,
             'y': 48,
-        },
-        'grass_dark_2': {
+        }
+    }
+}
+
+dark_grass_textured = {
+    'file': 'tileset.png',
+    'shared_data': {
+        'width': 16,
+        'height': 48,
+    },
+    'sprites': {
+        'grass_dark_texture_1': {
             'x': 64,
             'y': 48,
         },
-        'grass_dark_3': {
+        'grass_dark_textured_2': {
             'x': 80,
             'y': 48,
         },
-        'grass_dark_4': {
+        'grass_dark_textured_3': {
             'x': 96,
             'y': 48,
         },
@@ -855,10 +867,6 @@ dark_grass_flowers = {
             'x': 112,
             'y': 48,
         },
-        'grass_light_flowers_2': {
-            'x': 128,
-            'y': 48,
-        },
         'grass_light_flowers_3': {
             'x': 144,
             'y': 48,
@@ -869,10 +877,6 @@ dark_grass_flowers = {
         },
         'grass_light_flowers_5': {
             'x': 176,
-            'y': 48,
-        }, 
-        'grass_light_flowers_6': {
-            'x': 192,
             'y': 48,
         },    
     }
