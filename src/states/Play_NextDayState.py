@@ -16,7 +16,7 @@ class Play_NextDayState(BaseState):
         # update parent value
         self.parent.strikes = 0
         self.parent.current_day += 1
-
+        print(self.parent.current_day)
         # state
         self.fruit_not_drawn = True
         self.card_drawn_image = None

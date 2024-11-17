@@ -81,6 +81,8 @@ class Play_EndDayState(BaseState):
                 if button.id == 'bg':
                     print("exiting end day")
                     self.parent.endDayState = True
+                    if self.parent.current_day == 4:
+                        self.parent.end_game=True
                     self.exit_state()
 
     def render(self, canvas):
