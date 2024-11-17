@@ -29,7 +29,17 @@ class Play_PlayMagicEventState(BaseState):
         self.selecting_path = False
         self.selected_cell = None
         self.selected_cell_2 = None
-        self.choosing = False
+        self.played_event = False
+        self.selecting_path = False
+        self.selected_cell = None
+        self.selected_cell_2 = None
+        if (self.parent.current_event == 'event_keep' or
+            self.parent.current_event == 'event_point' or
+            self.parent.current_event == 'event_redraw' or
+            self.parent.current_event == 'event_reveal'):
+            self.choosing = True
+        else:
+            self.choosing = False
         self.drawn_keep = False
 
         self.card_path1_image = None
@@ -986,4 +996,3 @@ class Play_PlayMagicEventState(BaseState):
         if self.fruit_drawn_image:
             scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
             utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
-            
