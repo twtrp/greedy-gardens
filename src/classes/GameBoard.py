@@ -290,7 +290,8 @@ class GameBoard():
         south_index = center_index + 8
         possible_adjacent = [west_index, north_index, east_index, south_index]
         for direction, index in enumerate(possible_adjacent):
-            self.check_adjacent(center_index, index, direction)
+            if index in self.connected_indices:
+                self.check_adjacent(center_index, index, direction)
 
 
             
