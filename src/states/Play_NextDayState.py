@@ -20,6 +20,9 @@ class Play_NextDayState(BaseState):
         # state
         self.fruit_not_drawn = True
         self.card_drawn_image = None
+        
+        self.parent.endDayState = False
+        self.parent.set_start_state=False
 
     def update(self, dt, events):
         # clear free(temp) path
@@ -46,9 +49,11 @@ class Play_NextDayState(BaseState):
                                 self.fruit_not_drawn = False
                         else:
                             self.parent.drawing = True
+                            self.parent.set_start_state=True
                             self.exit_state()
         elif self.parent.current_day == self.parent.day:
             self.parent.drawing = True
+            self.parent.set_start_state=True
             self.exit_state()
         
 

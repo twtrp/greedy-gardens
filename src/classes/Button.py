@@ -93,4 +93,5 @@ class Button:
             self.clicked = False
 
     def render(self, canvas):
-        pygame.draw.rect(canvas, (255, 0, 0), self.rect, 2)
+        #pygame.draw.rect(canvas, (255, 0, 0), self.rect, 2)
+        pass
