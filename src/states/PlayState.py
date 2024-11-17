@@ -354,13 +354,14 @@ class PlayState(BaseState):
         self.cards_fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_fruit)
         self.cards_path_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_path)
         self.cards_event_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_event)
-
+        
+        self.pop_up_revealed_event_card = None
         for i in range(3):
             self.button_list.append(Button(
                 game=self.game,
                 id=f'revealed_event_{i+1}',
                 surface=self.card_fruit_back_image,
-                pos=(1040+i*60, 530+i*20),
+                pos=(1025+i*70, 555+i*10),
                 pos_anchor='topleft',
                 hover_cursor=cursors.hand,
             ))
@@ -467,21 +468,22 @@ class PlayState(BaseState):
         # hover function 
         if self.setup_start_state==True:
             top_card = None
+            self.pop_up_revealed_event_card = 0
             for button in self.button_list:
                 button.update(dt=dt,events=events)
             for button in reversed(self.button_list):
                 if button.hovered:
                     if button.id == 'revealed_event_3':
                         top_card = 3
-                        print(f"button {button.id} is holding")
+                        self.pop_up_revealed_event_card = 3
                         break
                     elif button.id == 'revealed_event_2'and top_card != 3:
                         top_card = 2
-                        print(f"button {button.id} is holding")
+                        self.pop_up_revealed_event_card = 2
                         break
                     elif button.id == 'revealed_event_1' and top_card != 2:
                         top_card = 1
-                        print(f"button {button.id} is holding")
+                        self.pop_up_revealed_event_card = 1
                         break
 
     def render(self, canvas):     
@@ -1029,6 +1031,7 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=self.path_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 74), pos_anchor='center')
             
             if len(self.revealed_event) > 0:
+                print(len(self.revealed_event))
                 utils.draw_rect(dest=canvas,
                                     size=(64, len(self.revealed_event)*60),
                                     pos=(constants.canvas_width - self.box_width + 4, 0),
@@ -1053,45 +1056,19 @@ class PlayState(BaseState):
             if self.setup_start_state == True:
                 for button in self.button_list:
                     button.render(canvas=canvas)
-        # if len(self.revealed_event) > 0:
-        #     utils.draw_rect(dest=canvas,
-        #             size=(64, len(self.revealed_event)*60),
-        #             pos=(constants.canvas_width - self.box_width + 4, 0),
-        #             pos_anchor='topright',
-        #             color=(*colors.white, 191),
-        #             inner_border_width=4,
-        #             outer_border_width=0,
-        #             outer_border_color=colors.black)
-            
-        #     # Render cards from back to front
-        #     for i, card in enumerate(self.revealed_event):
-        #         button = self.button_list[i]
-                
-        #         # Debug visualization of button hitbox
-        #         pygame.draw.rect(canvas, (255, 0, 0), button.rect, 2)
-                
-        #         if button.hovered:
-        #             # Render enlarged card
-        #             scaled_card = pygame.transform.scale_by(
-        #                 getattr(self, f'{card.card_name}_image'),
-        #                 2.0
-        #             )
-        #             utils.blit(
-        #                 dest=canvas,
-        #                 source=scaled_card,
-        #                 pos=(button.rect.right - 8, button.rect.top),
-        #                 pos_anchor='topright'
-        #             )
-        #         else:
-        #             # Render normal card
-        #             utils.blit(
-        #                 dest=canvas,
-        #                 source=getattr(self, f'{card.card_name}_image'),
-        #                 pos=(constants.canvas_width - self.box_width - 4, 6 + i*58),
-        #                 pos_anchor='topright'
-        #             )
-
-
+                if self.pop_up_revealed_event_card == 3:
+                    self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
+                    scaled_image = pygame.transform.scale_by(surface=self.magic_fruit3_event_image, factor=3)
+                    utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                elif self.pop_up_revealed_event_card == 2:
+                    self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
+                    scaled_image = pygame.transform.scale_by(surface=self.magic_fruit2_event_image, factor=3)
+                    utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                elif self.pop_up_revealed_event_card == 1:
+                    self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
+                    scaled_image = pygame.transform.scale_by(surface=self.magic_fruit1_event_image, factor=3)
+                    utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                    
 
                 
     def random_dirt(self):
