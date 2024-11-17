@@ -266,22 +266,22 @@ class GameBoard():
                 if (self.board[center_index].west and 
                     center_index // 8 == check_index // 8 and
                     self.board[check_index].east):
-                    self.connected_indices.append(center_index)
+                    self.check_connection(self.connected_indices, check_index)
             elif direction == 1:
                 if (self.board[center_index].north and 
                     center_index // 8 == check_index // 8 and
                     self.board[check_index].south):
-                    self.connected_indices.append(center_index)
+                    self.check_connection(self.connected_indices, check_index)
             elif direction == 2:
                 if (self.board[center_index].east and 
                     center_index // 8 == check_index // 8 and
                     self.board[check_index].west):
-                    self.connected_indices.append(center_index)
+                    self.check_connection(self.connected_indices, check_index)
             elif direction == 3:
                 if (self.board[center_index].south and 
                     center_index // 8 == check_index // 8 and
                     self.board[check_index].north):
-                    self.connected_indices.append(center_index)
+                    self.check_connection(self.connected_indices, check_index)
 
     def eval_new_tile(self, center_index):
         west_index = center_index - 1
