@@ -525,34 +525,34 @@ class PlayState(BaseState):
                 ## Render Day's Fruit
             if self.day1_fruit:
                 if self.current_day == 1:
-                    self.day1_fruit_image = self.fruit_16x16_sprites[self.day1_fruit]
+                    self.day1_fruit_image = self.fruit_sprites[self.day1_fruit]
                 else:
-                    self.day1_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day1_fruit])
+                    self.day1_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day1_fruit])
                 self.scaled_day1_fruit_image = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day1_fruit_image, pos=(40, 95), pos_anchor='center')
             if self.day2_fruit:
                 if self.current_day == 2:
-                    self.day2_fruit_image = self.fruit_16x16_sprites[self.day2_fruit]
+                    self.day2_fruit_image = self.fruit_sprites[self.day2_fruit]
                 else:
-                    self.day2_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day2_fruit])
+                    self.day2_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day2_fruit])
                 self.scaled_day2_fruit_image = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day2_fruit_image, pos=(40, 140), pos_anchor='center')
             if self.day3_fruit:
                 if self.current_day == 3:
-                    self.day3_fruit_image = self.fruit_16x16_sprites[self.day3_fruit]
+                    self.day3_fruit_image = self.fruit_sprites[self.day3_fruit]
                 else:
-                    self.day3_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day3_fruit])
+                    self.day3_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day3_fruit])
                 self.scaled_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day3_fruit_image, pos=(40, 185), pos_anchor='center')
             if self.day4_fruit:
                 if self.current_day == 4:
-                    self.day4_fruit_image = self.fruit_16x16_sprites[self.day4_fruit]
+                    self.day4_fruit_image = self.fruit_sprites[self.day4_fruit]
                 else:
-                    self.day4_fruit_image = utils.effect_grayscale(self.fruit_16x16_sprites[self.day4_fruit])
+                    self.day4_fruit_image = utils.effect_grayscale(self.fruit_sprites[self.day4_fruit])
                 self.scaled_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=self.scaled_day4_fruit_image, pos=(40, 230), pos_anchor='center')
             if self.seasonal_fruit:
-                self.seasonal_fruit_image = self.fruit_16x16_sprites[self.seasonal_fruit]
+                self.seasonal_fruit_image = self.fruit_sprites[self.seasonal_fruit]
                 scaled_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=1.25)
                 utils.blit(dest=canvas, source=scaled_seasonal_fruit_image, pos=(40, 275), pos_anchor='center')
 
@@ -998,20 +998,19 @@ class PlayState(BaseState):
                 if self.game_board.board[i].fruit:
                     for pos, fruit in enumerate(self.game_board.board[i].fruit):
                         if fruit != None:
-                            if fruit != "hole":
-                                fruit_image = self.big_fruit_sprites[fruit]
-                                if pos == 0:
-                                    utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
-                                    utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
-                                if pos == 1:
-                                    utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
-                                    utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
-                                if pos == 2:
-                                    utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                                    utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                                if pos == 3:
-                                    utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-                                    utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            fruit_image = self.big_fruit_sprites[fruit]
+                            if pos == 0:
+                                utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
+                                utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
+                            if pos == 1:
+                                utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
+                                utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
+                            if pos == 2:
+                                utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                                utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                            if pos == 3:
+                                utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
+                                utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
 
                         
 
