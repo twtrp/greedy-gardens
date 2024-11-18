@@ -14,6 +14,7 @@ class Play_PlacePathState(BaseState):
 
         #state
         self.is_placed = False
+        self.finding_magic = False
 
         self.select_frame = self.parent.selecting_tile
 
@@ -70,9 +71,11 @@ class Play_PlacePathState(BaseState):
         #                 self.parent.game_board.board[i].show_detail()
                     
         if self.is_placed:
-            if self.parent.game_board.magic_fruit_index:
+            if self.parent.game_board.magic_fruit_index and not self.finding_magic:
+                self.finding_magic = True
+                print(self.finding_magic)
                 self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                print(self.parent.game_board.magic_fruit_found())
+                print(self.parent.magic_eventing)
                 if self.parent.magic_eventing:
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
@@ -82,6 +85,7 @@ class Play_PlacePathState(BaseState):
                         self.parent.current_event = self.parent.magic_fruit3_event
                     self.parent.game_board.board[cell_pos].magic_fruit = 0
                     self.parent.magicing_number = magic_number
+                    print("exiting place")
                     self.exit_state()
 
                 elif not self.parent.magic_eventing:

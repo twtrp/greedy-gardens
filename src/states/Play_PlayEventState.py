@@ -360,7 +360,8 @@ class Play_PlayEventState(BaseState):
                                     not self.parent.game_board.board[button.id].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        old_path1 = "_"
+                                        print("clicked")
+                                        old_path1 = ""
                                         if self.parent.game_board.board[button.id].north:
                                             old_path1 += "N"
                                         if self.parent.game_board.board[button.id].west:
@@ -369,7 +370,7 @@ class Play_PlayEventState(BaseState):
                                             old_path1 += "E"
                                         if self.parent.game_board.board[button.id].south:
                                             old_path1 += "S"
-                                        old_path2 = "_"
+                                        old_path2 = ""
                                         if self.parent.game_board.board[self.selected_cell].north:
                                             old_path2 += "N"
                                         if self.parent.game_board.board[self.selected_cell].west:
@@ -402,17 +403,19 @@ class Play_PlayEventState(BaseState):
                                                 self.parent.drawn_cards_path.pop(m)  
                                                 break
                                         self.parent.drawn_cards_path.append(Cards("path", new_path, False))
-                                        self.parent.game_board.eval_new_tile(button.id)
-                                        self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                                        if self.parent.magic_eventing:
-                                            if magic_number == 1:
-                                                self.parent.current_event = self.parent.magic_fruit1_event
-                                            elif magic_number == 2:
-                                                self.parent.current_event = self.parent.magic_fruit2_event
-                                            elif magic_number == 3:
-                                                self.parent.current_event = self.parent.magic_fruit3_event
-                                            self.parent.game_board.board[cell_pos].magic_fruit = 0
-                                            self.parent.magicing_number = magic_number
+                                        if self.parent.game_board.magic_fruit_index:
+                                            self.parent.game_board.eval_new_tile(button.id)
+                                            self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+                                            if self.parent.magic_eventing:
+                                                if magic_number == 1:
+                                                    self.parent.current_event = self.parent.magic_fruit1_event
+                                                elif magic_number == 2:
+                                                    self.parent.current_event = self.parent.magic_fruit2_event
+                                                elif magic_number == 3:
+                                                    self.parent.current_event = self.parent.magic_fruit3_event
+                                                self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                                self.parent.magicing_number = magic_number
+                                                self.exit_state()
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
