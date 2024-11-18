@@ -471,10 +471,10 @@ class Play_PlayEventState(BaseState):
                         else:
                             if button.id == 'view board':
                                     self.choosing = True
-                        for option in self.redraw_button_option_surface_list:
-                            if button.id == option['id']:
-                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
-                                option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
+                            for option in self.redraw_button_option_surface_list:
+                                if button.id == option['id']:
+                                    option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+                                    option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
                     if button.clicked and self.choosing:
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
