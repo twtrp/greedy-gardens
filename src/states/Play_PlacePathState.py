@@ -84,6 +84,9 @@ class Play_PlacePathState(BaseState):
                         self.parent.current_event = self.parent.magic_fruit3_event
                     self.parent.game_board.board[cell_pos].magic_fruit = 0
                     self.parent.magicing_number = magic_number
+                    current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
+                    new_score = current_score + 1
+                    setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                     setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                     print("exiting place")
                     self.exit_state()
