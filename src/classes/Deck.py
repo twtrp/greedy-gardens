@@ -53,11 +53,16 @@ class Deck:
                 name.append('path_strike_NS')
                 name.append('path_strike_NW')
                 name.append('path_strike_NE')
-            for i in range(2):
+            for i in range(1):
                 name.append('path_WES')
                 name.append('path_NWS')
                 name.append('path_NES')
                 name.append('path_NWE')
+            for i in range(1):
+                name.append('path_strike_WES')
+                name.append('path_strike_NWS')
+                name.append('path_strike_NES')
+                name.append('path_strike_NWE')
         elif self.deck_type == 'event':
             for i in range(2):
                 name.append('event_free')
@@ -72,8 +77,7 @@ class Deck:
         # For Testing cards
         # elif self.deck_type == 'path':
         #     for i in range(10):
-        #         name.append('path_NS')
-        #     name.append('path_strike_WES')
+        #         name.append('path_strike_WES')
         # elif self.deck_type == 'event':
         #     for i in range(16):
         #         name.append('event_keep')
