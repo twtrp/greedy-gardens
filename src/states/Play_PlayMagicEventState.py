@@ -445,6 +445,17 @@ class Play_PlayMagicEventState(BaseState):
                                                 self.parent.drawn_cards_path.pop(m)  
                                                 break
                                         self.parent.drawn_cards_path.append(Cards("path", new_path, False))
+                                        self.parent.game_board.eval_new_tile(button.id)
+                                        self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+                                        if self.parent.magic_eventing:
+                                            if magic_number == 1:
+                                                self.parent.current_event = self.parent.magic_fruit1_event
+                                            elif magic_number == 2:
+                                                self.parent.current_event = self.parent.magic_fruit2_event
+                                            elif magic_number == 3:
+                                                self.parent.current_event = self.parent.magic_fruit3_event
+                                            self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                            self.parent.magicing_number = magic_number
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
