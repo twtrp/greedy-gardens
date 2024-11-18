@@ -9,7 +9,6 @@ from src.classes.Cell import Cell
 class Play_PlayEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-        self.parent = parent
 
         print("playing event")
 
@@ -88,12 +87,12 @@ class Play_PlayEventState(BaseState):
                     {
                         'id': 'add today',
                         'text1': 'Get 1 point today,',
-                        'text2': '',
+                        'text2': 'Lose 1 point from seasonal fruit',
                     },
                     {
                         'id': 'do nothing',
                         'text1': '',
-                        'text2': '',
+                        'text2': '', 
                     },
                 ]
             self.point_button_option_surface_list = []

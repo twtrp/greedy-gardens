@@ -6,7 +6,6 @@ import sqlite3
 class Play_ResultStage(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-        self.parent = parent
 
         # state
         self.is_hovering = False

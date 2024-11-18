@@ -9,7 +9,7 @@ from src.classes.Cell import Cell
 class Play_PlayMagicEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-        self.parent = parent
+         
         print("playing magic fruit event")
 
         # value
@@ -88,7 +88,7 @@ class Play_PlayMagicEventState(BaseState):
                     {
                         'id': 'add today',
                         'text1': 'Get 1 point today,',
-                        'text2': '',
+                        'text2': 'Lose 1 point from seasonal fruit',
                     },
                     {
                         'id': 'do nothing',

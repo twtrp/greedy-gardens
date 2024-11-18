@@ -5,7 +5,6 @@ from src.template.BaseState import BaseState
 class Play_PlacePathState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-        self.game = game
 
         print("Placing")
 
