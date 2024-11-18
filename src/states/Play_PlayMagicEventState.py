@@ -283,6 +283,7 @@ class Play_PlayMagicEventState(BaseState):
                                             self.parent.current_event = self.parent.magic_fruit3_event
                                         self.parent.game_board.board[cell_pos].magic_fruit = 0
                                         self.parent.magicing_number = magic_number
+                                        setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                                         self.exit_state()
                                 self.played_event = True
                         else:
@@ -457,6 +458,7 @@ class Play_PlayMagicEventState(BaseState):
                                                     self.parent.current_event = self.parent.magic_fruit3_event
                                                 self.parent.game_board.board[cell_pos].magic_fruit = 0
                                                 self.parent.magicing_number = magic_number
+                                                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                                                 self.exit_state()
                                         self.selected_cell = None
                                         self.played_event = True
