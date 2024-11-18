@@ -267,6 +267,7 @@ class Play_PlayEventState(BaseState):
                                             self.parent.current_event = self.parent.magic_fruit3_event
                                         self.parent.game_board.board[cell_pos].magic_fruit = 0
                                         self.parent.magicing_number = magic_number
+                                        setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                                         self.parent.play_event_state= False
                                         self.exit_state()
                                 self.played_event = True
@@ -347,7 +348,9 @@ class Play_PlayEventState(BaseState):
                         if button.hovered:
                             self.cell_pos = button.id
                             if self.selected_cell is None:
-                                if self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
+                                if (self.parent.game_board.board[button.id].path and 
+                                    not self.parent.game_board.board[button.id].temp and
+                                    not self.parent.game_board.board[button.id].home):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
                                         self.selected_cell = button.id
@@ -356,11 +359,13 @@ class Play_PlayEventState(BaseState):
                             else:
                                 if (button.id != self.selected_cell and
                                     self.parent.game_board.board[button.id].path and
+                                    not self.parent.game_board.board[button.id].temp and
                                     not self.parent.game_board.board[button.id].home and
                                     not self.parent.game_board.board[button.id].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        old_path1 = "_"
+                                        print("clicked")
+                                        old_path1 = ""
                                         if self.parent.game_board.board[button.id].north:
                                             old_path1 += "N"
                                         if self.parent.game_board.board[button.id].west:
@@ -369,7 +374,7 @@ class Play_PlayEventState(BaseState):
                                             old_path1 += "E"
                                         if self.parent.game_board.board[button.id].south:
                                             old_path1 += "S"
-                                        old_path2 = "_"
+                                        old_path2 = ""
                                         if self.parent.game_board.board[self.selected_cell].north:
                                             old_path2 += "N"
                                         if self.parent.game_board.board[self.selected_cell].west:
@@ -402,6 +407,20 @@ class Play_PlayEventState(BaseState):
                                                 self.parent.drawn_cards_path.pop(m)  
                                                 break
                                         self.parent.drawn_cards_path.append(Cards("path", new_path, False))
+                                        if self.parent.game_board.magic_fruit_index:
+                                            self.parent.game_board.eval_new_tile(button.id)
+                                            self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+                                            if self.parent.magic_eventing:
+                                                if magic_number == 1:
+                                                    self.parent.current_event = self.parent.magic_fruit1_event
+                                                elif magic_number == 2:
+                                                    self.parent.current_event = self.parent.magic_fruit2_event
+                                                elif magic_number == 3:
+                                                    self.parent.current_event = self.parent.magic_fruit3_event
+                                                self.parent.game_board.board[cell_pos].magic_fruit = 0
+                                                self.parent.magicing_number = magic_number
+                                                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                                                self.exit_state()
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
@@ -471,10 +490,10 @@ class Play_PlayEventState(BaseState):
                         else:
                             if button.id == 'view board':
                                     self.choosing = True
-                        for option in self.redraw_button_option_surface_list:
-                            if button.id == option['id']:
-                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
-                                option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
+                            for option in self.redraw_button_option_surface_list:
+                                if button.id == option['id']:
+                                    option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+                                    option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
                     if button.clicked and self.choosing:
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
@@ -578,43 +597,47 @@ class Play_PlayEventState(BaseState):
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                                 if self.selected_cell:
-                                    old_path1 = "_"
-                                    if self.parent.game_board.board[self.selected_cell].north:
-                                        old_path1 += "N"
-                                    if self.parent.game_board.board[self.selected_cell].west:
-                                        old_path1 += "W"
-                                    if self.parent.game_board.board[self.selected_cell].east:
-                                        old_path1 += "E"
-                                    if self.parent.game_board.board[self.selected_cell].south:
-                                        old_path1 += "S"
+                                    if not self.parent.game_board.board[self.selected_cell].temp:
+                                        old_path1 = ""
+                                        if self.parent.game_board.board[self.selected_cell].north:
+                                            old_path1 += "N"
+                                        if self.parent.game_board.board[self.selected_cell].west:
+                                            old_path1 += "W"
+                                        if self.parent.game_board.board[self.selected_cell].east:
+                                            old_path1 += "E"
+                                        if self.parent.game_board.board[self.selected_cell].south:
+                                            old_path1 += "S"
+                                        for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                            if old_path1 in self.parent.drawn_cards_path[n].card_name:
+                                                self.parent.drawn_cards_path.pop(n)  
+                                                break
                                     self.parent.game_board.board[self.selected_cell].north = False
                                     self.parent.game_board.board[self.selected_cell].west = False
                                     self.parent.game_board.board[self.selected_cell].east = False
                                     self.parent.game_board.board[self.selected_cell].south = False
                                     self.parent.game_board.board[self.selected_cell].path = False
-                                    for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
-                                        if old_path1 in self.parent.drawn_cards_path[n].card_name:
-                                            self.parent.drawn_cards_path.pop(n)  
-                                            break
+                                    self.parent.game_board.board[self.selected_cell].temp = False
                                 if self.selected_cell_2:
-                                    old_path2 = "_"
-                                    if self.parent.game_board.board[self.selected_cell_2].north:
-                                        old_path2 += "N"
-                                    if self.parent.game_board.board[self.selected_cell_2].west:
-                                        old_path2 += "W"
-                                    if self.parent.game_board.board[self.selected_cell_2].east:
-                                        old_path2 += "E"
-                                    if self.parent.game_board.board[self.selected_cell_2].south:
-                                        old_path2 += "S"
+                                    if not self.parent.game_board.board[self.selected_cell].temp:
+                                        old_path2 = ""
+                                        if self.parent.game_board.board[self.selected_cell_2].north:
+                                            old_path2 += "N"
+                                        if self.parent.game_board.board[self.selected_cell_2].west:
+                                            old_path2 += "W"
+                                        if self.parent.game_board.board[self.selected_cell_2].east:
+                                            old_path2 += "E"
+                                        if self.parent.game_board.board[self.selected_cell_2].south:
+                                            old_path2 += "S"
+                                        for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                            if old_path2 in self.parent.drawn_cards_path[m].card_name:
+                                                self.parent.drawn_cards_path.pop(m)  
+                                                break
                                     self.parent.game_board.board[self.selected_cell_2].north = False
                                     self.parent.game_board.board[self.selected_cell_2].west = False
                                     self.parent.game_board.board[self.selected_cell_2].east = False
                                     self.parent.game_board.board[self.selected_cell_2].south = False
                                     self.parent.game_board.board[self.selected_cell_2].path = False
-                                    for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
-                                        if old_path2 in self.parent.drawn_cards_path[m].card_name:
-                                            self.parent.drawn_cards_path.pop(m)  
-                                            break
+                                    self.parent.game_board.board[self.selected_cell].temp = False
                                 print(self.parent.drawn_cards_path)
                                 self.played_event = True
                                 
@@ -683,7 +706,7 @@ class Play_PlayEventState(BaseState):
                                     if button.clicked:
                                         self.selected_cell = None
                                 else:
-                                    self.select_frame = self.parent.cant_select
+                                    self.select_frame = self.parent.cant_selecting_tile
                 else:
                     print("No swap possible")
                     self.played_event = True
@@ -710,11 +733,6 @@ class Play_PlayEventState(BaseState):
         # show button hit box
         # for button in self.button_list:
         #     button.render(canvas)
-
-        if self.selected_cell:
-            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
-        if self.selected_cell_2:
-            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.cell_pos >= 0:
             utils.blit(dest=canvas, source=self.select_frame, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
@@ -798,3 +816,8 @@ class Play_PlayEventState(BaseState):
         if self.fruit_drawn_image:
             scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
             utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+
+        if self.selected_cell:
+            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+        if self.selected_cell_2:
+            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')

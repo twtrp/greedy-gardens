@@ -256,6 +256,7 @@ class GameBoard():
 
     def magic_fruit_found(self):
         # Intersection Check
+        print("finding")
         if self.magic_fruit_index:
             for i in self.magic_fruit_index:
                 if i in self.connected_indices:
