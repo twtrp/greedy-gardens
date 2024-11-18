@@ -98,6 +98,7 @@ class Menu_SettingsState(BaseState):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
 
         for button in self.button_list:

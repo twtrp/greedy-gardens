@@ -44,9 +44,9 @@ class GameBoard():
         column = index % 8
 
         # Determine the quadrant based on row and column
-        if row < 4 and column < 4:
+        if row < 4 and column >= 4:
             return 1  # Quadrant 1
-        elif row < 4 and column >= 4:
+        elif row < 4 and column < 4:
             return 2  # Quadrant 2
         elif row >= 4 and column < 4:
             return 3  # Quadrant 3
@@ -256,6 +256,7 @@ class GameBoard():
 
     def magic_fruit_found(self):
         # Intersection Check
+        print("finding")
         if self.magic_fruit_index:
             for i in self.magic_fruit_index:
                 if i in self.connected_indices:

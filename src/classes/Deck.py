@@ -1,3 +1,4 @@
+from src.library.essentials import *
 from src.classes.Cards import Cards
 import random
 
@@ -78,16 +79,8 @@ class Deck:
                 name.append('path_strike_WES')
         elif self.deck_type == 'event':
             for i in range(16):
-                name.append('event_redraw')
-
-        # For Testing cards
-        # elif self.deck_type == 'path':
-        #     for i in range(25):
-        #         name.append('path_NS')
-        #         name.append('path_strike_WES')
-        # elif self.deck_type == 'event':
-        #     for i in range(16):
-        #         name.append('event_merge')
+                name.append('event_free')
+                name.append('event_merge')
 
         for i in name:
             if not 'strike' in i:
@@ -137,10 +130,12 @@ class Deck:
         return strike_indices
 
     def not_all_duplicate(self):
-        for i in range(1,len(self)):
+        copied_array = copy.deepcopy(self)
+        cleaned_copy = [path.card_name.replace('path_', '').replace('strike_', '') for path in copied_array]
+        for i in range(1,len(cleaned_copy)):
             card1 = self[0].card_name
             card2 = self[i].card_name
-            if card1[-3:] != card2[-3:]:
+            if card1 != card2:
                 return True
         return False       
 

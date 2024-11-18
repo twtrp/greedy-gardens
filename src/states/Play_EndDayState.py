@@ -86,8 +86,8 @@ class Play_EndDayState(BaseState):
                     self.exit_state()
 
     def render(self, canvas):
-        for button in self.button_list:
-                button.render(canvas)
+        # for button in self.button_list:
+        #         button.render(canvas)
         
         utils.draw_rect(dest=canvas,
                         size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
