@@ -9,7 +9,7 @@ class Play_NextDayState(BaseState):
         print("Next Day")
 
         # Update score if fail to make more than yesterday
-        if self.parent.current_day > 1:
+        if 5> self.parent.current_day > 1:
             if getattr(self.parent, f'final_day{self.parent.current_day}_score') <= getattr(self.parent, f'final_day{self.parent.current_day - 1}_score'):
                 setattr(self.parent, f'final_day{self.parent.current_day}_score', getattr(self.parent, f'final_day{self.parent.current_day}_score') if getattr(self.parent, f'final_day{self.parent.current_day}_score') < 0 else 0)
 
@@ -25,6 +25,8 @@ class Play_NextDayState(BaseState):
         self.parent.set_start_state=False
 
     def update(self, dt, events):
+        if self.parent.current_day>=5:
+            self.exit_state()
         for index in self.parent.game_board.connected_indices:
             cell = self.parent.game_board.board[index]
             if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
