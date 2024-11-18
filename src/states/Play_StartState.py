@@ -18,6 +18,17 @@ class Play_StartState(BaseState):
         self.magic_fruit1_not_drawn = True
         self.magic_fruit2_not_drawn = True
         self.magic_fruit3_not_drawn = True
+
+        def on_complete():
+            self.parent.transitioning = False
+            self.parent.tween_list.clear()
+        self.parent.tween_list.append(tween.to(
+            container=self.parent,
+            key='mask_circle_radius',
+            end_value=750,
+            time=1,
+            ease_type=tweencurves.easeInQuint
+        ).on_complete(on_complete))
         
     def update(self, dt, events):
         for event in events:

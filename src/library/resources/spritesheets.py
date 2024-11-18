@@ -574,6 +574,20 @@ fruit_32x32 = {
     }
 }
 
+magic_fruit_shadow = {
+    'file': 'fruits_32x32.png',
+    'shared_data': {
+        'width': 64,
+        'height': 48,
+    },
+    'sprites': {
+        'magic_fruit_shadow': {
+            'x': 160,
+            'y': 96,
+        }
+    }
+}
+
 tileset = {
     'file': 'tileset.png',
     'shared_data': {

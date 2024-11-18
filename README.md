@@ -56,4 +56,14 @@
 - Some UI elements
     - https://crusenho.itch.io/complete-ui-essential-pack
     - https://danieldiggle.itch.io/sunnyside
-    
+- Play Songs
+    - https://youtu.be/npWzaYEFg20?si=DTa8-iKvg4yDos6r
+    - https://youtu.be/7YeBamGTNMI?si=MiCfyZrGSC85YoHs
+    - https://youtu.be/zSmaOrvssKU?si=9m3LbZt7iWtuXrWW
+    - https://youtu.be/TWKsUgq2N6c?si=xyF3I2uUWqwD3W8R
+    - https://youtu.be/06TFiOV-oQk?si=WA7783SSHYKDyNqc
+    - https://soundcloud.com/signusa/8-bit-stardew-valley-spring-wild-horseradish-jam
+    - https://youtu.be/7WuKj7a3ces?si=Xs98-l-xLrvGPdhY
+    - https://soundcloud.com/signusa/stardew-valley-spring-its-a-big-world-outside-8-bit?in=signusa/sets/stardew-valley-8-bit-covers
+    - https://youtu.be/FO9WXi9gxQg?si=tTmsiFdYI7bi5Tv6
+    - https://soundcloud.com/signusa/stardew-valley-winter-ancient-8-bit

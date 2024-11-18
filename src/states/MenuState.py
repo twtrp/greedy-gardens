@@ -2,7 +2,6 @@ from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.classes.Wind import Wind
 from src.states.Menu_TitleState import Menu_TitleState
-import tween
 
 class MenuState(BaseState):
     def __init__(self, game, parent, stack):
@@ -16,8 +15,8 @@ class MenuState(BaseState):
 
         self.finished_boot_up = False
         
-        utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
-        utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
+        utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+        utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
         self.game.music_channel.play()
 
         self.tween_list = []
@@ -93,7 +92,6 @@ class MenuState(BaseState):
         ]
         self.noise_overlay = utils.get_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
 
-        # Load wind
         self.wind_entities_list = []
         self.winds_props = {'y_offset': 1000}
         self.wind_spawn_rate_per_second = 0.85
@@ -348,6 +346,9 @@ class MenuState(BaseState):
         del self.surface_logo_props
         del self.overlay
         del self.overlay_props
+
+        # Clear tween list
+        self.tween_list.clear()
 
         # Set props to final values
         for layer in self.landscape_list:

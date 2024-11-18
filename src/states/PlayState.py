@@ -13,17 +13,23 @@ from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
 from src.classes.Button import Button
+from src.classes.TimerManager import TimerManager
+from src.classes.Wind import Wind
 import tween
 
 class PlayState(BaseState):
     def __init__(self, game, parent, stack, seed):
         BaseState.__init__(self, game, parent, stack, seed)
 
+        self.ready = False
+
         if seed == '':
             self.set_seed = True
-            self.seed = random.randint(10000000, 99999999)
+            self.seed = random.randint(0, 99999999)
         else:
             self.seed = seed
+
+        print(self.seed)
 
         self.game.canvas.fill((0, 0, 0))
 
@@ -94,29 +100,16 @@ class PlayState(BaseState):
         self.strikes = 0
         self.is_striking = False
 
-        self.ready = False
         self.load_assets()
+
+        self.tween_list = []
+        self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
+        self.mask_circle_radius = 0
+
         self.ready = True
+        utils.sound_play(sound=sfx.woop_out, volume=self.game.sfx_volume)
+        self.transitioning = True
 
-        self.finished_boot_up = False
-        
-        
-        
-        
-        # utils.music_load(music_channel=self.game.music_channel, name='menu_intro.ogg')
-        # utils.music_queue(music_channel=self.game.music_channel, name='menu_loop.ogg', loops=-1)
-        # self.game.music_channel.play()
-
-        # self.tween_list = []
-        # if not self.finished_boot_up:
-        #     self.bootup_tween_chain(skip=self.game.settings['skip_bootup'])
-        # else:
-        #     self.bootup_tween_chain(skip=True)
-
-        # magic fruit card locations
-        self.magic_fruit1_card_location = (1025, 555)
-        self.magic_fruit2_card_location = (1095, 565)
-        self.magic_fruit3_card_location = (1165, 575)
 
     #Main methods
 
@@ -166,7 +159,7 @@ class PlayState(BaseState):
         self.dark_grass_textured_sprites = list(utils.get_sprite_sheet(sprite_sheet=spritesheets.dark_grass_textured).values())
         self.dark_grass_flowers_sprites = list(utils.get_sprite_sheet(sprite_sheet=spritesheets.dark_grass_flowers).values())
         
-        self.plain_grass_frequency = math.ceil(10 / len(self.light_grass_sprites))
+        self.plain_grass_frequency = math.ceil(2 / len(self.light_grass_sprites))
         self.textured_grass_frequency = math.ceil(3 / len(self.light_grass_textured_sprites))
         self.flowers_frequency = math.ceil(4 / len(self.light_grass_flowers_sprites))
 
@@ -177,15 +170,17 @@ class PlayState(BaseState):
                                     + self.textured_grass_frequency * self.dark_grass_textured_sprites
                                     + self.flowers_frequency * self.dark_grass_flowers_sprites)
 
+        random.seed(None)
+
         for i in [1008, 0]:
             for j in [0, 384]:
                 for x in range(i, i + 272, 16):
                     for y in range(j, j + 336, 16):
                         utils.blit(dest=self.landscape_surface, source=random.choice(self.light_grass_choices), pos=(x, y))
 
-        self.plain_grass_frequency = math.ceil(140 / len(self.light_grass_sprites))
-        self.textured_grass_frequency = math.ceil(24 / len(self.light_grass_textured_sprites))
-        self.flowers_frequency = math.ceil(4 / len(self.light_grass_flowers_sprites))
+        self.plain_grass_frequency = math.ceil(200 / len(self.light_grass_sprites))
+        self.textured_grass_frequency = math.ceil(45 / len(self.light_grass_textured_sprites))
+        self.flowers_frequency = math.ceil(8 / len(self.light_grass_flowers_sprites))
 
         self.light_grass_choices = (self.plain_grass_frequency * self.light_grass_sprites
                                     + self.textured_grass_frequency * self.light_grass_textured_sprites
@@ -193,7 +188,6 @@ class PlayState(BaseState):
         self.dark_grass_choices = (self.plain_grass_frequency * self.dark_grass_sprites
                                     + self.textured_grass_frequency * self.dark_grass_textured_sprites
                                     + self.flowers_frequency * self.dark_grass_flowers_sprites)
-
 
         for x in range(304, 976, 16):
             for y in range(32, 704, 16):
@@ -204,16 +198,18 @@ class PlayState(BaseState):
                 else:
                     utils.blit(dest=self.landscape_surface, source=random.choice(self.light_grass_choices), pos=(x, y))
 
+        random.seed(self.seed)
+
         self.landscape_list = [
             # {
             #     'image': utils.get_image(dir=dir.play_bg, name='grass_pattern.png', mode='colorkey'),
             # },
-            {
-                'image': utils.get_image(dir=dir.play_bg, name='water_low.png', mode='colorkey'),
-            },
-            {
-                'image': utils.get_image(dir=dir.play_bg, name='water_high.png', mode='colorkey'),
-            },
+            # {
+            #     'image': utils.get_image(dir=dir.play_bg, name='water_low.png', mode='colorkey'),
+            # },
+            # {
+            #     'image': utils.get_image(dir=dir.play_bg, name='water_high.png', mode='colorkey'),
+            # },
             {
                 'image': utils.get_image(dir=dir.play_bg, name='trees_bridges.png', mode='colorkey'),
             },
@@ -221,6 +217,14 @@ class PlayState(BaseState):
                 'image': utils.get_image(dir=dir.play_bg, name='fence.png', mode='colorkey'),
             },
         ]
+
+        self.water_low_image = utils.get_image(dir=dir.play_bg, name='water_low.png', mode='colorkey')
+        self.water_high_image = utils.get_image(dir=dir.play_bg, name='water_high.png', mode='colorkey')
+
+        self.water_is_high = True
+        self.water_timer = pygame.USEREVENT + 1
+        self.timer_manager = TimerManager()
+        self.timer_manager.StartTimer(self.water_timer, 1500)
 
         # color of score
         day1_color = colors.mono_150
@@ -342,6 +346,7 @@ class PlayState(BaseState):
         self.magic_fruit1_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1')
         self.magic_fruit2_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_2')
         self.magic_fruit3_image = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3')
+        self.magic_fruit_shadow = utils.get_sprite(sprite_sheet=spritesheets.magic_fruit_shadow, target_sprite='magic_fruit_shadow', mode='alpha')
 
         self.home = utils.get_sprite(sprite_sheet=spritesheets.home, target_sprite='home', mode='alpha')
         
@@ -414,6 +419,36 @@ class PlayState(BaseState):
         #fix
         self.end_game=False
 
+        # wind
+        self.wind_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
+        self.wind_entities_list = []
+        self.wind_spawn_rate_per_second = 0.5
+        self.wind_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
+        for wind_sprite in self.wind_sprites:
+            self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (2, 1))
+
+        # music
+        self.songs = [
+            music.play_1,
+            music.play_2,
+            music.play_3,
+            music.play_4,
+            music.play_5,
+            music.play_6,
+            music.play_7,
+            music.play_8,
+        ]
+        random.seed(None)
+        random.shuffle(self.songs)
+        random.seed(self.seed)
+
+        utils.music_load(music_channel=self.game.music_channel, name=self.songs[0])
+        self.music_end_event = pygame.USEREVENT + 2
+        pygame.mixer.music.set_endevent(self.music_end_event)
+        self.current_song = 0
+        self.game.music_channel.play()
+    
+
     def update(self, dt, events):
                 
         if self.ready:
@@ -424,10 +459,23 @@ class PlayState(BaseState):
 
             # Update tweens
             tween.update(passed_time=dt)
+            # print(self.tween_list)
 
-            # Update buttons
-            for button in self.grid_buttons:
-                button.update(dt=dt, events=events)
+            # Update winds
+            for wind in self.wind_entities_list:
+                if wind.active:
+                    wind.update(dt=dt, events=[])
+                else:
+                    self.wind_entities_list.remove(wind)
+
+            spawn_rate = self.wind_spawn_rate_per_second * dt
+            spawns = int(spawn_rate)
+            spawn_chance = spawn_rate - spawns
+            for _ in range(spawns):
+                self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
+
+            if random.random() <= spawn_chance:
+                self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
 
         # State change and loop
         if not self.started:
@@ -458,11 +506,19 @@ class PlayState(BaseState):
         elif self.end_game:
             Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
 
-
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                        self.exit_state()
+        if not self.transitioning:
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                            self.exit_state()
+                elif event.type == self.water_timer:
+                    self.water_is_high = not self.water_is_high
+                elif event.type == self.music_end_event:
+                    self.current_song += 1
+                    if self.current_song >= len(self.songs):
+                        self.current_song = 0
+                    utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
+                    self.game.music_channel.play()
                         
 
         # Update deck remaining
@@ -545,10 +601,19 @@ class PlayState(BaseState):
                             self.pop_up_revealed_event_card = 4
                             break
                 
-    def render(self, canvas):     
+
+    def render(self, canvas):
+
+
         if self.ready:
 
+            # Render graphics
             utils.blit(dest=canvas, source=self.landscape_surface)
+
+            if self.water_is_high:
+                utils.blit(dest=canvas, source=self.water_high_image)
+            else:
+                utils.blit(dest=canvas, source=self.water_low_image)
             
             for layer in self.landscape_list:
                 utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
@@ -562,124 +627,7 @@ class PlayState(BaseState):
                                 outer_border_width=0,
                                 outer_border_color=colors.black)
             
-            # Render text in left white box
-            utils.blit(dest=canvas, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
-            for i, score in enumerate(self.score_title_list):
-                utils.blit(dest=canvas, source=score, pos=(70, 83 + i*45), pos_anchor='midleft')
-            utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
-
-            # Render value in left white box
-            for i, score in enumerate(self.score_amount_list):
-                utils.blit(dest=canvas, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
-
-            # Render strike in left white box
-            for i in range(self.strikes):
-                    utils.blit(dest=canvas, source=self.scaled_live_strike, pos=(40 + i*64, 400), pos_anchor='topleft')
-            for i in range(3 - self.strikes):
-                    utils.blit(dest=canvas, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 400), pos_anchor='topleft')
-            ## Render current task image
-            if self.current_path:
-                self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
-                utils.blit(dest=canvas, source=self.current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
-                utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 535), pos_anchor='center')
-            elif self.current_event:
-                self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
-                utils.blit(dest=canvas, source=self.current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
-                utils.blit(dest=canvas, source=self.left_box_event_text, pos=(self.box_width/2, 535), pos_anchor='center')
-            else:
-                utils.blit(dest=canvas, source=self.left_box_draw_text, pos=(self.box_width/2, 535), pos_anchor='center')
-
-                ## Render Day's Fruit
-            if self.day1_fruit:
-                if self.current_day == 1:
-                    self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
-                else:
-                    self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
-                utils.blit(dest=canvas, source=self.day1_fruit_image, pos=(45, 83), pos_anchor='center')
-            if self.day2_fruit:
-                if self.current_day == 2:
-                    self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
-                else:
-                    self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
-                utils.blit(dest=canvas, source=self.day2_fruit_image, pos=(45, 128), pos_anchor='center')
-            if self.day3_fruit:
-                if self.current_day == 3:
-                    self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
-                else:
-                    self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
-                utils.blit(dest=canvas, source=self.day3_fruit_image, pos=(45, 173), pos_anchor='center')
-            if self.day4_fruit:
-                if self.current_day == 4:
-                    self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
-                else:
-                    self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
-                utils.blit(dest=canvas, source=self.day4_fruit_image, pos=(45, 218), pos_anchor='center')
-            if self.seasonal_fruit:
-                self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
-                utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
-
-            
-            # Render right white box
-            utils.draw_rect(dest=canvas,
-                                size=(self.box_width, constants.canvas_height),
-                                pos=(constants.canvas_width - self.box_width, 0),
-                                pos_anchor='topleft',
-                                color=(*colors.white, 175), # 75% transparency
-                                inner_border_width=4,
-                                outer_border_width=0,
-                                outer_border_color=colors.black)
-            
-            # Render text in right white box
-            utils.blit(dest=canvas, source=self.right_box_title, pos=(constants.canvas_width - self.box_width/2, 35), pos_anchor='center')
-            for i, deck in enumerate(self.deck_title_list):
-                utils.blit(dest=canvas, source=deck, pos=(1145, 85 + i*135), pos_anchor='topleft')
-                utils.blit(dest=canvas, source=self.right_remaining, pos=(1145, 110 + i*135), pos_anchor='topleft')
-
-            # Render value in right white box
-            self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
-            utils.blit(dest=canvas, source=self.fruit_deck_remaining_amount, pos=(1145, 135), pos_anchor='topleft')
-            self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
-            utils.blit(dest=canvas, source=self.path_deck_remaining_amount, pos=(1145, 270), pos_anchor='topleft')
-            self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
-            utils.blit(dest=canvas, source=self.event_deck_remaining_amount, pos=(1145, 405), pos_anchor='topleft')
-
-            # Render image in right white box
-            utils.blit(dest=canvas, source=self.card_fruit_back_image, pos=(1130, 65), pos_anchor='topright')
-            utils.blit(dest=canvas, source=self.card_path_back_image, pos=(1130, 200), pos_anchor='topright')
-            utils.blit(dest=canvas, source=self.card_event_back_image, pos=(1130, 335), pos_anchor='topright')
-
-            ## Render Magic Fruit Event
-            utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 500), pos_anchor='center')
-            if self.magic_fruit1_event:
-                self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
-                utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=self.magic_fruit1_card_location, pos_anchor='topleft')
-                utils.blit(
-                    dest=canvas,
-                    source=self.magic_fruit1_image,
-                    pos=(self.magic_fruit1_card_location[0] + 48, self.magic_fruit1_card_location[1] - 26),
-                    pos_anchor='midtop'
-                )
-            if self.magic_fruit2_event:
-                self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
-                utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=self.magic_fruit2_card_location, pos_anchor='topleft')
-                utils.blit(
-                    dest=canvas,
-                    source=self.magic_fruit2_image,
-                    pos=(self.magic_fruit2_card_location[0] + 48, self.magic_fruit2_card_location[1] - 26),
-                    pos_anchor='midtop'
-                )
-            if self.magic_fruit3_event:
-                self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
-                utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=self.magic_fruit3_card_location, pos_anchor='topleft')
-                utils.blit(
-                    dest=canvas,
-                    source=self.magic_fruit3_image,
-                    pos=(self.magic_fruit3_card_location[0] + 48, self.magic_fruit3_card_location[1] - 26),
-                    pos_anchor='midtop'
-                )
-
-            # Render path on board
+            # Render board
 
             ## Render path on placed tile
             for i, rect in enumerate(self.grid_hitboxes):
@@ -1046,15 +994,18 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.dirt_sprite_9[i], pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_ES, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
 
-                # Render Magic Fruit
+                ## Render Magic Fruit
                 if self.game_board.board[i].magic_fruit == 1:
+                    utils.blit(dest=canvas, source=self.magic_fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 40, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='center')
                     utils.blit(dest=canvas, source=self.magic_fruit1_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 40, self.grid_start_y + ((i // 8) * self.cell_size) + 40), pos_anchor='center')
                 if self.game_board.board[i].magic_fruit == 2:
+                    utils.blit(dest=canvas, source=self.magic_fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 40, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='center')
                     utils.blit(dest=canvas, source=self.magic_fruit2_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 40, self.grid_start_y + ((i // 8) * self.cell_size) + 40), pos_anchor='center')
                 if self.game_board.board[i].magic_fruit == 3:
+                    utils.blit(dest=canvas, source=self.magic_fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 40, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='center')
                     utils.blit(dest=canvas, source=self.magic_fruit3_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 40, self.grid_start_y + ((i // 8) * self.cell_size) + 40), pos_anchor='center')
 
-                # Render Fruits
+                ## Render Fruits
                 if self.game_board.board[i].fruit:
                     for pos, fruit in enumerate(self.game_board.board[i].fruit):
                         if fruit != None:
@@ -1072,6 +1023,132 @@ class PlayState(BaseState):
                                 utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                                 utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
 
+
+            # Render wind
+            self.wind_surface.fill((0, 0, 0, 0))
+            for wind in self.wind_entities_list:
+                wind.render()
+            utils.blit(dest=canvas, source=self.wind_surface)
+            
+
+            # Render gui
+
+            ## Render text in left white box
+            utils.blit(dest=canvas, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
+            for i, score in enumerate(self.score_title_list):
+                utils.blit(dest=canvas, source=score, pos=(70, 83 + i*45), pos_anchor='midleft')
+            utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
+
+            ## Render value in left white box
+            for i, score in enumerate(self.score_amount_list):
+                utils.blit(dest=canvas, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
+
+            ## Render strike in left white box
+            for i in range(self.strikes):
+                    utils.blit(dest=canvas, source=self.scaled_live_strike, pos=(40 + i*64, 400), pos_anchor='topleft')
+            for i in range(3 - self.strikes):
+                    utils.blit(dest=canvas, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 400), pos_anchor='topleft')
+            ## Render current task image
+            if self.current_path:
+                self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
+                utils.blit(dest=canvas, source=self.current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 535), pos_anchor='center')
+            elif self.current_event:
+                self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
+                utils.blit(dest=canvas, source=self.current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_event_text, pos=(self.box_width/2, 535), pos_anchor='center')
+            else:
+                utils.blit(dest=canvas, source=self.left_box_draw_text, pos=(self.box_width/2, 535), pos_anchor='center')
+
+            ## Render Day's Fruit
+            if self.day1_fruit:
+                if self.current_day == 1:
+                    self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
+                else:
+                    self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
+                utils.blit(dest=canvas, source=self.day1_fruit_image, pos=(45, 83), pos_anchor='center')
+            if self.day2_fruit:
+                if self.current_day == 2:
+                    self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
+                else:
+                    self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
+                utils.blit(dest=canvas, source=self.day2_fruit_image, pos=(45, 128), pos_anchor='center')
+            if self.day3_fruit:
+                if self.current_day == 3:
+                    self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
+                else:
+                    self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
+                utils.blit(dest=canvas, source=self.day3_fruit_image, pos=(45, 173), pos_anchor='center')
+            if self.day4_fruit:
+                if self.current_day == 4:
+                    self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
+                else:
+                    self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
+                utils.blit(dest=canvas, source=self.day4_fruit_image, pos=(45, 218), pos_anchor='center')
+            if self.seasonal_fruit:
+                self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
+                utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
+
+            
+            ## Render right white box
+            utils.draw_rect(dest=canvas,
+                                size=(self.box_width, constants.canvas_height),
+                                pos=(constants.canvas_width - self.box_width, 0),
+                                pos_anchor='topleft',
+                                color=(*colors.white, 175), # 75% transparency
+                                inner_border_width=4,
+                                outer_border_width=0,
+                                outer_border_color=colors.black)
+            
+            ## Render text in right white box
+            utils.blit(dest=canvas, source=self.right_box_title, pos=(constants.canvas_width - self.box_width/2, 35), pos_anchor='center')
+            for i, deck in enumerate(self.deck_title_list):
+                utils.blit(dest=canvas, source=deck, pos=(1145, 85 + i*135), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.right_remaining, pos=(1145, 110 + i*135), pos_anchor='topleft')
+
+            ## Render value in right white box
+            self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
+            utils.blit(dest=canvas, source=self.fruit_deck_remaining_amount, pos=(1145, 135), pos_anchor='topleft')
+            self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
+            utils.blit(dest=canvas, source=self.path_deck_remaining_amount, pos=(1145, 270), pos_anchor='topleft')
+            self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
+            utils.blit(dest=canvas, source=self.event_deck_remaining_amount, pos=(1145, 405), pos_anchor='topleft')
+
+            ## Render image in right white box
+            utils.blit(dest=canvas, source=self.card_fruit_back_image, pos=(1130, 65), pos_anchor='topright')
+            utils.blit(dest=canvas, source=self.card_path_back_image, pos=(1130, 200), pos_anchor='topright')
+            utils.blit(dest=canvas, source=self.card_event_back_image, pos=(1130, 335), pos_anchor='topright')
+
+            ## Render Magic Fruit Event cards
+            utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 500), pos_anchor='center')
+            if self.magic_fruit1_event:
+                self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
+                utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(1025, 555), pos_anchor='topleft')
+                utils.blit(
+                    dest=canvas,
+                    source=self.magic_fruit1_image,
+                    pos=(1025 + 48, 555 - 26),
+                    pos_anchor='midtop'
+                )
+            if self.magic_fruit2_event:
+                self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
+                utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=(1095, 565), pos_anchor='topleft')
+                utils.blit(
+                    dest=canvas,
+                    source=self.magic_fruit2_image,
+                    pos=(1095 + 48, 565 - 26),
+                    pos_anchor='midtop'
+                )
+            if self.magic_fruit3_event:
+                self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
+                utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=(1165, 575), pos_anchor='topleft')
+                utils.blit(
+                    dest=canvas,
+                    source=self.magic_fruit3_image,
+                    pos=(1165 + 48, 575 - 26),
+                    pos_anchor='midtop'
+                )
                         
 
             # Render Revealed card
@@ -1134,8 +1211,17 @@ class PlayState(BaseState):
                         #self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                         scaled_image = pygame.transform.scale_by(surface=self.current_event_image, factor=3)
                         utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
-                        
 
+
+            # transition mask     
+            self.mask_surface.fill(color=colors.black)
+            pygame.draw.circle(
+                surface=self.mask_surface,
+                color=(*colors.black, 0),
+                center=(constants.canvas_width/2, constants.canvas_height/2),
+                radius=self.mask_circle_radius
+            )
+            utils.blit(dest=canvas, source=self.mask_surface)
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
