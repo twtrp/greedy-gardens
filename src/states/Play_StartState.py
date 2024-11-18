@@ -29,6 +29,8 @@ class Play_StartState(BaseState):
             time=1,
             ease_type=tweencurves.easeInQuint
         ).on_complete(on_complete))
+
+        utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
         
     def update(self, dt, events):
         for event in events:
