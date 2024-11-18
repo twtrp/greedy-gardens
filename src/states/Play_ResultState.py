@@ -6,7 +6,11 @@ import sqlite3
 class Play_ResultStage(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-        self.parent = parent
+
+        # state
+        self.is_hovering = False
+        self.is_continue = False
+
         self.load_assets()
         
         # Get high score from database
@@ -38,7 +42,6 @@ class Play_ResultStage(BaseState):
         sql_cursor.close()
         #print(self.high_score)
         
-        self.is_hovering=False
         self.button_list = []
         
         self.final_results_text = utils.get_text(text='Final Results', font=fonts.lf2, size='large', color=colors.white)
@@ -63,6 +66,13 @@ class Play_ResultStage(BaseState):
         self.big_day3_fruit_image = pygame.transform.scale_by(surface=self.day3_fruit_color_image, factor=2)
         self.big_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_color_image, factor=2)
         self.big_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_color_image, factor=2)
+
+        self.glow_day1_fruit_image = utils.effect_outline(surface=self.big_day1_fruit_image, distance=2, color=colors.white)
+        self.glow_day2_fruit_image = utils.effect_outline(surface=self.big_day2_fruit_image, distance=2, color=colors.white)
+        self.glow_day3_fruit_image = utils.effect_outline(surface=self.big_day3_fruit_image, distance=2, color=colors.white)
+        self.glow_day4_fruit_image = utils.effect_outline(surface=self.big_day4_fruit_image, distance=2, color=colors.white)
+        self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.white)
+        
         
         self.day1_text = utils.get_text(text="Day 1", font=fonts.lf2, size='medium', color=colors.white)
         self.day2_text = utils.get_text(text='Day 2', font=fonts.lf2, size='medium', color=colors.white)
@@ -87,78 +97,93 @@ class Play_ResultStage(BaseState):
             {
                 'id': 'continue',
                 'text': 'Continue',
-                'color1': colors.yellow_medium,
-            }]
+                'size': 'medium',
+                'color': colors.yellow_light,
+            },
+            {
+                'id': 'view board',
+                'text': 'Hover here to view board',
+                'size': 'small',
+                'color': colors.white,
+            },
+        ]
         self.button_option_surface_list = []
         for i, option in enumerate(self.button_option_list):
-            text1 = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=option['color1'])
+            text = utils.get_text(text=option['text'], font=fonts.lf2, size=option['size'], color=option['color'])
             self.button_option_surface_list.append({
                 'id': option['id'],
-                'surface1': text1,
+                'surface': text,
                 'scale': 1.0
             })
-            self.button_list.append(Button(
-                game=self.game,
-                id=option['id'],
-                width=200,
-                height=40,
-                pos=(constants.canvas_width/2,600),
-                pos_anchor=posanchors.center
-            ))
-        
-        self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.white)
-        self.hover_to_view_surface = [{
-                    'id': 'view board',
-                    'surface': self.hover_to_view_title,
-                    'scale': 1.0,
-                },]
         self.button_list.append(Button(
-                    game=self.game,
-                    id='view board',
-                    width=400,
-                    height=50,
-                    pos=(constants.canvas_width/2, 695),
-                    pos_anchor=posanchors.center,
-                    hover_cursor=cursors.hand,
-                ))
+            game=self.game,
+            id=self.button_option_list[0]['id'],
+            width=200,
+            height=40,
+            pos=(constants.canvas_width/2, 600),
+            pos_anchor=posanchors.center
+        ))
+        self.button_list.append(Button(
+            game=self.game,
+            id=self.button_option_list[1]['id'],
+            width=400,
+            height=50,
+            pos=(constants.canvas_width/2, 695),
+            pos_anchor=posanchors.center,
+            hover_cursor=cursors.hand,
+        ))
+
+        for button in self.button_list:
+            print(button.id) 
+        
         self.parent.endDayState=True
         # First load the sprite sheet
         
 
         
     def update(self, dt, events):
-        for button in self.button_list:
-            button.update(dt=dt, events=events)
-        for button in self.button_list:
-            if button.hovered:
-                if button.id == 'view board':
-                    #print("Hovering over view board")
-                    self.is_hovering = True
-                # elif button.id == 'continue':
-                #     for option in self.button_option_surface_list:
-                #         if button.id == option['continue']:
-                #             option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
-                #             option['scale_fruit'] = min(option['scale_fruit'] + 7.2*dt, 3.6)
+        if not self.is_continue:
+            for button in self.button_list:
+                button.update(dt=dt, events=events)
+                if button.hovered:
+                    if button.id == 'view board':
+                        #print("Hovering over view board")
+                        self.is_hovering = True
+                    if button.hover_cursor is not None:
+                        self.cursor = button.hover_cursor
+                    for option in self.button_option_surface_list:
+                        if button.id == option['id']:
+                            option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                 else: 
-                    print("Hovering over other button")
-                    self.is_hovering = False
-                    
-            elif button.clicked:
-                if button.id == 'continue':
-                    print("End game")
-                    #implement this to menu state
-                    self.exit_state()
+                    if button.id == 'view board':
+                        # print("Hovering over other button")
+                        self.is_hovering = False
+                    for option in self.button_option_surface_list:
+                        if button.id == option['id']:
+                            option['scale'] = max(option['scale'] - 2.4*dt, 1.0)          
+                if button.clicked:
+                    for option in self.button_option_surface_list:
+                        if button.id == 'continue':
+                            self.is_continue = True
+        else:
+            print("End game")
+            #implement this to menu state
+            self.parent.exit_state()
             
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
 
     def render(self, canvas):
-        for button in self.button_list:
-            button.render(canvas=canvas)
+        # For Rendering button hitboxes
+        # for button in self.button_list:
+        #     button.render(canvas=canvas)
+
         # Draw dark overlay when not hovering
         # print(self.is_hovering)
         if not self.is_hovering:
             utils.draw_rect(dest=canvas,
                         size=(constants.canvas_width, constants.canvas_height),
-                        pos=(self.parent.box_width, 0),
+                        pos=(0, 0),
                         pos_anchor='topleft',
                         color=(*colors.black, 128), # 50% transparency
                         inner_border_width=0,
@@ -170,23 +195,23 @@ class Play_ResultStage(BaseState):
             
             utils.blit(dest=canvas, source=self.seed_text, pos=(constants.canvas_width/2, 100), pos_anchor='center')
   
-            utils.blit(dest=canvas, source=self.big_day1_fruit_image, pos=(constants.canvas_width/2 - 175, 150), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day1_fruit_image, pos=(constants.canvas_width/2 - 177, 150), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day1_text, pos=((constants.canvas_width/2 )-135, 140), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day1_score_text, pos=((constants.canvas_width/2 )+130, 140), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.big_day2_fruit_image, pos=(constants.canvas_width/2 - 175, 210), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day2_fruit_image, pos=(constants.canvas_width/2 - 177, 210), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day2_text, pos=((constants.canvas_width/2 )-135, 200), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day2_score_text, pos=((constants.canvas_width/2 )+130, 200), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.big_day3_fruit_image, pos=(constants.canvas_width/2 - 175, 270), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day3_fruit_image, pos=(constants.canvas_width/2 - 177, 270), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day3_text, pos=((constants.canvas_width/2 )-135, 260), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day3_score_text, pos=((constants.canvas_width/2 )+130, 260), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.big_day4_fruit_image, pos=(constants.canvas_width/2 - 175, 330), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day4_fruit_image, pos=(constants.canvas_width/2 - 177, 330), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day4_text, pos=((constants.canvas_width/2 )-135, 320), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+130, 320), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.big_seasonal_fruit_image, pos=(constants.canvas_width/2 - 175, 390), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 177, 390), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_text, pos=((constants.canvas_width/2 )-135, 380), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+130, 380), pos_anchor=posanchors.topright)
             
@@ -203,7 +228,11 @@ class Play_ResultStage(BaseState):
             #         scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
             #     utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
             
-            # Always render hover text
-            utils.blit(dest=canvas, source=self.hover_to_view_title ,pos=(constants.canvas_width/2, constants.canvas_height - 25), pos_anchor=posanchors.center)
+            # Always render hoverable text
+            scaled_continue_button = pygame.transform.scale_by(surface=self.button_option_surface_list[0]['surface'], factor=self.button_option_surface_list[0]['scale'])
+            utils.blit(dest=canvas, source=scaled_continue_button, pos=(constants.canvas_width/2, 600), pos_anchor=posanchors.center)
+
+            scaled_hover_to_button = pygame.transform.scale_by(surface=self.button_option_surface_list[1]['surface'], factor=self.button_option_surface_list[1]['scale'])
+            utils.blit(dest=canvas, source=scaled_hover_to_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
         else:
             pass

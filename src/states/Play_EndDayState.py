@@ -5,7 +5,6 @@ from src.classes.Button import Button
 class Play_EndDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-        self.parent = parent
         
         # Get current day's info
         self.current_day = self.parent.current_day
