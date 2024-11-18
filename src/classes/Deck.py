@@ -1,3 +1,4 @@
+from src.library.essentials import *
 from src.classes.Cards import Cards
 import random
 
@@ -128,10 +129,12 @@ class Deck:
         return strike_indices
 
     def not_all_duplicate(self):
-        for i in range(1,len(self)):
+        copied_array = copy.deepcopy(self)
+        cleaned_copy = [path.card_name.replace('path_', '').replace('strike_', '') for path in copied_array]
+        for i in range(1,len(cleaned_copy)):
             card1 = self[0].card_name
             card2 = self[i].card_name
-            if card1[-3:] != card2[-3:]:
+            if card1 != card2:
                 return True
         return False       
 
