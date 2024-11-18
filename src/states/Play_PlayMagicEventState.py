@@ -854,7 +854,7 @@ class Play_PlayMagicEventState(BaseState):
                                     if button.clicked:
                                         self.selected_cell = None
                                 else:
-                                    self.select_frame = self.parent.cant_select
+                                    self.select_frame = self.parent.cant_selecting_tile
 
                     # for event in events:
                     #     self.mouse_pos = pygame.mouse.get_pos()
@@ -918,11 +918,6 @@ class Play_PlayMagicEventState(BaseState):
             utils.blit(dest=canvas, source=self.scaled_card_magic_event, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
             if self.parent.magicing_number > 0:
                 utils.blit(dest=canvas, source=self.scaled_magic_fruit, pos=(constants.canvas_width/2, constants.canvas_height/2 - 128 - 16), pos_anchor='center')
-
-        if self.selected_cell:
-            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
-        if self.selected_cell_2:
-            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.cell_pos >= 0:
             utils.blit(dest=canvas, source=self.select_frame, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
@@ -1006,3 +1001,8 @@ class Play_PlayMagicEventState(BaseState):
         if self.fruit_drawn_image:
             scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
             utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+
+        if self.selected_cell:
+            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
+        if self.selected_cell_2:
+            utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
