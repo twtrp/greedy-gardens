@@ -80,6 +80,7 @@ class Deck:
         elif self.deck_type == 'event':
             for i in range(16):
                 name.append('event_free')
+                name.append('event_merge')
 
         for i in name:
             if not 'strike' in i:

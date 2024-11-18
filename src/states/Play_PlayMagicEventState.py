@@ -391,7 +391,9 @@ class Play_PlayMagicEventState(BaseState):
                         if button.hovered:
                             self.cell_pos = button.id
                             if self.selected_cell is None:
-                                if self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
+                                if (self.parent.game_board.board[button.id].path and
+                                    not self.parent.game_board.board[button.id].temp and
+                                    not self.parent.game_board.board[button.id].home):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
                                         self.selected_cell = button.id
@@ -751,7 +753,7 @@ class Play_PlayMagicEventState(BaseState):
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                                 if self.selected_cell:
-                                    old_path1 = "_"
+                                    old_path1 = ""
                                     if self.parent.game_board.board[self.selected_cell].north:
                                         old_path1 += "N"
                                     if self.parent.game_board.board[self.selected_cell].west:
@@ -765,12 +767,13 @@ class Play_PlayMagicEventState(BaseState):
                                     self.parent.game_board.board[self.selected_cell].east = False
                                     self.parent.game_board.board[self.selected_cell].south = False
                                     self.parent.game_board.board[self.selected_cell].path = False
+                                    self.parent.game_board.board[self.selected_cell].temp = False
                                     for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
                                         if old_path1 in self.parent.drawn_cards_path[n].card_name:
                                             self.parent.drawn_cards_path.pop(n)  
                                             break
                                 if self.selected_cell_2:
-                                    old_path2 = "_"
+                                    old_path2 = ""
                                     if self.parent.game_board.board[self.selected_cell_2].north:
                                         old_path2 += "N"
                                     if self.parent.game_board.board[self.selected_cell_2].west:
@@ -784,6 +787,7 @@ class Play_PlayMagicEventState(BaseState):
                                     self.parent.game_board.board[self.selected_cell_2].east = False
                                     self.parent.game_board.board[self.selected_cell_2].south = False
                                     self.parent.game_board.board[self.selected_cell_2].path = False
+                                    self.parent.game_board.board[self.selected_cell].temp = False
                                     for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
                                         if old_path2 in self.parent.drawn_cards_path[m].card_name:
                                             self.parent.drawn_cards_path.pop(m)  

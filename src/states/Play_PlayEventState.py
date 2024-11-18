@@ -348,7 +348,9 @@ class Play_PlayEventState(BaseState):
                         if button.hovered:
                             self.cell_pos = button.id
                             if self.selected_cell is None:
-                                if self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
+                                if (self.parent.game_board.board[button.id].path and 
+                                    not self.parent.game_board.board[button.id].temp and
+                                    not self.parent.game_board.board[button.id].home):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
                                         self.selected_cell = button.id
@@ -357,6 +359,7 @@ class Play_PlayEventState(BaseState):
                             else:
                                 if (button.id != self.selected_cell and
                                     self.parent.game_board.board[button.id].path and
+                                    not self.parent.game_board.board[button.id].temp and
                                     not self.parent.game_board.board[button.id].home and
                                     not self.parent.game_board.board[button.id].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
@@ -594,43 +597,47 @@ class Play_PlayEventState(BaseState):
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                                 if self.selected_cell:
-                                    old_path1 = "_"
-                                    if self.parent.game_board.board[self.selected_cell].north:
-                                        old_path1 += "N"
-                                    if self.parent.game_board.board[self.selected_cell].west:
-                                        old_path1 += "W"
-                                    if self.parent.game_board.board[self.selected_cell].east:
-                                        old_path1 += "E"
-                                    if self.parent.game_board.board[self.selected_cell].south:
-                                        old_path1 += "S"
+                                    if not self.parent.game_board.board[self.selected_cell].temp:
+                                        old_path1 = ""
+                                        if self.parent.game_board.board[self.selected_cell].north:
+                                            old_path1 += "N"
+                                        if self.parent.game_board.board[self.selected_cell].west:
+                                            old_path1 += "W"
+                                        if self.parent.game_board.board[self.selected_cell].east:
+                                            old_path1 += "E"
+                                        if self.parent.game_board.board[self.selected_cell].south:
+                                            old_path1 += "S"
+                                        for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                            if old_path1 in self.parent.drawn_cards_path[n].card_name:
+                                                self.parent.drawn_cards_path.pop(n)  
+                                                break
                                     self.parent.game_board.board[self.selected_cell].north = False
                                     self.parent.game_board.board[self.selected_cell].west = False
                                     self.parent.game_board.board[self.selected_cell].east = False
                                     self.parent.game_board.board[self.selected_cell].south = False
                                     self.parent.game_board.board[self.selected_cell].path = False
-                                    for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
-                                        if old_path1 in self.parent.drawn_cards_path[n].card_name:
-                                            self.parent.drawn_cards_path.pop(n)  
-                                            break
+                                    self.parent.game_board.board[self.selected_cell].temp = False
                                 if self.selected_cell_2:
-                                    old_path2 = "_"
-                                    if self.parent.game_board.board[self.selected_cell_2].north:
-                                        old_path2 += "N"
-                                    if self.parent.game_board.board[self.selected_cell_2].west:
-                                        old_path2 += "W"
-                                    if self.parent.game_board.board[self.selected_cell_2].east:
-                                        old_path2 += "E"
-                                    if self.parent.game_board.board[self.selected_cell_2].south:
-                                        old_path2 += "S"
+                                    if not self.parent.game_board.board[self.selected_cell].temp:
+                                        old_path2 = ""
+                                        if self.parent.game_board.board[self.selected_cell_2].north:
+                                            old_path2 += "N"
+                                        if self.parent.game_board.board[self.selected_cell_2].west:
+                                            old_path2 += "W"
+                                        if self.parent.game_board.board[self.selected_cell_2].east:
+                                            old_path2 += "E"
+                                        if self.parent.game_board.board[self.selected_cell_2].south:
+                                            old_path2 += "S"
+                                        for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                            if old_path2 in self.parent.drawn_cards_path[m].card_name:
+                                                self.parent.drawn_cards_path.pop(m)  
+                                                break
                                     self.parent.game_board.board[self.selected_cell_2].north = False
                                     self.parent.game_board.board[self.selected_cell_2].west = False
                                     self.parent.game_board.board[self.selected_cell_2].east = False
                                     self.parent.game_board.board[self.selected_cell_2].south = False
                                     self.parent.game_board.board[self.selected_cell_2].path = False
-                                    for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
-                                        if old_path2 in self.parent.drawn_cards_path[m].card_name:
-                                            self.parent.drawn_cards_path.pop(m)  
-                                            break
+                                    self.parent.game_board.board[self.selected_cell].temp = False
                                 print(self.parent.drawn_cards_path)
                                 self.played_event = True
                                 
