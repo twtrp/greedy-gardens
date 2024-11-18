@@ -24,7 +24,7 @@ class PlayState(BaseState):
         self.ready = False
 
         if seed == '':
-            self.set_seed = True
+            self.set_seed = False
             self.seed = random.randint(0, 99999999)
         else:
             self.seed = seed
@@ -509,7 +509,7 @@ class PlayState(BaseState):
                             self.transitioning = True
                             self.game.music_channel.fadeout(1500)
                             utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
-                            self.freeze_frame = pygame.display.get_surface()
+                            self.freeze_frame = self.game.canvas.copy()
                             def on_complete():
                                 utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
                                 utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
