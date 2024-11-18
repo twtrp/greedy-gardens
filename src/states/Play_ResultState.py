@@ -17,10 +17,10 @@ class Play_ResultStage(BaseState):
     def load_assets(self):
         
         self.new_record = False
-        
+        self.setted_seed= not self.parent.set_seed
         sql_conn = sqlite3.connect('data/records.sqlite')
         sql_cursor = sql_conn.cursor()
-        if self.parent.set_seed:
+        if self.setted_seed:
             # Check if seed exists
             sql_cursor.execute('SELECT COUNT(*) FROM records WHERE seed = ?', (self.parent.seed,))
             seed_exists = sql_cursor.fetchone()[0] > 0
@@ -45,9 +45,9 @@ class Play_ResultStage(BaseState):
         self.button_list = []
         
         self.final_results_text = utils.get_text(text='Final Results', font=fonts.lf2, size='large', color=colors.white)
-        if self.parent.set_seed:
+        if self.setted_seed:
             self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
-        elif not self.parent.set_seed:
+        elif not self.setted_seed:
             self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.lf2, size='medium', color=colors.white)
             
         #self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
@@ -142,7 +142,7 @@ class Play_ResultStage(BaseState):
         
         sql_conn = sqlite3.connect('data/records.sqlite')
         sql_cursor = sql_conn.cursor()
-        if self.parent.set_seed:
+        if self.setted_seed:
             sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed = ?', (self.parent.seed,))
             result = sql_cursor.fetchone()
             current_high_score = result[0] if result[0] is not None else 0
@@ -254,7 +254,7 @@ class Play_ResultStage(BaseState):
             utils.blit(dest=canvas, source=self.day4_text, pos=((constants.canvas_width/2 )-135, 320), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+160, 320), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 175, 39-100), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 175, 390-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_text, pos=((constants.canvas_width/2 )-135, 380), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+160, 380), pos_anchor=posanchors.topright)
             
