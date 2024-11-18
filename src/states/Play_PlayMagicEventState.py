@@ -47,6 +47,7 @@ class Play_PlayMagicEventState(BaseState):
             if "strike" in self.parent.current_path:
                 self.parent.is_striking = True
         self.parent.current_path = None
+        self.parent.playing_magic_event = True
 
         # Load text
         self.choice_keep_title = utils.get_text(text='choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_175)
@@ -281,6 +282,7 @@ class Play_PlayMagicEventState(BaseState):
                                         new_score = current_score + 1
                                         setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                                         setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                                        self.parent.playing_magic_event = False
                                         self.exit_state()
                                 self.played_event = True
                         else:
@@ -461,6 +463,7 @@ class Play_PlayMagicEventState(BaseState):
                                                 new_score = current_score + 1
                                                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                                                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                                                self.parent.playing_magic_event = False
                                                 self.exit_state()
                                         self.selected_cell = None
                                         self.played_event = True
@@ -904,6 +907,7 @@ class Play_PlayMagicEventState(BaseState):
                 self.parent.strikes = 0
             else: 
                 self.parent.drawing = True
+            self.parent.playing_magic_event = False
             self.parent.is_striking = False
             self.parent.current_event = None
             print("exiting play magic event")
