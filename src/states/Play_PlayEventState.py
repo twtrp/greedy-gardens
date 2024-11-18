@@ -253,6 +253,7 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.eval_new_tile(button.id)
                                     self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
                                     if self.parent.magic_eventing:
+                                        utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
                                         if magic_number == 1:
                                             self.parent.current_event = self.parent.magic_fruit1_event
                                         elif magic_number == 2:
@@ -405,6 +406,7 @@ class Play_PlayEventState(BaseState):
                                             self.parent.game_board.eval_new_tile(button.id)
                                             self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
                                             if self.parent.magic_eventing:
+                                                utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
                                                 if magic_number == 1:
                                                     self.parent.current_event = self.parent.magic_fruit1_event
                                                 elif magic_number == 2:
