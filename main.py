@@ -39,6 +39,10 @@ class Game:
         utils.sound_play(sound=sfx.ambience, sound_channel=self.ambience_channel, loops=-1, fade_ms=3000)
 
         self.state_stack = []
+        utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
+        utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
+        self.music_channel.play()
+        MenuState(game=self, parent=self, stack=self.state_stack).enter_state()
 
 
     # Class methods
@@ -76,7 +80,7 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            MenuState(game=self, parent=self, stack=self.state_stack).enter_state()
+            MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=True).enter_state()
 
         # Handle quit
         for event in events:

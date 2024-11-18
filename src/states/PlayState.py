@@ -109,6 +109,7 @@ class PlayState(BaseState):
 
         self.ready = True
         utils.sound_play(sound=sfx.woop_out, volume=self.game.sfx_volume)
+
         self.transitioning = True
 
 
@@ -484,7 +485,9 @@ class PlayState(BaseState):
     
 
     def update(self, dt, events):
-        if self.ready:  
+        tween.update(passed_time=dt)
+        if self.ready:
+
             if self.paused:
                 for button in self.pause_options_button_list:
                     button.update(dt=dt, events=events)
@@ -502,25 +505,38 @@ class PlayState(BaseState):
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.paused = False
                         elif button.id == 'quit':
-                            self.timer_manager.StopTimer(self.water_timer)
+                            self.transitioning = True
                             self.game.music_channel.fadeout(1500)
-                            self.transitioning = False
-                            self.exit_state()
+                            utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
+                            # self.freeze_frame = pygame.display.get_surface()
+                            def on_complete():
+                                utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                                utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
+                                self.game.music_channel.play()
+                                self.timer_manager.StopTimer(self.water_timer)
+                                self.tween_list.clear()
+                                self.game.state_stack.clear()
+                            self.tween_list.append(tween.to(
+                                container=self,
+                                key='mask_circle_radius',
+                                end_value=0,
+                                time=1,
+                                ease_type=tweencurves.easeOutQuint
+                            ).on_complete(on_complete))
 
                 for event in events:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.paused = not self.paused
+                            
+                utils.set_cursor(cursor=self.cursor)
+                self.cursor = cursors.normal
 
             else: 
                 # Update substates
                 if self.substate_stack:
                     self.substate_stack[-1].update(dt=dt, events=events)
-
-                # Update tweens
-                tween.update(passed_time=dt)
-                # print(self.tween_list)
 
                 # Update winds
                 for wind in self.wind_entities_list:
@@ -589,8 +605,7 @@ class PlayState(BaseState):
                             if self.current_song >= len(self.songs):
                                 self.current_song = 0
                             utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
-                            self.game.music_channel.play()
-                                
+                            self.game.music_channel.play()        
 
                 # Update deck remaining
                 self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
@@ -669,9 +684,6 @@ class PlayState(BaseState):
                                 if button.id == 'event_card':
                                     self.pop_up_revealed_event_card = 4
                                     break
-
-        utils.set_cursor(cursor=self.cursor)
-        self.cursor = cursors.normal
                 
 
     def render(self, canvas):
@@ -1284,7 +1296,20 @@ class PlayState(BaseState):
                         scaled_image = pygame.transform.scale_by(surface=self.current_event_image, factor=3)
                         utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
 
+        # pause menu
+        if self.paused:
+            utils.blit(dest=canvas, source=self.pause_background)
+            utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 200), pos_anchor='center')
+            for i, option in enumerate(self.pause_options_surface_list):
+                scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                utils.blit(
+                    dest=canvas,
+                    source=scaled_surface,
+                    pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
+                    pos_anchor='center'
+                )
 
+        if self.transitioning:
             # transition mask     
             self.mask_surface.fill(color=colors.black)
             pygame.draw.circle(
@@ -1294,19 +1319,6 @@ class PlayState(BaseState):
                 radius=self.mask_circle_radius
             )
             utils.blit(dest=canvas, source=self.mask_surface)
-
-            # pause menu
-            if self.paused:
-                utils.blit(dest=canvas, source=self.pause_background)
-                utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 200), pos_anchor='center')
-                for i, option in enumerate(self.pause_options_surface_list):
-                    scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                    utils.blit(
-                        dest=canvas,
-                        source=scaled_surface,
-                        pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
-                        pos_anchor='center'
-                    )
 
                 
     def random_dirt(self):

@@ -4,8 +4,8 @@ from src.classes.Wind import Wind
 from src.states.Menu_TitleState import Menu_TitleState
 
 class MenuState(BaseState):
-    def __init__(self, game, parent, stack):
-        BaseState.__init__(self, game, parent, stack)
+    def __init__(self, game, parent, stack, finished_bootup=False):
+        BaseState.__init__(self, game, parent, stack, finished_bootup)
 
         self.substate_stack = []
 
@@ -13,17 +13,28 @@ class MenuState(BaseState):
         self.load_assets()
         self.ready = True
 
-        self.finished_boot_up = False
-        
-        utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
-        utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
-        self.game.music_channel.play()
+        self.finished_boot_up = finished_bootup
 
         self.tween_list = []
         if not self.finished_boot_up:
             self.bootup_tween_chain(skip=self.game.settings['skip_bootup'])
+            self.transitioning = False
         else:
             self.bootup_tween_chain(skip=True)
+            utils.sound_play(sound=sfx.woop_out, volume=self.game.sfx_volume)
+            def on_complete():
+                self.transitioning = False
+                self.tween_list.clear()
+            self.transitioning = True
+            self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
+            self.mask_circle_radius = 0
+            self.tween_list.append(tween.to(
+                container=self,
+                key='mask_circle_radius',
+                end_value=750,
+                time=1,
+                ease_type=tweencurves.easeInQuint
+            ).on_complete(on_complete))
 
         self.records_sorter = {
             'column': 'rowid',
@@ -139,6 +150,9 @@ class MenuState(BaseState):
 
         self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
         self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
+
+        self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
+        self.mask_circle_radius = 750
         
 
     def update(self, dt, events):
@@ -236,6 +250,19 @@ class MenuState(BaseState):
 
             else:
                 self.substate_stack[-1].render(canvas=canvas)
+
+
+        if self.transitioning:
+            # transition mask     
+            self.mask_surface.fill(color=colors.black)
+            pygame.draw.circle(
+                surface=self.mask_surface,
+                color=(*colors.black, 0),
+                center=(constants.canvas_width/2, constants.canvas_height/2),
+                radius=self.mask_circle_radius
+            )
+            utils.blit(dest=canvas, source=self.mask_surface)
+
                 
 
     #Class methods
