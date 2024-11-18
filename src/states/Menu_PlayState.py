@@ -141,7 +141,7 @@ class Menu_PlayState(BaseState):
                         utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
                         self.button_list.clear()
                         self.transitioning = True
-                        self.freeze_frame = pygame.display.get_surface()
+                        self.freeze_frame = self.game.canvas.copy()
                         def on_complete():
                             self.parent.tween_list.clear()
                             PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=self.textbox_text).enter_state()
