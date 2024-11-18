@@ -123,17 +123,16 @@ class Play_PlayEventState(BaseState):
                     'text': f'Day {self.parent.current_day + 1}',
                     'fruit': getattr(self.parent, f'day{self.parent.current_day + 1}_fruit'),
                 })
-            if self.parent.current_day != self.parent.day:
-                self.redraw_button_option_list.append({
-                    'id': 'seasonal fruit',
-                    'text': 'Seasonal',
-                    'fruit': self.parent.seasonal_fruit,
-                })
-                self.redraw_button_option_list.append({
-                    'id': 'do nothing',
-                    'text': 'Do Nothing',
-                    'fruit': 'nothing',
-                })
+            self.redraw_button_option_list.append({
+                'id': 'seasonal fruit',
+                'text': 'Seasonal',
+                'fruit': self.parent.seasonal_fruit,
+            })
+            self.redraw_button_option_list.append({
+                'id': 'do nothing',
+                'text': 'Do Nothing',
+                'fruit': 'nothing',
+            })
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
@@ -767,11 +766,16 @@ class Play_PlayEventState(BaseState):
                     scaled_redraw_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     if option["id"] == "do nothing":
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2, 265 + i*75), pos_anchor=posanchors.center)
+                    elif option['id'] == 'seasonal fruit':
+                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
+                        self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
+                        self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
+                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575 - 30, 265 + i*75), pos_anchor='center')
                     else:
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
                         self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
                         self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
-                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575 - (i//2)*30, 265 + i*75), pos_anchor='center')
+                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575, 265 + i*75), pos_anchor='center')
 
             elif self.parent.current_event == 'event_reveal':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
