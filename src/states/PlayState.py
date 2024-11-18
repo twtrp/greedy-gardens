@@ -510,6 +510,7 @@ class PlayState(BaseState):
             print("endgame status: ", self.end_game)
         elif self.end_game:
             Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+            self.end_game = False
 
         if not self.transitioning:
             for event in events:
