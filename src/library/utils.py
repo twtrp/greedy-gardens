@@ -142,7 +142,7 @@ def get_text(
     color = text color
     '''
     text_font = pygame.font.Font(os.path.join(dir.fonts, font['file']), font['sizes'][size])
-    text_surface = text_surface = text_font.render(text, False, color)
+    text_surface = text_font.render(text, False, color)
                     #text_font.render(text=text, antialias=False, color=color)
 
     deco_distance = get_font_deco_distance(font=font, size=size)

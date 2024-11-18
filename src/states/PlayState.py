@@ -501,12 +501,13 @@ class PlayState(BaseState):
             self.play_event_state = True
             Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.eventing = False
-        elif self.endDayState:
+        elif self.endDayState and not self.end_game:
             Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.endDayState = False
         elif self.is_3_strike and self.current_day <= self.day:
             Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
             self.is_3_strike = False 
+            print("endgame status: ", self.end_game)
         elif self.end_game:
             Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
 
@@ -1195,7 +1196,7 @@ class PlayState(BaseState):
                 self.substate_stack[-1].render(canvas=canvas)       
             
             #hover function
-            if self.setup_start_state == True:
+            if self.setup_start_state and not self.end_game:
                 # for button in self.button_list:
                 #     button.render(canvas=canvas)
                 if self.pop_up_revealed_event_card == 3:
