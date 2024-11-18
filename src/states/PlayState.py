@@ -478,6 +478,9 @@ class PlayState(BaseState):
             if random.random() <= spawn_chance:
                 self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
 
+            for button in self.grid_buttons:
+                button.update(dt, events)
+
         # State change and loop
         if not self.started:
             Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
@@ -511,7 +514,7 @@ class PlayState(BaseState):
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                            self.exit_state()
+                        self.exit_state()
                 elif event.type == self.water_timer:
                     self.water_is_high = not self.water_is_high
                 elif event.type == self.music_end_event:
@@ -1223,6 +1226,7 @@ class PlayState(BaseState):
                 radius=self.mask_circle_radius
             )
             utils.blit(dest=canvas, source=self.mask_surface)
+
                 
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
