@@ -507,6 +507,12 @@ class PlayState(BaseState):
                             self.transitioning = False
                             self.exit_state()
 
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            self.paused = not self.paused
+
             else: 
                 # Update substates
                 if self.substate_stack:

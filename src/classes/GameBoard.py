@@ -13,6 +13,7 @@ class GameBoard():
 
         self.home_index = 0
         self.magic_fruit_index = []
+        self.connected_indices = []
 
         # Set the board (Home, Magic Fruits, and Fruits)
         self.set_board()
