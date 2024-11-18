@@ -87,12 +87,7 @@ class Play_PlayEventState(BaseState):
                 self.point_button_option_list = [
                     {
                         'id': 'add today',
-                        'text1': 'Get 1 point today,',
-                        'text2': '',
-                    },
-                    {
-                        'id': 'do nothing',
-                        'text1': '',
+                        'text1': 'Get free 1 point today,',
                         'text2': '',
                     },
                 ]
@@ -130,15 +125,15 @@ class Play_PlayEventState(BaseState):
                 })
             if self.parent.current_day != self.parent.day:
                 self.redraw_button_option_list.append({
-                'id': 'seasonal fruit',
-                'text': 'Seasonal',
-                'fruit': self.parent.seasonal_fruit,
-            })
+                    'id': 'seasonal fruit',
+                    'text': 'Seasonal',
+                    'fruit': self.parent.seasonal_fruit,
+                })
                 self.redraw_button_option_list.append({
-                        'id': 'do nothing',
-                        'text': 'Do Nothing',
-                        'fruit': 'nothing',
-                    })
+                    'id': 'do nothing',
+                    'text': 'Do Nothing',
+                    'fruit': 'nothing',
+                })
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
@@ -440,15 +435,13 @@ class Play_PlayEventState(BaseState):
                     button.update(dt=dt, events=events)
                     if button.hovered:
                         if button.id == 'view board':
-                                self.choosing = False
-                        if button.id == 'view board':
                             self.choosing = False
                         if button.id != 'do nothing':
                             if button.hover_cursor is not None:
                                 self.cursor = button.hover_cursor
-                        for option in self.point_button_option_surface_list:
-                            if button.id == option['id']:
-                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                            for option in self.point_button_option_surface_list:
+                                if button.id == option['id']:
+                                    option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                     else:
                         if button.id == 'view board':
                                 self.choosing = True
@@ -480,7 +473,7 @@ class Play_PlayEventState(BaseState):
                     if not self.fruit_drawn_image:
                         if button.hovered:
                             if button.id == 'view board':
-                                    self.choosing = False
+                                self.choosing = False
                             if button.hover_cursor is not None:
                                 self.cursor = button.hover_cursor
                             for option in self.redraw_button_option_surface_list:

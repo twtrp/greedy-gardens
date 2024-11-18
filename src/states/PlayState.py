@@ -448,163 +448,230 @@ class PlayState(BaseState):
         pygame.mixer.music.set_endevent(self.music_end_event)
         self.current_song = 0
         self.game.music_channel.play()
+
+        # pause
+        self.paused = False
+        self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
+        self.pause_background.fill((*colors.black, 200))
+        self.pause_title = utils.get_text(text='Paused', font=fonts.lf2, size='huge', color=colors.mono_205)
+        self.pause_options = [
+            {
+                'id': 'resume',
+                'text': 'Resume',
+            },
+            {
+                'id': 'quit',
+                'text': 'Exit to menu',
+            }
+        ]
+        self.pause_options_surface_list = []
+        self.pause_options_button_list = []
+        for i, option in enumerate(self.pause_options):
+            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
+            self.pause_options_surface_list.append({
+                'id': option['id'],
+                'surface': text,
+                'scale': 1,
+            })
+            self.pause_options_button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                width=300,
+                height=80,
+                pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
+                pos_anchor='center'
+            ))
     
 
     def update(self, dt, events):
-                
-        if self.ready:
-
-            # Update substates
-            if self.substate_stack:
-                self.substate_stack[-1].update(dt=dt, events=events)
-
-            # Update tweens
-            tween.update(passed_time=dt)
-            # print(self.tween_list)
-
-            # Update winds
-            for wind in self.wind_entities_list:
-                if wind.active:
-                    wind.update(dt=dt, events=[])
-                else:
-                    self.wind_entities_list.remove(wind)
-
-            spawn_rate = self.wind_spawn_rate_per_second * dt
-            spawns = int(spawn_rate)
-            spawn_chance = spawn_rate - spawns
-            for _ in range(spawns):
-                self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
-
-            if random.random() <= spawn_chance:
-                self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
-
-            for button in self.grid_buttons:
-                button.update(dt, events)
-
-        # State change and loop
-        if not self.started:
-            Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.started = True
-        elif self.drawing:
-            Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.drawing = False
-        elif self.placing:
-            Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.placing = False
-        elif self.magic_eventing:
-            Play_PlayMagicEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.magic_eventing = False
-        elif self.is_strike and not self.magic_eventing:
-            Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.is_strike = False
-        elif self.eventing:
-            self.play_event_state = True
-            Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.eventing = False
-        elif self.endDayState and not self.end_game:
-            Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.endDayState = False
-        elif self.is_3_strike and self.current_day <= self.day:
-            Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-            self.is_3_strike = False 
-            print("endgame status: ", self.end_game)
-        elif self.end_game:
-            Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
-
-        if not self.transitioning:
-            for event in events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.exit_state()
-                elif event.type == self.water_timer:
-                    self.water_is_high = not self.water_is_high
-                elif event.type == self.music_end_event:
-                    self.current_song += 1
-                    if self.current_song >= len(self.songs):
-                        self.current_song = 0
-                    utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
-                    self.game.music_channel.play()
-                        
-
-        # Update deck remaining
-        self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
-        self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
-        self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
-
-        # Update day/score color and amount
-        ## check color of score
-        day_colors = {
-            "day1_color": colors.mono_150,
-            "day2_color": colors.mono_150,
-            "day3_color": colors.mono_150,
-            "day4_color": colors.mono_150
-        }
-
-        for i in range(1,self.day + 1):
-            if i < self.current_day:
-                day_colors[f"day{i}_color"] = colors.white
-            elif i == self.current_day:
-                day_colors[f"day{i}_color"] = colors.yellow_light
-            else:
-                day_colors[f"day{i}_color"] = colors.mono_150
-        
-        if self.current_day < 2:
-            self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
-        if self.current_day < 3:
-            self.final_day2_score = self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
-        if self.current_day < 4:
-            self.final_day3_score = self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
-        if self.current_day < 5:
-            self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
-        self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
-        self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
-        
-
-        self.score_list = [
-            {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.final_day1_score},
-            {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.final_day2_score},
-            {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.final_day3_score},
-            {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.final_day4_score},
-            {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.final_seasonal_score},
-            {'text': 'Total', 'color': colors.green_light, 'amount': self.total_score},
-        ]
-
-        self.score_title_list = []
-        for score in self.score_list:
-            text = utils.get_text(text=score['text'], font=fonts.lf2, size='tiny', color=score['color'])
-            self.score_title_list.append(text)
-
-        self.score_amount_list = []
-        for score in self.score_list:
-            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
-            self.score_amount_list.append(amount)
-
-        # hover function 
-        if self.setup_start_state==True:
-            top_card = None
-            self.pop_up_revealed_event_card = 0
-            for button in self.button_list:
-                button.update(dt=dt,events=events)
-            for button in reversed(self.button_list):
-                if button.hovered:
-                    if button.id == 'revealed_event_3':
-                        top_card = 3
-                        self.pop_up_revealed_event_card = 3
-                        break
-                    elif button.id == 'revealed_event_2'and top_card != 3:
-                        top_card = 2
-                        self.pop_up_revealed_event_card = 2
-                        break
-                    elif button.id == 'revealed_event_1' and top_card != 2:
-                        top_card = 1
-                        self.pop_up_revealed_event_card = 1
-                        break
-            if self.play_event_state == True:
-                for button in self.button_list:
+        if self.ready:  
+            if self.paused:
+                for button in self.pause_options_button_list:
+                    button.update(dt=dt, events=events)
                     if button.hovered:
-                        if button.id == 'event_card':
-                            self.pop_up_revealed_event_card = 4
-                            break
+                        self.cursor = button.hover_cursor
+                        for option in self.pause_options_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                    else:
+                        for option in self.pause_options_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+                    if button.clicked:
+                        if button.id == 'resume':
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            self.paused = False
+                        elif button.id == 'quit':
+                            self.timer_manager.StopTimer(self.water_timer)
+                            self.game.music_channel.fadeout(1500)
+                            self.transitioning = False
+                            self.exit_state()
+
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            self.paused = not self.paused
+
+            else: 
+                # Update substates
+                if self.substate_stack:
+                    self.substate_stack[-1].update(dt=dt, events=events)
+
+                # Update tweens
+                tween.update(passed_time=dt)
+                # print(self.tween_list)
+
+                # Update winds
+                for wind in self.wind_entities_list:
+                    if wind.active:
+                        wind.update(dt=dt, events=[])
+                    else:
+                        self.wind_entities_list.remove(wind)
+
+                spawn_rate = self.wind_spawn_rate_per_second * dt
+                spawns = int(spawn_rate)
+                spawn_chance = spawn_rate - spawns
+                for _ in range(spawns):
+                    self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
+
+                if random.random() <= spawn_chance:
+                    self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
+
+                # update buttons
+                for button in self.grid_buttons:
+                    button.update(dt=dt, events=events)
+
+                for button in self.button_list:
+                    button.update(dt=dt, events=events)
+
+                # State change and loop
+                if not self.started:
+                    Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.started = True
+                elif self.drawing:
+                    Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.drawing = False
+                elif self.placing:
+                    Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.placing = False
+                elif self.magic_eventing:
+                    Play_PlayMagicEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.magic_eventing = False
+                elif self.is_strike and not self.magic_eventing:
+                    Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.is_strike = False
+                elif self.eventing:
+                    self.play_event_state = True
+                    Play_PlayEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.eventing = False
+                elif self.endDayState and not self.end_game:
+                    Play_NextDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.endDayState = False
+                elif self.is_3_strike and self.current_day <= self.day:
+                    Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.is_3_strike = False 
+                    print("endgame status: ", self.end_game)
+                elif self.end_game:
+                    Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    self.end_game = False
+
+                if not self.transitioning:
+                    for event in events:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_ESCAPE:
+                                utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                self.paused = not self.paused
+                        elif event.type == self.water_timer:
+                            self.water_is_high = not self.water_is_high
+                        elif event.type == self.music_end_event:
+                            self.current_song += 1
+                            if self.current_song >= len(self.songs):
+                                self.current_song = 0
+                            utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
+                            self.game.music_channel.play()
+                                
+
+                # Update deck remaining
+                self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
+                self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
+                self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
+
+                # Update day/score color and amount
+                ## check color of score
+                day_colors = {
+                    "day1_color": colors.mono_150,
+                    "day2_color": colors.mono_150,
+                    "day3_color": colors.mono_150,
+                    "day4_color": colors.mono_150
+                }
+
+                for i in range(1,self.day + 1):
+                    if i < self.current_day:
+                        day_colors[f"day{i}_color"] = colors.white
+                    elif i == self.current_day:
+                        day_colors[f"day{i}_color"] = colors.yellow_light
+                    else:
+                        day_colors[f"day{i}_color"] = colors.mono_150
+                
+                if self.current_day < 2:
+                    self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
+                if self.current_day < 3:
+                    self.final_day2_score = self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
+                if self.current_day < 4:
+                    self.final_day3_score = self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
+                if self.current_day < 5:
+                    self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
+                self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
+                self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
+                
+
+                self.score_list = [
+                    {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.final_day1_score},
+                    {'text': 'Day 2', 'color': day_colors['day2_color'], 'amount': self.final_day2_score},
+                    {'text': 'Day 3', 'color': day_colors['day3_color'], 'amount': self.final_day3_score},
+                    {'text': 'Day 4', 'color': day_colors['day4_color'], 'amount': self.final_day4_score},
+                    {'text': 'Seasonal', 'color': colors.yellow_light, 'amount': self.final_seasonal_score},
+                    {'text': 'Total', 'color': colors.green_light, 'amount': self.total_score},
+                ]
+
+                self.score_title_list = []
+                for score in self.score_list:
+                    text = utils.get_text(text=score['text'], font=fonts.lf2, size='tiny', color=score['color'])
+                    self.score_title_list.append(text)
+
+                self.score_amount_list = []
+                for score in self.score_list:
+                    amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
+                    self.score_amount_list.append(amount)
+
+                # hover function 
+                if self.setup_start_state==True:
+                    top_card = None
+                    self.pop_up_revealed_event_card = 0
+                    for button in reversed(self.button_list):
+                        if button.hovered:
+                            if button.id == 'revealed_event_3':
+                                top_card = 3
+                                self.pop_up_revealed_event_card = 3
+                                break
+                            elif button.id == 'revealed_event_2'and top_card != 3:
+                                top_card = 2
+                                self.pop_up_revealed_event_card = 2
+                                break
+                            elif button.id == 'revealed_event_1' and top_card != 2:
+                                top_card = 1
+                                self.pop_up_revealed_event_card = 1
+                                break
+                    if self.play_event_state == True:
+                        for button in self.button_list:
+                            if button.hovered:
+                                if button.id == 'event_card':
+                                    self.pop_up_revealed_event_card = 4
+                                    break
+
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
                 
 
     def render(self, canvas):
@@ -1227,6 +1294,19 @@ class PlayState(BaseState):
                 radius=self.mask_circle_radius
             )
             utils.blit(dest=canvas, source=self.mask_surface)
+
+            # pause menu
+            if self.paused:
+                utils.blit(dest=canvas, source=self.pause_background)
+                utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 200), pos_anchor='center')
+                for i, option in enumerate(self.pause_options_surface_list):
+                    scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                    utils.blit(
+                        dest=canvas,
+                        source=scaled_surface,
+                        pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
+                        pos_anchor='center'
+                    )
 
                 
     def random_dirt(self):
