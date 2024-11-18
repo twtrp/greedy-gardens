@@ -27,6 +27,7 @@ class PlayState(BaseState):
             self.set_seed = False
             self.seed = random.randint(0, 99999999)
         else:
+            self.set_seed = True
             self.seed = seed
 
         print(self.seed)
