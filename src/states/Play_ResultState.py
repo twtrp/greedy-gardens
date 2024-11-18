@@ -98,7 +98,7 @@ class Play_ResultStage(BaseState):
         self.button_option_list = [
             {
                 'id': 'continue',
-                'text': 'Continue',
+                'text': 'Continue to main menu',
                 'size': 'medium',
                 'color': colors.yellow_light,
             },
@@ -184,33 +184,46 @@ class Play_ResultStage(BaseState):
 
         
     def update(self, dt, events):
-        if not self.is_continue:
-            for button in self.button_list:
-                button.update(dt=dt, events=events)
-                if button.hovered:
-                    if button.id == 'view board':
-                        #print("Hovering over view board")
-                        self.is_hovering = True
-                    if button.hover_cursor is not None:
-                        self.cursor = button.hover_cursor
-                    for option in self.button_option_surface_list:
-                        if button.id == option['id']:
-                            option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
-                else: 
-                    if button.id == 'view board':
-                        # print("Hovering over other button")
-                        self.is_hovering = False
-                    for option in self.button_option_surface_list:
-                        if button.id == option['id']:
-                            option['scale'] = max(option['scale'] - 2.4*dt, 1.0)          
-                if button.clicked:
-                    for option in self.button_option_surface_list:
-                        if button.id == 'continue':
-                            self.is_continue = True
-        else:
-            print("End game")
-            #implement this to menu state
-            self.parent.exit_state()
+        for button in self.button_list:
+            button.update(dt=dt, events=events)
+            if button.hovered:
+                if button.id == 'view board':
+                    #print("Hovering over view board")
+                    self.is_hovering = True
+                if button.hover_cursor is not None:
+                    self.cursor = button.hover_cursor
+                for option in self.button_option_surface_list:
+                    if button.id == option['id']:
+                        option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+            else: 
+                if button.id == 'view board':
+                    # print("Hovering over other button")
+                    self.is_hovering = False
+                for option in self.button_option_surface_list:
+                    if button.id == option['id']:
+                        option['scale'] = max(option['scale'] - 2.4*dt, 1.0)          
+            if button.clicked:
+                for option in self.button_option_surface_list:
+                    if button.id == 'continue':
+                        self.parent.transitioning = True
+                        self.game.music_channel.fadeout(1500)
+                        utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
+                        self.freeze_frame = self.game.canvas.copy()
+                        def on_complete():
+                            utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                            utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
+                            self.game.music_channel.play()
+                            self.parent.timer_manager.StopTimer(self.water_timer)
+                            self.parent.tween_list.clear()
+                            self.game.state_stack.clear()
+                        self.parent.tween_list.append(tween.to(
+                            container=self.parent,
+                            key='mask_circle_radius',
+                            end_value=0,
+                            time=1,
+                            ease_type=tweencurves.easeOutQuint
+                        ).on_complete(on_complete))
+
             
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
