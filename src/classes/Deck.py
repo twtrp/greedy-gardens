@@ -31,7 +31,7 @@ class Deck:
     - fruit has 6 cards
     - path has 62 cards
       - 36 normal + 18 strike 2 ways paths
-      - 4 normal + 4 strike 3 ways paths
+      - 8 normal 3 ways paths
     - event has 18 cards (9 types of events)
     '''
     def build_deck(self):
@@ -53,14 +53,11 @@ class Deck:
         #         name.append('path_strike_NS')
         #         name.append('path_strike_NW')
         #         name.append('path_strike_NE')
-        #     name.append('path_WES')
-        #     name.append('path_NWS')
-        #     name.append('path_NES')
-        #     name.append('path_NWE')
-        #     name.append('path_strike_WE')
-        #     name.append('path_strike_NWS')
-        #     name.append('path_strike_NES')
-        #     name.append('path_strike_NWE')
+        #     for i in range(2):
+        #         name.append('path_WES')
+        #         name.append('path_NWS')
+        #         name.append('path_NES')
+        #         name.append('path_NWE')
         # elif self.deck_type == 'event':
         #     for i in range(2):
         #         name.append('event_free')
