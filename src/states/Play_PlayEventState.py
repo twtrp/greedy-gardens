@@ -14,7 +14,7 @@ class Play_PlayEventState(BaseState):
         print("playing event")
 
         # value
-        self.box_width = 68
+        self.box_width = 60
         self.box_height = 352
 
         self.cell_pos = -1
@@ -227,9 +227,9 @@ class Play_PlayEventState(BaseState):
 
                 for event in events:
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_w and self.choice > 0:
+                        if (event.key == pygame.K_w or event.key == pygame.K_UP) and self.choice > 0:
                             self.choice -= 1
-                        elif event.key == pygame.K_s and self.choice < 5:
+                        elif (event.key == pygame.K_s or event.key == pygame.K_DOWN) and self.choice < 5:
                             self.choice += 1
 
                 self.cell_pos = -1
@@ -799,6 +799,19 @@ class Play_PlayEventState(BaseState):
 
 
         if self.selecting_path:
+            utils.blit(
+                dest=canvas,
+                source=self.parent.up_key_hint,
+                pos=(self.parent.box_width, constants.canvas_height - self.box_height - 32),
+                pos_anchor='topleft'                            
+            )
+            utils.blit(
+                dest=canvas,
+                source=self.parent.down_key_hint,
+                pos=(self.parent.box_width + 28, constants.canvas_height - self.box_height - 32),
+                pos_anchor='topleft'
+            )
+
             utils.draw_rect(dest=canvas,
                                     size=(self.box_width, self.box_height),
                                     pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),

@@ -923,7 +923,7 @@ keyboard_keys_long = {
         'height': 16,
     },
     'sprites': {
-        'space': {
+        'spacebar': {
             'x': 64,
             'y': 32,
         }

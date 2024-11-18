@@ -261,12 +261,19 @@ class PlayState(BaseState):
         self.left_box_task = utils.get_text(text='Current task', font=fonts.lf2, size='small', color=colors.white)
         self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
         self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_draw_text = utils.get_text(text='Draw a card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_draw_text = utils.get_text(text='Draw card', font=fonts.lf2, size='tiny', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
         self.scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
         self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
+
+        self.up_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='up')
+        self.up_key_hint = pygame.transform.scale_by(surface=self.up_key_hint, factor=2)
+        self.down_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
+        self.down_key_hint = pygame.transform.scale_by(surface=self.down_key_hint, factor=2)
+        self.spacebar_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
+        self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=2)
 
         # right gui
         self.right_box_title = utils.get_text(text='Cards', font=fonts.lf2, size='small', color=colors.white)
