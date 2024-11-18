@@ -123,17 +123,16 @@ class Play_PlayMagicEventState(BaseState):
                     'text': f'Day {self.parent.current_day + 1}',
                     'fruit': getattr(self.parent, f'day{self.parent.current_day + 1}_fruit'),
                 })
-            if self.parent.current_day != self.parent.day:
-                self.redraw_button_option_list.append({
-                    'id': 'seasonal fruit',
-                    'text': 'Seasonal',
-                    'fruit': self.parent.seasonal_fruit,
-                })
-                self.redraw_button_option_list.append({
-                    'id': 'do nothing',
-                    'text': 'Do Nothing',
-                    'fruit': 'nothing',
-                })
+            self.redraw_button_option_list.append({
+                'id': 'seasonal fruit',
+                'text': 'Seasonal',
+                'fruit': self.parent.seasonal_fruit,
+            })
+            self.redraw_button_option_list.append({
+                'id': 'do nothing',
+                'text': 'Do Nothing',
+                'fruit': 'nothing',
+            })
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
