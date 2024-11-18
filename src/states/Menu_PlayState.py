@@ -86,7 +86,6 @@ class Menu_PlayState(BaseState):
                     if event.key == pygame.K_ESCAPE:
                         utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                         self.exit_state()
-
                     if self.textbox_mode == 'active':
                         if event.key == pygame.K_BACKSPACE:
                             self.textbox_text = self.textbox_text[:-1]
@@ -146,7 +145,6 @@ class Menu_PlayState(BaseState):
                         def on_complete():
                             self.parent.tween_list.clear()
                             PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=self.textbox_text).enter_state()
-                            self.exit_state()
                         self.parent.tween_list.append(tween.to(
                             container=self,
                             key='mask_circle_radius',
@@ -226,3 +224,4 @@ class Menu_PlayState(BaseState):
                 radius=self.mask_circle_radius
             )
             utils.blit(dest=canvas, source=self.mask_surface)
+
