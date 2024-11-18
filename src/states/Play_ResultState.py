@@ -118,7 +118,8 @@ class Play_ResultStage(BaseState):
                     width=400,
                     height=50,
                     pos=(constants.canvas_width/2, 695),
-                    pos_anchor=posanchors.center
+                    pos_anchor=posanchors.center,
+                    hover_cursor=cursors.hand,
                 ))
         self.parent.endDayState=True
         # First load the sprite sheet
@@ -131,13 +132,15 @@ class Play_ResultStage(BaseState):
         for button in self.button_list:
             if button.hovered:
                 if button.id == 'view board':
+                    #print("Hovering over view board")
                     self.is_hovering = True
                 # elif button.id == 'continue':
                 #     for option in self.button_option_surface_list:
                 #         if button.id == option['continue']:
                 #             option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                 #             option['scale_fruit'] = min(option['scale_fruit'] + 7.2*dt, 3.6)
-                else:
+                else: 
+                    print("Hovering over other button")
                     self.is_hovering = False
                     
             elif button.clicked:
@@ -145,11 +148,13 @@ class Play_ResultStage(BaseState):
                     print("End game")
                     #implement this to menu state
                     self.exit_state()
+            
 
     def render(self, canvas):
         for button in self.button_list:
             button.render(canvas=canvas)
         # Draw dark overlay when not hovering
+        # print(self.is_hovering)
         if not self.is_hovering:
             utils.draw_rect(dest=canvas,
                         size=(constants.canvas_width, constants.canvas_height),
