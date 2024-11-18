@@ -26,6 +26,7 @@ class Play_PlacePathState(BaseState):
                 if not self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                     self.select_frame = self.parent.selecting_tile
                     if button.clicked:
+                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
                         if "N" in self.parent.current_path:
                             self.parent.game_board.board[button.id].north = True
                         if "W" in self.parent.current_path:

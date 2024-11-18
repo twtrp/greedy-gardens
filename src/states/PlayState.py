@@ -279,7 +279,7 @@ class PlayState(BaseState):
         self.down_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
         self.down_key_hint = pygame.transform.scale_by(surface=self.down_key_hint, factor=2)
         self.spacebar_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
-        self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=2)
+        self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=3)
 
         # right gui
         self.right_box_title = utils.get_text(text='Cards', font=fonts.lf2, size='small', color=colors.white)
@@ -1136,6 +1136,9 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
             utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
+            ## Render spacebar hint
+            utils.blit(dest=canvas, source=self.spacebar_key_hint, pos=(self.box_width/2, 630), pos_anchor='center')   
+
             ## Render value in left white box
             for i, score in enumerate(self.score_amount_list):
                 utils.blit(dest=canvas, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
@@ -1194,7 +1197,6 @@ class PlayState(BaseState):
                 self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
                 utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
 
-            
             ## Render right white box
             utils.draw_rect(dest=canvas,
                                 size=(self.box_width, constants.canvas_height),
@@ -1292,7 +1294,7 @@ class PlayState(BaseState):
                 pass
 
             else:
-                self.substate_stack[-1].render(canvas=canvas)       
+                self.substate_stack[-1].render(canvas=canvas)  
             
             #hover function
             if self.setup_start_state and not self.end_game:
@@ -1347,6 +1349,7 @@ class PlayState(BaseState):
                         #self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                         scaled_image = pygame.transform.scale_by(surface=self.current_event_image, factor=3)
                         utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+  
 
         # pause menu
         if self.paused:

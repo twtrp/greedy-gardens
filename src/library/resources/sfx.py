@@ -36,7 +36,7 @@ woop_out = {
 }
 card = {
     'name': '0000013d_shwip.wav',
-    'volume': 2,
+    'volume': 5,
 }
 magic_fruit = {
     'name': '00000174_GoldenWalnut.wav',

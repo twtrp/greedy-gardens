@@ -24,6 +24,7 @@ class Play_NextDayState(BaseState):
         self.parent.set_start_state=False
 
         self.parent.left_box_none_text = utils.get_text(text=f'Draw {self.parent.current_day} fruit', font=fonts.lf2, size='tiny', color=colors.white)
+        self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.lf2, size='large', color=colors.white)
 
     def update(self, dt, events):
         if self.parent.current_day>=5:
@@ -67,7 +68,9 @@ class Play_NextDayState(BaseState):
 
     def render(self, canvas):
         if self.card_drawn_image:
+            utils.blit(dest=canvas, source=self.card_drawn_text, pos=(constants.canvas_width/2, constants.canvas_height/2 - 190), pos_anchor='center')
             scaled_card_drawn = pygame.transform.scale_by(surface=self.card_drawn_image, factor=2)
+            scaled_card_drawn = utils.effect_outline(surface=scaled_card_drawn, distance=4, color=colors.white)
             utils.blit(dest=canvas, source=scaled_card_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
         
         # Should have text showing Days number
