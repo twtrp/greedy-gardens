@@ -58,25 +58,25 @@ class Deck:
                 name.append('path_NWS')
                 name.append('path_NES')
                 name.append('path_NWE')
-        elif self.deck_type == 'event':
-            for i in range(2):
-                name.append('event_free')
-                name.append('event_keep')
-                name.append('event_merge')
-                name.append('event_point')
-                name.append('event_redraw')
-                name.append('event_remove')
-                name.append('event_reveal')
-                name.append('event_swap')
+        # elif self.deck_type == 'event':
+        #     for i in range(2):
+        #         name.append('event_free')
+        #         name.append('event_keep')
+        #         name.append('event_merge')
+        #         name.append('event_point')
+        #         name.append('event_redraw')
+        #         name.append('event_remove')
+        #         name.append('event_reveal')
+        #         name.append('event_swap')
 
         # For Testing cards
         # elif self.deck_type == 'path':
         #     for i in range(10):
         #         name.append('path_NS')
         #     name.append('path_strike_WES')
-        # elif self.deck_type == 'event':
-        #     for i in range(16):
-        #         name.append('event_remove')
+        elif self.deck_type == 'event':
+            for i in range(16):
+                name.append('event_keep')
 
 
 

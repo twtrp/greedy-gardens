@@ -273,39 +273,36 @@ class Play_PlayEventState(BaseState):
 
             elif self.parent.current_event == 'event_keep':
                 # print('event_keep')
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE:
-                            if not self.drawn_keep:
-                                self.card_path1 = self.parent.deck_path.draw_card()
-                                self.card_path2 = self.parent.deck_path.draw_card()
-                                self.card_path3 = self.parent.deck_path.draw_card()
-                                self.card_path1_image = self.parent.cards_path_sprites[f"card_{self.card_path1.card_name}"]
-                                self.card_path2_image = self.parent.cards_path_sprites[f"card_{self.card_path2.card_name}"]
-                                self.card_path3_image = self.parent.cards_path_sprites[f"card_{self.card_path3.card_name}"]
-                                self.card_path_button_option_list = [
-                                    {
-                                        'id': 'path 1',
-                                    },
-                                    {
-                                        'id': 'path 2',
-                                    },
-                                    {
-                                        'id': 'path 3',
-                                    },
-                                ]
-                                for i, option in enumerate(self.card_path_button_option_list):
-                                    self.button_list.append(Button(
-                                        game=self.game,
-                                        id=option['id'],
-                                        width=192,
-                                        height=256,
-                                        pos=(constants.canvas_width/2 - 210 + i*210, constants.canvas_height/2),
-                                        pos_anchor=posanchors.center
-                                    ))
-                                # self.parent.current_path = self.card_drawn.card_name
-                                self.drawn_keep = True
-                if self.drawn_keep:
+                if not self.drawn_keep:
+                    self.card_path1 = self.parent.deck_path.draw_card()
+                    self.card_path2 = self.parent.deck_path.draw_card()
+                    self.card_path3 = self.parent.deck_path.draw_card()
+                    self.card_path1_image = self.parent.cards_path_sprites[f"card_{self.card_path1.card_name}"]
+                    self.card_path2_image = self.parent.cards_path_sprites[f"card_{self.card_path2.card_name}"]
+                    self.card_path3_image = self.parent.cards_path_sprites[f"card_{self.card_path3.card_name}"]
+                    self.card_path_button_option_list = [
+                        {
+                            'id': 'path 1',
+                        },
+                        {
+                            'id': 'path 2',
+                        },
+                        {
+                            'id': 'path 3',
+                        },
+                    ]
+                    for i, option in enumerate(self.card_path_button_option_list):
+                        self.button_list.append(Button(
+                            game=self.game,
+                            id=option['id'],
+                            width=192,
+                            height=256,
+                            pos=(constants.canvas_width/2 - 210 + i*210, constants.canvas_height/2),
+                            pos_anchor=posanchors.center
+                        ))
+                    # self.parent.current_path = self.card_drawn.card_name
+                    self.drawn_keep = True
+                elif self.drawn_keep:
                     for button in self.button_list:
                         button.update(dt=dt, events=events)
                         if button.hovered:
