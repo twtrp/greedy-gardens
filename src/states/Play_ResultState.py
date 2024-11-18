@@ -237,23 +237,23 @@ class Play_ResultStage(BaseState):
             
             utils.blit(dest=canvas, source=self.seed_text, pos=(constants.canvas_width/2, 100), pos_anchor='center')
   
-            utils.blit(dest=canvas, source=self.glow_day1_fruit_image, pos=(constants.canvas_width/2 - 177, 150), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day1_fruit_image, pos=(constants.canvas_width/2 - 175, 150-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day1_text, pos=((constants.canvas_width/2 )-135, 140), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day1_score_text, pos=((constants.canvas_width/2 )+160, 140-10), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_day2_fruit_image, pos=(constants.canvas_width/2 - 177, 210), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day2_fruit_image, pos=(constants.canvas_width/2 - 175, 210-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day2_text, pos=((constants.canvas_width/2 )-135, 200), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day2_score_text, pos=((constants.canvas_width/2 )+160, 200-10), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_day3_fruit_image, pos=(constants.canvas_width/2 - 177, 270), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day3_fruit_image, pos=(constants.canvas_width/2 - 175, 270-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day3_text, pos=((constants.canvas_width/2 )-135, 260), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day3_score_text, pos=((constants.canvas_width/2 )+160, 260-10), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_day4_fruit_image, pos=(constants.canvas_width/2 - 177, 330), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_day4_fruit_image, pos=(constants.canvas_width/2 - 175, 330-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day4_text, pos=((constants.canvas_width/2 )-135, 320), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+160, 320-10), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 177, 390), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 175, 39-100), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_text, pos=((constants.canvas_width/2 )-135, 380), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+160, 380-10), pos_anchor=posanchors.topright)
             
