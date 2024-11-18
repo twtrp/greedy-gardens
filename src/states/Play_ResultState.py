@@ -47,10 +47,10 @@ class Play_ResultStage(BaseState):
         self.final_results_text = utils.get_text(text='Final Results', font=fonts.lf2, size='large', color=colors.white)
         if self.parent.set_seed:
             self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
-        elif self.parent.set_seed:
+        elif not self.parent.set_seed:
             self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.lf2, size='medium', color=colors.white)
             
-        self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
+        #self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
         
         self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
         #Gen chat and not work. Do later ()
@@ -74,11 +74,11 @@ class Play_ResultStage(BaseState):
         self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.white)
         
         
-        self.day1_text = utils.get_text(text="Day 1", font=fonts.lf2, size='medium', color=colors.white)
-        self.day2_text = utils.get_text(text='Day 2', font=fonts.lf2, size='medium', color=colors.white)
-        self.day3_text = utils.get_text(text='Day 3', font=fonts.lf2, size='medium', color=colors.white)
-        self.day4_text = utils.get_text(text='Day 4', font=fonts.lf2, size='medium', color=colors.white)
-        self.seasonal_text = utils.get_text(text='Seasonal', font=fonts.lf2, size='medium', color=colors.white)
+        self.day1_text = utils.get_text(text="Day 1", font=fonts.lf2, size='small', color=colors.white)
+        self.day2_text = utils.get_text(text='Day 2', font=fonts.lf2, size='small', color=colors.white)
+        self.day3_text = utils.get_text(text='Day 3', font=fonts.lf2, size='small', color=colors.white)
+        self.day4_text = utils.get_text(text='Day 4', font=fonts.lf2, size='small', color=colors.white)
+        self.seasonal_text = utils.get_text(text='Seasonal', font=fonts.lf2, size='small', color=colors.white)
         
         # Convert the score to string when calling get_text
         self.day1_score_text = utils.get_text(text=str(self.parent.final_day1_score),font=fonts.lf2,size='small', color=colors.white)
@@ -87,13 +87,13 @@ class Play_ResultStage(BaseState):
         self.day4_score_text = utils.get_text(text=str(self.parent.final_day4_score), font=fonts.lf2, size='small', color=colors.white)
         self.seasonal_score_text = utils.get_text(text=str(self.parent.final_seasonal_score), font=fonts.lf2, size='small', color=colors.white)
         
-        self.total_text = utils.get_text(text='Total', font=fonts.lf2, size='tiny', color=colors.white)
+        self.total_text = utils.get_text(text='Total', font=fonts.lf2, size='small', color=colors.white)
         self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.lf2, size='small', color=colors.white)
         
-        self.high_score_text = utils.get_text(text='High Score', font=fonts.lf2, size='tiny', color=colors.white)
+        self.high_score_text = utils.get_text(text='High Score', font=fonts.lf2, size='small', color=colors.white)
         self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.lf2, size='small', color=colors.white)
         
-        self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='tiny', color=colors.green_medium)
+        self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='small', color=colors.green_medium)
         
         self.button_option_list = [
             {
@@ -235,33 +235,34 @@ class Play_ResultStage(BaseState):
             # Render all result texts
             utils.blit(dest=canvas, source=self.final_results_text,pos=(constants.canvas_width/2, 50), pos_anchor='center')
             
+            
             utils.blit(dest=canvas, source=self.seed_text, pos=(constants.canvas_width/2, 100), pos_anchor='center')
   
             utils.blit(dest=canvas, source=self.glow_day1_fruit_image, pos=(constants.canvas_width/2 - 175, 150-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day1_text, pos=((constants.canvas_width/2 )-135, 140), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day1_score_text, pos=((constants.canvas_width/2 )+160, 140-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.day1_score_text, pos=((constants.canvas_width/2 )+160, 140), pos_anchor=posanchors.topright)
             
             utils.blit(dest=canvas, source=self.glow_day2_fruit_image, pos=(constants.canvas_width/2 - 175, 210-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day2_text, pos=((constants.canvas_width/2 )-135, 200), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day2_score_text, pos=((constants.canvas_width/2 )+160, 200-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.day2_score_text, pos=((constants.canvas_width/2 )+160, 200), pos_anchor=posanchors.topright)
             
             utils.blit(dest=canvas, source=self.glow_day3_fruit_image, pos=(constants.canvas_width/2 - 175, 270-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day3_text, pos=((constants.canvas_width/2 )-135, 260), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day3_score_text, pos=((constants.canvas_width/2 )+160, 260-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.day3_score_text, pos=((constants.canvas_width/2 )+160, 260), pos_anchor=posanchors.topright)
             
             utils.blit(dest=canvas, source=self.glow_day4_fruit_image, pos=(constants.canvas_width/2 - 175, 330-10), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.day4_text, pos=((constants.canvas_width/2 )-135, 320), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+160, 320-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+160, 320), pos_anchor=posanchors.topright)
             
             utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 175, 39-100), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.seasonal_text, pos=((constants.canvas_width/2 )-135, 380), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+160, 380-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+160, 380), pos_anchor=posanchors.topright)
             
             utils.blit(dest=canvas, source=self.total_text, pos=(constants.canvas_width/2 - 135, 440), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.total_score_text, pos=((constants.canvas_width/2 )+160, 440-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.total_score_text, pos=((constants.canvas_width/2 )+160, 440), pos_anchor=posanchors.topright)
             
             utils.blit(dest=canvas, source=self.high_score_text ,pos=(constants.canvas_width/2 -135, 500), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.high_score_fromDB_text, pos=((constants.canvas_width/2 )+160, 500-10), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.high_score_fromDB_text, pos=((constants.canvas_width/2 )+160, 500), pos_anchor=posanchors.topright)
             if self.new_record:
                 utils.blit(dest=canvas, source=self.new_text, pos=((constants.canvas_width/2 )-200, 500), pos_anchor=posanchors.topleft)
             # for i, option in enumerate(self.button_option_surface_list):
