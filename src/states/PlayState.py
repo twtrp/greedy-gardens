@@ -93,6 +93,8 @@ class PlayState(BaseState):
         self.is_3_strike = False
         self.magic_eventing = False
         self.playing_magic_event = False
+        self.drawing_path_card = False
+        self.drawing_event_card = False
         # self.day1 = True
         # self.day2 = False
         # self.day3 = False
@@ -263,7 +265,9 @@ class PlayState(BaseState):
         self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
         self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.lf2, size='tiny', color=colors.white)
         self.left_box_magic_event_text = utils.get_text(text='Play magic fruit event', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_draw_text = utils.get_text(text='Draw a card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_draw_path_text = utils.get_text(text='Draw a path card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_draw_event_text = utils.get_text(text='Draw an event card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_none_text = utils.get_text(text='Draw a card', font=fonts.lf2, size='tiny', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
@@ -1141,6 +1145,8 @@ class PlayState(BaseState):
                 self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
                 utils.blit(dest=canvas, source=self.current_path_image, pos=(self.box_width/2, 640), pos_anchor='center')
                 utils.blit(dest=canvas, source=self.left_box_path_text, pos=(self.box_width/2, 535), pos_anchor='center')
+            elif self.drawing_path_card:
+                utils.blit(dest=canvas, source=self.left_box_draw_path_text, pos=(self.box_width/2, 535), pos_anchor='center')
             elif self.current_event and self.playing_magic_event:
                 self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                 utils.blit(dest=canvas, source=self.current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
@@ -1149,8 +1155,10 @@ class PlayState(BaseState):
                 self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                 utils.blit(dest=canvas, source=self.current_event_image, pos=(self.box_width/2, 640), pos_anchor='center')
                 utils.blit(dest=canvas, source=self.left_box_event_text, pos=(self.box_width/2, 535), pos_anchor='center')
+            elif self.drawing_event_card:
+                utils.blit(dest=canvas, source=self.left_box_draw_event_text, pos=(self.box_width/2, 535), pos_anchor='center')
             else:
-                utils.blit(dest=canvas, source=self.left_box_draw_text, pos=(self.box_width/2, 535), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.left_box_none_text, pos=(self.box_width/2, 535), pos_anchor='center')
 
             ## Render Day's Fruit
             if self.day1_fruit:

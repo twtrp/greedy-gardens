@@ -10,6 +10,7 @@ class Play_DrawPathState(BaseState):
         # state
         self.not_drawn = True
         self.card_drawn_image = None
+        self.parent.drawing_path_card = True
 
     def update(self, dt, events):
         for event in events:
@@ -28,6 +29,7 @@ class Play_DrawPathState(BaseState):
                         if "strike" in self.parent.current_path:
                             self.parent.strikes += 1
                         print("exiting draw path")
+                        self.parent.drawing_path_card = False
                         self.exit_state()
  
         utils.set_cursor(cursor=self.cursor)

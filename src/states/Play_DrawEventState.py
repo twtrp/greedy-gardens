@@ -12,6 +12,7 @@ class Play_DrawEventState(BaseState):
         # state
         self.not_drawn = True
         self.card_drawn_image = None
+        self.parent.drawing_event_card = True
 
     def update(self, dt, events):
         for event in events:
@@ -28,6 +29,7 @@ class Play_DrawEventState(BaseState):
                     else:
                         self.parent.is_strike = False
                         self.parent.eventing = True
+                        self.parent.drawing_event_card = False
                         print("exiting draw event") 
                         self.exit_state()
 
