@@ -1300,7 +1300,7 @@ class PlayState(BaseState):
             if self.setup_start_state and not self.end_game:
                 # for button in self.button_list:
                 #     button.render(canvas=canvas)
-                if self.pop_up_revealed_event_card == 3:
+                if self.pop_up_revealed_event_card == 3 and self.magic_fruit3_event != None:
                     mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                     mask_surface.fill((*colors.black, 175))
                     pygame.draw.rect(
@@ -1312,7 +1312,7 @@ class PlayState(BaseState):
                     self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
                     scaled_image = pygame.transform.scale_by(surface=self.magic_fruit3_event_image, factor=3)
                     utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
-                elif self.pop_up_revealed_event_card == 2:
+                elif self.pop_up_revealed_event_card == 2 and self.magic_fruit2_event != None:
                     mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                     mask_surface.fill((*colors.black, 175))
                     pygame.draw.rect(
@@ -1324,7 +1324,7 @@ class PlayState(BaseState):
                     self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
                     scaled_image = pygame.transform.scale_by(surface=self.magic_fruit2_event_image, factor=3)
                     utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
-                elif self.pop_up_revealed_event_card == 1:
+                elif self.pop_up_revealed_event_card == 1 and self.magic_fruit1_event != None:
                     mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                     mask_surface.fill((*colors.black, 175))
                     pygame.draw.rect(

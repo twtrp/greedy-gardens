@@ -212,6 +212,7 @@ class Play_PlayMagicEventState(BaseState):
         # Load image/sprite
         self.card_magic_event = self.parent.cards_event_sprites[f"card_{self.parent.current_event}"]
         self.scaled_card_magic_event = pygame.transform.scale_by(surface=self.card_magic_event, factor=2)
+        self.scaled_card_magic_event = utils.effect_outline(surface=self.scaled_card_magic_event, distance=4, color=colors.white)
         if self.parent.magicing_number > 0:
             self.scaled_magic_fruit = pygame.transform.scale_by(surface=getattr(self.parent, f'magic_fruit{self.parent.magicing_number}_image'), factor=2)
 

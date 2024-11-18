@@ -44,5 +44,5 @@ magic_fruit = {
 }
 dirt = {
     'name': '0000000d_hoeHit.wav',
-    'volume': 1,
+    'volume': 0.5,
 }
