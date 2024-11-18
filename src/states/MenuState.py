@@ -11,7 +11,6 @@ class MenuState(BaseState):
 
         self.ready = False
         self.load_assets()
-        self.ready = True
 
         self.finished_boot_up = finished_bootup
 
@@ -40,6 +39,8 @@ class MenuState(BaseState):
             'column': 'rowid',
             'order': 'DESC',
         }
+
+        self.ready = True
 
 
     #Main methods
@@ -287,7 +288,7 @@ class MenuState(BaseState):
                 delay=delay
             ))
 
-            delay = 1.75
+            delay += 1.75
             self.tween_list.append(tween.to(
                 container=self.overlay_props,
                 key='alpha',
@@ -323,7 +324,7 @@ class MenuState(BaseState):
                 delay=delay
             ).on_complete(self.finish_bootup))
             
-            delay = 4
+            delay += 2.25
             self.tween_list.append(tween.to(
                 container=self.game_logo_props,
                 key='scale',
@@ -366,7 +367,7 @@ class MenuState(BaseState):
 
 
     def finish_bootup(self):
-        self.finished_boot_up = True
+        self.game.finished_bootup = True
 
         # Clear intro assets
         del self.surface_logo

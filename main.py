@@ -42,7 +42,8 @@ class Game:
         utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
         utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
         self.music_channel.play()
-        MenuState(game=self, parent=self, stack=self.state_stack).enter_state()
+
+        self.finished_bootup = False
 
 
     # Class methods
@@ -80,7 +81,7 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=True).enter_state()
+            MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
 
         # Handle quit
         for event in events:
