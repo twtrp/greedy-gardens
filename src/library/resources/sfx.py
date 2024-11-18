@@ -14,7 +14,7 @@ click = {
     'name': '00000014.wav',
     'volume': 1.75,
 }
-tick = {
+scroll = {
     'name': '00000007.wav',
     'volume': 1,
 }
@@ -33,4 +33,16 @@ woop_in = {
 woop_out = {
     'name': '0000013e_fallDown_reverse.wav',
     'volume': 2,
+}
+card = {
+    'name': '0000013d_shwip.wav',
+    'volume': 2,
+}
+magic_fruit = {
+    'name': '00000174_GoldenWalnut.wav',
+    'volume': 1,
+}
+dirt = {
+    'name': '0000000d_hoeHit.wav',
+    'volume': 1,
 }

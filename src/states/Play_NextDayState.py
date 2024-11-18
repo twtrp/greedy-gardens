@@ -23,6 +23,8 @@ class Play_NextDayState(BaseState):
         self.parent.endDayState = False
         self.parent.set_start_state=False
 
+        self.parent.left_box_none_text = utils.get_text(text=f'Draw {self.parent.current_day} fruit', font=fonts.lf2, size='tiny', color=colors.white)
+
     def update(self, dt, events):
         if self.parent.current_day>=5:
             self.exit_state()

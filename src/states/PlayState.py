@@ -261,13 +261,13 @@ class PlayState(BaseState):
             self.score_amount_list.append(amount)
 
         self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.lf2, size='small', color=colors.white)
-        self.left_box_task = utils.get_text(text='Current task', font=fonts.lf2, size='small', color=colors.white)
+        self.left_box_task = utils.get_text(text='Current Task', font=fonts.lf2, size='small', color=colors.white)
         self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
         self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.lf2, size='tiny', color=colors.white)
         self.left_box_magic_event_text = utils.get_text(text='Play magic fruit event', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_draw_path_text = utils.get_text(text='Draw a path card', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_draw_event_text = utils.get_text(text='Draw an event card', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_none_text = utils.get_text(text='Draw a card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_draw_path_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_draw_event_text = utils.get_text(text='Draw event card', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_none_text = utils.get_text(text='Draw seasonal fruit', font=fonts.lf2, size='tiny', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
@@ -1128,9 +1128,7 @@ class PlayState(BaseState):
                 wind.render()
             utils.blit(dest=canvas, source=self.wind_surface)
             
-
             # Render gui
-
             ## Render text in left white box
             utils.blit(dest=canvas, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
             for i, score in enumerate(self.score_title_list):

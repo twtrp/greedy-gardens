@@ -17,7 +17,7 @@ class Play_ResultStage(BaseState):
     def load_assets(self):
         
         self.new_record = False
-        self.setted_seed= not self.parent.set_seed
+        self.setted_seed= self.parent.set_seed
         sql_conn = sqlite3.connect('data/records.sqlite')
         sql_cursor = sql_conn.cursor()
         if self.setted_seed:
@@ -120,8 +120,8 @@ class Play_ResultStage(BaseState):
         self.button_list.append(Button(
             game=self.game,
             id=self.button_option_list[0]['id'],
-            width=200,
-            height=40,
+            width=400,
+            height=80,
             pos=(constants.canvas_width/2, 600),
             pos_anchor=posanchors.center
         ))
@@ -213,7 +213,7 @@ class Play_ResultStage(BaseState):
                             utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
                             utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
                             self.game.music_channel.play()
-                            self.parent.timer_manager.StopTimer(self.water_timer)
+                            self.parent.timer_manager.StopTimer(self.parent.water_timer)
                             self.parent.tween_list.clear()
                             self.game.state_stack.clear()
                         self.parent.tween_list.append(tween.to(
@@ -240,7 +240,7 @@ class Play_ResultStage(BaseState):
                         size=(constants.canvas_width, constants.canvas_height),
                         pos=(0, 0),
                         pos_anchor='topleft',
-                        color=(*colors.black, 128), # 50% transparency
+                        color=(*colors.black, 175), # 50% transparency
                         inner_border_width=0,
                         outer_border_width=0,
                         outer_border_color=colors.black)
