@@ -14,8 +14,8 @@ class Deck:
         random.shuffle(self.cards)
 
         # # comment if want to test card or deck
-        if self.deck_type == 'path':
-            self.organize_deck()
+        # if self.deck_type == 'path':
+        #     self.organize_deck()
 
     def draw_card(self):
         if self.cards:
@@ -74,13 +74,14 @@ class Deck:
                 name.append('event_reveal')
                 name.append('event_swap')
 
-        # For Testing cards
+        # # For Testing cards
         # elif self.deck_type == 'path':
         #     for i in range(10):
+        #         name.append('path_NES')
         #         name.append('path_strike_WES')
         # elif self.deck_type == 'event':
         #     for i in range(16):
-        #         name.append('event_keep')
+        #         name.append('event_merge')
 
 
 

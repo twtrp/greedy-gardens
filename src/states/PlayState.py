@@ -587,6 +587,7 @@ class PlayState(BaseState):
                     Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.placing = False
                 elif self.magic_eventing:
+                    self.play_event_state = True
                     Play_PlayMagicEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.magic_eventing = False
                 elif self.is_strike and not self.magic_eventing:
