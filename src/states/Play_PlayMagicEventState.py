@@ -989,6 +989,18 @@ class Play_PlayMagicEventState(BaseState):
 
 
         if self.selecting_path:
+            utils.blit(
+                dest=canvas,
+                source=self.parent.up_key_hint,
+                pos=(self.parent.box_width, constants.canvas_height - self.box_height - 32),
+                pos_anchor='topleft'                            
+            )
+            utils.blit(
+                dest=canvas,
+                source=self.parent.down_key_hint,
+                pos=(self.parent.box_width + 28, constants.canvas_height - self.box_height - 32),
+                pos_anchor='topleft'
+            )
             utils.draw_rect(dest=canvas,
                                     size=(self.box_width, self.box_height),
                                     pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),
