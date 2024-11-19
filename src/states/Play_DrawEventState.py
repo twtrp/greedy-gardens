@@ -7,7 +7,7 @@ class Play_DrawEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
-        print("Drawing event")
+        # print("Drawing event")
 
         # state
         self.not_drawn = True
@@ -31,7 +31,7 @@ class Play_DrawEventState(BaseState):
                         self.parent.is_strike = False
                         self.parent.eventing = True
                         self.parent.drawing_event_card = False
-                        print("exiting draw event") 
+                        # print("exiting draw event") 
                         self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

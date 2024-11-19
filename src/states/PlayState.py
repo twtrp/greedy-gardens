@@ -28,9 +28,9 @@ class PlayState(BaseState):
             self.seed = random.randint(0, 99999999)
         else:
             self.set_seed = True
-            self.seed = seed
+            self.seed = int(seed)
 
-        print(self.seed)
+        print('Seed:',self.seed)
 
         self.game.canvas.fill((0, 0, 0))
 
@@ -150,7 +150,7 @@ class PlayState(BaseState):
                     width=self.cell_size,
                     height=self.cell_size,
                     pos=(cell_x, cell_y),
-                    pos_anchor='topleft'
+                    pos_anchor='topleft',
                 ))
                 self.game_board.board.append(Cell(index))
                 index += 1
@@ -439,7 +439,7 @@ class PlayState(BaseState):
         # wind
         self.wind_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.wind_entities_list = []
-        self.wind_spawn_rate_per_second = 0.5
+        self.wind_spawn_rate_per_second = 0.75
         self.wind_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
         for wind_sprite in self.wind_sprites:
             self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (2, 1))
@@ -603,7 +603,7 @@ class PlayState(BaseState):
                 elif self.is_3_strike and self.current_day <= self.day:
                     Play_EndDayState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.is_3_strike = False 
-                    print("endgame status: ", self.end_game)
+                    # print("endgame status: ", self.end_game)
                 elif self.end_game:
                     Play_ResultStage(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.end_game = False
@@ -722,7 +722,7 @@ class PlayState(BaseState):
                                 size=(self.box_width, constants.canvas_height),
                                 pos=(0, 0),
                                 pos_anchor='topleft',
-                                color=(*colors.white, 175), # 75% transparency
+                                color=(*colors.white, 160), # 75% transparency
                                 inner_border_width=4,
                                 outer_border_width=0,
                                 outer_border_color=colors.black)
@@ -1204,7 +1204,7 @@ class PlayState(BaseState):
                                 size=(self.box_width, constants.canvas_height),
                                 pos=(constants.canvas_width - self.box_width, 0),
                                 pos_anchor='topleft',
-                                color=(*colors.white, 175), # 75% transparency
+                                color=(*colors.white, 160), # 75% transparency
                                 inner_border_width=4,
                                 outer_border_width=0,
                                 outer_border_color=colors.black)
@@ -1265,7 +1265,7 @@ class PlayState(BaseState):
                                     size=(64, len(self.revealed_path)*60),
                                     pos=(constants.canvas_width - self.box_width + 4, constants.canvas_height),
                                     pos_anchor='bottomright',
-                                    color=(*colors.white, 175), # 75% transparency
+                                    color=(*colors.white, 160), # 75% transparency
                                     inner_border_width=4,
                                     outer_border_width=0,
                                     outer_border_color=colors.black)
@@ -1282,7 +1282,7 @@ class PlayState(BaseState):
                                     size=(64, len(self.revealed_event)*60),
                                     pos=(constants.canvas_width - self.box_width + 4, 0),
                                     pos_anchor='topright',
-                                    color=(*colors.white, 175), # 75% transparency
+                                    color=(*colors.white, 160), # 75% transparency
                                     inner_border_width=4,
                                     outer_border_width=0,
                                     outer_border_color=colors.black)

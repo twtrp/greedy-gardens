@@ -6,7 +6,7 @@ class Play_PlacePathState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
-        print("Placing")
+        # print("Placing")
 
         # value
         self.cell_pos = -1
@@ -73,9 +73,9 @@ class Play_PlacePathState(BaseState):
         if self.is_placed:
             if self.parent.game_board.magic_fruit_index and not self.finding_magic:
                 self.finding_magic = True
-                print(self.finding_magic)
+                # print(self.finding_magic)
                 self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                print(self.parent.magic_eventing)
+                # print(self.parent.magic_eventing)
                 if self.parent.magic_eventing:
                     utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
                     if magic_number == 1:
@@ -90,7 +90,7 @@ class Play_PlacePathState(BaseState):
                     new_score = current_score + 1
                     setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                     setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-                    print("exiting place")
+                    # print("exiting place")
                     self.exit_state()
 
                 elif not self.parent.magic_eventing:
@@ -99,7 +99,7 @@ class Play_PlacePathState(BaseState):
                     else: 
                         self.parent.drawing = True
                     self.parent.current_path = None
-                    print("exiting place")
+                    # print("exiting place")
                     self.exit_state()
                     
             else:
@@ -108,7 +108,7 @@ class Play_PlacePathState(BaseState):
                 else: 
                     self.parent.drawing = True
                 self.parent.current_path = None
-                print("exiting place")
+                # print("exiting place")
                 self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

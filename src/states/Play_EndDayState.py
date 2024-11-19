@@ -78,7 +78,7 @@ class Play_EndDayState(BaseState):
                     self.cursor = button.hover_cursor
             if button.clicked:
                 if button.id == 'bg':
-                    print("exiting end day")
+                    # print("exiting end day")
                     self.parent.endDayState = True
                     if self.parent.current_day >= 4:
                         self.parent.end_game=True

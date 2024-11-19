@@ -135,8 +135,8 @@ class Play_ResultStage(BaseState):
             hover_cursor=cursors.hand,
         ))
 
-        for button in self.button_list:
-            print(button.id) 
+        # for button in self.button_list:
+        #     print(button.id) 
         
         self.parent.endDayState=True
         

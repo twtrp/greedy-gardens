@@ -5,7 +5,7 @@ class Play_NextDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
-        print("Next Day")
+        # print("Next Day")
 
         # Update score if fail to make more than yesterday
         if 5> self.parent.current_day > 1:
@@ -15,7 +15,7 @@ class Play_NextDayState(BaseState):
         # update parent value
         self.parent.strikes = 0
         self.parent.current_day += 1
-        print(self.parent.current_day)
+        # print(self.parent.current_day)
         # state
         self.fruit_not_drawn = True
         self.card_drawn_image = None

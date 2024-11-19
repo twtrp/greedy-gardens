@@ -11,7 +11,7 @@ select = {
     'volume': 1,
 }
 click = {
-    'name': '00000014.wav',
+    'name': '0000001b_toolSwap.wav',
     'volume': 1.75,
 }
 scroll = {

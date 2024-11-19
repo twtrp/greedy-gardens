@@ -5,7 +5,7 @@ class Play_StartState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
-        print("Starting")
+        # print("Starting")
 
         # state
         self.card_drawn = None

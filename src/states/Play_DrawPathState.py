@@ -5,7 +5,7 @@ class Play_DrawPathState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
-        print("Drawing path")
+        # print("Drawing path")
 
         # state
         self.not_drawn = True
@@ -29,7 +29,7 @@ class Play_DrawPathState(BaseState):
                         self.parent.placing = True
                         if "strike" in self.parent.current_path:
                             self.parent.strikes += 1
-                        print("exiting draw path")
+                        # print("exiting draw path")
                         self.parent.drawing_path_card = False
                         self.exit_state()
  

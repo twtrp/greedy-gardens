@@ -10,7 +10,7 @@ class Play_PlayMagicEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
          
-        print("playing magic fruit event")
+        # print("playing magic fruit event")
 
         # value
         self.box_width = 68
@@ -68,7 +68,8 @@ class Play_PlayMagicEventState(BaseState):
                     width=400,
                     height=50,
                     pos=(constants.canvas_width/2, 695),
-                    pos_anchor=posanchors.center
+                    pos_anchor=posanchors.center,
+                    hover_cursor=cursors.normal
                 ))
         if self.parent.current_event == 'event_point':
             if self.parent.current_day < self.parent.day:
@@ -363,20 +364,20 @@ class Play_PlayMagicEventState(BaseState):
                                 self.choosing = True
                         if button.clicked:
                             if button.id == 'path 1':
-                                print(f'select path 1')
-                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                # print(f'select path 1')
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 self.parent.deck_path.cards.append(self.card_path1)
                                 self.choosing = False
                                 self.played_event = True
                             elif button.id == 'path 2':
-                                print(f'select path 2')
-                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                # print(f'select path 2')
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 self.parent.deck_path.cards.append(self.card_path2)
                                 self.choosing = False
                                 self.played_event = True
                             elif button.id == 'path 3':
-                                print(f'select path 3')
-                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                # print(f'select path 3')
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 self.parent.deck_path.cards.append(self.card_path3)
                                 self.choosing = False
                                 self.played_event = True
@@ -548,7 +549,7 @@ class Play_PlayMagicEventState(BaseState):
                     #                 else:
                     #                     self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
-                    print("No merge possible")
+                    # print("No merge possible")
                     self.played_event = True
                                     
             elif self.parent.current_event == 'event_point':
@@ -573,7 +574,7 @@ class Play_PlayMagicEventState(BaseState):
                     if button.clicked:
                         if button.id == 'add today':
                             # print(f'adding score day {self.parent.current_day}')
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') + 1)
                             if (self.parent.current_day < self.parent.day):
                                 setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') - 1)
@@ -581,7 +582,7 @@ class Play_PlayMagicEventState(BaseState):
                             self.played_event = True
                         elif button.id == 'lose today':
                             # print(f'losing score day {self.parent.current_day}')
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') - 1)
                             if (self.parent.current_day < self.parent.day):
                                 setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') + 1)
@@ -612,7 +613,7 @@ class Play_PlayMagicEventState(BaseState):
                     if button.clicked and self.choosing:
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
                             setattr(self.parent, f'day{self.parent.current_day}_fruit', self.card_drawn.card_name)
@@ -622,7 +623,7 @@ class Play_PlayMagicEventState(BaseState):
                             self.choosing = False
                         elif button.id == 'tomorrow fruit':
                             # print('redraw tomorrow fruit')
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
                             setattr(self.parent, f'day{self.parent.current_day + 1}_fruit', self.card_drawn.card_name)
@@ -632,7 +633,7 @@ class Play_PlayMagicEventState(BaseState):
                             self.choosing = False
                         elif button.id == 'seasonal fruit':
                             # print('redraw seasonal fruit')
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = self.parent.seasonal_fruit
                             self.parent.seasonal_fruit = self.card_drawn.card_name
@@ -641,7 +642,7 @@ class Play_PlayMagicEventState(BaseState):
                             self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
                         elif button.id == 'do nothing':
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.choosing = False
                             self.played_event = True
                 if self.fruit_drawn_image:
@@ -754,7 +755,7 @@ class Play_PlayMagicEventState(BaseState):
                     if button.clicked:
                         if self.selected_cell or self.selected_cell_2:
                             if button.id == 'remove':
-                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 if self.selected_cell:
                                     old_path1 = ""
                                     if self.parent.game_board.board[self.selected_cell].north:
@@ -795,7 +796,7 @@ class Play_PlayMagicEventState(BaseState):
                                         if old_path2 in self.parent.drawn_cards_path[m].card_name:
                                             self.parent.drawn_cards_path.pop(m)  
                                             break
-                                print(self.parent.drawn_cards_path)
+                                # print(self.parent.drawn_cards_path)
                                 self.played_event = True
                                 
 
@@ -819,17 +820,17 @@ class Play_PlayMagicEventState(BaseState):
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
                         if button.id == 'reveal path':
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
                             for card in self.parent.revealed_path:
                                 if "strike_" in card.card_name:
                                     card.card_name = card.card_name.replace("strike_", "")
-                            print(self.parent.revealed_path)
+                            # print(self.parent.revealed_path)
                             self.played_event = True
                         if button.id == 'reveal event':
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.parent.revealed_event = self.parent.deck_event.cards[-4:]
-                            print(self.parent.revealed_event)
+                            # print(self.parent.revealed_event)
                             self.played_event = True
                 # self.played_event = True
 
@@ -895,11 +896,11 @@ class Play_PlayMagicEventState(BaseState):
                     #                 else:
                     #                     self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
-                    print("No swap possible")
+                    # print("No swap possible")
                     self.played_event = True
 
             else: # for any bug
-                print(f"There is no such event {self.parent.current_event}")
+                # print(f"There is no such event {self.parent.current_event}")
                 self.played_event = True
         else:
             self.parent.game_board.eval_new_tile(self.parent.game_board.home_index)
@@ -920,7 +921,7 @@ class Play_PlayMagicEventState(BaseState):
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                 self.parent.playing_magic_event = False
                 self.parent.play_event_state = False
-                print(self.parent.play_event_state)
+                # print(self.parent.play_event_state)
                 self.exit_state()
             else:
                 if self.parent.is_striking:
@@ -933,7 +934,7 @@ class Play_PlayMagicEventState(BaseState):
                 self.parent.playing_magic_event = False
                 self.parent.is_striking = False
                 self.parent.current_event = None
-                print("exiting play magic event")
+                # print("exiting play magic event")
                 self.parent.play_event_state = False
                 self.exit_state()
 

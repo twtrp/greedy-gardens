@@ -35,7 +35,7 @@ class Game:
         self.music_channel.set_volume(self.settings['music_volume'])
         self.sfx_volume = self.settings['sfx_volume']
         self.ambience_channel = pygame.mixer.Channel(0)
-        self.ambience_channel.set_volume(self.settings['ambience_volume'])
+        self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
         utils.sound_play(sound=sfx.ambience, sound_channel=self.ambience_channel, loops=-1, fade_ms=3000)
 
         self.state_stack = []
@@ -55,7 +55,7 @@ class Game:
         if setting_index == 1:
             self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 2:
-            self.ambience_channel.set_volume(self.settings['ambience_volume'])
+            self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
         if setting_index == 3:
             pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
             if self.settings['fullscreen']:
