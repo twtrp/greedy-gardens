@@ -15,7 +15,7 @@ class Play_DrawPathState(BaseState):
     def update(self, dt, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and self.parent.shown_day_title:
                     if self.not_drawn:
                         self.card_drawn_image_props = {
                             'x': 1080,
