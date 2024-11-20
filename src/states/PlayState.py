@@ -306,6 +306,7 @@ class PlayState(BaseState):
         self.up_key_hint = pygame.transform.scale_by(surface=self.up_key_hint, factor=2)
         self.down_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
         self.down_key_hint = pygame.transform.scale_by(surface=self.down_key_hint, factor=2)
+        self.press_spacebar_hint = utils.get_text(text='Press', font=fonts.lf2, size='tiny', color=colors.mono_205)
         self.spacebar_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
         self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=3)
 
@@ -1183,7 +1184,8 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
             ## Render spacebar hint
-            utils.blit(dest=canvas, source=self.spacebar_key_hint, pos=(self.box_width/2, 630), pos_anchor='center')   
+            utils.blit(dest=canvas, source=self.press_spacebar_hint, pos=(self.box_width/2, 600), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.spacebar_key_hint, pos=(self.box_width/2, 640), pos_anchor='center')   
 
             ## Render value in left white box
             for i, score in enumerate(self.score_amount_list):

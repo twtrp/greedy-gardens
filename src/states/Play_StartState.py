@@ -37,7 +37,7 @@ class Play_StartState(BaseState):
     def update(self, dt, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and not self.parent.transitioning:
                     # for testing
                     if self.day2_not_drawn:
                         self.card_drawn = self.parent.deck_fruit.draw_card()
