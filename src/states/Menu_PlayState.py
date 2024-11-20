@@ -55,7 +55,7 @@ class Menu_PlayState(BaseState):
         self.textbox_label = utils.get_text(text='Seed', font=fonts.lf2, size='small', color=colors.white)
         self.textbox_mode = 'inactive'
         self.textbox_text = ''
-        self.textbox_limit = 8
+        self.textbox_limit = 6
         self.textbox_text_surface = utils.get_text(
             text=self.textbox_text,
             font=fonts.lf2,
@@ -223,5 +223,6 @@ class Menu_PlayState(BaseState):
                 center=(constants.canvas_width/2, constants.canvas_height/2),
                 radius=self.mask_circle_radius
             )
-            utils.blit(dest=canvas, source=self.mask_surface)
+            self.pixelated_mask_surface = utils.effect_pixelate(surface=self.mask_surface, pixel_size=4)
+            utils.blit(dest=canvas, source=self.pixelated_mask_surface)
 

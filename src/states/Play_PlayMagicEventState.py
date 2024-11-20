@@ -13,7 +13,7 @@ class Play_PlayMagicEventState(BaseState):
         # print("playing magic fruit event")
 
         # value
-        self.box_width = 68
+        self.box_width = 60
         self.box_height = 352
 
         self.cell_pos = -1
@@ -39,7 +39,46 @@ class Play_PlayMagicEventState(BaseState):
 
         self.select_frame = self.parent.selecting_tile
 
+        if self.parent.magicing_number == 1:
+            self.card_magic_event_props = {
+                'x': 1073,
+                'y': 619,
+                'scale': 1,
+            }
+        elif self.parent.magicing_number == 2:
+            self.card_magic_event_props = {
+                'x': 1143,
+                'y': 629,
+                'scale': 1,
+            }
+        elif self.parent.magicing_number == 3:
+            self.card_magic_event_props = {
+                'x': 1213,
+                'y': 639,
+                'scale': 1,
+            }
+        def on_complete():
+            self.parent.tween_list.clear()
+        utils.multitween(
+            tween_list=self.parent.tween_list,
+            container=self.card_magic_event_props,
+            keys=['x', 'y', 'scale'],
+            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+            time=0.4,
+            ease_type=tweencurves.easeOutQuint,
+            on_complete=on_complete
+        )
+
+        self.parent.is_current_task_event = False
         self.load_assets()
+
+
+        self.fruit_drawn_image_props = {
+            'x': 1080,
+            'y': 130,
+            'scale': 1,
+        }
+
 
     def load_assets(self):
         # update state
@@ -50,10 +89,10 @@ class Play_PlayMagicEventState(BaseState):
         self.parent.playing_magic_event = True
 
         # Load text
-        self.choice_keep_title = utils.get_text(text='choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_175)
-        self.choice_point_title = utils.get_text(text='choose', font=fonts.lf2, size='large', color=colors.mono_175)
-        self.choice_redraw_title = utils.get_text(text='choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_175)
-        self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
+        self.choice_keep_title = utils.get_text(text='Choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_175)
+        self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_175)
+        self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_175)
+        # self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
         self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.white)
         self.hover_to_view_surface = [{
                     'id': 'view board',
@@ -65,7 +104,7 @@ class Play_PlayMagicEventState(BaseState):
         self.button_list.append(Button(
                     game=self.game,
                     id='view board',
-                    width=400,
+                    width=600,
                     height=50,
                     pos=(constants.canvas_width/2, 695),
                     pos_anchor=posanchors.center,
@@ -106,9 +145,9 @@ class Play_PlayMagicEventState(BaseState):
                 self.button_list.append(Button(
                     game=self.game,
                     id=option['id'],
-                    width=400,
-                    height=95,
-                    pos=(constants.canvas_width/2, 290 + (i*2)*75),
+                    width=600,
+                    height=100,
+                    pos=(constants.canvas_width/2, constants.canvas_height/2 - 75 + i*150),
                     pos_anchor=posanchors.center
                 ))
         elif self.parent.current_event == 'event_redraw':
@@ -149,8 +188,8 @@ class Play_PlayMagicEventState(BaseState):
                 self.button_list.append(Button(
                     game=self.game,
                     id=option['id'],
-                    width=300,
-                    height=40,
+                    width=600,
+                    height=50,
                     pos=(constants.canvas_width/2, 265 + i*75),
                     pos_anchor=posanchors.center
                 ))
@@ -204,9 +243,9 @@ class Play_PlayMagicEventState(BaseState):
                 self.button_list.append(Button(
                     game=self.game,
                     id=option['id'],
-                    width=500,
-                    height=40,
-                    pos=(constants.canvas_width/2, 250 + i*65),
+                    width=600,
+                    height=50,
+                    pos=(constants.canvas_width/2, constants.canvas_height/2 - 50 + i*100),
                     pos_anchor=posanchors.center
                 ))
             
@@ -227,6 +266,7 @@ class Play_PlayMagicEventState(BaseState):
         self.path_ES_image = self.parent.path_ES_image
 
     def update(self, dt, events):
+
         if not self.shown_event:
             for event in events:
                 if event.type == pygame.KEYDOWN:
@@ -236,7 +276,10 @@ class Play_PlayMagicEventState(BaseState):
                             self.parent.current_event == 'event_redraw' or
                             self.parent.current_event == 'event_reveal'):
                             self.choosing = True
+                            utils.sound_play(sound=sfx.appear, volume=self.game.sfx_volume)
+                        self.parent.is_current_task_event = True
                         self.shown_event = True
+                        self.parent.playing_magic_event = True
 
         # Each event
         elif not self.played_event and self.shown_event:
@@ -611,6 +654,24 @@ class Play_PlayMagicEventState(BaseState):
                                     option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                                     option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
                     if button.clicked and self.choosing:
+                        if not button.id == 'do nothing':
+                            self.fruit_drawn_image_props = {
+                                'x': 1080,
+                                'y': 130,
+                                'scale': 1,
+                            }
+                        def on_complete():
+                            self.parent.tween_list.clear()
+                        utils.multitween(
+                            tween_list=self.parent.tween_list,
+                            container=self.fruit_drawn_image_props,
+                            keys=['x', 'y', 'scale'],
+                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                            time=0.4,
+                            ease_type=tweencurves.easeOutQuint,
+                            on_complete=on_complete
+                        )
+                        
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
@@ -621,6 +682,7 @@ class Play_PlayMagicEventState(BaseState):
                             random.shuffle(self.parent.deck_fruit.cards)
                             self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
+                            self.parent.drawing_path_card = True
                         elif button.id == 'tomorrow fruit':
                             # print('redraw tomorrow fruit')
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
@@ -631,6 +693,7 @@ class Play_PlayMagicEventState(BaseState):
                             random.shuffle(self.parent.deck_fruit.cards)
                             self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
+                            self.parent.drawing_path_card = True
                         elif button.id == 'seasonal fruit':
                             # print('redraw seasonal fruit')
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
@@ -641,6 +704,7 @@ class Play_PlayMagicEventState(BaseState):
                             random.shuffle(self.parent.deck_fruit.cards)
                             self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                             self.choosing = False
+                            self.parent.drawing_path_card = True
                         elif button.id == 'do nothing':
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.choosing = False
@@ -947,29 +1011,37 @@ class Play_PlayMagicEventState(BaseState):
         # for button in self.button_list:
         #     button.render(canvas)
             
-        if not self.shown_event:
-            utils.blit(dest=canvas, source=self.scaled_card_magic_event, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+        if not self.shown_event and self.card_magic_event_props:
+            
+            # if self.parent.magicing_number > 0:
+            #     self.scaled_magic_fruit = pygame.transform.scale_by(surface=getattr(self.parent, f'magic_fruit{self.parent.magicing_number}_image'), factor=2)
+            scaled_card_magic_event = pygame.transform.scale_by(surface=self.card_magic_event, factor=self.card_magic_event_props['scale'])
+            scaled_card_magic_event = utils.effect_outline(surface=scaled_card_magic_event, distance=4, color=colors.white)
+            utils.blit(dest=canvas, source=scaled_card_magic_event, pos=(self.card_magic_event_props['x'], self.card_magic_event_props['y']), pos_anchor='center')
             if self.parent.magicing_number > 0:
-                utils.blit(dest=canvas, source=self.scaled_magic_fruit, pos=(constants.canvas_width/2, constants.canvas_height/2 - 128 - 16), pos_anchor='center')
+                scaled_magic_fruit = pygame.transform.scale_by(surface=getattr(self.parent, f'magic_fruit{self.parent.magicing_number}_image'), factor=self.card_magic_event_props['scale'])
+                utils.blit(dest=canvas, source=scaled_magic_fruit, pos=(self.card_magic_event_props['x'], self.card_magic_event_props['y'] - self.card_magic_event_props['scale']*74), pos_anchor='center')
 
         if self.cell_pos >= 0:
             utils.blit(dest=canvas, source=self.select_frame, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.choosing:
-            utils.draw_rect(dest=canvas,
-                            size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
-                            pos=(self.parent.box_width, 0),
-                            pos_anchor='topleft',
-                            color=(*colors.black, 128), # 50% transparency
-                            inner_border_width=0,
-                            outer_border_width=0,
-                            outer_border_color=colors.black)
+            utils.draw_rect(
+                dest=canvas,
+                size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+                pos=(self.parent.box_width, 0),
+                pos_anchor='topleft',
+                color=(*colors.black, 128), # 50% transparency
+                inner_border_width=0,
+                outer_border_width=0,
+                outer_border_color=colors.black
+            )
             
             scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
             utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
             
             if self.parent.current_event == 'event_keep':
-                utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 if self.card_path3_image:
                     scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2)
                     scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2)
@@ -979,15 +1051,26 @@ class Play_PlayMagicEventState(BaseState):
                     utils.blit(dest=canvas, source=scaled_card_path3, pos=(constants.canvas_width/2 + 210, constants.canvas_height/2), pos_anchor='center')
 
             elif self.parent.current_event == 'event_point':
-                utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.point_button_option_surface_list):
+                    
                     scaled_point_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
-                    utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 265 + (i*2)*75), pos_anchor=posanchors.center)
+                    utils.blit(
+                        dest=canvas,
+                        source=scaled_point_button,
+                        pos=(constants.canvas_width/2, constants.canvas_height/2 - 75 + i*150 - 30),
+                        pos_anchor=posanchors.center
+                    )
                     scaled_point_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
-                    utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 315 + (i*2)*75), pos_anchor=posanchors.center)
+                    utils.blit(
+                        dest=canvas,
+                        source=scaled_point_button,
+                        pos=(constants.canvas_width/2, constants.canvas_height/2 - 75 + i*150 + 30),
+                        pos_anchor=posanchors.center
+                    )
 
             elif self.parent.current_event == 'event_redraw':
-                utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.redraw_button_option_surface_list):
                     scaled_redraw_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     if option["id"] == "do nothing":
@@ -996,13 +1079,19 @@ class Play_PlayMagicEventState(BaseState):
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
                         self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
                         self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
-                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(575 - (i//2)*30, 265 + i*75), pos_anchor='center')
+                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(570 - (i//2)*30, 265 + i*75), pos_anchor='center')
 
             elif self.parent.current_event == 'event_reveal':
-                utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 180), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.reveal_button_option_surface_list):
                     scaled_reveal_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     utils.blit(dest=canvas, source=scaled_reveal_button, pos=(constants.canvas_width/2, 250 + i*65), pos_anchor=posanchors.center)
+                    utils.blit(
+                        dest=canvas,
+                        source=scaled_reveal_button,
+                        pos=(constants.canvas_width/2, constants.canvas_height/2 - 50 + i*100),
+                        pos_anchor=posanchors.center
+                    )
 
         if self.parent.current_event == 'event_remove':
             for i, option in enumerate(self.remove_button_option_surface_list):
@@ -1044,8 +1133,14 @@ class Play_PlayMagicEventState(BaseState):
             utils.blit(dest=canvas, source=self.small_selecting_tile, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320 + 58*self.choice), pos_anchor='center')
 
         if self.fruit_drawn_image:
-            scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=2)
-            utils.blit(dest=canvas, source=scaled_fruit_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+            scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=self.fruit_drawn_image_props['scale'])
+            scaled_fruit_drawn = utils.effect_outline(surface=scaled_fruit_drawn, distance=4, color=colors.white)
+            utils.blit(
+                dest=canvas,
+                source=scaled_fruit_drawn,
+                pos=(self.fruit_drawn_image_props['x'], self.fruit_drawn_image_props['y']),
+                pos_anchor='center'
+            )
 
         if self.selected_cell:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')

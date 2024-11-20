@@ -17,15 +17,31 @@ class Play_DrawPathState(BaseState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if self.not_drawn:
+                        self.card_drawn_image_props = {
+                            'x': 1080,
+                            'y': 265,
+                            'scale': 1,
+                        }
+                        def on_complete():
+                            self.parent.tween_list.clear()
+                        utils.multitween(
+                            tween_list=self.parent.tween_list,
+                            container=self.card_drawn_image_props,
+                            keys=['x', 'y', 'scale'],
+                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                            time=0.4,
+                            ease_type=tweencurves.easeOutQuint,
+                            on_complete=on_complete
+                        )
                         utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                         self.card_drawn = self.parent.deck_path.draw_card()
                         self.parent.drawn_cards_path.append(self.card_drawn)
                         self.card_drawn_image = self.parent.cards_path_sprites[f"card_{self.card_drawn.card_name}"]
-                        self.parent.current_path = self.card_drawn.card_name
                         if len(self.parent.revealed_path) > 0:
                             self.parent.revealed_path.pop()
                         self.not_drawn = False
                     else:
+                        self.parent.current_path = self.card_drawn.card_name
                         self.parent.placing = True
                         if "strike" in self.parent.current_path:
                             self.parent.strikes += 1
@@ -38,6 +54,6 @@ class Play_DrawPathState(BaseState):
 
     def render(self, canvas):
         if self.card_drawn_image:
-            scaled_card_drawn = pygame.transform.scale_by(surface=self.card_drawn_image, factor=2)
+            scaled_card_drawn = pygame.transform.scale_by(surface=self.card_drawn_image, factor=self.card_drawn_image_props['scale'])
             scaled_card_drawn = utils.effect_outline(surface=scaled_card_drawn, distance=4, color=colors.white)
-            utils.blit(dest=canvas, source=scaled_card_drawn, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+            utils.blit(dest=canvas, source=scaled_card_drawn, pos=(self.card_drawn_image_props['x'], self.card_drawn_image_props['y']), pos_anchor='center')

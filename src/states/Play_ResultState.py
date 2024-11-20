@@ -240,7 +240,7 @@ class Play_ResultStage(BaseState):
                         size=(constants.canvas_width, constants.canvas_height),
                         pos=(0, 0),
                         pos_anchor='topleft',
-                        color=(*colors.black, 175), # 50% transparency
+                        color=(*colors.black, 175), 
                         inner_border_width=0,
                         outer_border_width=0,
                         outer_border_color=colors.black)

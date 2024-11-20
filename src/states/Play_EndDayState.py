@@ -23,6 +23,8 @@ class Play_EndDayState(BaseState):
             
         self.button_list = []
 
+        self.parent.is_choosing = True
+
         self.load_assets()
             
     def load_assets(self):
@@ -82,21 +84,24 @@ class Play_EndDayState(BaseState):
                     self.parent.endDayState = True
                     if self.parent.current_day >= 4:
                         self.parent.end_game=True
+                    self.parent.is_choosing = False
                     self.exit_state()
  
     def render(self, canvas):
         # for button in self.button _list:
         #         button.render(canvas)
         
-        utils.draw_rect(dest=canvas,
-                        size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
-                        pos=(self.parent.box_width, 0),
-                        pos_anchor='topleft',
-                        color=(*colors.black, 128), # 50% transparency
-                        inner_border_width=0,
-                        outer_border_width=0,
-                        outer_border_color=colors.black)
-
+        # utils.draw_rect(
+        #     dest=canvas,
+        #     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+        #     pos=(self.parent.box_width, 0),
+        #     pos_anchor='topleft',
+        #     color=(*colors.black, 128), # 50% transparency
+        #     inner_border_width=0,
+        #     outer_border_width=0,
+        #     outer_border_color=colors.black
+        # )
+        
         # Title text
         utils.blit(dest=canvas, source=self.result_title, pos=(constants.canvas_width/2, constants.canvas_height/2 - 150), pos_anchor='center')
         if self.parent.current_day > 1:

@@ -262,7 +262,8 @@ class MenuState(BaseState):
                 center=(constants.canvas_width/2, constants.canvas_height/2),
                 radius=self.mask_circle_radius
             )
-            utils.blit(dest=canvas, source=self.mask_surface)
+            self.pixelated_mask_surface = utils.effect_pixelate(surface=self.mask_surface, pixel_size=4)
+            utils.blit(dest=canvas, source=self.pixelated_mask_surface)
 
                 
 

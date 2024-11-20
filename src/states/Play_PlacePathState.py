@@ -16,12 +16,14 @@ class Play_PlacePathState(BaseState):
         self.finding_magic = False
 
         self.select_frame = self.parent.selecting_tile
+        
 
     def update(self, dt, events):
         
         self.cell_pos = -1
         for button in self.parent.grid_buttons:
             if button.hovered:
+                self.cursor = cursors.dig
                 self.cell_pos = button.id
                 if not self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                     self.select_frame = self.parent.selecting_tile
@@ -80,10 +82,13 @@ class Play_PlacePathState(BaseState):
                     utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
+                        # print('PlacePath Magic 1:', self.parent.magic_fruit1_event)
                     elif magic_number == 2:
                         self.parent.current_event = self.parent.magic_fruit2_event
+                        # print('PlacePath Magic 2:', self.parent.magic_fruit2_event)
                     elif magic_number == 3:
                         self.parent.current_event = self.parent.magic_fruit3_event
+                        # print('PlacePath Magic 3:', self.parent.magic_fruit3_event)
                     self.parent.game_board.board[cell_pos].magic_fruit = 0
                     self.parent.magicing_number = magic_number
                     current_score = getattr(self.parent, f'day{self.parent.current_day}_score')

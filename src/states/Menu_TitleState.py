@@ -25,34 +25,35 @@ class Menu_TitleState(BaseState):
 
     def update(self, dt, events):
         
-        for button in self.button_list:
-            button.update(dt=dt, events=events)
-            
-            if button.hovered:
-                self.cursor = button.hover_cursor
-                for option in self.parent.title_button_option_surface_list:
-                    if button.id == option['id']:
-                        option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
-            else:
-                for option in self.parent.title_button_option_surface_list:
-                    if button.id == option['id']:
-                        option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
-            
-            if button.clicked:
-                if button.id == 'play':
-                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                    Menu_PlayState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
-                elif button.id == 'records':
-                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                    Menu_RecordsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
-                elif button.id == 'settings':
-                    utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                    Menu_SettingsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
-                elif button.id == 'quit':
-                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
-                    pygame.mixer.stop()
-                    pygame.quit()
-                    sys.exit()
+        if not self.parent.transitioning:
+            for button in self.button_list:
+                button.update(dt=dt, events=events)
+                
+                if button.hovered:
+                    self.cursor = button.hover_cursor
+                    for option in self.parent.title_button_option_surface_list:
+                        if button.id == option['id']:
+                            option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                else:
+                    for option in self.parent.title_button_option_surface_list:
+                        if button.id == option['id']:
+                            option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+                
+                if button.clicked:
+                    if button.id == 'play':
+                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                        Menu_PlayState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
+                    elif button.id == 'records':
+                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                        Menu_RecordsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
+                    elif button.id == 'settings':
+                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                        Menu_SettingsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
+                    elif button.id == 'quit':
+                        utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                        pygame.mixer.stop()
+                        pygame.quit()
+                        sys.exit()
         
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
