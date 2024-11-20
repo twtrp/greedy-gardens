@@ -1,0 +1,9 @@
+### How to launch game on Windows
+1. Launch "PLAY GREEDY GARDENS.exe"
+
+### How to launch game on Mac and Linux:
+1. Start terminal in this root folder.
+2. Enter in terminal: `python -m venv venv`
+3. Enter in terminal: `.\venv\Scripts\activate`
+4. Enter in terminal: `pip install -r requirements.txt` when terminal is in (venv)
+5. Enter in terminal: `python main.py` when terminal is in (venv)
