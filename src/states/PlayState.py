@@ -210,11 +210,20 @@ class PlayState(BaseState):
 
         random.seed(self.seed)
 
-        trees_bridges = utils.get_image(dir=dir.play_bg, name='trees_bridges.png', mode='colorkey')
-        fence = utils.get_image(dir=dir.play_bg, name='fence.png', mode='colorkey')
+        self.landscape_list = [
+            {
+                'image': utils.get_image(dir=dir.play_bg, name='trees_bridges.png', mode='colorkey'),
+            },
+            {
+                'image': utils.get_image(dir=dir.play_bg, name='fence.png', mode='colorkey'),
+            },
+        ]
 
-        utils.blit(dest=self.landscape_surface, source=trees_bridges, pos=(0, 0))
-        utils.blit(dest=self.landscape_surface, source=fence, pos=(0, 0))
+        # self.trees_bridges = utils.get_image(dir=dir.play_bg, name='trees_bridges.png', mode='colorkey')
+        # fence = utils.get_image(dir=dir.play_bg, name='fence.png', mode='colorkey')
+
+        # utils.blit(dest=self.landscape_surface, source=trees_bridges, pos=(0, 0))
+        # utils.blit(dest=self.landscape_surface, source=fence, pos=(0, 0))
 
         light_fruit_hole = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='fruit_hole_light_green')
         dark_fruit_hole = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='fruit_hole_dark_green')
@@ -519,6 +528,7 @@ class PlayState(BaseState):
 
     def update(self, dt, events):
         tween.update(passed_time=dt)
+
         if self.ready:
 
             if self.paused:
@@ -735,6 +745,9 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=self.water_high_image)
             else:
                 utils.blit(dest=canvas, source=self.water_low_image)
+
+            for layer in self.landscape_list:
+                utils.blit(dest=canvas, source=layer['image'], pos=(0, 0))
             
             
             # Render board
@@ -1132,7 +1145,6 @@ class PlayState(BaseState):
                             if pos == 3:
                                 utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                                 utils.blit(dest=canvas, source=fruit_image, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 48, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
-
 
             # Render wind
             self.wind_surface.fill((0, 0, 0, 0))

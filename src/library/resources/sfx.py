@@ -42,7 +42,11 @@ magic_fruit = {
     'name': '00000174_GoldenWalnut.wav',
     'volume': 1,
 }
-dirt = {
+dig = {
     'name': '0000000d_hoeHit.wav',
+    'volume': 0.5,
+}
+dirt = {
+    'name': '000000f4_dirtyHit.wav',
     'volume': 0.5,
 }

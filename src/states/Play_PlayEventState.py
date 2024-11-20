@@ -236,8 +236,17 @@ class Play_PlayEventState(BaseState):
                 for event in events:
                     if event.type == pygame.KEYDOWN:
                         if (event.key == pygame.K_w or event.key == pygame.K_UP) and self.choice > 0:
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
                             self.choice -= 1
                         elif (event.key == pygame.K_s or event.key == pygame.K_DOWN) and self.choice < 5:
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
+                            self.choice += 1
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 4 and self.choice > 0:
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
+                            self.choice -= 1
+                        elif event.button == 5 and self.choice < 5:
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
                             self.choice += 1
 
                 self.cell_pos = -1
@@ -248,6 +257,7 @@ class Play_PlayEventState(BaseState):
                         if not self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                             self.select_frame = self.parent.selecting_tile
                             if button.clicked:
+                                utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
                                 if "N" in self.choices[self.choice]:
                                     self.parent.game_board.board[button.id].north = True
                                 if "W" in self.choices[self.choice]:
@@ -358,6 +368,7 @@ class Play_PlayEventState(BaseState):
                                     not self.parent.game_board.board[button.id].home):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
+                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                         self.selected_cell = button.id
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -370,6 +381,8 @@ class Play_PlayEventState(BaseState):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
                                         # print("clicked")
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
                                         old_path1 = ""
                                         if self.parent.game_board.board[button.id].north:
                                             old_path1 += "N"
@@ -436,6 +449,7 @@ class Play_PlayEventState(BaseState):
                                 elif button.id == self.selected_cell:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
+                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                         self.selected_cell = None
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -523,6 +537,7 @@ class Play_PlayEventState(BaseState):
                             
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
@@ -535,6 +550,7 @@ class Play_PlayEventState(BaseState):
                             self.parent.drawing_path_card = True
                         elif button.id == 'tomorrow fruit':
                             # print('redraw tomorrow fruit')
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
@@ -547,6 +563,7 @@ class Play_PlayEventState(BaseState):
                             self.parent.drawing_path_card = True
                         elif button.id == 'seasonal fruit':
                             # print('redraw seasonal fruit')
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = self.parent.seasonal_fruit
@@ -580,10 +597,12 @@ class Play_PlayEventState(BaseState):
                                 not self.parent.game_board.board[button.id].home):
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
+                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                     self.selected_cell = button.id
                             elif button.id == self.selected_cell_2:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
+                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                     self.selected_cell_2 = None
                             else:
                                 self.select_frame = self.parent.cant_selecting_tile
@@ -593,10 +612,12 @@ class Play_PlayEventState(BaseState):
                                 not self.parent.game_board.board[button.id].home):
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
+                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                     self.selected_cell_2 = button.id
                             elif button.id == self.selected_cell:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
+                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                     self.selected_cell = None
                             else:
                                 self.select_frame = self.parent.cant_selecting_tile
@@ -604,10 +625,12 @@ class Play_PlayEventState(BaseState):
                             if button.id == self.selected_cell:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
+                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                     self.selected_cell = None
                             elif button.id == self.selected_cell_2:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
+                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                     self.selected_cell_2 = None
                             else:
                                 self.select_frame = self.parent.cant_selecting_tile
@@ -629,6 +652,7 @@ class Play_PlayEventState(BaseState):
                         if self.selected_cell or self.selected_cell_2:
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
                                 if self.selected_cell:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
                                         old_path1 = ""
@@ -722,6 +746,7 @@ class Play_PlayEventState(BaseState):
                                 if self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
+                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                         self.selected_cell = button.id
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -738,6 +763,7 @@ class Play_PlayEventState(BaseState):
                                 elif button.id == self.selected_cell:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
+                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                         self.selected_cell = None
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile

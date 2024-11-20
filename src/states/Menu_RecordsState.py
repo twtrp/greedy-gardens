@@ -191,11 +191,11 @@ class Menu_RecordsState(BaseState):
                     if button.id == 'table' and button.hovered:
                         if event.button == 4:
                             if self.table_scroll_offset != 0:
-                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.5)
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.75)
                             self.table_scroll_offset = min(self.table_scroll_offset + self.table_row_height, 0)
                         elif event.button == 5:
                             if self.table_scroll_offset != self.table_max_scroll_offset:
-                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.5)
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.75)
                             self.table_scroll_offset = max(self.table_scroll_offset - self.table_row_height, self.table_max_scroll_offset)
 
         for button in self.button_list:
