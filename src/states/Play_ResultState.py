@@ -12,7 +12,6 @@ class Play_ResultStage(BaseState):
         self.is_continue = False
 
         self.load_assets()
-        
 
     def load_assets(self):
         

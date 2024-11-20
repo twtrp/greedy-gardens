@@ -23,7 +23,7 @@ class Play_StartState(BaseState):
 
         def on_complete():
             self.parent.transitioning = False
-            self.parent.tween_list.clear()
+            self.parent.day_title_tween_chain()
         self.parent.tween_list.append(tween.to(
             container=self.parent,
             key='mask_circle_radius',

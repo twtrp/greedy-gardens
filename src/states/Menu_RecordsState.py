@@ -285,7 +285,7 @@ class Menu_RecordsState(BaseState):
             size=(self.table_width, self.table_height),
             pos=(constants.canvas_width/2, 380),
             pos_anchor=posanchors.center,
-            color=(*colors.white, 200),
+            color=(*colors.white, 165),
             inner_border_width=3
         )
         

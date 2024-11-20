@@ -2,6 +2,7 @@ from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.classes.Button import Button
 from src.states.PlayState import PlayState
+from src.states.Menu_TutorialState import Menu_TutorialState
 
 class Menu_PlayState(BaseState):
     def __init__(self, game, parent, stack):
@@ -9,7 +10,6 @@ class Menu_PlayState(BaseState):
 
         self.button_list = []
         self.load_assets()
-
 
         self.transitioning = False
         self.freeze_frame = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
@@ -25,6 +25,10 @@ class Menu_PlayState(BaseState):
         self.page_title = utils.get_text(text='Play', font=fonts.lf2, size='huge', color=colors.green_light)
 
         self.button_option_list = [
+            {
+                'id': 'tutorial',
+                'text': 'How to play',
+            },
             {
                 'id': 'start',
                 'text': 'Start game',
@@ -43,14 +47,25 @@ class Menu_PlayState(BaseState):
                 'scale': 1.0
             })
         for i, option in enumerate(self.button_option_surface_list):
-            self.button_list.append(Button(
-                game=self.game,
-                id=option['id'],
-                width=300,
-                height=80,
-                pos=(constants.canvas_width/2, 280 + i*300),
-                pos_anchor=posanchors.center
-            ))
+            if i != len(self.button_option_surface_list) - 1:
+                self.button_list.append(Button(
+                    game=self.game,
+                    id=option['id'],
+                    width=300,
+                    height=80,
+                    pos=(constants.canvas_width/2, 270 + i*80),
+                    pos_anchor=posanchors.center
+                ))
+            else:
+                self.button_list.append(Button(
+                    game=self.game,
+                    id=option['id'],
+                    width=300,
+                    height=80,
+                    pos=(constants.canvas_width/2, 580),
+                    pos_anchor=posanchors.center
+                ))
+        
             
         self.textbox_label = utils.get_text(text='Seed', font=fonts.lf2, size='small', color=colors.white)
         self.textbox_mode = 'inactive'
@@ -74,7 +89,7 @@ class Menu_PlayState(BaseState):
             id='textbox',
             width=140,
             height=50,
-            pos=(constants.canvas_width/2, 420),
+            pos=(constants.canvas_width/2, 460),
             pos_anchor=posanchors.center
         ))
 
@@ -152,6 +167,9 @@ class Menu_PlayState(BaseState):
                             time=1,
                             ease_type=tweencurves.easeOutQuint
                         ).on_complete(on_complete))
+                    elif button.id == 'tutorial':
+                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                        Menu_TutorialState(game=self.game, parent=self.parent, stack=self.parent.substate_stack).enter_state()
                     elif button.id == 'textbox':
                         self.textbox_mode = 'active'            
                     elif button.id == 'back':
@@ -166,45 +184,49 @@ class Menu_PlayState(BaseState):
         if not self.transitioning:
             utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
             for i, option in enumerate(self.button_option_surface_list):
-                processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 280 + i*300), pos_anchor=posanchors.center)
+                if i != len(self.button_option_surface_list) - 1:
+                    processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                    utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 260 + i*80), pos_anchor=posanchors.center)
+                else:
+                    processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                    utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 580), pos_anchor=posanchors.center)
 
-            utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 373), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 413), pos_anchor=posanchors.center)
             if self.textbox_mode == 'inactive':
                 utils.draw_rect(
                     dest=canvas,
                     size=(140, 50),
-                    pos=(constants.canvas_width/2, 420), 
+                    pos=(constants.canvas_width/2, 460), 
                     pos_anchor=posanchors.center,
-                    color=(*colors.white, 200),
+                    color=(*colors.white, 165),
                     inner_border_width=3
                 )
                 if self.textbox_text == '':
-                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 460), pos_anchor=posanchors.center)
                 else:
-                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 460), pos_anchor=posanchors.center)
             elif self.textbox_mode == 'hovered':
                 utils.draw_rect(
                     dest=canvas,
                     size=(140, 50),
-                    pos=(constants.canvas_width/2, 420), 
+                    pos=(constants.canvas_width/2, 460), 
                     pos_anchor=posanchors.center,
-                    color=(*colors.white, 200),
+                    color=(*colors.white, 165),
                     inner_border_width=3,
                     outer_border_width=3,
                     outer_border_color=colors.white
                 )
                 if self.textbox_text == '':
-                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 460), pos_anchor=posanchors.center)
                 else:
-                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 460), pos_anchor=posanchors.center)
             elif self.textbox_mode == 'active':
                 utils.draw_rect(
                     dest=canvas,
                     size=(140, 50),
-                    pos=(constants.canvas_width/2, 420), 
+                    pos=(constants.canvas_width/2, 460), 
                     pos_anchor=posanchors.center,
-                    color=(*colors.white, 200),
+                    color=(*colors.white, 165),
                     inner_border_width=3,
                     outer_border_width=3,
                     outer_border_color=colors.mono_175,
@@ -212,7 +234,7 @@ class Menu_PlayState(BaseState):
                     outest_border_color=colors.white
                 )
                 if self.textbox_text != '':
-                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 420), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 460), pos_anchor=posanchors.center)
 
         else:
             utils.blit(dest=canvas, source=self.freeze_frame)

@@ -470,7 +470,7 @@ def multitween(
         keys: List[str],
         end_values: List[float],
         time: float,
-        ease_type: callable,
+        ease_type: callable | List[callable],
         delay: float = 0,
         on_complete: callable = None
     ) -> None:
@@ -488,30 +488,60 @@ def multitween(
     on_complete = function to call when tween is complete
     '''
     if on_complete is None:
-        for i in range(len(keys)):
-            tween_list.append(tween.to(
-                container=container,
-                key=keys[i],
-                end_value=end_values[i],
-                time=time,
-                ease_type=ease_type,
-                delay=delay
-            ))
+        if isinstance(ease_type, list):
+            for i in range(len(keys)):
+                tween_list.append(tween.to(
+                    container=container,
+                    key=keys[i],
+                    end_value=end_values[i],
+                    time=time,
+                    ease_type=ease_type[i],
+                    delay=delay
+                ))
+        else:
+            for i in range(len(keys)):
+                tween_list.append(tween.to(
+                    container=container,
+                    key=keys[i],
+                    end_value=end_values[i],
+                    time=time,
+                    ease_type=ease_type,
+                    delay=delay
+                ))
     else:
-        for i in range(len(keys) - 1):
+        if isinstance(ease_type, list):
+            for i in range(len(keys) - 1):
+                tween_list.append(tween.to(
+                    container=container,
+                    key=keys[i],
+                    end_value=end_values[i],
+                    time=time,
+                    ease_type=ease_type[i],
+                    delay=delay
+                ))
             tween_list.append(tween.to(
                 container=container,
-                key=keys[i],
-                end_value=end_values[i],
+                key=keys[-1],
+                end_value=end_values[-1],
+                time=time,
+                ease_type=ease_type[-1],
+                delay=delay
+            ).on_complete(on_complete))
+        else:
+            for i in range(len(keys) - 1):
+                tween_list.append(tween.to(
+                    container=container,
+                    key=keys[i],
+                    end_value=end_values[i],
+                    time=time,
+                    ease_type=ease_type,
+                    delay=delay
+                ))
+            tween_list.append(tween.to(
+                container=container,
+                key=keys[-1],
+                end_value=end_values[-1],
                 time=time,
                 ease_type=ease_type,
                 delay=delay
-            ))
-        tween_list.append(tween.to(
-            container=container,
-            key=keys[-1],
-            end_value=end_values[-1],
-            time=time,
-            ease_type=ease_type,
-            delay=delay
-        ).on_complete(on_complete))
+            ).on_complete(on_complete))

@@ -1,14 +1,21 @@
-### How to launch game on Windows
-1. Launch "PLAY GREEDY GARDENS.exe"
+### How to launch game on Windows:
+- Launch "Greedy Gardens - Windows.exe"
 
-### How to setup game on Windows
+### How to launch game on MacOS:
+- Launch "Greedy Gardens - MacOS"
+
+### How to launch game on Linux:
+- Launch "Greedy Gardens - Linux"
+
+
+### How to setup game on Windows:
 1. Start terminal in this root folder.
 2. Enter in terminal: `python -m venv venv`
 3. Enter in terminal: `.\venv\Scripts\activate`
 4. Enter in terminal: `pip install -r requirements.txt` when terminal is in (venv)
 5. Enter in terminal: `python main.py` when terminal is in (venv)
 
-### How to launch the game MacOS and Linux:
+ ### How to setup the game MacOS and Linux:
 1. Start terminal in this root folder.
 2. Enter in terminal: `python3 -m venv venv`
 3. Enter in terminal: `source venv/bin/activate`

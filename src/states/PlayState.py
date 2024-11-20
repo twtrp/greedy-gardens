@@ -117,6 +117,8 @@ class PlayState(BaseState):
         self.transitioning = True
         self.freeze_frame = None
 
+        self.shown_day_title = False
+
         self.is_current_task_event = False
         self.is_choosing = False
 
@@ -525,6 +527,10 @@ class PlayState(BaseState):
                 pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
                 pos_anchor='center'
             ))
+
+        # Day title
+        self.day_title_text = None
+        self.day_title_text_props = None
     
 
     def update(self, dt, events):
@@ -1166,6 +1172,17 @@ class PlayState(BaseState):
             
             # Render gui
 
+            ## Render Day title
+            if self.day_title_text and self.day_title_text_props:
+                self.day_title_text.set_alpha(self.day_title_text_props['alpha'])
+                utils.blit(
+                    dest=canvas,
+                    source=self.day_title_text,
+                    pos=(constants.canvas_width/2, self.day_title_text_props['y']),
+                    pos_anchor='center'
+                )
+            
+            ## Render left white box
             utils.draw_rect(
                 dest=canvas,
                 size=(self.box_width, constants.canvas_height),
@@ -1193,9 +1210,9 @@ class PlayState(BaseState):
 
             ## Render strike in left white box
             for i in range(self.strikes):
-                    utils.blit(dest=canvas, source=self.scaled_live_strike, pos=(40 + i*64, 400), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.scaled_live_strike, pos=(40 + i*64, 400), pos_anchor='topleft')
             for i in range(3 - self.strikes):
-                    utils.blit(dest=canvas, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 400), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 400), pos_anchor='topleft')
             ## Render current task image
             if self.current_path:
                 self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
@@ -1446,7 +1463,40 @@ class PlayState(BaseState):
             )
             self.pixelated_mask_surface = utils.effect_pixelate(surface=self.mask_surface, pixel_size=4)
             utils.blit(dest=canvas, source=self.pixelated_mask_surface)
-
                 
+
     def random_dirt(self):
         return utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite=f"dirt_{random.randint(1, 9)}")
+    
+    
+    def day_title_tween_chain(self):
+        self.shown_day_title = False
+        self.day_title_text_props = {
+            'y': constants.canvas_height/2 + 150,
+            'alpha': 0,
+        }
+        self.day_title_text = utils.get_text(text=f'Day {self.current_day}', font=fonts.lf2, size='huge', color=colors.white)
+        def on_complete1():
+            utils.multitween(
+                tween_list=self.tween_list,
+                container=self.day_title_text_props,
+                keys=['y', 'alpha'],
+                end_values=[constants.canvas_height/2 - 150, 0],
+                time=1,
+                ease_type=[tweencurves.easeInExpo, tweencurves.easeInCubic],
+                on_complete=on_complete2
+            )
+        def on_complete2():
+            self.day_title_text = None
+            self.day_title_text_props = None
+            self.shown_day_title = True
+            self.tween_list.clear()
+        utils.multitween(
+            tween_list=self.tween_list,
+            container=self.day_title_text_props,
+            keys=['y', 'alpha'],
+            end_values=[constants.canvas_height/2, 255],
+            time=1,
+            ease_type=[tweencurves.easeOutExpo, tweencurves.easeOutCubic],
+            on_complete=on_complete1
+        )

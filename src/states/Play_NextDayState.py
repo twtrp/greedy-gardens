@@ -27,14 +27,22 @@ class Play_NextDayState(BaseState):
         self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.lf2, size='large', color=colors.white)
 
         utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
+        self.parent.day_title_tween_chain()
 
     def update(self, dt, events):
         if self.parent.current_day>=5:
+            for index in self.parent.game_board.connected_indices:
+                cell = self.parent.game_board.board[index]
+                if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
+                    cell.fruit = [None if item == getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') else item for item in cell.fruit]
+                if self.parent.seasonal_fruit in cell.fruit:
+                    cell.fruit = [None if item == self.parent.seasonal_fruit else item for item in cell.fruit]
             self.exit_state()
-        for index in self.parent.game_board.connected_indices:
-            cell = self.parent.game_board.board[index]
-            if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
-                cell.fruit = [None if item == getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') else item for item in cell.fruit]
+        else:
+            for index in self.parent.game_board.connected_indices:
+                cell = self.parent.game_board.board[index]
+                if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
+                    cell.fruit = [None if item == getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') else item for item in cell.fruit]
 
         # clear free(temp) path
         for i, rect in enumerate(self.parent.grid_hitboxes):
@@ -50,7 +58,7 @@ class Play_NextDayState(BaseState):
         if self.parent.current_day < self.parent.day:
             for event in events:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE and not self.parent.transitioning:
                         if self.fruit_not_drawn:
                             utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                             self.card_drawn_image_props = {
