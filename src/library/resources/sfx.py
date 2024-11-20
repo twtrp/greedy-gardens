@@ -20,7 +20,7 @@ scroll = {
 }
 appear = {
     'name': '00000008.wav',
-    'volume': 1,
+    'volume': 0.5,
 }
 chicken_crowing = {
     'name': '00000149_rooster.wav',

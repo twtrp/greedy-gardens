@@ -1153,6 +1153,7 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=self.wind_surface)
 
             # Render dim
+            print(self.is_choosing)
             if self.is_choosing:
                 utils.draw_rect(
                     dest=canvas,
@@ -1366,6 +1367,11 @@ class PlayState(BaseState):
                         color=(*colors.black, 0),
                         rect=(1095 + 2, 565 + 2, 96 - 4, 128 - 4)
                     )
+                    pygame.draw.rect(
+                        surface=mask_surface,
+                        color=(*colors.black, 175),
+                        rect=(1165 + 2, 575 + 2, 96 - 4, 128 - 4)
+                    )
                     utils.blit(dest=canvas, source=mask_surface)
                     self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
                     scaled_image = pygame.transform.scale_by(surface=self.magic_fruit2_event_image, factor=3)
@@ -1377,6 +1383,11 @@ class PlayState(BaseState):
                         surface=mask_surface,
                         color=(*colors.black, 0),
                         rect=(1025 + 2, 555 + 2, 96 - 4, 128 - 4)
+                    )
+                    pygame.draw.rect(
+                        surface=mask_surface,
+                        color=(*colors.black, 175),
+                        rect=(1095 + 2, 565 + 2, 96 - 4, 128 - 4)
                     )
                     utils.blit(dest=canvas, source=mask_surface)
                     self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")

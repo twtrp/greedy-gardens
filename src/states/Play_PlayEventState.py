@@ -719,6 +719,7 @@ class Play_PlayEventState(BaseState):
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
                         if button.id == 'reveal path':
+                            self.choosing = False
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
                             for card in self.parent.revealed_path:
@@ -727,6 +728,7 @@ class Play_PlayEventState(BaseState):
                             # print(self.parent.revealed_path)
                             self.played_event = True
                         if button.id == 'reveal event':
+                            self.choosing = False
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.parent.revealed_event = self.parent.deck_event.cards[-4:]
                             # print(self.parent.revealed_event)
