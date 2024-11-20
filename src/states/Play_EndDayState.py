@@ -116,7 +116,7 @@ class Play_EndDayState(BaseState):
                 utils.blit(dest=canvas, source=self.pass_title, pos=(constants.canvas_width/2, 515), pos_anchor='center')
                 
         # Fruit and score
-        if self.parent.curretn_day == 1:
+        if self.parent.current_day == 1:
             utils.blit(dest=canvas, source=self.result_surface_list[0]['surface_fruit'], pos=(constants.canvas_width/2 - 32, constants.canvas_height/2), pos_anchor='center')
             utils.blit(dest=canvas, source=self.result_surface_list[0]['surface'], pos=(constants.canvas_width/2 + 32, constants.canvas_height/2), pos_anchor='center')
         else:

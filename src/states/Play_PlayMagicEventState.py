@@ -169,6 +169,10 @@ class Play_PlayMagicEventState(BaseState):
                     'text': f'Day {self.parent.current_day + 1}',
                     'fruit': getattr(self.parent, f'day{self.parent.current_day + 1}_fruit'),
                 })
+            else:
+                self.redraw_button_option_list.append({
+                    'id': 'dummy',
+                })
             self.redraw_button_option_list.append({
                 'id': 'seasonal fruit',
                 'text': 'Seasonal',
@@ -181,6 +185,15 @@ class Play_PlayMagicEventState(BaseState):
             })
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
+                if option['id'] == 'dummy':
+                    self.redraw_button_option_surface_list.append({
+                        'id': 'dummy',
+                        'surface': None,
+                        'surface_fruit': None,
+                        'scale': 1.0,
+                        'scale_fruit': 3.0
+                    })
+                    continue
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
                 fruit = self.parent.fruit_sprites[option['fruit']]
                 self.redraw_button_option_surface_list.append({
@@ -1128,6 +1141,8 @@ class Play_PlayMagicEventState(BaseState):
             elif self.parent.current_event == 'event_redraw':
                 utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.redraw_button_option_surface_list):
+                    if option['id'] == 'dummy':
+                        continue
                     scaled_redraw_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     if option["id"] == "do nothing":
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2, 265 + i*75), pos_anchor=posanchors.center)
