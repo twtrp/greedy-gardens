@@ -70,15 +70,20 @@ class Play_PlayMagicEventState(BaseState):
         )
 
         self.parent.is_current_task_event = False
-        self.load_assets()
 
-
+        # event redraw
         self.fruit_drawn_image_props = {
             'x': 1080,
             'y': 130,
             'scale': 1,
         }
 
+        # event keep
+        self.card_path1_image_scale = 1
+        self.card_path2_image_scale = 1
+        self.card_path3_image_scale = 1
+
+        self.load_assets()
 
     def load_assets(self):
         # update state
@@ -89,9 +94,9 @@ class Play_PlayMagicEventState(BaseState):
         self.parent.playing_magic_event = True
 
         # Load text
-        self.choice_keep_title = utils.get_text(text='Choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_175)
-        self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_175)
-        self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_175)
+        self.choice_keep_title = utils.get_text(text='Choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_205)
+        self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_205)
+        self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_205)
         # self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
         self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.white)
         self.hover_to_view_surface = [{
@@ -409,12 +414,24 @@ class Play_PlayMagicEventState(BaseState):
                     for button in self.button_list:
                         button.update(dt=dt, events=events)
                         if button.hovered:
-                            if button.id == 'view board':
+                            if button.id == 'path 1':
+                                self.card_path1_image_scale = min(self.card_path1_image_scale + 2.4*dt, 1.1)
+                            elif button.id == 'path 2':
+                                self.card_path2_image_scale = min(self.card_path2_image_scale + 2.4*dt, 1.1)
+                            elif button.id == 'path 3':
+                                self.card_path3_image_scale = min(self.card_path3_image_scale + 2.4*dt, 1.1)
+                            elif button.id == 'view board':
                                 self.choosing = False
                             if button.hover_cursor is not None:
                                 self.cursor = button.hover_cursor
                         else:
-                            if button.id == 'view board':
+                            if button.id == 'path 1':
+                                self.card_path1_image_scale = max(self.card_path1_image_scale - 2.4*dt, 1.0)
+                            elif button.id == 'path 2':
+                                self.card_path2_image_scale = max(self.card_path2_image_scale - 2.4*dt, 1.0)
+                            elif button.id == 'path 3':
+                                self.card_path3_image_scale = max(self.card_path3_image_scale - 2.4*dt, 1.0)
+                            elif button.id == 'view board':
                                 self.choosing = True
                         if button.clicked:
                             if button.id == 'path 1':
@@ -1082,9 +1099,9 @@ class Play_PlayMagicEventState(BaseState):
             if self.parent.current_event == 'event_keep':
                 utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 if self.card_path3_image:
-                    scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2)
-                    scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2)
-                    scaled_card_path3 = pygame.transform.scale_by(surface=self.card_path3_image, factor=2)
+                    scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2*self.card_path1_image_scale)
+                    scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2*self.card_path2_image_scale)
+                    scaled_card_path3 = pygame.transform.scale_by(surface=self.card_path3_image, factor=2*self.card_path3_image_scale)
                     utils.blit(dest=canvas, source=scaled_card_path1, pos=(constants.canvas_width/2 - 210, constants.canvas_height/2), pos_anchor='center')
                     utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     utils.blit(dest=canvas, source=scaled_card_path3, pos=(constants.canvas_width/2 + 210, constants.canvas_height/2), pos_anchor='center')

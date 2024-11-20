@@ -48,5 +48,5 @@ dig = {
 }
 dirt = {
     'name': '000000f4_dirtyHit.wav',
-    'volume': 2,
+    'volume': 1.5,
 }
