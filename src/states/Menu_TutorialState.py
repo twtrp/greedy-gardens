@@ -88,7 +88,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
-                    text="Seasonal fruits are bonus scores tallied at the end.",
+                    text="Seasonal fruits are bonus objectives tallied at the end.",
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
             ],
