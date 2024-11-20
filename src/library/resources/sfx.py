@@ -1,6 +1,6 @@
 ambience = {
     'name': 'ambience.ogg',
-    'volume': 1,
+    'volume': 0.5,
 }
 deselect = {
     'name': '00000002_bigDeSelect.wav',
