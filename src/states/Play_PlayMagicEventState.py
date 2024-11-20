@@ -156,6 +156,16 @@ class Play_PlayMagicEventState(BaseState):
                     pos_anchor=posanchors.center
                 ))
         elif self.parent.current_event == 'event_redraw':
+            self.redraw_button_option_list = []
+            if not self.parent.current_day < self.parent.day:
+                self.redraw_button_option_list.append({
+                    'id': 'dummy',
+            })
+            self.redraw_button_option_list.append({
+                'id': 'today fruit',
+                'text': f'Day {self.parent.current_day}',
+                'fruit': getattr(self.parent, f'day{self.parent.current_day}_fruit'),
+            })
             self.redraw_button_option_list = [
                 {
                     'id': 'today fruit',
@@ -168,10 +178,6 @@ class Play_PlayMagicEventState(BaseState):
                     'id': 'tomorrow fruit',
                     'text': f'Day {self.parent.current_day + 1}',
                     'fruit': getattr(self.parent, f'day{self.parent.current_day + 1}_fruit'),
-                })
-            else:
-                self.redraw_button_option_list.append({
-                    'id': 'dummy',
                 })
             self.redraw_button_option_list.append({
                 'id': 'seasonal fruit',

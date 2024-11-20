@@ -132,7 +132,7 @@ class Play_ResultStage(BaseState):
             height=50,
             pos=(constants.canvas_width/2, 695),
             pos_anchor=posanchors.center,
-            hover_cursor=cursors.hand,
+            hover_cursor=cursors.normal
         ))
 
         # for button in self.button_list:
