@@ -1153,7 +1153,7 @@ class PlayState(BaseState):
             utils.blit(dest=canvas, source=self.wind_surface)
 
             # Render dim
-            print(self.is_choosing)
+            # print(self.is_choosing)
             if self.is_choosing:
                 utils.draw_rect(
                     dest=canvas,
