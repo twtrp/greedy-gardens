@@ -52,6 +52,7 @@ class Play_NextDayState(BaseState):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         if self.fruit_not_drawn:
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                             self.card_drawn_image_props = {
                                 'x': 1080,
                                 'y': 130,

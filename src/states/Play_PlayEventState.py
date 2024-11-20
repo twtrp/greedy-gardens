@@ -759,6 +759,8 @@ class Play_PlayEventState(BaseState):
                                     not self.parent.game_board.board[button.id].is_the_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
+                                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
                                         self.selected_cell = None
                                         self.played_event = True
