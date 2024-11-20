@@ -547,7 +547,7 @@ class PlayState(BaseState):
                         if button.id == 'resume':
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.paused = False
-                        elif button.id == 'quit':
+                        elif button.id == 'quit' and not self.transitioning:
                             self.transitioning = True
                             self.game.music_channel.fadeout(1500)
                             utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
@@ -1370,7 +1370,12 @@ class PlayState(BaseState):
                     pygame.draw.rect(
                         surface=mask_surface,
                         color=(*colors.black, 175),
-                        rect=(1165 + 2, 575 + 2, 96 - 4, 128 - 4)
+                        rect=(1165, 575, 96 - 4, 128 - 4)
+                    )
+                    pygame.draw.rect(
+                        surface=mask_surface,
+                        color=(*colors.black, 0),
+                        rect=(1165, 575, 2, 2)
                     )
                     utils.blit(dest=canvas, source=mask_surface)
                     self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
@@ -1387,7 +1392,12 @@ class PlayState(BaseState):
                     pygame.draw.rect(
                         surface=mask_surface,
                         color=(*colors.black, 175),
-                        rect=(1095 + 2, 565 + 2, 96 - 4, 128 - 4)
+                        rect=(1095, 565, 96 - 4, 128 - 4)
+                    )
+                    pygame.draw.rect(
+                        surface=mask_surface,
+                        color=(*colors.black, 0),
+                        rect=(1095, 565, 2, 2)
                     )
                     utils.blit(dest=canvas, source=mask_surface)
                     self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
