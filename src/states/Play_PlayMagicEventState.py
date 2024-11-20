@@ -1064,16 +1064,16 @@ class Play_PlayMagicEventState(BaseState):
             utils.blit(dest=canvas, source=self.select_frame, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.choosing:
-            utils.draw_rect(
-                dest=canvas,
-                size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
-                pos=(self.parent.box_width, 0),
-                pos_anchor='topleft',
-                color=(*colors.black, 128), # 50% transparency
-                inner_border_width=0,
-                outer_border_width=0,
-                outer_border_color=colors.black
-            )
+            # utils.draw_rect(
+            #     dest=canvas,
+            #     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+            #     pos=(self.parent.box_width, 0),
+            #     pos_anchor='topleft',
+            #     color=(*colors.black, 128), # 50% transparency
+            #     inner_border_width=0,
+            #     outer_border_width=0,
+            #     outer_border_color=colors.black
+            # )
             
             scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
             utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
@@ -1123,7 +1123,6 @@ class Play_PlayMagicEventState(BaseState):
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.reveal_button_option_surface_list):
                     scaled_reveal_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                    utils.blit(dest=canvas, source=scaled_reveal_button, pos=(constants.canvas_width/2, 250 + i*65), pos_anchor=posanchors.center)
                     utils.blit(
                         dest=canvas,
                         source=scaled_reveal_button,
