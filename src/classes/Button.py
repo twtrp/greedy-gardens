@@ -36,25 +36,13 @@ class Button:
        self.set_pos(self.pos, self.pos_anchor)
 
    def create_surface(self, surface):
-       canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
-       screen_aspect_ratio = self.game.screen_width / self.game.screen_height
+       self.scale_x = self.game.screen_width / constants.canvas_width
+       self.scale_y = self.game.screen_height / constants.canvas_height
+       self.padding_x = self.para_padding_x * self.scale_x
+       self.padding_y = self.para_padding_y * self.scale_y
 
-       if screen_aspect_ratio > canvas_aspect_ratio:
-           scale_factor = self.game.screen_height / constants.canvas_height
-           offset_x = (self.game.screen_width - int(constants.canvas_width * scale_factor)) // 2
-           scale_x = scale_factor
-           scale_y = scale_factor
-       else:
-           scale_factor = self.game.screen_width / constants.canvas_width
-           offset_y = (self.game.screen_height - int(constants.canvas_height * scale_factor)) // 2
-           scale_x = scale_factor
-           scale_y = scale_factor
-
-       self.padding_x = self.para_padding_x * scale_x
-       self.padding_y = self.para_padding_y * scale_y
-
-       actual_width = (self.para_width * scale_x if self.para_width != 0 else surface.get_width() * scale_x) + 2 * self.padding_x
-       actual_height = (self.para_height * scale_y if self.para_height != 0 else surface.get_height() * scale_y) + 2 * self.padding_y
+       actual_width = (self.para_width * self.scale_x if self.para_width != 0 else surface.get_width() * self.scale_x) + 2 * self.padding_x
+       actual_height = (self.para_height * self.scale_y if self.para_height != 0 else surface.get_height() * self.scale_y) + 2 * self.padding_y
 
        self.surface = pygame.Surface((actual_width, actual_height), pygame.SRCALPHA)
        button_surface = surface if surface is not None else pygame.Surface((self.para_width, self.para_height))
@@ -64,20 +52,8 @@ class Button:
        self.rect = self.surface.get_rect()
 
    def update_scale(self):
-       canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
-       screen_aspect_ratio = self.game.screen_width / self.game.screen_height
-
-       if screen_aspect_ratio > canvas_aspect_ratio:
-           scale_factor = self.game.screen_height / constants.canvas_height
-           scale_x = scale_factor
-           scale_y = scale_factor
-       else:
-           scale_factor = self.game.screen_width / constants.canvas_width
-           scale_x = scale_factor
-           scale_y = scale_factor
-
-       self.scale_x = scale_x
-       self.scale_y = scale_y
+       self.scale_x = self.game.screen_width / constants.canvas_width
+       self.scale_y = self.game.screen_height / constants.canvas_height
        self.padding_x = self.para_padding_x * self.scale_x
        self.padding_y = self.para_padding_y * self.scale_y
 
@@ -85,30 +61,16 @@ class Button:
        self.enable_click = enable
 
    def set_pos(self, pos: tuple, pos_anchor: str):
-       canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
-       screen_aspect_ratio = self.game.screen_width / self.game.screen_height
-
-       if screen_aspect_ratio > canvas_aspect_ratio:
-           scale_factor = self.game.screen_height / constants.canvas_height
-           offset_x = (self.game.screen_width - int(constants.canvas_width * scale_factor)) // 2
-           scaled_x = pos[0] * scale_factor + offset_x
-           scaled_y = pos[1] * scale_factor
-       else:
-           scale_factor = self.game.screen_width / constants.canvas_width
-           offset_y = (self.game.screen_height - int(constants.canvas_height * scale_factor)) // 2
-           scaled_x = pos[0] * scale_factor
-           scaled_y = pos[1] * scale_factor + offset_y
-
-       setattr(self.rect, pos_anchor, (scaled_x, scaled_y))
+       setattr(self.rect, pos_anchor, (pos[0] * self.scale_x, pos[1] * self.scale_y))
 
    def check_collision(self, pos):
        return self.rect.collidepoint(pos)
 
    def update(self, dt, events):
-       new_canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
-       new_screen_aspect_ratio = self.game.screen_width / self.game.screen_height
+       new_scale_x = self.game.screen_width / constants.canvas_width
+       new_scale_y = self.game.screen_height / constants.canvas_height
 
-       if new_screen_aspect_ratio != self.scale_x or new_screen_aspect_ratio != self.scale_y:
+       if new_scale_x != self.scale_x or new_scale_y != self.scale_y:
            self.update_scale()
            self.create_surface(self.surface)
            self.set_pos(self.pos, self.pos_anchor)
