@@ -8,7 +8,7 @@ class Game:
         self.settings = self.settings_manager.load_all_settings()
 
         self.fps_cap = self.settings['fps_cap'] + 1
-        self.title = 'Greedy Gardens'
+        self.title = 'Greedy Gardens 1.0.1'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
@@ -132,7 +132,6 @@ class Game:
         while True:
             try:
                 # pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
-                pygame.display.set_caption(self.title)
                 dt = self.clock.tick(self.fps_cap)/1000.0
                 events = pygame.event.get()
                 self.update(dt=dt, events=events)
