@@ -4,3 +4,5 @@ data/settings.lst
 windowsvenv/
 linuxvenv/
 macvenv/
+build/
+dist/
