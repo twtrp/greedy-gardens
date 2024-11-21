@@ -97,13 +97,13 @@ class Game:
             self.state_stack[-1].render(canvas=self.canvas)
 
         # Render canvas to screen
-        if (constants.canvas_width, constants.canvas_height) != (self.screen_width, self.screen_height):
-            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
-            utils.blit(dest=self.screen, source=scaled_canvas)
-        else:
-            utils.blit(dest=self.screen, source=self.canvas)
+        # if (constants.canvas_width, constants.canvas_height) != (self.screen_width, self.screen_height):
+        #     scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
+        #     utils.blit(dest=self.screen, source=scaled_canvas)
+        # else:
+        #     utils.blit(dest=self.screen, source=self.canvas)
 
-        self.screen.fill(color=colors.black)
+        # self.screen.fill(color=colors.black)
 
         canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
         screen_aspect_ratio = self.screen_width / self.screen_height
