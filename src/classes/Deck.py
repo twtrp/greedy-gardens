@@ -81,8 +81,8 @@ class Deck:
         #         name.append('path_strike_NES')
         #         name.append('path_strike_WES')
         # elif self.deck_type == 'event':
-        #     for i in range(16):
-        #         name.append('event_free')
+            # for i in range(16):
+            #     name.append('event_free')
 
 
 

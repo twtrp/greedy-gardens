@@ -27,7 +27,8 @@ class Play_NextDayState(BaseState):
         self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.lf2, size='large', color=colors.white)
 
         utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
-        self.parent.day_title_tween_chain()
+        if self.parent.current_day < 5:
+            self.parent.day_title_tween_chain()
 
     def update(self, dt, events):
         if self.parent.current_day>=5:
@@ -58,7 +59,7 @@ class Play_NextDayState(BaseState):
         if self.parent.current_day < self.parent.day:
             for event in events:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and not self.parent.transitioning:
+                    if event.key == pygame.K_SPACE and self.parent.shown_day_title:
                         if self.fruit_not_drawn:
                             utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
                             self.card_drawn_image_props = {
