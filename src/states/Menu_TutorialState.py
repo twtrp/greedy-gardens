@@ -76,10 +76,6 @@ class Menu_TutorialState(BaseState):
                     font=fonts.lf2, size='small', color=colors.yellow_light
                 ),
                 utils.get_text(
-                    text="There are 6 fruit types: 4 daily, 1 seasonal, 1 unused.",
-                    font=fonts.lf2, size='tiny', color=colors.white
-                ),
-                utils.get_text(
                     text="Each day you can only score a specific fruit.",
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
@@ -88,7 +84,11 @@ class Menu_TutorialState(BaseState):
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
-                    text="Seasonal fruits are bonus objectives tallied at the end.",
+                    text="Fruits connected to Farmhouse are scored when a day ends.",
+                    font=fonts.lf2, size='tiny', color=colors.white
+                ),
+                utils.get_text(
+                    text="Seasonal fruits are bonus objectives scored when the game ends.",
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
             ],
@@ -211,7 +211,7 @@ class Menu_TutorialState(BaseState):
                 y_offset = 0
 
         start_x = 50
-        start_y = 430
+        start_y = 420
         y_offset = 0
         for i, text in enumerate(self.tutorial_surface_list[2]):
             utils.blit(dest=canvas, source=text, pos=(start_x, start_y + i*40 + y_offset), pos_anchor=posanchors.topleft)

@@ -13,7 +13,7 @@ class Game:
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
         pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
-        pygame.display.set_caption(self.title+' (0 FPS)')
+        pygame.display.set_caption(self.title)
         self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         self.display_info = pygame.display.Info()
         if self.settings['fullscreen']:
@@ -103,26 +103,26 @@ class Game:
         else:
             utils.blit(dest=self.screen, source=self.canvas)
 
-        # self.screen.fill(color=colors.black)
+        self.screen.fill(color=colors.black)
 
-        # canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
-        # screen_aspect_ratio = self.screen_width / self.screen_height
+        canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
+        screen_aspect_ratio = self.screen_width / self.screen_height
 
-        # if screen_aspect_ratio > canvas_aspect_ratio:
-        #     scale_factor = self.screen_height / constants.canvas_height
-        #     scaled_width = int(constants.canvas_width * scale_factor)
-        #     scaled_height = self.screen_height
-        #     offset_x = (self.screen_width - scaled_width) // 2
-        #     offset_y = 0
-        # else:
-        #     scale_factor = self.screen_width / constants.canvas_width
-        #     scaled_width = self.screen_width
-        #     scaled_height = int(constants.canvas_height * scale_factor)
-        #     offset_x = 0
-        #     offset_y = (self.screen_height - scaled_height) // 2
+        if screen_aspect_ratio > canvas_aspect_ratio:
+            scale_factor = self.screen_height / constants.canvas_height
+            scaled_width = int(constants.canvas_width * scale_factor)
+            scaled_height = self.screen_height
+            offset_x = (self.screen_width - scaled_width) // 2
+            offset_y = 0
+        else:
+            scale_factor = self.screen_width / constants.canvas_width
+            scaled_width = self.screen_width
+            scaled_height = int(constants.canvas_height * scale_factor)
+            offset_x = 0
+            offset_y = (self.screen_height - scaled_height) // 2
 
-        # scaled_canvas = pygame.transform.scale(self.canvas, (scaled_width, scaled_height))
-        # self.screen.blit(scaled_canvas, (offset_x, offset_y))
+        scaled_canvas = pygame.transform.scale(self.canvas, (scaled_width, scaled_height))
+        self.screen.blit(scaled_canvas, (offset_x, offset_y))
         
         # Update display
         pygame.display.update()
@@ -131,7 +131,8 @@ class Game:
     def game_loop(self):
         while True:
             try:
-                pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
+                # pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
+                pygame.display.set_caption(self.title)
                 dt = self.clock.tick(self.fps_cap)/1000.0
                 events = pygame.event.get()
                 self.update(dt=dt, events=events)
