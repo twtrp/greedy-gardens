@@ -21,20 +21,20 @@ class Play_ResultStage(BaseState):
         sql_cursor = sql_conn.cursor()
         if self.setted_seed:
             # Check if seed exists
-            sql_cursor.execute('SELECT COUNT(*) FROM records WHERE seed = ?', (self.parent.seed,))
+            sql_cursor.execute(f'SELECT COUNT(*) FROM records WHERE seed = {self.parent.seed} AND seed_type = "Set Seed"')
             seed_exists = sql_cursor.fetchone()[0] > 0
             if not seed_exists:
                 self.high_score = self.parent.total_score
             else:
-                sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed = ?', (self.parent.seed,))
+                sql_cursor.execute(f'SELECT MAX(score) FROM records WHERE seed = {self.parent.seed} AND seed_type = "Set Seed"')
                 self.high_score = sql_cursor.fetchone()[0]
         else:
-            sql_cursor.execute('SELECT COUNT(*) FROM records')
+            sql_cursor.execute('SELECT COUNT(*) FROM records WHERE seed_type = "Random Seed"')
             records_exist = sql_cursor.fetchone()[0] > 0
             if not records_exist:
                 self.high_score = self.parent.total_score
             else:
-                sql_cursor.execute('SELECT MAX(score) FROM records')
+                sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Random Seed"')
                 self.high_score = sql_cursor.fetchone()[0]
                 
         sql_cursor.close()
