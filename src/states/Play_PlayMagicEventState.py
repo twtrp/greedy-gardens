@@ -1170,12 +1170,13 @@ class Play_PlayMagicEventState(BaseState):
                     )
 
         if self.parent.current_event == 'event_remove':
-            for i, option in enumerate(self.remove_button_option_surface_list):
-                if self.selected_cell or self.selected_cell_2:
-                    scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
-                else:
-                    scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
-                utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
+            if self.shown_event:
+                for i, option in enumerate(self.remove_button_option_surface_list):
+                    if self.selected_cell or self.selected_cell_2:
+                        scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
+                    else:
+                        scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
+                    utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
 
 
         if self.selecting_path:

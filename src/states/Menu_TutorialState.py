@@ -80,7 +80,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
-                    text="You only know today's and tomorrow's fruit.",
+                    text="You only know today's, tomorrow's, and seasonal fruit.",
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
@@ -120,7 +120,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
-                    text="Events that can either help or disrupt your plans.",
+                    text="Every event can either help or disrupt your plans.",
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
@@ -142,7 +142,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
                 utils.get_text(
-                    text="Magic Fruits also provide 1 bonus score for that day",
+                    text="Magic Fruits also provide 1 bonus score for that day.",
                     font=fonts.lf2, size='tiny', color=colors.white
                 ),
             ],
