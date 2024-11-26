@@ -6,6 +6,11 @@ class Play_NextDayState(BaseState):
         BaseState.__init__(self, game, parent, stack)
 
         # print("Next Day")
+        
+        # Update score if fail to make more than yesterday
+        if 5> self.parent.current_day > 1:
+            if getattr(self.parent, f'final_day{self.parent.current_day}_score') <= getattr(self.parent, f'final_day{self.parent.current_day - 1}_score'):
+                setattr(self.parent, f'final_day{self.parent.current_day}_score', getattr(self.parent, f'final_day{self.parent.current_day}_score') if getattr(self.parent, f'final_day{self.parent.current_day}_score') < 0 else 0)
  
         # update parent value
         self.parent.strikes = 0
@@ -21,8 +26,8 @@ class Play_NextDayState(BaseState):
         self.parent.left_box_none_text = utils.get_text(text=f'Draw day {self.parent.current_day + 1} fruit', font=fonts.lf2, size='tiny', color=colors.white)
         self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.lf2, size='large', color=colors.white)
 
-        utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
         if self.parent.current_day < 5:
+            utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
             self.parent.day_title_tween_chain()
 
     def update(self, dt, events):
