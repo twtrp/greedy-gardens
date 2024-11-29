@@ -102,27 +102,6 @@ class Game:
             utils.blit(dest=self.screen, source=scaled_canvas)
         else:
             utils.blit(dest=self.screen, source=self.canvas)
-
-
-        # self.screen.fill(color=colors.black)
-        # canvas_aspect_ratio = constants.canvas_width / constants.canvas_height
-        # screen_aspect_ratio = self.screen_width / self.screen_height
-
-        # if screen_aspect_ratio > canvas_aspect_ratio:
-        #     scale_factor = self.screen_height / constants.canvas_height
-        #     scaled_width = int(constants.canvas_width * scale_factor)
-        #     scaled_height = self.screen_height
-        #     offset_x = (self.screen_width - scaled_width) // 2
-        #     offset_y = 0
-        # else:
-        #     scale_factor = self.screen_width / constants.canvas_width
-        #     scaled_width = self.screen_width
-        #     scaled_height = int(constants.canvas_height * scale_factor)
-        #     offset_x = 0
-        #     offset_y = (self.screen_height - scaled_height) // 2
-
-        # scaled_canvas = pygame.transform.scale(self.canvas, (scaled_width, scaled_height))
-        # self.screen.blit(scaled_canvas, (offset_x, offset_y))
         
         # Update display
         pygame.display.update()
