@@ -20,6 +20,18 @@ class Play_EndDayState(BaseState):
         elif self.current_day == 4:
             self.current_score = self.parent.day4_score
             self.current_fruit = self.parent.day4_fruit
+
+        # Update score if fail to make more than yesterday
+        if self.parent.current_day > 1:
+            current_score = getattr(self.parent, f'final_day{self.parent.current_day}_score')
+            previous_score = getattr(self.parent, f'final_day{self.parent.current_day - 1}_score')
+
+            # If today's score is not higher than yesterday's
+            if current_score <= previous_score:
+                # Replace today's score with 0 (or keep it if already negative)
+                new_score = current_score if current_score < 0 else 0
+                setattr(self.parent, f'final_day{self.parent.current_day}_score', new_score)
+                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
             
         self.button_list = []
 

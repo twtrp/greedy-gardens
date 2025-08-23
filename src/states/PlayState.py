@@ -48,8 +48,8 @@ class PlayState(BaseState):
         self.drawn_cards_event = []
  
         # value
-        self.day1_score = 0
-        self.day2_score = 0
+        self.day1_score = 2
+        self.day2_score = 1
         self.day3_score = 0
         self.day4_score = 0
         self.seasonal_score = 0
@@ -104,6 +104,7 @@ class PlayState(BaseState):
         self.current_day = 1
         self.strikes = 0
         self.is_striking = False
+        self.current_turn = 0
 
         self.load_assets()
 
@@ -313,7 +314,7 @@ class PlayState(BaseState):
         self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=3)
 
         # right gui
-        self.right_box_title = utils.get_text(text='Cards', font=fonts.lf2, size='small', color=colors.white)
+        self.right_box_title = utils.get_text(text='Turn 0', font=fonts.lf2, size='small', color=colors.white)
 
         self.deck_list = [
             {'text': 'Fruit',},
@@ -684,6 +685,7 @@ class PlayState(BaseState):
                     else:
                         day_colors[f"day{i}_color"] = colors.mono_150
                 
+                #Score calculation
                 if self.current_day < 2:
                     self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
                 if self.current_day < 3:
@@ -694,7 +696,6 @@ class PlayState(BaseState):
                     self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
                 self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
                 self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
-                
 
                 self.score_list = [
                     {'text': 'Day 1', 'color': day_colors['day1_color'], 'amount': self.final_day1_score},

@@ -141,17 +141,7 @@ class Play_ResultStage(BaseState):
         
         sql_conn = sqlite3.connect('data/records.sqlite')
         sql_cursor = sql_conn.cursor()
-        if self.setted_seed:
-            sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed = ?', (self.parent.seed,))
-            result = sql_cursor.fetchone()
-            current_high_score = result[0] if result[0] is not None else 0
-            
-            if self.parent.total_score > current_high_score:
-                self.high_score = self.parent.total_score
-                self.new_record = True
-            else:
-                self.high_score = current_high_score
-                
+        if self.setted_seed: 
             # Insert the new score
             sql_cursor.execute(
                 'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
@@ -159,22 +149,21 @@ class Play_ResultStage(BaseState):
             )
 
         else:
-            # Check highest score for random seeds
-            sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Random Seed"')
-            result = sql_cursor.fetchone()
-            current_high_score = result[0] if result[0] is not None else 0
-            
-            if self.parent.total_score > current_high_score:
-                self.high_score = self.parent.total_score
-                self.new_record = True
-            else:
-                self.high_score = current_high_score
-                
             # Insert the new score
             sql_cursor.execute(
                 'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
                 (self.parent.total_score, self.parent.seed, 'Random Seed')
             )
+
+        # Check overall highest score
+        sql_cursor.execute('SELECT MAX(score) FROM records')
+        result = sql_cursor.fetchone()
+        current_high_score = result[0] if result[0] is not None else 0
+        if self.parent.total_score > current_high_score:
+            self.high_score = self.parent.total_score
+            self.new_record = True
+        else:
+            self.high_score = current_high_score
 
         sql_conn.commit()
         sql_cursor.close()

@@ -41,7 +41,6 @@ class Play_PlayEventState(BaseState):
 
         self.card_path1_image = None
         self.card_path2_image = None
-        self.card_path3_image = None
         self.fruit_drawn_image = None
 
         self.select_frame = self.parent.selecting_tile
@@ -56,7 +55,6 @@ class Play_PlayEventState(BaseState):
         # event keep
         self.card_path1_image_scale = 1
         self.card_path2_image_scale = 1
-        self.card_path3_image_scale = 1
 
         self.load_assets()
 
@@ -314,19 +312,14 @@ class Play_PlayEventState(BaseState):
                 if not self.drawn_keep:
                     self.card_path1 = self.parent.deck_path.draw_card()
                     self.card_path2 = self.parent.deck_path.draw_card()
-                    self.card_path3 = self.parent.deck_path.draw_card()
                     self.card_path1_image = self.parent.cards_path_sprites[f"card_{self.card_path1.card_name}"]
                     self.card_path2_image = self.parent.cards_path_sprites[f"card_{self.card_path2.card_name}"]
-                    self.card_path3_image = self.parent.cards_path_sprites[f"card_{self.card_path3.card_name}"]
                     self.card_path_button_option_list = [
                         {
                             'id': 'path 1',
                         },
                         {
                             'id': 'path 2',
-                        },
-                        {
-                            'id': 'path 3',
                         },
                     ]
                     for i, option in enumerate(self.card_path_button_option_list):
@@ -335,7 +328,7 @@ class Play_PlayEventState(BaseState):
                             id=option['id'],
                             width=192,
                             height=256,
-                            pos=(constants.canvas_width/2 - 210 + i*210, constants.canvas_height/2),
+                            pos=(constants.canvas_width/2 - 105 + i*210, constants.canvas_height/2),
                             pos_anchor=posanchors.center
                         ))
                     # self.parent.current_path = self.card_drawn.card_name
@@ -348,8 +341,6 @@ class Play_PlayEventState(BaseState):
                                 self.card_path1_image_scale = min(self.card_path1_image_scale + 2.4*dt, 1.1)
                             elif button.id == 'path 2':
                                 self.card_path2_image_scale = min(self.card_path2_image_scale + 2.4*dt, 1.1)
-                            elif button.id == 'path 3':
-                                self.card_path3_image_scale = min(self.card_path3_image_scale + 2.4*dt, 1.1)
                             elif button.id == 'view board':
                                 self.choosing = False
                             if button.hover_cursor is not None:
@@ -359,8 +350,6 @@ class Play_PlayEventState(BaseState):
                                 self.card_path1_image_scale = max(self.card_path1_image_scale - 2.4*dt, 1.0)
                             elif button.id == 'path 2':
                                 self.card_path2_image_scale = max(self.card_path2_image_scale - 2.4*dt, 1.0)
-                            elif button.id == 'path 3':
-                                self.card_path3_image_scale = max(self.card_path3_image_scale - 2.4*dt, 1.0)
                             elif button.id == 'view board':
                                 self.choosing = True
                         if button.clicked:
@@ -374,12 +363,6 @@ class Play_PlayEventState(BaseState):
                                 # print(f'select path 2')
                                 utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 self.parent.deck_path.cards.append(self.card_path2)
-                                self.choosing = False
-                                self.played_event = True
-                            elif button.id == 'path 3':
-                                # print(f'select path 3')
-                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                                self.parent.deck_path.cards.append(self.card_path3)
                                 self.choosing = False
                                 self.played_event = True
 
@@ -842,13 +825,11 @@ class Play_PlayEventState(BaseState):
             
             if self.parent.current_event == 'event_keep':
                 utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
-                if self.card_path3_image:
+                if self.card_path2_image:
                     scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2*self.card_path1_image_scale)
                     scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2*self.card_path2_image_scale)
-                    scaled_card_path3 = pygame.transform.scale_by(surface=self.card_path3_image, factor=2*self.card_path3_image_scale)
-                    utils.blit(dest=canvas, source=scaled_card_path1, pos=(constants.canvas_width/2 - 210, constants.canvas_height/2), pos_anchor='center')
-                    utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
-                    utils.blit(dest=canvas, source=scaled_card_path3, pos=(constants.canvas_width/2 + 210, constants.canvas_height/2), pos_anchor='center')
+                    utils.blit(dest=canvas, source=scaled_card_path1, pos=(constants.canvas_width/2 - 105, constants.canvas_height/2), pos_anchor='center')
+                    utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2 + 105, constants.canvas_height/2), pos_anchor='center')
 
             elif self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
