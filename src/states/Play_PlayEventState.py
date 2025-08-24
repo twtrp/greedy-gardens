@@ -547,6 +547,8 @@ class Play_PlayEventState(BaseState):
                                 ease_type=tweencurves.easeOutQuint,
                                 on_complete=on_complete
                             )
+
+                        random.seed(self.parent.seed)
                             
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
