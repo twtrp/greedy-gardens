@@ -29,3 +29,13 @@ lf7 = {
     },
     'pixel_size_divisor': 8
 }
+
+minecraftia = {
+    'file': 'Minecraftia-Regular.ttf',
+    'sizes': {
+        'small': 16,
+        'medium': 24,
+        'large': 36,
+    },
+    'pixel_size_divisor': 8
+}

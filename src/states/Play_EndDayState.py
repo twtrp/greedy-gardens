@@ -32,6 +32,8 @@ class Play_EndDayState(BaseState):
                 new_score = current_score if current_score < 0 else 0
                 setattr(self.parent, f'final_day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
+                # Set penalty flag to prevent score recalculation
+                setattr(self.parent, f'day{self.parent.current_day}_penalty_applied', True)
             
         self.button_list = []
 
@@ -67,7 +69,7 @@ class Play_EndDayState(BaseState):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='large', color=colors.white)
                 fruit = self.parent.fruit_sprites[option['fruit']]
                 scaled_fruit_image = pygame.transform.scale_by(surface=fruit, factor=3)
-                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.white)
+                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.mono_35)
                 if i == 0 and self.parent.current_day != 1:
                     glow_fruit_image = utils.effect_grayscale(surface=glow_fruit_image)
                 self.result_surface_list.append({

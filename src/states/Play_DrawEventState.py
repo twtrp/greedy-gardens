@@ -1,5 +1,6 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
+from src.classes.Button import Button
  
 
 
@@ -41,6 +42,24 @@ class Play_DrawEventState(BaseState):
                         self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
                         if len(self.parent.revealed_event) > 0:
                             self.parent.revealed_event.pop()
+                            # Update buttons for revealed event cards after removing revealed event
+                            # Remove existing revealed event buttons
+                            self.parent.button_list = [btn for btn in self.parent.button_list if not btn.id.startswith('revealed_event_individual_')]
+                            
+                            # Add new buttons for each revealed event card with larger hitboxes to eliminate gaps
+                            for i, card in enumerate(self.parent.revealed_event):
+                                # Create a larger invisible surface for better hover detection
+                                button_surface = pygame.Surface((self.parent.revealed_event_button_width, self.parent.revealed_event_button_height), pygame.SRCALPHA)
+                                button_x = constants.canvas_width - self.parent.box_width - self.parent.revealed_event_button_width
+                                button_y = self.parent.revealed_event_button_y_base + i * self.parent.revealed_event_button_y_spacing
+                                self.parent.button_list.append(Button(
+                                    game=self.parent.game,
+                                    id=f'revealed_event_individual_{i}',
+                                    surface=button_surface,  # Use larger invisible surface for hitbox
+                                    pos=(button_x, button_y),
+                                    pos_anchor='topleft',
+                                    hover_cursor=cursors.hand,
+                                ))
                         self.not_drawn = False
                     else:
                         self.parent.is_current_task_event = True

@@ -9,4 +9,4 @@ To run:
 
 To build:
 - venv/Scripts/Activate
-- pyinstaller --onefile main.py
+- pyinstaller --onefile --noconsole --name PlayGreedyGardens-[Version] main.py

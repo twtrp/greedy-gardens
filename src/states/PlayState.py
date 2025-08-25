@@ -36,6 +36,10 @@ class PlayState(BaseState):
 
         # config of gui
         self.box_width = 272
+        self.revealed_event_button_width = 52
+        self.revealed_event_button_height = 58
+        self.revealed_event_button_y_base = 4    
+        self.revealed_event_button_y_spacing = 58
 
         # create deck
         self.deck_fruit = Deck('fruit', self.seed)
@@ -48,8 +52,8 @@ class PlayState(BaseState):
         self.drawn_cards_event = []
  
         # value
-        self.day1_score = 0
-        self.day2_score = 0
+        self.day1_score = 2
+        self.day2_score = 1
         self.day3_score = 0
         self.day4_score = 0
         self.seasonal_score = 0
@@ -59,6 +63,12 @@ class PlayState(BaseState):
         self.final_day4_score = 0
         self.final_seasonal_score = 0
         self.total_score = 0
+        
+        # Penalty flags to prevent score recalculation after penalty applied
+        self.day1_penalty_applied = False
+        self.day2_penalty_applied = False
+        self.day3_penalty_applied = False
+        self.day4_penalty_applied = False
         self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
         self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
         self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
@@ -427,7 +437,6 @@ class PlayState(BaseState):
         self.big_fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_32x32)
         self.fruit_shadow = utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='fruit_shadow', mode="alpha")
         
-        
         # gui
         self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='selecting_tile', mode='alpha')
         self.cant_selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
@@ -448,15 +457,32 @@ class PlayState(BaseState):
         self.cards_path_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_path)
         self.cards_event_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_event)
         self.pop_up_revealed_event_card = None
-        for i in range(3):
-            self.button_list.append(Button(
-                game=self.game,
-                id=f'revealed_event_{i+1}',
-                surface=self.card_fruit_back_image,
-                pos=(1025+i*70, 555+i*10),
-                pos_anchor='topleft',
-                hover_cursor=cursors.hand,
-            ))
+        
+        # Add magic fruit buttons at actual render positions
+        self.button_list.append(Button(
+            game=self.game,
+            id='magic_fruit_1',
+            surface=self.card_fruit_back_image,
+            pos=(1073, 619),
+            pos_anchor='center',
+            hover_cursor=cursors.hand,
+        ))
+        self.button_list.append(Button(
+            game=self.game,
+            id='magic_fruit_2',
+            surface=self.card_fruit_back_image,
+            pos=(1143, 629),
+            pos_anchor='center',
+            hover_cursor=cursors.hand,
+        ))
+        self.button_list.append(Button(
+            game=self.game,
+            id='magic_fruit_3',
+            surface=self.card_fruit_back_image,
+            pos=(1213, 639),
+            pos_anchor='center',
+            hover_cursor=cursors.hand,
+        ))
         self.button_list.append(Button(
             game=self.game,
             id='event_card',
@@ -533,7 +559,6 @@ class PlayState(BaseState):
         self.day_title_text = None
         self.day_title_text_props = None
     
-
     def update(self, dt, events):
         tween.update(passed_time=dt)
 
@@ -686,13 +711,13 @@ class PlayState(BaseState):
                         day_colors[f"day{i}_color"] = colors.mono_150
                 
                 #Score calculation
-                if self.current_day < 2:
+                if self.current_day < 2 and not self.day1_penalty_applied:
                     self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
-                if self.current_day < 3:
+                if self.current_day < 3 and not self.day2_penalty_applied:
                     self.final_day2_score = self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
-                if self.current_day < 4:
+                if self.current_day < 4 and not self.day3_penalty_applied:
                     self.final_day3_score = self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
-                if self.current_day < 5:
+                if self.current_day < 5 and not self.day4_penalty_applied:
                     self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
                 self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
                 self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
@@ -720,19 +745,22 @@ class PlayState(BaseState):
                 if self.setup_start_state==True and not self.transitioning:
                     top_card = None
                     self.pop_up_revealed_event_card = 0
-                    for button in reversed(self.button_list):
+                    for button in reversed(self.button_list): 
                         if button.hovered:
-                            if button.id == 'revealed_event_3':
-                                top_card = 3
+                            if button.id == 'magic_fruit_3' and self.magic_fruit3_event != None:
                                 self.pop_up_revealed_event_card = 3
                                 break
-                            elif button.id == 'revealed_event_2'and top_card != 3:
-                                top_card = 2
+                            elif button.id == 'magic_fruit_2' and self.magic_fruit2_event != None:
                                 self.pop_up_revealed_event_card = 2
                                 break
-                            elif button.id == 'revealed_event_1' and top_card != 2:
-                                top_card = 1
+                            elif button.id == 'magic_fruit_1' and self.magic_fruit1_event != None:
                                 self.pop_up_revealed_event_card = 1
+                                break
+                            elif button.id.startswith('revealed_event_individual_'):
+                                # Extract the index from the button id
+                                index = int(button.id.split('_')[-1])
+                                # Set popup to show this individual revealed event card (using negative values to distinguish from magic fruits)
+                                self.pop_up_revealed_event_card = -(index + 1)  # -1, -2, -3, -4 for individual revealed events
                                 break
                     if self.play_event_state == True:
                         for button in self.button_list:
@@ -1243,27 +1271,32 @@ class PlayState(BaseState):
                         self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
                     else:
                         self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
+                    self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_50)
                     utils.blit(dest=canvas, source=self.day1_fruit_image, pos=(45, 83), pos_anchor='center')
                 if self.day2_fruit:
                     if self.current_day == 2:
                         self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
                     else:
                         self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
+                    self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_50)
                     utils.blit(dest=canvas, source=self.day2_fruit_image, pos=(45, 128), pos_anchor='center')
                 if self.day3_fruit:
                     if self.current_day == 3:
                         self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
                     else:
                         self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
+                    self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_50)
                     utils.blit(dest=canvas, source=self.day3_fruit_image, pos=(45, 173), pos_anchor='center')
                 if self.day4_fruit:
                     if self.current_day == 4:
                         self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
                     else:
                         self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
+                    self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_50)
                     utils.blit(dest=canvas, source=self.day4_fruit_image, pos=(45, 218), pos_anchor='center')
                 if self.seasonal_fruit:
                     self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
+                    self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_50)
                     utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
 
                 ## Render right white box
@@ -1363,17 +1396,18 @@ class PlayState(BaseState):
                                         outer_border_color=colors.black)
                     
                     for i, card in enumerate(self.revealed_event):
-                        utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 2, 6 + i*58), pos_anchor='topright')
-                    utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, 6 + i*58 + 72), pos_anchor='center')
-                    utils.blit(dest=canvas, source=self.event_text, pos=(constants.canvas_width - self.box_width - 28, 6 + i*58 + 92), pos_anchor='center')
+                        utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 2, 10 + i*58), pos_anchor=posanchors.topright)
+                    utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, 8 + i*58 + 72), pos_anchor='center')
+                    utils.blit(dest=canvas, source=self.event_text, pos=(constants.canvas_width - self.box_width - 28, 8 + i*58 + 92), pos_anchor='center')
                 
                 #hover function
                 if self.setup_start_state and not self.end_game:
                     # for button in self.button_list:
                     #     button.render(canvas=canvas)
-                    if self.pop_up_revealed_event_card == 3 and self.magic_fruit3_event != None:
+                    if self.pop_up_revealed_event_card == 3 and self.magic_fruit3_event != None: 
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                         mask_surface.fill((*colors.black, 175))
+                        # Cutout for magic fruit 3 at original button position
                         pygame.draw.rect(
                             surface=mask_surface,
                             color=(*colors.black, 0),
@@ -1391,11 +1425,13 @@ class PlayState(BaseState):
                             color=(*colors.black, 0),
                             rect=(1095 + 2, 565 + 2, 96 - 4, 128 - 4)
                         )
-                        pygame.draw.rect(
-                            surface=mask_surface,
-                            color=(*colors.black, 175),
-                            rect=(1165, 575, 96 - 4, 128 - 4)
-                        )
+                        # Only shadow magic fruit 3 if it exists
+                        if self.magic_fruit3_event != None:
+                            pygame.draw.rect(
+                                surface=mask_surface,
+                                color=(*colors.black, 175),
+                                rect=(1165, 575, 96 - 4, 128 - 4)
+                            )
                         pygame.draw.rect(
                             surface=mask_surface,
                             color=(*colors.black, 0),
@@ -1413,11 +1449,20 @@ class PlayState(BaseState):
                             color=(*colors.black, 0),
                             rect=(1025 + 2, 555 + 2, 96 - 4, 128 - 4)
                         )
-                        pygame.draw.rect(
-                            surface=mask_surface,
-                            color=(*colors.black, 175),
-                            rect=(1095, 565, 96 - 4, 128 - 4)
-                        )
+                        # Only shadow magic fruit 2 if it exists
+                        if self.magic_fruit2_event != None:
+                            pygame.draw.rect(
+                                surface=mask_surface,
+                                color=(*colors.black, 175),
+                                rect=(1095, 565, 96 - 4, 128 - 4)
+                            )
+                        # Only shadow magic fruit 3 if it exists  
+                        if self.magic_fruit3_event != None:
+                            pygame.draw.rect(
+                                surface=mask_surface,
+                                color=(*colors.black, 175),
+                                rect=(1165, 575, 96 - 4, 128 - 4)
+                            )
                         pygame.draw.rect(
                             surface=mask_surface,
                             color=(*colors.black, 0),
@@ -1427,6 +1472,27 @@ class PlayState(BaseState):
                         self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
                         scaled_image = pygame.transform.scale_by(surface=self.magic_fruit1_event_image, factor=3)
                         utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+
+                    # Handle individual revealed event card hover (negative values)
+                    elif self.pop_up_revealed_event_card < 0 and len(self.revealed_event) > 0:
+                        index = -self.pop_up_revealed_event_card - 1 
+                        if index < len(self.revealed_event):
+                            mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
+                            mask_surface.fill((*colors.black, 175))
+                            
+                            button_x = constants.canvas_width - self.box_width - self.revealed_event_button_width
+                            button_y = self.revealed_event_button_y_base + index * self.revealed_event_button_y_spacing
+                            
+                            pygame.draw.rect(
+                                surface=mask_surface,
+                                color=(*colors.black, 0),
+                                rect=(button_x, button_y, self.revealed_event_button_width, self.revealed_event_button_height)
+                            )
+                            utils.blit(dest=canvas, source=mask_surface)
+                            card = self.revealed_event[index]
+                            card_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{card.card_name}")
+                            scaled_image = pygame.transform.scale_by(surface=card_image, factor=3)
+                            utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
                     if self.play_event_state == True and self.is_current_task_event:
                         if self.pop_up_revealed_event_card == 4:
                             mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
@@ -1439,7 +1505,7 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=mask_surface)
                             #self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                             scaled_image = pygame.transform.scale_by(surface=self.current_event_image, factor=3)
-                            utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                            utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
   
 
         # pause menu

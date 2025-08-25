@@ -148,6 +148,7 @@ class Play_PlayEventState(BaseState):
                 'text': 'Do Nothing',
                 'fruit': 'nothing',
             })
+            print(self.redraw_button_option_list)
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 if option['id'] == 'dummy':
@@ -747,6 +748,24 @@ class Play_PlayEventState(BaseState):
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.parent.revealed_event = self.parent.deck_event.cards[-4:]
                             # print(self.parent.revealed_event)
+                            # Update buttons for revealed event cards
+                            # Remove existing revealed event buttons
+                            self.parent.button_list = [btn for btn in self.parent.button_list if not btn.id.startswith('revealed_event_individual_')]
+                            
+                            # Add new buttons for each revealed event card with larger hitboxes to eliminate gaps
+                            for i, card in enumerate(self.parent.revealed_event):
+                                # Create a larger invisible surface for better hover detection
+                                button_surface = pygame.Surface((self.parent.revealed_event_button_width, self.parent.revealed_event_button_height), pygame.SRCALPHA)
+                                button_x = constants.canvas_width - self.parent.box_width - self.parent.revealed_event_button_width
+                                button_y = self.parent.revealed_event_button_y_base + i * self.parent.revealed_event_button_y_spacing
+                                self.parent.button_list.append(Button(
+                                    game=self.parent.game,
+                                    id=f'revealed_event_individual_{i}',
+                                    surface=button_surface,  # Use larger invisible surface for hitbox
+                                    pos=(button_x, button_y),
+                                    pos_anchor='topleft',
+                                    hover_cursor=cursors.hand,
+                                ))
                             self.played_event = True
                 # self.played_event = True
 
@@ -862,8 +881,11 @@ class Play_PlayEventState(BaseState):
                     else:
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
                         self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
-                        self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.white)
-                        utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(570 - (i//2)*30, 265 + i*75), pos_anchor='center')
+                        self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.mono_35)
+                        if option['id'] == 'seasonal fruit':
+                            utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(540, 265 + i*75), pos_anchor='center')
+                        else:
+                            utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(570, 265 + i*75), pos_anchor='center')
                         
             elif self.parent.current_event == 'event_reveal':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
