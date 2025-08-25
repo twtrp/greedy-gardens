@@ -52,8 +52,8 @@ class PlayState(BaseState):
         self.drawn_cards_event = []
  
         # value
-        self.day1_score = 2
-        self.day2_score = 1
+        self.day1_score = 0
+        self.day2_score = 0
         self.day3_score = 0
         self.day4_score = 0
         self.seasonal_score = 0

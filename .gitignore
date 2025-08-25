@@ -6,3 +6,4 @@ linuxvenv/
 macvenv/
 build/
 dist/
+release/
