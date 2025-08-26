@@ -154,7 +154,15 @@ class MenuState(BaseState):
 
         self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.mask_circle_radius = 750
-        
+
+        self.version_number_text = utils.get_text(
+            text=self.parent.version_number,
+            font=fonts.lf7,
+            size='small',
+            color=colors.white, 
+            long_shadow=False,
+            outline=False
+        )
 
     def update(self, dt, events):
         if self.ready:
@@ -216,6 +224,14 @@ class MenuState(BaseState):
             ## Render final menu_bg to canvas
             utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
 
+            ## Render version number
+            utils.blit(
+                dest=canvas,
+                source=self.version_number_text,
+                pos=(12, constants.canvas_height - 2),
+                pos_anchor=posanchors.bottomleft
+            )
+
             # Build intro
 
             ## Render overlay
@@ -252,7 +268,6 @@ class MenuState(BaseState):
             else:
                 self.substate_stack[-1].render(canvas=canvas)
 
-
         if self.transitioning:
             # transition mask     
             self.mask_surface.fill(color=colors.black)
@@ -265,7 +280,7 @@ class MenuState(BaseState):
             self.pixelated_mask_surface = utils.effect_pixelate(surface=self.mask_surface, pixel_size=4)
             utils.blit(dest=canvas, source=self.pixelated_mask_surface)
 
-                
+
 
     #Class methods
   
@@ -284,12 +299,12 @@ class MenuState(BaseState):
                 container=self.surface_logo_props,
                 key='scale',
                 end_value=1,
-                time=3,
+                time=2.5,
                 ease_type=tweencurves.easeOutCubic,
                 delay=delay
             ))
 
-            delay += 1.75
+            delay += 1.5
             self.tween_list.append(tween.to(
                 container=self.overlay_props,
                 key='alpha',
@@ -326,6 +341,9 @@ class MenuState(BaseState):
             ).on_complete(self.finish_bootup))
             
             delay += 2.25
+            def start_music():
+                self.game.start_menu_music()
+            
             self.tween_list.append(tween.to(
                 container=self.game_logo_props,
                 key='scale',
@@ -333,7 +351,7 @@ class MenuState(BaseState):
                 time=0.75,
                 ease_type=tweencurves.easeOutElastic,
                 delay=delay
-            ))
+            ).on_start(start_music))
             self.tween_list.append(tween.to(
                 container=self.game_logo_props,
                 key='alpha',
@@ -363,12 +381,14 @@ class MenuState(BaseState):
                 ))
                 
         else:
-
+            self.game.start_menu_music()
             self.finish_bootup()
 
 
     def finish_bootup(self):
         self.game.finished_bootup = True
+        
+        self.game.start_menu_music()
 
         # Clear intro assets
         del self.surface_logo

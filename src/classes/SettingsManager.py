@@ -42,7 +42,7 @@ class SettingsManager():
             },
             {
                 'id': 'fps_cap',
-                'label': 'FPS Cap',
+                'label': 'Framerate',
                 'value': [30, 60, 999],
                 'value_label': ['30', '60', 'uncapped'],
                 'value_default': 30,
@@ -51,7 +51,7 @@ class SettingsManager():
             },
             {
                 'id': 'skip_bootup',
-                'label': 'Skip Bootup',
+                'label': 'Skip Intro',
                 'value': [0, 1],
                 'value_label': ['off', 'on'],
                 'value_default': 0,
@@ -75,6 +75,11 @@ class SettingsManager():
 
     def load_all_settings(self):
         self.current_settings = {}
+        
+        # Ensure data directory exists
+        if not os.path.exists(dir.data):
+            os.makedirs(dir.data)
+            
         # when settings file is missing
         if not os.path.exists(self.settings_file):
             with open(self.settings_file, 'w') as fp:
@@ -100,6 +105,10 @@ class SettingsManager():
                 
 
     def save_setting(self, current_settings_index):
+        # Ensure data directory exists
+        if not os.path.exists(dir.data):
+            os.makedirs(dir.data)
+            
         with open(self.settings_file, 'w') as fp:
             for i in range(len(self.settings_list)):
                 option = self.settings_list[i]
@@ -108,6 +117,10 @@ class SettingsManager():
 
             
     def reset_settings(self):
+        # Ensure data directory exists
+        if not os.path.exists(dir.data):
+            os.makedirs(dir.data)
+            
         with open(self.settings_file, 'w') as fp:
             for setting in self.settings_list:
                 fp.write(f"{setting['id']}={setting['value_default']}\n")

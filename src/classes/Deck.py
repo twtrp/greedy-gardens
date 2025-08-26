@@ -64,14 +64,14 @@ class Deck:
                 name.append('path_strike_NWS')
                 name.append('path_strike_NES')
                 name.append('path_strike_NWE')
-        # For Testing path
+        # # For Testing path
         # elif self.deck_type == 'path':
         #     for i in range(16):
         #         name.append('path_strike_WES')
         #         name.append('path_strike_NWS')
         #         name.append('path_strike_NES')
         #         name.append('path_strike_NWE')
-        #     name.append('path_NW') # Should always have a non-strike card
+        #     name.append('path_WES') # Should always have a non-strike card or it will crash
 
         elif self.deck_type == 'event':
             for i in range(2):
@@ -83,10 +83,10 @@ class Deck:
                 name.append('event_remove')
                 name.append('event_reveal')
                 name.append('event_swap')
-        # # For Testing events
+        # For Testing events
         # elif self.deck_type == 'event':
         #     for i in range(16):
-        #         name.append('event_reveal')
+        #         name.append('event_free')
 
 
 

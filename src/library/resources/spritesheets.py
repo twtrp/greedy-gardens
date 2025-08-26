@@ -111,7 +111,7 @@ gui = {
             'width': 96,
             'height': 96,
         },
-        'path_WE': {
+        'path_WE': { 
             'x': 0,
             'y': 144,
             'width': 48,

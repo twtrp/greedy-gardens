@@ -6,9 +6,10 @@ class Game:
     def __init__(self):
         self.settings_manager = SettingsManager()
         self.settings = self.settings_manager.load_all_settings()
-
         self.fps_cap = self.settings['fps_cap'] + 1
-        self.title = 'Greedy Gardens 1.2.0'
+
+        self.version_number = 'v2.0.0-beta2'
+        self.title = f'Greedy Gardens {self.version_number}'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
@@ -17,46 +18,32 @@ class Game:
         self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         self.display_info = pygame.display.Info()
         
-        # Try hardware acceleration first, fallback to software if it fails
-        try:
-            if self.settings['fullscreen']:
-                self.screen_width = self.display_info.current_w
-                self.screen_height = self.display_info.current_h
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
-            else:
-                self.screen_width = constants.window_width
-                self.screen_height = constants.window_height
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
-        except pygame.error:
-            # Fallback to software rendering if hardware acceleration fails
-            if self.settings['fullscreen']:
-                self.screen_width = self.display_info.current_w
-                self.screen_height = self.display_info.current_h
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.FULLSCREEN)
-            else:
-                self.screen_width = constants.window_width
-                self.screen_height = constants.window_height
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
+        if self.settings['fullscreen']:
+            self.screen_width = self.display_info.current_w
+            self.screen_height = self.display_info.current_h
+            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                  flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+        else:
+            self.screen_width = constants.window_width
+            self.screen_height = constants.window_height
+            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                  flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+
         utils.set_cursor(cursor=cursors.normal)
         self.screen.fill(color=colors.white)
         pygame.display.update()
         self.clock = pygame.time.Clock()
 
         self.music_channel = pygame.mixer.music
-        self.music_channel.set_volume(self.settings['music_volume'] * 0.35)
+        self.music_channel.set_volume(self.settings['music_volume'])
         self.sfx_volume = self.settings['sfx_volume']
         self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(self.settings['ambience_volume'] * 0.75)
         utils.sound_play(sound=sfx.ambience, sound_channel=self.ambience_channel, loops=-1, fade_ms=3000)
 
         self.state_stack = []
-        # utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
         utils.music_load(music_channel=self.music_channel, name=music.menu_loop)
         utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
-        self.music_channel.play()
 
         self.finished_bootup = False
 
@@ -74,34 +61,25 @@ class Game:
         if setting_index == 3:
             pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
             
-            # Try hardware acceleration first, fallback to software if it fails
-            try:
-                if self.settings['fullscreen']:
-                    self.screen_width = self.display_info.current_w
-                    self.screen_height = self.display_info.current_h
-                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                          flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
-                else:
-                    self.screen_width = constants.window_width
-                    self.screen_height = constants.window_height
-                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                          flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
-            except pygame.error:
-                # Fallback to software rendering if hardware acceleration fails
-                if self.settings['fullscreen']:
-                    self.screen_width = self.display_info.current_w
-                    self.screen_height = self.display_info.current_h
-                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                          flags=pygame.FULLSCREEN)
-                else:
-                    self.screen_width = constants.window_width
-                    self.screen_height = constants.window_height
-                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
+            if self.settings['fullscreen']:
+                self.screen_width = self.display_info.current_w
+                self.screen_height = self.display_info.current_h
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                        flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+            else:
+                self.screen_width = constants.window_width
+                self.screen_height = constants.window_height
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                    flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
             
             pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
             pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
         if setting_index == 4:
             self.fps_cap = self.settings['fps_cap'] + 1
+
+    def start_menu_music(self):
+        if not self.music_channel.get_busy():
+            self.music_channel.play()
 
 
     # Main methods

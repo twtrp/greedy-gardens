@@ -6,6 +6,9 @@ class Play_EndDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
         
+        # Stop the spacebar hint animation loop
+        self.parent.tween_list.clear()
+        
         # Get current day's info
         self.current_day = self.parent.current_day
         if self.current_day == 1:
@@ -102,6 +105,9 @@ class Play_EndDayState(BaseState):
                     if self.parent.current_day >= 4:
                         self.parent.end_game=True
                     self.parent.is_choosing = False
+                    # Restart the spacebar hint animation when returning to normal gameplay
+                    if hasattr(self.parent, 'start_spacebar_hint_animation'):
+                        self.parent.start_spacebar_hint_animation()
                     self.exit_state()
  
     def render(self, canvas):
@@ -113,7 +119,7 @@ class Play_EndDayState(BaseState):
         #     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
         #     pos=(self.parent.box_width, 0),
         #     pos_anchor='topleft',
-        #     color=(*colors.black, 128), # 50% transparency
+        #     color=(*colors.black, 90), # 50% transparency
         #     inner_border_width=0,
         #     outer_border_width=0,
         #     outer_border_color=colors.black
@@ -139,5 +145,5 @@ class Play_EndDayState(BaseState):
                 utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2 + 32, 305 + i*120), pos_anchor='center')
         
         # Continue text
-        utils.blit(dest=canvas, source=self.continue_text, pos=(constants.canvas_width/2, constants.canvas_height-self.continue_text.get_height()+5), pos_anchor='center')
+        utils.blit(dest=canvas, source=self.continue_text, pos=(constants.canvas_width/2, 695), pos_anchor='center')
         

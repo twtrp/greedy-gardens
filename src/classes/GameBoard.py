@@ -35,6 +35,11 @@ class GameBoard():
     
     def set_magic_fruit(self,index,num):
         self.board[index].magic_fruit=num
+    
+    def is_in_corner_exclusion_zone(self, row, col):
+        if (row == 1 and col == 1) or (row == 1 and col == 6) or (row == 6 and col == 1) or (row == 6 and col == 6):
+            return True
+        return False
         
     def show_detail(self, index):
         self.board[index].show_detail()
@@ -85,7 +90,15 @@ class GameBoard():
         unique_index = []
 
         # Set home location
-        home_index = random.randint(1, 6) * 8 + random.randint(1, 6) # index = row*8 + column with home not at the edge
+        valid_home_found = False
+        while not valid_home_found:
+            home_row = random.randint(1, 6)
+            home_col = random.randint(1, 6)
+            home_index = home_row * 8 + home_col
+            
+            if not self.is_in_corner_exclusion_zone(home_row, home_col):
+                valid_home_found = True
+        
         home_quadrant = self.check_quadrant(home_index)
         self.set_home(home_index)
 

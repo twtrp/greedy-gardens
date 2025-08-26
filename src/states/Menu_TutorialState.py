@@ -42,19 +42,19 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="Welcome to Greedy Gardens!",
-                    font=fonts.minecraftia, size='medium', color=colors.green_light
+                    font=fonts.minecraftia, size='medium', color=colors.green_light, long_shadow=False
                 ),
                 utils.get_text(
-                    text="You're a fruit picker working on a 4 day contract.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    text="You're a fruit picker working on a 4-day contract.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Your job is to collect fruits by building paths",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="to connect fruits to the Farmhouse.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
             [
@@ -64,19 +64,19 @@ class Menu_TutorialState(BaseState):
                 ),
                 utils.get_text(
                     text="You must score more fruits than the previous day, or",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="you will earn zero points for that day.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Scoring too high early can make the next day harder.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Aim for the highest total score by the end of day 4.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
             [
@@ -86,73 +86,73 @@ class Menu_TutorialState(BaseState):
                 ),
                 utils.get_text(
                     text="Each day you can only score a specific fruit.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="You only know today's, tomorrow's, and seasonal fruit.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Fruits connected to Farmhouse are scored when a day ends.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Seasonal fruits are bonus objectives scored when the game ends.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
-                    text="All about paths:",
+                    text="All about paths",
                     font=fonts.minecraftia, size='medium', color=colors.yellow_light
                 ),
                 utils.get_text(
                     text="You can place paths based on the path cards you draw.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Some cards path cards gives you a strike.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="After 3 strikes, the day ends.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
-                    text="All about events:",
+                    text="All about events",
                     font=fonts.minecraftia, size='medium', color=colors.yellow_light
                 ),
                 utils.get_text(
                     text="Strikes from path cards will trigger events.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Every event can either help or disrupt your plans.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Each game has 16 event cards: 8 types with 2 of each.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
-                    text="All about magic fruits:",
+                    text="All about magic fruits",
                     font=fonts.minecraftia, size='medium', color=colors.yellow_light
                 ),
                 utils.get_text(
                     text="There are 3 magic fruits on the board.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Collecting a Magic Fruit will trigger an event assigned to it,",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    text="Collecting a magic fruit will trigger an event assigned to it,",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="and well as providing 1 bonus score for that day.",
-                    font=fonts.minecraftia, size='small', color=colors.white
+                    text="as well as providing 1 bonus score for that day.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
         ]
@@ -167,6 +167,40 @@ class Menu_TutorialState(BaseState):
         ]
         for i, surface in enumerate(self.fruit_sprites):
             self.fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+
+        self.path_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES'),
+        ]
+        for i, surface in enumerate(self.path_sprites):
+            self.path_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
+            self.path_sprites[i] = utils.effect_outline(surface=self.path_sprites[i], distance=2, color=colors.mono_35)
+
+        self.event_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_keep'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_merge'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_point'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_redraw'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_remove'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_reveal'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_swap'),
+        ]
+        for i, surface in enumerate(self.event_sprites):
+            self.event_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
+            self.event_sprites[i] = utils.effect_outline(surface=self.event_sprites[i], distance=2, color=colors.mono_35)
+
+        self.magic_fruit_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_2'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3'),
+        ]
+        for i, surface in enumerate(self.magic_fruit_sprites):
+            self.magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
 
 
     def update(self, dt, events):
@@ -202,7 +236,7 @@ class Menu_TutorialState(BaseState):
             size=(constants.canvas_width - 40, constants.canvas_height - 100),
             pos=(20, 20),
             pos_anchor=posanchors.topleft,
-            color=(*colors.mono_50, 165),
+            color=(*colors.mono_50, 225),
             inner_border_width=3
         )
 
@@ -224,12 +258,42 @@ class Menu_TutorialState(BaseState):
                 header_y_offset = 0
                 y_increment += 40
 
-        # start_x = 280
-        # start_y = 415
-        # x_increment = 40
-        # for i, surface in enumerate(self.fruit_sprites):
-        #     utils.blit(
-        #         dest=canvas, source=surface,
-        #         pos=(start_x + i * x_increment, start_y),
-        #         pos_anchor=posanchors.topleft
-        #     )
+        start_x = 280
+        start_y = self.tutorial_coords_list[2][1] - 5
+        x_increment = 40
+        for i, surface in enumerate(self.fruit_sprites):
+            utils.blit(
+                dest=canvas, source=surface,
+                pos=(start_x + i * x_increment, start_y),
+                pos_anchor=posanchors.topleft
+            )
+
+        start_x = 880
+        start_y = self.tutorial_coords_list[3][1] - 8
+        x_increment = 40
+        for i, surface in enumerate(self.path_sprites):
+            utils.blit(
+                dest=canvas, source=surface,
+                pos=(start_x + i * x_increment, start_y),
+                pos_anchor=posanchors.topleft
+            )
+
+        start_x = 895
+        start_y = self.tutorial_coords_list[4][1] - 8
+        x_increment = 40
+        for i, surface in enumerate(self.event_sprites):
+            utils.blit(
+                dest=canvas, source=surface,
+                pos=(start_x + i * x_increment, start_y),
+                pos_anchor=posanchors.topleft
+            )
+
+        start_x = 965
+        start_y = self.tutorial_coords_list[5][1] - 5
+        x_increment = 40
+        for i, surface in enumerate(self.magic_fruit_sprites):
+            utils.blit(
+                dest=canvas, source=surface,
+                pos=(start_x + i * x_increment, start_y),
+                pos_anchor=posanchors.topleft
+            )
