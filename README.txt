@@ -36,7 +36,7 @@ Mac:
 
     Dependencies:
     - brew install python@3.11
-    - $(brew --prefix)/bin/python3.11 -m venv .venv
+    - $(brew --prefix)/bin/python3.11 -m venv venvmac
     - source venvmac/bin/activate
     - python -m pip install --upgrade pip setuptools wheel
     - pip install -r requirements.txt

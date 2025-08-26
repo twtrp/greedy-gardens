@@ -3,7 +3,6 @@ __pycache__/
 data/settings.lst
 linuxvenv/
 venvlinux/
-venv/
 venvmac/
 build/
 dist/
