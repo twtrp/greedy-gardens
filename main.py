@@ -39,7 +39,8 @@ class Game:
         utils.sound_play(sound=sfx.ambience, sound_channel=self.ambience_channel, loops=-1, fade_ms=3000)
 
         self.state_stack = []
-        utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
+        # utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
+        utils.music_load(music_channel=self.music_channel, name=music.menu_loop)
         utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
         self.music_channel.play()
 
@@ -51,7 +52,7 @@ class Game:
     def apply_settings(self, setting_index):
         self.settings = self.settings_manager.load_all_settings()
         if setting_index == 0:
-            self.music_channel.set_volume(self.settings['music_volume'])
+            self.music_channel.set_volume(self.settings['music_volume']*1)
         if setting_index == 1:
             self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 2:

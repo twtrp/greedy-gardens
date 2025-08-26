@@ -511,6 +511,14 @@ class PlayState(BaseState):
             music.play_6,
             music.play_7,
             music.play_8,
+            music.play_9,
+            music.play_10,
+            music.play_11,
+            music.play_12,
+            music.play_13,
+            music.play_14,
+            music.play_15,
+            music.play_16
         ]
         random.seed(None)
         random.shuffle(self.songs)
@@ -586,7 +594,8 @@ class PlayState(BaseState):
                             utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
                             self.freeze_frame = self.game.canvas.copy()
                             def on_complete():
-                                utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                                # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                                utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
                                 utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
                                 self.game.music_channel.play()
                                 self.timer_manager.StopTimer(self.water_timer)

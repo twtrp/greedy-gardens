@@ -198,7 +198,8 @@ class Play_ResultStage(BaseState):
                         utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
                         self.freeze_frame = self.game.canvas.copy()
                         def on_complete():
-                            utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                            # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                            utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
                             utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
                             self.game.music_channel.play()
                             self.parent.timer_manager.StopTimer(self.parent.water_timer)
