@@ -110,5 +110,5 @@ class SettingsManager():
     def reset_settings(self):
         with open(self.settings_file, 'w') as fp:
             for setting in self.settings_list:
-                fp.write(f'{setting['id']}={setting['value_default']}\n')
+                fp.write(f"{setting['id']}={setting['value_default']}\n")
                 
