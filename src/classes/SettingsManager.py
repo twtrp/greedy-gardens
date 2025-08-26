@@ -79,7 +79,7 @@ class SettingsManager():
         if not os.path.exists(self.settings_file):
             with open(self.settings_file, 'w') as fp:
                 for setting in self.settings_list:
-                    fp.write(f"{setting['id']}={setting['value_default']}\n")
+                    fp.write(f'{setting['id']}={setting['value_default']}\n')
                     self.current_settings[setting['id']] = setting['value_default']
 
         else:
@@ -110,5 +110,5 @@ class SettingsManager():
     def reset_settings(self):
         with open(self.settings_file, 'w') as fp:
             for setting in self.settings_list:
-                fp.write(f"{setting['id']}={setting['value_default']}\n")
+                fp.write(f'{setting['id']}={setting['value_default']}\n')
                 

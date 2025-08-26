@@ -1,9 +1,9 @@
 venv/
 __pycache__/
 data/settings.lst
+windowsvenv/
 linuxvenv/
-venvlinux/
-venvmac/
+macvenv/
 build/
 dist/
 release/
