@@ -1,6 +1,7 @@
 from src.library.essentials import *
 from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
+import platform
 
 class Game:
     def __init__(self):
@@ -16,16 +17,27 @@ class Game:
         pygame.display.set_caption(self.title)
         self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         self.display_info = pygame.display.Info()
+        
+        # Check if running on macOS to avoid hardware surface issues in VMs
+        is_macos = platform.system() == 'Darwin'
+        
         if self.settings['fullscreen']:
             self.screen_width = self.display_info.current_w
             self.screen_height = self.display_info.current_h
-            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                  flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+            if is_macos:
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                      flags=pygame.FULLSCREEN)
+            else:
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                      flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
         else:
             self.screen_width = constants.window_width
             self.screen_height = constants.window_height
-            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                  flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+            if is_macos:
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
+            else:
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                      flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
         utils.set_cursor(cursor=cursors.normal)
         self.screen.fill(color=colors.white)
         pygame.display.update()
@@ -59,16 +71,27 @@ class Game:
             self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
         if setting_index == 3:
             pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
+            
+            # Check if running on macOS to avoid hardware surface issues in VMs
+            is_macos = platform.system() == 'Darwin'
+            
             if self.settings['fullscreen']:
                 self.screen_width = self.display_info.current_w
                 self.screen_height = self.display_info.current_h
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+                if is_macos:
+                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                          flags=pygame.FULLSCREEN)
+                else:
+                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                          flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
             else:
                 self.screen_width = constants.window_width
                 self.screen_height = constants.window_height
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+                if is_macos:
+                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
+                else:
+                    self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
+                                                          flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
             pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
             pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
         if setting_index == 4:
