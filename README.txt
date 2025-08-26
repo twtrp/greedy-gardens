@@ -35,14 +35,15 @@ Linux:
 Mac:
 
     Dependencies:
-    - python3 -m venv venvmac
+    - brew install python@3.11
+    - $(brew --prefix)/bin/python3.11 -m venv .venv
     - source venvmac/bin/activate
-    - python3 -m pip install --upgrade pip setuptools wheel
+    - python -m pip install --upgrade pip setuptools wheel
     - pip install -r requirements.txt
 
     To run:
     - source venvmac/bin/activate
-    - python3 main.py
+    - python main.py
 
     To build:
     - source venvmac/bin/activate
