@@ -1069,7 +1069,12 @@ class Play_PlayMagicEventState(BaseState):
                     self.parent.is_3_strike = True
                     self.parent.strikes = 0
                 else: 
-                    self.parent.drawing = True
+                    # Check if path deck is empty - if so, end the day instead of trying to draw
+                    if self.parent.deck_path.remaining_cards() <= 0:
+                        self.parent.is_3_strike = True
+                        self.parent.strikes = 0
+                    else:
+                        self.parent.drawing = True
                 self.parent.playing_magic_event = False
                 self.parent.is_striking = False
                 self.parent.current_event = None

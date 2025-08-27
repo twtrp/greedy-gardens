@@ -95,11 +95,6 @@ class Play_PlacePathState(BaseState):
                     new_score = current_score + 1
                     setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                     setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-                    
-                    # Check if the path that triggered magic fruit was also a strike
-                    if "strike" in self.parent.current_path:
-                        self.parent.is_striking = True
-                    
                     # print("exiting place")
                     self.exit_state()
 
@@ -107,7 +102,12 @@ class Play_PlacePathState(BaseState):
                     if "strike" in self.parent.current_path:
                         self.parent.is_strike = True
                     else: 
-                        self.parent.drawing = True
+                        # Check if path deck is empty - if so, end the day instead of trying to draw
+                        if self.parent.deck_path.remaining_cards() <= 0:
+                            self.parent.is_3_strike = True
+                            self.parent.strikes = 0
+                        else:
+                            self.parent.drawing = True
                     self.parent.current_path = None
                     # print("exiting place")
                     self.exit_state()
@@ -116,7 +116,12 @@ class Play_PlacePathState(BaseState):
                 if "strike" in self.parent.current_path:
                     self.parent.is_strike = True
                 else: 
-                    self.parent.drawing = True
+                    # Check if path deck is empty - if so, end the day instead of trying to draw
+                    if self.parent.deck_path.remaining_cards() <= 0:
+                        self.parent.is_3_strike = True
+                        self.parent.strikes = 0
+                    else:
+                        self.parent.drawing = True
                 self.parent.current_path = None
                 # print("exiting place")
                 self.exit_state()

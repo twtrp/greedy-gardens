@@ -90,7 +90,7 @@ class Play_ResultStage(BaseState):
         
         self.final_results_text = utils.get_text(text='Final Results', font=fonts.lf2, size='large', color=colors.white)
         if self.setted_seed:
-            self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
+            self.seed_text = utils.get_text(text=f'Set Seed', font=fonts.lf2, size='medium', color=colors.white)
         elif not self.setted_seed:
             self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.lf2, size='medium', color=colors.white)
             
@@ -135,10 +135,7 @@ class Play_ResultStage(BaseState):
         self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.lf2, size='small', color=colors.white)
         
         # Display appropriate high score label based on seed type
-        if self.setted_seed:
-            self.high_score_text = utils.get_text(text='Set Seed High Score', font=fonts.lf2, size='small', color=colors.white)
-        else:
-            self.high_score_text = utils.get_text(text='Personal Best (Random)', font=fonts.lf2, size='small', color=colors.white)
+        self.high_score_text = utils.get_text(text='High Score', font=fonts.lf2, size='small', color=colors.white)
         self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.lf2, size='small', color=colors.white)
         
         self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='small', color=colors.green_medium)

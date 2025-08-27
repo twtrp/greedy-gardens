@@ -562,7 +562,7 @@ class PlayState(BaseState):
 
         self.paused = False
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
-        self.pause_background.fill((*colors.black, 225))
+        self.pause_background.fill((*colors.black, 200))
         self.pause_title = utils.get_text(text='Paused', font=fonts.lf2, size='huge', color=colors.mono_205)
         
         self.settings_manager = SettingsManager()
