@@ -245,6 +245,11 @@ class Play_ResultStage(BaseState):
                             utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
                             self.game.music_channel.play()
                             self.parent.timer_manager.StopTimer(self.parent.water_timer)
+                            
+                            # Clean up spacebar animation system
+                            if hasattr(self.parent, 'spacebar_animation_growing'):
+                                delattr(self.parent, 'spacebar_animation_growing')
+                            
                             self.parent.tween_list.clear()
                             self.game.state_stack.clear()
                         self.parent.tween_list.append(tween.to(

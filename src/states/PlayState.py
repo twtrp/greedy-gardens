@@ -628,6 +628,11 @@ class PlayState(BaseState):
                                 utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
                                 self.game.music_channel.play()
                                 self.timer_manager.StopTimer(self.water_timer)
+                                
+                                # Clean up spacebar animation system
+                                if hasattr(self, 'spacebar_animation_growing'):
+                                    delattr(self, 'spacebar_animation_growing')
+                                
                                 self.tween_list.clear()
                                 self.game.state_stack.clear()
                             self.tween_list.append(tween.to(
@@ -1620,25 +1625,30 @@ class PlayState(BaseState):
         )
 
     def start_spacebar_hint_animation(self):
-        # Ensure we start from 1.0 to match the fixed scale from day end state
+        # Clear any existing animation to prevent duplicates
         self.spacebar_hint_scale = 1.0
         
-        def create_loop():
-            def on_complete():
-                create_loop()
-            
-            self.tween_list.append(tween.to(
-                container=self,
-                key='spacebar_hint_scale',
-                end_value=1.15,
-                time=1,
-                ease_type=tweencurves.easeInOutSine
-            ).on_complete(lambda: self.tween_list.append(tween.to(
-                container=self,
-                key='spacebar_hint_scale',
-                end_value=1.0,
-                time=1,
-                ease_type=tweencurves.easeInOutSine
-            ).on_complete(on_complete))))
+        # Simple non-recursive animation using a toggle approach
+        self.spacebar_animation_growing = True
         
-        create_loop()
+        def toggle_animation():
+            if hasattr(self, 'spacebar_animation_growing'):
+                if self.spacebar_animation_growing:
+                    self.tween_list.append(tween.to(
+                        container=self,
+                        key='spacebar_hint_scale',
+                        end_value=1.15,
+                        time=1,
+                        ease_type=tweencurves.easeInOutSine
+                    ).on_complete(lambda: toggle_animation() if hasattr(self, 'spacebar_animation_growing') else None))
+                else:
+                    self.tween_list.append(tween.to(
+                        container=self,
+                        key='spacebar_hint_scale',
+                        end_value=1.0,
+                        time=1,
+                        ease_type=tweencurves.easeInOutSine
+                    ).on_complete(lambda: toggle_animation() if hasattr(self, 'spacebar_animation_growing') else None))
+                self.spacebar_animation_growing = not self.spacebar_animation_growing
+        
+        toggle_animation()
