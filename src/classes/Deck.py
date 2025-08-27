@@ -64,7 +64,7 @@ class Deck:
                 name.append('path_strike_NWS')
                 name.append('path_strike_NES')
                 name.append('path_strike_NWE')
-        # # For Testing path
+        # For Testing path
         # elif self.deck_type == 'path':
         #     for i in range(16):
         #         name.append('path_strike_WES')
@@ -86,7 +86,7 @@ class Deck:
         # For Testing events
         # elif self.deck_type == 'event':
         #     for i in range(16):
-        #         name.append('event_free')
+        #         name.append('event_point')
 
 
 
@@ -147,6 +147,5 @@ class Deck:
             card2 = self[i].card_name
             if card1 != card2:
                 return True
-        return False       
-
+        return False 
         

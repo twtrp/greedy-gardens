@@ -36,30 +36,54 @@ class Play_ResultStage(BaseState):
             ''')
             sql_conn.commit()
             
+            # Get current high score and check for new record
             if self.setted_seed:
-                # Check if seed exists
-                sql_cursor.execute(f'SELECT COUNT(*) FROM records WHERE seed = {self.parent.seed} AND seed_type = "Set Seed"')
-                seed_exists = sql_cursor.fetchone()[0] > 0
-                if not seed_exists:
+                # Get current high score for ALL set seeds (global leaderboard)
+                sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Set Seed"')
+                result = sql_cursor.fetchone()
+                current_high_score = result[0] if result[0] is not None else 0
+                
+                # Check if this is a new record for set seeds globally
+                if self.parent.total_score > current_high_score:
                     self.high_score = self.parent.total_score
+                    self.new_record = True
                 else:
-                    sql_cursor.execute(f'SELECT MAX(score) FROM records WHERE seed = {self.parent.seed} AND seed_type = "Set Seed"')
-                    self.high_score = sql_cursor.fetchone()[0]
-            else:
-                sql_cursor.execute('SELECT COUNT(*) FROM records WHERE seed_type = "Random Seed"')
-                records_exist = sql_cursor.fetchone()[0] > 0
-                if not records_exist:
-                    self.high_score = self.parent.total_score
-                else:
-                    sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Random Seed"')
-                    self.high_score = sql_cursor.fetchone()[0]
+                    self.high_score = current_high_score
+                    self.new_record = False
                     
+                # Insert the new score
+                sql_cursor.execute(
+                    'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
+                    (self.parent.total_score, self.parent.seed, 'Set Seed')
+                )
+            else:
+                # Get current high score for random seeds
+                sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Random Seed"')
+                result = sql_cursor.fetchone()
+                current_high_score = result[0] if result[0] is not None else 0
+                
+                # Check if this is a new record for random seeds
+                if self.parent.total_score > current_high_score:
+                    self.high_score = self.parent.total_score
+                    self.new_record = True
+                else:
+                    self.high_score = current_high_score
+                    self.new_record = False
+                    
+                # Insert the new score
+                sql_cursor.execute(
+                    'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
+                    (self.parent.total_score, self.parent.seed, 'Random Seed')
+                )
+
+            sql_conn.commit()
             sql_cursor.close()
             sql_conn.close()
         except Exception as e:
-            print(f"Error loading records: {e}")
+            print(f"Error with records database: {e}")
             # Set default values if database fails
             self.high_score = self.parent.total_score
+            self.new_record = False
 
         
         self.button_list = []
@@ -110,7 +134,11 @@ class Play_ResultStage(BaseState):
         self.total_text = utils.get_text(text='Total', font=fonts.lf2, size='small', color=colors.white)
         self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.lf2, size='small', color=colors.white)
         
-        self.high_score_text = utils.get_text(text='High Score', font=fonts.lf2, size='small', color=colors.white)
+        # Display appropriate high score label based on seed type
+        if self.setted_seed:
+            self.high_score_text = utils.get_text(text='Set Seed High Score', font=fonts.lf2, size='small', color=colors.white)
+        else:
+            self.high_score_text = utils.get_text(text='Personal Best (Random)', font=fonts.lf2, size='small', color=colors.white)
         self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.lf2, size='small', color=colors.white)
         
         self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='small', color=colors.green_medium)
@@ -152,64 +180,13 @@ class Play_ResultStage(BaseState):
             height=50,
             pos=(constants.canvas_width/2, 695),
             pos_anchor=posanchors.center,
-            hover_cursor=cursors.normal
+            hover_cursor=cursors.normal,
         ))
 
         # for button in self.button_list:
         #     print(button.id) 
         
         self.parent.endDayState=True
-        
-        # Ensure data directory exists
-        if not os.path.exists('data'):
-            os.makedirs('data')
-        
-        try:
-            sql_conn = sqlite3.connect('data/records.sqlite')
-            sql_cursor = sql_conn.cursor()
-            
-            # Create table if it doesn't exist
-            sql_cursor.execute('''
-                CREATE TABLE IF NOT EXISTS records (
-                    score INTEGER,
-                    seed INTEGER,
-                    seed_type TEXT
-                )
-            ''')
-            sql_conn.commit()
-            
-            if self.setted_seed: 
-                # Insert the new score
-                sql_cursor.execute(
-                    'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
-                    (self.parent.total_score, self.parent.seed, 'Set Seed')
-                )
-
-            else:
-                # Insert the new score
-                sql_cursor.execute(
-                    'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
-                    (self.parent.total_score, self.parent.seed, 'Random Seed')
-                )
-
-            # Check overall highest score
-            sql_cursor.execute('SELECT MAX(score) FROM records')
-            result = sql_cursor.fetchone()
-            current_high_score = result[0] if result[0] is not None else 0
-            if self.parent.total_score > current_high_score:
-                self.high_score = self.parent.total_score
-                self.new_record = True
-            else:
-                self.high_score = current_high_score
-
-            sql_conn.commit()
-            sql_cursor.close()
-            sql_conn.close()
-        except Exception as e:
-            print(f"Error saving record: {e}")
-            # Set fallback values if database fails
-            self.high_score = self.parent.total_score
-            self.new_record = False
                 
 
         
@@ -223,14 +200,14 @@ class Play_ResultStage(BaseState):
                 if button.hover_cursor is not None:
                     self.cursor = button.hover_cursor
                 for option in self.button_option_surface_list:
-                    if button.id == option['id']:
+                    if button.id == option['id'] and button.id != 'view board':
                         option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
             else: 
                 if button.id == 'view board':
                     # print("Hovering over other button")
                     self.is_hovering = False
                 for option in self.button_option_surface_list:
-                    if button.id == option['id']:
+                    if button.id == option['id'] and button.id != 'view board':
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)          
             if button.clicked:
                 for option in self.button_option_surface_list:
@@ -276,7 +253,7 @@ class Play_ResultStage(BaseState):
                         size=(constants.canvas_width, constants.canvas_height),
                         pos=(0, 0),
                         pos_anchor='topleft',
-                        color=(*colors.black, 90), 
+                        color=(*colors.black, 160), 
                         inner_border_width=0,
                         outer_border_width=0,
                         outer_border_color=colors.black)

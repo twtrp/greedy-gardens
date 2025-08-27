@@ -86,27 +86,31 @@ class Play_PlayEventState(BaseState):
                 self.point_button_option_list = [
                     {
                         'id': 'add today',
-                        'text1': 'Get 1 point today,',
-                        'text2': 'Lose 1 point next day',
+                        'text1': '+1 point today,',
+                        'text2': '-1 point next day',
                     },
                     {
                         'id': 'lose today',
-                        'text1': 'Lose 1 point today,',
-                        'text2': 'Get 1 point next day',
+                        'text1': '-1 point today,',
+                        'text2': '+1 point next day',
                     },
                 ]
             else:
                 self.point_button_option_list = [
                     {
                         'id': 'add today',
-                        'text1': 'Get free 1 point today',
+                        'text1': '+1 point today',
                         'text2': '',
                     },
                 ]
             self.point_button_option_surface_list = []
             for i, option in enumerate(self.point_button_option_list):
                 text1 = utils.get_text(text=option['text1'], font=fonts.lf2, size='medium', color=colors.white)
-                text2 = utils.get_text(text=option['text2'], font=fonts.lf2, size='medium', color=colors.white)
+                # Only create text2 surface if text2 is not empty
+                if option['text2'].strip():  # Check if text2 has actual content
+                    text2 = utils.get_text(text=option['text2'], font=fonts.lf2, size='medium', color=colors.white)
+                else:
+                    text2 = None
                 self.point_button_option_surface_list.append({
                     'id': option['id'],
                     'surface1': text1,
@@ -149,6 +153,7 @@ class Play_PlayEventState(BaseState):
                 'fruit': 'nothing',
             })
             self.redraw_button_option_surface_list = []
+            visual_index = 0  # Track visual position independent of list index
             for i, option in enumerate(self.redraw_button_option_list):
                 if option['id'] == 'dummy':
                     self.redraw_button_option_surface_list.append({
@@ -173,9 +178,10 @@ class Play_PlayEventState(BaseState):
                     id=option['id'],
                     width=600,
                     height=50,
-                    pos=(constants.canvas_width/2, 265 + i*75),
+                    pos=(constants.canvas_width/2, 265 + visual_index*75),  # Use visual_index instead of i
                     pos_anchor=posanchors.center
                 ))
+                visual_index += 1  # Increment only for non-dummy entries
         elif self.parent.current_event == 'event_remove':
             self.remove_button_option_list = [
                 {
@@ -854,37 +860,59 @@ class Play_PlayEventState(BaseState):
             elif self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.point_button_option_surface_list):
-                    scaled_point_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
-                    utils.blit(
-                        dest=canvas,
-                        source=scaled_point_button,
-                        pos=(constants.canvas_width/2, constants.canvas_height/2 - 75 + i*150 - 30),
-                        pos_anchor=posanchors.center
-                    )
-                    scaled_point_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
-                    utils.blit(
-                        dest=canvas,
-                        source=scaled_point_button,
-                        pos=(constants.canvas_width/2, constants.canvas_height/2 - 75 + i*150 + 30),
-                        pos_anchor=posanchors.center
-                    )
+                    scaled_point_button1 = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
+                    base_y = constants.canvas_height/2 - 75 + i*150
+                    
+                    # Check if this is a single-line option (surface2 is None)
+                    if option['surface2'] is None:
+                        # Single line - center it without offset
+                        utils.blit(
+                            dest=canvas,
+                            source=scaled_point_button1,
+                            pos=(constants.canvas_width/2, base_y),
+                            pos_anchor=posanchors.center
+                        )
+                    else:
+                        # Two lines - use offset positioning
+                        scaled_point_button2 = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
+                        offset = 30 * option['scale']
+                        utils.blit(
+                            dest=canvas,
+                            source=scaled_point_button1,
+                            pos=(constants.canvas_width/2, base_y - offset),
+                            pos_anchor=posanchors.center
+                        )
+                        utils.blit(
+                            dest=canvas,
+                            source=scaled_point_button2,
+                            pos=(constants.canvas_width/2, base_y + offset),
+                            pos_anchor=posanchors.center
+                        )
 
             elif self.parent.current_event == 'event_redraw':
                 utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
+                visual_index = 0  # Track visual position independent of list index
                 for i, option in enumerate(self.redraw_button_option_surface_list):
                     if option['id'] == 'dummy':
                         continue
                     scaled_redraw_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     if option["id"] == "do nothing":
-                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2, 265 + i*75), pos_anchor=posanchors.center)
+                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2, 265 + visual_index*75), pos_anchor=posanchors.center)
                     else:
-                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + 35, 265 + i*75), pos_anchor=posanchors.center)
-                        self.scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
-                        self.glow_fruit_image = utils.effect_outline(surface=self.scaled_fruit_image, distance=2, color=colors.mono_35)
+                        # Scale the text offset with the surface scale
+                        text_offset = 35 * option['scale']
+                        utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + text_offset, 265 + visual_index*75), pos_anchor=posanchors.center)
+                        scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
+                        glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.mono_35)
                         if option['id'] == 'seasonal fruit':
-                            utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(540, 265 + i*75), pos_anchor='center')
+                            # Scale the fruit offset with the fruit scale
+                            fruit_offset = 540 + (540 - constants.canvas_width/2) * (option['scale_fruit'] - 3.0) / 3.0
+                            utils.blit(dest=canvas, source=glow_fruit_image, pos=(fruit_offset, 265 + visual_index*75), pos_anchor='center')
                         else:
-                            utils.blit(dest=canvas, source=self.glow_fruit_image, pos=(570, 265 + i*75), pos_anchor='center')
+                            # Scale the fruit offset with the fruit scale  
+                            fruit_offset = 570 + (570 - constants.canvas_width/2) * (option['scale_fruit'] - 3.0) / 3.0
+                            utils.blit(dest=canvas, source=glow_fruit_image, pos=(fruit_offset, 265 + visual_index*75), pos_anchor='center')
+                    visual_index += 1  # Increment only for non-dummy entries
                         
             elif self.parent.current_event == 'event_reveal':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)

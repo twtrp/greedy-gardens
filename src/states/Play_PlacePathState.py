@@ -95,6 +95,11 @@ class Play_PlacePathState(BaseState):
                     new_score = current_score + 1
                     setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                     setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                    
+                    # Check if the path that triggered magic fruit was also a strike
+                    if "strike" in self.parent.current_path:
+                        self.parent.is_striking = True
+                    
                     # print("exiting place")
                     self.exit_state()
 

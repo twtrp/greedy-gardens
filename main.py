@@ -75,7 +75,6 @@ class Game:
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
                                                     flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
             
-            pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
             pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
         if setting_index == 4:
             self.fps_cap = self.settings['fps_cap'] + 1

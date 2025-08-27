@@ -342,26 +342,22 @@ class PlayState(BaseState):
             font=fonts.lf2, size='tiny', color=colors.white
         )
 
-        # Create combined spacebar hint surface
         combined_width = max(self.press_spacebar_hint.get_width(), self.spacebar_key_hint.get_width())
         combined_height = self.press_spacebar_hint.get_height() + self.spacebar_key_hint.get_height() + 3
         self.combined_spacebar_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
         
-        # Blit both elements to the combined surface
         press_x = (combined_width - self.press_spacebar_hint.get_width()) // 2
         spacebar_x = (combined_width - self.spacebar_key_hint.get_width()) // 2
         self.combined_spacebar_hint.blit(self.press_spacebar_hint, (press_x, 0))
         self.combined_spacebar_hint.blit(self.spacebar_key_hint, (spacebar_x, self.press_spacebar_hint.get_height() + 3))
         
-        # Scale properties for spacebar hint animation (tick-based like wind animations)
         self.spacebar_hint_scale_min = 1.0
         self.spacebar_hint_scale_max = 1.15
 
         self.spacebar_hint_scale = 1.0
         self.spacebar_animation_time = 0.0
-        self.spacebar_animation_cycle_duration = 2  # seconds per full cycle
+        self.spacebar_animation_cycle_duration = 2
 
-        # right gui
         self.right_box_title = utils.get_text(text='Turn 1', font=fonts.lf2, size='small', color=colors.white)
 
         self.deck_list = [
@@ -496,7 +492,6 @@ class PlayState(BaseState):
         self.cards_event_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.cards_event)
         self.pop_up_revealed_event_card = None
         
-        # Add magic fruit buttons at actual render positions
         self.button_list.append(Button(
             game=self.game,
             id='magic_fruit_1',
@@ -554,7 +549,6 @@ class PlayState(BaseState):
             music.play_11,
             music.play_12,
             music.play_13,
-            music.play_14,
         ]
         random.seed(None)
         random.shuffle(self.songs)
@@ -566,13 +560,11 @@ class PlayState(BaseState):
         self.current_song = 0
         self.game.music_channel.play()
 
-        # pause
         self.paused = False
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
-        self.pause_background.fill((*colors.black, 200))
+        self.pause_background.fill((*colors.black, 225))
         self.pause_title = utils.get_text(text='Paused', font=fonts.lf2, size='huge', color=colors.mono_205)
         
-        # Settings for pause menu
         self.settings_manager = SettingsManager()
         self.current_settings_index = self.settings_manager.load_all_settings_index()
         self.setting_index = 0
@@ -581,10 +573,9 @@ class PlayState(BaseState):
         self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
         self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
         
-        # Create settings options (excluding skip_bootup)
         self.pause_settings_surface_list = []
         for i, setting in enumerate(self.settings_manager.settings_list):
-            if setting['id'] != 'skip_bootup':  # Exclude Skip Intro setting
+            if setting['id'] != 'skip_bootup':
                 text_string = setting['label'] + ':  ' + setting['value_label'][self.current_settings_index[i]]
                 text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
                 self.pause_settings_surface_list.append({
@@ -592,7 +583,7 @@ class PlayState(BaseState):
                     'surface': text,
                     'left_arrow_scale': 0,
                     'right_arrow_scale': 0,
-                    'settings_list_index': i  # Keep track of the original index in settings_list
+                    'settings_list_index': i
                 })
         
         self.pause_options = [
@@ -608,7 +599,6 @@ class PlayState(BaseState):
         self.pause_options_surface_list = []
         self.pause_options_button_list = []
         
-        # Add setting buttons first
         for i, option in enumerate(self.pause_settings_surface_list):
             self.pause_options_button_list.append(Button(
                 game=self.game,
@@ -616,7 +606,7 @@ class PlayState(BaseState):
                 group='setting',
                 width=500,
                 height=50,
-                pos=(constants.canvas_width/2, 295 + i*50),  # Start at 295 (moved down 15px from 280)
+                pos=(constants.canvas_width/2, 295 + i*50),
                 pos_anchor='center',
                 hover_cursor=None,
                 enable_click=False
@@ -627,7 +617,7 @@ class PlayState(BaseState):
                 group='arrow',
                 width=48,
                 height=50,
-                pos=(constants.canvas_width/2 - 180, 295 + i*50),  # Start at 295 (moved down 15px from 280)
+                pos=(constants.canvas_width/2 - 180, 295 + i*50),
                 pos_anchor='center'
             ))
             self.pause_options_button_list.append(Button(
@@ -636,11 +626,10 @@ class PlayState(BaseState):
                 group='arrow',
                 width=48,
                 height=50,
-                pos=(constants.canvas_width/2 + 180, 295 + i*50),  # Start at 295 (moved down 15px from 280)
+                pos=(constants.canvas_width/2 + 180, 295 + i*50),
                 pos_anchor='center'
             ))
         
-        # Add resume/quit buttons
         for i, option in enumerate(self.pause_options):
             text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
             self.pause_options_surface_list.append({
@@ -648,11 +637,10 @@ class PlayState(BaseState):
                 'surface': text,
                 'scale': 1,
             })
-            # Position: Resume below title, Exit after settings (5 settings * 50px = 250px below settings start)
-            if i == 0:  # Resume button - below title
-                y_offset = 225  # Below pause title at 120, moved down 15px more
-            else:  # Exit to menu button - after settings panel
-                y_offset = 295 + 5*50 + 30  # Settings start at 295, 5 settings * 50px, plus 30px spacing
+            if i == 0:
+                y_offset = 225
+            else:
+                y_offset = 295 + 5*50 + 30
             self.pause_options_button_list.append(Button(
                 game=self.game,
                 id=option['id'],
@@ -681,19 +669,16 @@ class PlayState(BaseState):
                         if button.hover_cursor is not None:
                             self.cursor = button.hover_cursor
                         
-                        # Handle settings hover effects
                         for i, option in enumerate(self.pause_settings_surface_list):
                             if button.id == option['id']:
                                 self.setting_index = option['settings_list_index']
                                 option['left_arrow_scale'] = min(option['left_arrow_scale'] + 10*dt, 1.0)
                                 option['right_arrow_scale'] = min(option['right_arrow_scale'] + 10*dt, 1.0)
                         
-                        # Handle regular button hover effects
                         for option in self.pause_options_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                     else:
-                        # Reset hover effects
                         for option in self.pause_settings_surface_list:
                             if button.id == option['id']:
                                 option['left_arrow_scale'] = max(option['left_arrow_scale'] - 10*dt, 0)
