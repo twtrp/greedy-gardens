@@ -1,9 +1,9 @@
 venv/
+venvlinux/
+venvwindows/
 __pycache__/
 data/settings.lst
-windowsvenv/
-linuxvenv/
-macvenv/
 build/
 dist/
 release/
+*.spec
