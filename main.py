@@ -1,6 +1,9 @@
 from src.library.essentials import *
 from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
+import traceback
+import tkinter as tk
+from tkinter import messagebox
 
 class Game:
     def __init__(self):
@@ -81,6 +84,29 @@ class Game:
         if not self.music_channel.get_busy():
             self.music_channel.play()
 
+    def show_error_popup(self, error):
+        error_message = f"{type(error).__name__}: {str(error)}\n\nFull traceback:\n{traceback.format_exc()}"
+
+        # Create a minimal tkinter window as parent (for taskbar support)
+        root = tk.Tk()
+        root.title("Greedy Gardens - Fatal Error")
+        root.geometry("1x1+0+0")  # Make it tiny and position at top-left
+        root.attributes('-alpha', 0.0)  # Make it invisible but keep in taskbar
+        
+        # Make sure the messagebox appears in front
+        root.lift()
+        root.attributes('-topmost', True)
+        root.after(100, lambda: root.attributes('-topmost', False))
+        
+        # Create error message with version info
+        full_message = f"Greedy Gardens has encountered a fatal error.\n\n"
+        full_message += f"Error Details:\n{error_message}\n\n"
+        full_message += f"Please report this error to the developer."
+        
+        # Show the error dialog with parent for taskbar visibility
+        messagebox.showerror("Greedy Gardens - Fatal Error", full_message, parent=root)
+        root.destroy()
+
 
     # Main methods
 
@@ -97,6 +123,13 @@ class Game:
                 pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
+            
+            # TEST CRASH: Press Ctrl+Shift+C to simulate a crash
+            if event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_LCTRL] and keys[pygame.K_LSHIFT] and event.key == pygame.K_c:
+                    # Simulate different types of crashes for testing
+                    raise RuntimeError("This is a test crash! Press Ctrl+Shift+C was pressed to simulate an error.")
     
 
     def render(self):
@@ -127,8 +160,17 @@ class Game:
                 pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
+            except Exception as e:
+                self.show_error_popup(e)
+                pygame.mixer.stop()
+                pygame.quit()
+                sys.exit(1)
 
 
 if __name__ == '__main__':
     game = Game()
-    game.game_loop()
+    try:
+        game.game_loop()
+    except Exception as e:
+        game.show_error_popup(e)
+        sys.exit(1)

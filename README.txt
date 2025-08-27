@@ -11,10 +11,10 @@ Windows:
 
     To build:
     - venv\Scripts\Activate
-    - pyinstaller --onefile --noconsole --name PlayGreedyGardens-[Version] main.py
+    - python3 build.py
 
 
-Linux/MacOS:
+Linux:
 
     Dependencies:
     - python3 -m venv venvlinux
@@ -27,4 +27,4 @@ Linux/MacOS:
 
     To build:
     - source venvlinux/bin/activate
-    - pyinstaller --onefile --noconsole --name PlayGreedyGardens-[Version] main.py
+    - python3 build.py
