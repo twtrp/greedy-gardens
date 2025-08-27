@@ -1109,7 +1109,7 @@ class Play_PlayMagicEventState(BaseState):
             #     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
             #     pos=(self.parent.box_width, 0),
             #     pos_anchor='topleft',
-            #     color=(*colors.black, 128), # 50% transparency
+            #     color=(*colors.black, 90), # 50% transparency
             #     inner_border_width=0,
             #     outer_border_width=0,
             #     outer_border_color=colors.black
@@ -1191,24 +1191,32 @@ class Play_PlayMagicEventState(BaseState):
         if self.selecting_path:
             utils.blit(
                 dest=canvas,
+                source=self.parent.event_free_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
+            utils.blit(
+                dest=canvas,
                 source=self.parent.up_key_hint,
-                pos=(self.parent.box_width, constants.canvas_height - self.box_height - 32),
-                pos_anchor='topleft'                            
+                pos=(constants.canvas_width//2 - 225, 2),
+                pos_anchor=posanchors.midtop                          
             )
             utils.blit(
                 dest=canvas,
                 source=self.parent.down_key_hint,
-                pos=(self.parent.box_width + 28, constants.canvas_height - self.box_height - 32),
-                pos_anchor='topleft'
+                pos=(constants.canvas_width//2 - 225 + 32, 2),
+                pos_anchor=posanchors.midtop
             )
-            utils.draw_rect(dest=canvas,
-                                    size=(self.box_width, self.box_height),
-                                    pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),
-                                    pos_anchor='topleft',
-                                    color=(*colors.white, 166), # 75% transparency
-                                    inner_border_width=4,
-                                    outer_border_width=0,
-                                    outer_border_color=colors.black)
+
+            utils.draw_rect(
+                dest=canvas,
+                size=(self.box_width, self.box_height),
+                pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),
+                pos_anchor='topleft',
+                color=(*colors.white, 150),
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
+            )
             
             utils.blit(dest=canvas, source=self.path_WE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320), pos_anchor='center')
             utils.blit(dest=canvas, source=self.path_NS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 262), pos_anchor='center')

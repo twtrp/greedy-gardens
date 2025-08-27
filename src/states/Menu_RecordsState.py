@@ -6,8 +6,28 @@ class Menu_RecordsState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
-        self.sql_conn = sqlite3.connect(os.path.join(dir.data, 'records.sqlite'))
-        self.sql_cursor = self.sql_conn.cursor()
+        # Ensure data directory exists
+        if not os.path.exists(dir.data):
+            os.makedirs(dir.data)
+
+        try:
+            self.sql_conn = sqlite3.connect(os.path.join(dir.data, 'records.sqlite'))
+            self.sql_cursor = self.sql_conn.cursor()
+            
+            # Create table if it doesn't exist
+            self.sql_cursor.execute('''
+                CREATE TABLE IF NOT EXISTS records (
+                    score INTEGER,
+                    seed INTEGER,
+                    seed_type TEXT
+                )
+            ''')
+            self.sql_conn.commit()
+        except Exception as e:
+            print(f"Error connecting to records database: {e}")
+            # Create dummy connection that will fail gracefully
+            self.sql_conn = None
+            self.sql_cursor = None
 
         self.table_width = 600
         self.table_height = 300
@@ -20,34 +40,39 @@ class Menu_RecordsState(BaseState):
         self.table_row_surface_dict = {}
         self.ordered_row_ids = []
 
-        query = f'SELECT rowid, * FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
-        self.sql_cursor.execute(query)
-        rows = self.sql_cursor.fetchall()
-            
-        for row in rows:
-            rowid = row[0]
-            self.ordered_row_ids.append(rowid)
-            surface = pygame.Surface(size=(constants.canvas_width, self.table_row_height), flags=pygame.SRCALPHA)
-            row_data = {
-                'rowid': rowid,
-                'score': row[1],
-                'seed': row[2],
-                'seed_type': row[3]
-            }
-            for idx, key in enumerate(row_data.keys()):
-                cell = utils.get_text(
-                    text=str(row_data[key]),
-                    font=fonts.lf2,
-                    size='small',
-                    color=colors.mono_50,
-                    long_shadow=False,
-                    outline=False
-                )
-                utils.blit(dest=surface,
-                           source=cell,
-                           pos=(self.table_header_list[idx]['x'] - 8, 0),
-                           pos_anchor=posanchors.midtop)
-            self.table_row_surface_dict[rowid] = surface
+        if self.sql_cursor is not None:
+            try:
+                query = f'SELECT rowid, * FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
+                self.sql_cursor.execute(query)
+                rows = self.sql_cursor.fetchall()
+                    
+                for row in rows:
+                    rowid = row[0]
+                    self.ordered_row_ids.append(rowid)
+                    surface = pygame.Surface(size=(constants.canvas_width, self.table_row_height), flags=pygame.SRCALPHA)
+                    row_data = {
+                        'rowid': rowid,
+                        'score': row[1],
+                        'seed': row[2],
+                        'seed_type': row[3]
+                    }
+                    for idx, key in enumerate(row_data.keys()):
+                        cell = utils.get_text(
+                            text=str(row_data[key]),
+                            font=fonts.lf2,
+                            size='small',
+                            color=colors.mono_50,
+                            long_shadow=False,
+                            outline=False
+                        )
+                        utils.blit(dest=surface,
+                                   source=cell,
+                                   pos=(self.table_header_list[idx]['x'] - 8, 0),
+                                   pos_anchor=posanchors.midtop)
+                    self.table_row_surface_dict[rowid] = surface
+            except Exception as e:
+                print(f"Error loading records data: {e}")
+                # Continue with empty records if there's an error
 
         self.table_max_scroll_offset = min(0, -len(self.ordered_row_ids) * self.table_row_height + self.table_height - 12)
 
@@ -117,17 +142,24 @@ class Menu_RecordsState(BaseState):
                                             padding_x=9,
                                             padding_y=10))
         
-        query = f'SELECT rowid,* FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
-        self.sql_cursor.execute(query)
-        rows = self.sql_cursor.fetchall()
-        self.table_row_list = []
-        for row in rows:
-            self.table_row_list.append({
-                'rowid': row[0],
-                'score': row[1],
-                'seed': row[2],
-                'seed_type': row[3]
-            })
+        if self.sql_cursor is not None:
+            try:
+                query = f'SELECT rowid,* FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
+                self.sql_cursor.execute(query)
+                rows = self.sql_cursor.fetchall()
+                self.table_row_list = []
+                for row in rows:
+                    self.table_row_list.append({
+                        'rowid': row[0],
+                        'score': row[1],
+                        'seed': row[2],
+                        'seed_type': row[3]
+                    })
+            except Exception as e:
+                print(f"Error loading table data: {e}")
+                self.table_row_list = []
+        else:
+            self.table_row_list = []
         self.table_row_surface_list = []
         for row in self.table_row_list:
             row_keys = list(self.table_row_list[0].keys())
@@ -254,20 +286,29 @@ class Menu_RecordsState(BaseState):
                             'scale': new_scale,
                             'x': header['x']
                         })
-                        query = f'SELECT rowid FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
-                        if self.parent.records_sorter['column'] == 'score':
-                            query += ', seed ASC, seed_type ASC'
-                        elif self.parent.records_sorter['column'] == 'seed':
-                            query += ', score DESC, seed_type ASC'
-                        elif self.parent.records_sorter['column'] == 'seed_type':
-                            query += ', seed ASC, score DESC'
-                        self.sql_cursor.execute(query)
-                        self.ordered_row_ids = [row[0] for row in self.sql_cursor.fetchall()]
+                        if self.sql_cursor is not None:
+                            try:
+                                query = f'SELECT rowid FROM records ORDER BY {self.parent.records_sorter["column"]} {self.parent.records_sorter["order"]}'
+                                if self.parent.records_sorter['column'] == 'score':
+                                    query += ', seed ASC, seed_type ASC'
+                                elif self.parent.records_sorter['column'] == 'seed':
+                                    query += ', score DESC, seed_type ASC'
+                                elif self.parent.records_sorter['column'] == 'seed_type':
+                                    query += ', seed ASC, score DESC'
+                                self.sql_cursor.execute(query)
+                                self.ordered_row_ids = [row[0] for row in self.sql_cursor.fetchall()]
+                            except Exception as e:
+                                print(f"Error sorting records: {e}")
+                                self.ordered_row_ids = []
                     utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
 
                 if button.id == 'back':
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
-                    self.sql_conn.close()
+                    if self.sql_conn is not None:
+                        try:
+                            self.sql_conn.close()
+                        except Exception as e:
+                            print(f"Error closing database connection: {e}")
                     self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

@@ -23,6 +23,7 @@ lf2 = {
 lf7 = {
     'file': 'LazyFox Pixel Font 7.ttf',
     'sizes': {
+        'tiny': 18,
         'small': 24,
         'medium': 36,
         'large': 48,

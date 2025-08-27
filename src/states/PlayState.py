@@ -315,6 +315,7 @@ class PlayState(BaseState):
         self.scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
         self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
 
+        # Event Control Hints
         self.up_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='up')
         self.up_key_hint = pygame.transform.scale_by(surface=self.up_key_hint, factor=2)
         self.down_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
@@ -322,9 +323,39 @@ class PlayState(BaseState):
         self.press_spacebar_hint = utils.get_text(text='Press', font=fonts.lf2, size='tiny', color=colors.mono_205)
         self.spacebar_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
         self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=3)
+        self.event_free_control_hint = utils.get_text(
+            text='Press            or scroll mouse wheel to choose the path type.',
+            font=fonts.lf2, size='tiny', color=colors.white
+        )
+        self.event_merge_control_hint = utils.get_text(
+            text='Select 2 paths. Path 1 will be removed and merged with path 2.',
+            font=fonts.lf2, size='tiny', color=colors.white
+        )
+        self.event_remove_control_hint = utils.get_text(
+            text='Select 1 or 2 paths. Click Remove button to confirm.',
+            font=fonts.lf2, size='tiny', color=colors.white
+        )
+        self.event_swap_control_hint = utils.get_text(
+            text='Select 2 paths to swap their positions.',
+            font=fonts.lf2, size='tiny', color=colors.white
+        )
+
+        # Create combined spacebar hint surface
+        combined_width = max(self.press_spacebar_hint.get_width(), self.spacebar_key_hint.get_width())
+        combined_height = self.press_spacebar_hint.get_height() + self.spacebar_key_hint.get_height() + 3
+        self.combined_spacebar_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
+        
+        # Blit both elements to the combined surface
+        press_x = (combined_width - self.press_spacebar_hint.get_width()) // 2
+        spacebar_x = (combined_width - self.spacebar_key_hint.get_width()) // 2
+        self.combined_spacebar_hint.blit(self.press_spacebar_hint, (press_x, 0))
+        self.combined_spacebar_hint.blit(self.spacebar_key_hint, (spacebar_x, self.press_spacebar_hint.get_height() + 3))
+        
+        # Scale properties for spacebar hint animation
+        self.spacebar_hint_scale = 1.0
 
         # right gui
-        self.right_box_title = utils.get_text(text='Turn 0', font=fonts.lf2, size='small', color=colors.white)
+        self.right_box_title = utils.get_text(text='Turn 1', font=fonts.lf2, size='small', color=colors.white)
 
         self.deck_list = [
             {'text': 'Fruit',},
@@ -496,7 +527,7 @@ class PlayState(BaseState):
         # wind
         self.wind_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.wind_entities_list = []
-        self.wind_spawn_rate_per_second = 0.75
+        self.wind_spawn_rate_per_second = 1.5
         self.wind_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
         for wind_sprite in self.wind_sprites:
             self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (2, 1))
@@ -517,8 +548,6 @@ class PlayState(BaseState):
             music.play_12,
             music.play_13,
             music.play_14,
-            music.play_15,
-            music.play_16
         ]
         random.seed(None)
         random.shuffle(self.songs)
@@ -599,6 +628,11 @@ class PlayState(BaseState):
                                 utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
                                 self.game.music_channel.play()
                                 self.timer_manager.StopTimer(self.water_timer)
+                                
+                                # Clean up spacebar animation system
+                                if hasattr(self, 'spacebar_animation_growing'):
+                                    delattr(self, 'spacebar_animation_growing')
+                                
                                 self.tween_list.clear()
                                 self.game.state_stack.clear()
                             self.tween_list.append(tween.to(
@@ -769,7 +803,7 @@ class PlayState(BaseState):
                                 # Extract the index from the button id
                                 index = int(button.id.split('_')[-1])
                                 # Set popup to show this individual revealed event card (using negative values to distinguish from magic fruits)
-                                self.pop_up_revealed_event_card = -(index + 1)  # -1, -2, -3, -4 for individual revealed events
+                                self.pop_up_revealed_event_card = -(index + 1) # -1, -2, -3, -4 for individual revealed events
                                 break
                     if self.play_event_state == True:
                         for button in self.button_list:
@@ -1205,7 +1239,7 @@ class PlayState(BaseState):
                     size=(constants.canvas_width, constants.canvas_height),
                     pos=(0, 0),
                     pos_anchor='topleft',
-                    color=(*colors.black, 128)
+                    color=(*colors.black, 90)
                 )
             
             # Render gui
@@ -1228,10 +1262,9 @@ class PlayState(BaseState):
                     size=(self.box_width, constants.canvas_height),
                     pos=(0, 0),
                     pos_anchor='topleft',
-                    color=(*colors.white, 160), # 75% transparency
+                    color=(*colors.white, 150),
                     inner_border_width=4,
-                    outer_border_width=0,
-                    outer_border_color=colors.black
+                    inner_border_color=colors.mono_240,
                 )
                 ## Render text in left white box
                 utils.blit(dest=canvas, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
@@ -1240,9 +1273,15 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
                 utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
-                ## Render spacebar hint
-                utils.blit(dest=canvas, source=self.press_spacebar_hint, pos=(self.box_width/2, 600), pos_anchor='center')
-                utils.blit(dest=canvas, source=self.spacebar_key_hint, pos=(self.box_width/2, 640), pos_anchor='center')   
+                ## Render spacebar hint (hide only when a card is being rendered at position 630)
+                card_being_rendered = (self.current_path or 
+                                     (self.current_event and self.playing_magic_event and self.is_current_task_event) or
+                                     (self.current_event and not self.playing_magic_event))
+                if not card_being_rendered:
+                    # Use fixed scale during end day state, animated scale otherwise
+                    scale_factor = 1.0 if self.is_choosing else self.spacebar_hint_scale
+                    scaled_combined_hint = pygame.transform.scale_by(surface=self.combined_spacebar_hint, factor=scale_factor)
+                    utils.blit(dest=canvas, source=scaled_combined_hint, pos=(self.box_width/2, 620), pos_anchor='center')   
 
                 ## Render value in left white box
                 for i, score in enumerate(self.score_amount_list):
@@ -1309,14 +1348,15 @@ class PlayState(BaseState):
                     utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
 
                 ## Render right white box
-                utils.draw_rect(dest=canvas,
-                                    size=(self.box_width, constants.canvas_height),
-                                    pos=(constants.canvas_width - self.box_width, 0),
-                                    pos_anchor='topleft',
-                                    color=(*colors.white, 160), # 75% transparency
-                                    inner_border_width=4,
-                                    outer_border_width=0,
-                                    outer_border_color=colors.black)
+                utils.draw_rect(
+                    dest=canvas,
+                    size=(self.box_width, constants.canvas_height),
+                    pos=(constants.canvas_width - self.box_width, 0),
+                    pos_anchor='topleft',
+                    color=(*colors.white, 150),
+                    inner_border_width=4,
+                    inner_border_color=colors.mono_240,
+                )
                 
                 ## Render text in right white box
                 utils.blit(dest=canvas, source=self.right_box_title, pos=(constants.canvas_width - self.box_width/2, 35), pos_anchor='center')
@@ -1378,14 +1418,15 @@ class PlayState(BaseState):
             if self.current_day < 5:
                 # Render Revealed card
                 if len(self.revealed_path) > 0:
-                    utils.draw_rect(dest=canvas,
-                                        size=(60, len(self.revealed_path)*60),
-                                        pos=(constants.canvas_width - self.box_width + 4, constants.canvas_height),
-                                        pos_anchor='bottomright',
-                                        color=(*colors.white, 160), # 75% transparency
-                                        inner_border_width=4,
-                                        outer_border_width=0,
-                                        outer_border_color=colors.black)
+                    utils.draw_rect(
+                        dest=canvas,
+                        size=(60, len(self.revealed_path)*60),
+                        pos=(constants.canvas_width - self.box_width + 4, constants.canvas_height),
+                        pos_anchor='bottomright',
+                        color=(*colors.white, 150),
+                        inner_border_width=4,
+                        inner_border_color=colors.mono_240,
+                    )
                     
                     for i, card in enumerate(self.revealed_path):
                         utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 2, constants.canvas_height - 6 - i*58), pos_anchor='bottomright')
@@ -1395,14 +1436,15 @@ class PlayState(BaseState):
                     utils.blit(dest=canvas, source=self.path_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 74), pos_anchor='center')
                 
                 if len(self.revealed_event) > 0:
-                    utils.draw_rect(dest=canvas,
-                                        size=(60, len(self.revealed_event)*60),
-                                        pos=(constants.canvas_width - self.box_width + 4, 0),
-                                        pos_anchor='topright',
-                                        color=(*colors.white, 160), # 75% transparency
-                                        inner_border_width=4,
-                                        outer_border_width=0,
-                                        outer_border_color=colors.black)
+                    utils.draw_rect(
+                        dest=canvas,
+                        size=(60, len(self.revealed_event)*60),
+                        pos=(constants.canvas_width - self.box_width + 4, 0),
+                        pos_anchor='topright',
+                        color=(*colors.white, 150),
+                        inner_border_width=4,
+                        inner_border_color=colors.mono_240,
+                    )
                     
                     for i, card in enumerate(self.revealed_event):
                         utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 2, 10 + i*58), pos_anchor=posanchors.topright)
@@ -1415,7 +1457,7 @@ class PlayState(BaseState):
                     #     button.render(canvas=canvas)
                     if self.pop_up_revealed_event_card == 3 and self.magic_fruit3_event != None: 
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
-                        mask_surface.fill((*colors.black, 175))
+                        mask_surface.fill((*colors.black, 90))
                         # Cutout for magic fruit 3 at original button position
                         pygame.draw.rect(
                             surface=mask_surface,
@@ -1428,7 +1470,7 @@ class PlayState(BaseState):
                         utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     elif self.pop_up_revealed_event_card == 2 and self.magic_fruit2_event != None:
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
-                        mask_surface.fill((*colors.black, 175))
+                        mask_surface.fill((*colors.black, 90))
                         pygame.draw.rect(
                             surface=mask_surface,
                             color=(*colors.black, 0),
@@ -1438,7 +1480,7 @@ class PlayState(BaseState):
                         if self.magic_fruit3_event != None:
                             pygame.draw.rect(
                                 surface=mask_surface,
-                                color=(*colors.black, 175),
+                                color=(*colors.black, 90),
                                 rect=(1165, 575, 96 - 4, 128 - 4)
                             )
                         pygame.draw.rect(
@@ -1452,7 +1494,7 @@ class PlayState(BaseState):
                         utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     elif self.pop_up_revealed_event_card == 1 and self.magic_fruit1_event != None:
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
-                        mask_surface.fill((*colors.black, 175))
+                        mask_surface.fill((*colors.black, 90))
                         pygame.draw.rect(
                             surface=mask_surface,
                             color=(*colors.black, 0),
@@ -1462,14 +1504,14 @@ class PlayState(BaseState):
                         if self.magic_fruit2_event != None:
                             pygame.draw.rect(
                                 surface=mask_surface,
-                                color=(*colors.black, 175),
+                                color=(*colors.black, 90),
                                 rect=(1095, 565, 96 - 4, 128 - 4)
                             )
                         # Only shadow magic fruit 3 if it exists  
                         if self.magic_fruit3_event != None:
                             pygame.draw.rect(
                                 surface=mask_surface,
-                                color=(*colors.black, 175),
+                                color=(*colors.black, 90),
                                 rect=(1165, 575, 96 - 4, 128 - 4)
                             )
                         pygame.draw.rect(
@@ -1487,7 +1529,7 @@ class PlayState(BaseState):
                         index = -self.pop_up_revealed_event_card - 1 
                         if index < len(self.revealed_event):
                             mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
-                            mask_surface.fill((*colors.black, 175))
+                            mask_surface.fill((*colors.black, 90))
                             
                             button_x = constants.canvas_width - self.box_width - self.revealed_event_button_width
                             button_y = self.revealed_event_button_y_base + index * self.revealed_event_button_y_spacing
@@ -1505,7 +1547,7 @@ class PlayState(BaseState):
                     if self.play_event_state == True and self.is_current_task_event:
                         if self.pop_up_revealed_event_card == 4:
                             mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
-                            mask_surface.fill((*colors.black, 175))
+                            mask_surface.fill((*colors.black, 90))
                             pygame.draw.rect(
                                 surface=mask_surface,
                                 color=(*colors.black, 0),
@@ -1515,7 +1557,7 @@ class PlayState(BaseState):
                             #self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                             scaled_image = pygame.transform.scale_by(surface=self.current_event_image, factor=3)
                             utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
-  
+
 
         # pause menu
         if self.paused:
@@ -1571,6 +1613,7 @@ class PlayState(BaseState):
             self.day_title_text_props = None
             self.shown_day_title = True
             self.tween_list.clear()
+            self.start_spacebar_hint_animation()
         utils.multitween(
             tween_list=self.tween_list,
             container=self.day_title_text_props,
@@ -1580,3 +1623,32 @@ class PlayState(BaseState):
             ease_type=[tweencurves.easeOutExpo, tweencurves.easeOutCubic],
             on_complete=on_complete1
         )
+
+    def start_spacebar_hint_animation(self):
+        # Clear any existing animation to prevent duplicates
+        self.spacebar_hint_scale = 1.0
+        
+        # Simple non-recursive animation using a toggle approach
+        self.spacebar_animation_growing = True
+        
+        def toggle_animation():
+            if hasattr(self, 'spacebar_animation_growing'):
+                if self.spacebar_animation_growing:
+                    self.tween_list.append(tween.to(
+                        container=self,
+                        key='spacebar_hint_scale',
+                        end_value=1.15,
+                        time=1,
+                        ease_type=tweencurves.easeInOutSine
+                    ).on_complete(lambda: toggle_animation() if hasattr(self, 'spacebar_animation_growing') else None))
+                else:
+                    self.tween_list.append(tween.to(
+                        container=self,
+                        key='spacebar_hint_scale',
+                        end_value=1.0,
+                        time=1,
+                        ease_type=tweencurves.easeInOutSine
+                    ).on_complete(lambda: toggle_animation() if hasattr(self, 'spacebar_animation_growing') else None))
+                self.spacebar_animation_growing = not self.spacebar_animation_growing
+        
+        toggle_animation()

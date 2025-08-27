@@ -148,7 +148,6 @@ class Play_PlayEventState(BaseState):
                 'text': 'Do Nothing',
                 'fruit': 'nothing',
             })
-            print(self.redraw_button_option_list)
             self.redraw_button_option_surface_list = []
             for i, option in enumerate(self.redraw_button_option_list):
                 if option['id'] == 'dummy':
@@ -904,6 +903,12 @@ class Play_PlayEventState(BaseState):
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.parent.current_event == 'event_remove':
+            utils.blit(
+                dest=canvas,
+                source=self.parent.event_remove_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
             for i, option in enumerate(self.remove_button_option_surface_list):
                 if self.selected_cell or self.selected_cell_2:
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
@@ -911,30 +916,52 @@ class Play_PlayEventState(BaseState):
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
                 utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
 
+        if self.parent.current_event == 'event_swap':
+            utils.blit(
+                dest=canvas,
+                source=self.parent.event_swap_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
+
+        if self.parent.current_event == 'event_merge':
+            utils.blit(
+                dest=canvas,
+                source=self.parent.event_merge_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
 
         if self.selecting_path:
             utils.blit(
                 dest=canvas,
+                source=self.parent.event_free_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
+            utils.blit(
+                dest=canvas,
                 source=self.parent.up_key_hint,
-                pos=(self.parent.box_width, constants.canvas_height - self.box_height - 32),
-                pos_anchor='topleft'                            
+                pos=(constants.canvas_width//2 - 225, 2),
+                pos_anchor=posanchors.midtop                          
             )
             utils.blit(
                 dest=canvas,
                 source=self.parent.down_key_hint,
-                pos=(self.parent.box_width + 28, constants.canvas_height - self.box_height - 32),
-                pos_anchor='topleft'
+                pos=(constants.canvas_width//2 - 225 + 32, 2),
+                pos_anchor=posanchors.midtop
             )
 
-            utils.draw_rect(dest=canvas,
-                                    size=(self.box_width, self.box_height),
-                                    pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),
-                                    pos_anchor='topleft',
-                                    color=(*colors.white, 166), # 75% transparency
-                                    inner_border_width=4,
-                                    outer_border_width=0,
-                                    outer_border_color=colors.black)
-            
+            utils.draw_rect(
+                dest=canvas,
+                size=(self.box_width, self.box_height),
+                pos=(self.parent.box_width - 4, constants.canvas_height - self.box_height),
+                pos_anchor='topleft',
+                color=(*colors.white, 166), # 75% transparency
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
+            )
+
             utils.blit(dest=canvas, source=self.path_WE_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 320), pos_anchor='center')
             utils.blit(dest=canvas, source=self.path_NS_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 262), pos_anchor='center')
             utils.blit(dest=canvas, source=self.path_NW_image, pos=(self.parent.box_width + self.box_width/2 - 4, constants.canvas_height - 204), pos_anchor='center')
