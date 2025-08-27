@@ -124,12 +124,12 @@ class Game:
                 pygame.quit()
                 sys.exit()
             
-            # TEST CRASH: Press Ctrl+Shift+C to simulate a crash
-            if event.type == pygame.KEYDOWN:
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_LCTRL] and keys[pygame.K_LSHIFT] and event.key == pygame.K_c:
-                    # Simulate different types of crashes for testing
-                    raise RuntimeError("This is a test crash! Press Ctrl+Shift+C was pressed to simulate an error.")
+            # # TEST CRASH: Press Ctrl+Shift+C to simulate a crash
+            # if event.type == pygame.KEYDOWN:
+            #     keys = pygame.key.get_pressed()
+            #     if keys[pygame.K_LCTRL] and keys[pygame.K_LSHIFT] and event.key == pygame.K_c:
+            #         # Simulate different types of crashes for testing
+            #         raise RuntimeError("This is a test crash! Press Ctrl+Shift+C was pressed to simulate an error.")
     
 
     def render(self):
