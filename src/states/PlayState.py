@@ -1625,10 +1625,9 @@ class PlayState(BaseState):
         )
 
     def start_spacebar_hint_animation(self):
-        # Clear any existing animation to prevent duplicates
+
         self.spacebar_hint_scale = 1.0
         
-        # Simple non-recursive animation using a toggle approach
         self.spacebar_animation_growing = True
         
         def toggle_animation():
