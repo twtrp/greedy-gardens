@@ -15,7 +15,9 @@ from src.classes.Cell import Cell
 from src.classes.Button import Button
 from src.classes.TimerManager import TimerManager
 from src.classes.Wind import Wind
+from src.classes.SettingsManager import SettingsManager
 import tween
+import math
 
 class PlayState(BaseState):
     def __init__(self, game, parent, stack, seed):
@@ -351,8 +353,13 @@ class PlayState(BaseState):
         self.combined_spacebar_hint.blit(self.press_spacebar_hint, (press_x, 0))
         self.combined_spacebar_hint.blit(self.spacebar_key_hint, (spacebar_x, self.press_spacebar_hint.get_height() + 3))
         
-        # Scale properties for spacebar hint animation
+        # Scale properties for spacebar hint animation (tick-based like wind animations)
+        self.spacebar_hint_scale_min = 1.0
+        self.spacebar_hint_scale_max = 1.15
+
         self.spacebar_hint_scale = 1.0
+        self.spacebar_animation_time = 0.0
+        self.spacebar_animation_cycle_duration = 2  # seconds per full cycle
 
         # right gui
         self.right_box_title = utils.get_text(text='Turn 1', font=fonts.lf2, size='small', color=colors.white)
@@ -564,6 +571,30 @@ class PlayState(BaseState):
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.pause_background.fill((*colors.black, 200))
         self.pause_title = utils.get_text(text='Paused', font=fonts.lf2, size='huge', color=colors.mono_205)
+        
+        # Settings for pause menu
+        self.settings_manager = SettingsManager()
+        self.current_settings_index = self.settings_manager.load_all_settings_index()
+        self.setting_index = 0
+        
+        # Load arrow graphics
+        self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
+        self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
+        
+        # Create settings options (excluding skip_bootup)
+        self.pause_settings_surface_list = []
+        for i, setting in enumerate(self.settings_manager.settings_list):
+            if setting['id'] != 'skip_bootup':  # Exclude Skip Intro setting
+                text_string = setting['label'] + ':  ' + setting['value_label'][self.current_settings_index[i]]
+                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
+                self.pause_settings_surface_list.append({
+                    'id': setting['id'],
+                    'surface': text,
+                    'left_arrow_scale': 0,
+                    'right_arrow_scale': 0,
+                    'settings_list_index': i  # Keep track of the original index in settings_list
+                })
+        
         self.pause_options = [
             {
                 'id': 'resume',
@@ -576,6 +607,40 @@ class PlayState(BaseState):
         ]
         self.pause_options_surface_list = []
         self.pause_options_button_list = []
+        
+        # Add setting buttons first
+        for i, option in enumerate(self.pause_settings_surface_list):
+            self.pause_options_button_list.append(Button(
+                game=self.game,
+                id=option['id'],
+                group='setting',
+                width=500,
+                height=50,
+                pos=(constants.canvas_width/2, 295 + i*50),  # Start at 295 (moved down 15px from 280)
+                pos_anchor='center',
+                hover_cursor=None,
+                enable_click=False
+            ))
+            self.pause_options_button_list.append(Button(
+                game=self.game,
+                id=option['id']+'_left',
+                group='arrow',
+                width=48,
+                height=50,
+                pos=(constants.canvas_width/2 - 180, 295 + i*50),  # Start at 295 (moved down 15px from 280)
+                pos_anchor='center'
+            ))
+            self.pause_options_button_list.append(Button(
+                game=self.game,
+                id=option['id']+'_right',
+                group='arrow',
+                width=48,
+                height=50,
+                pos=(constants.canvas_width/2 + 180, 295 + i*50),  # Start at 295 (moved down 15px from 280)
+                pos_anchor='center'
+            ))
+        
+        # Add resume/quit buttons
         for i, option in enumerate(self.pause_options):
             text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
             self.pause_options_surface_list.append({
@@ -583,18 +648,26 @@ class PlayState(BaseState):
                 'surface': text,
                 'scale': 1,
             })
+            # Position: Resume below title, Exit after settings (5 settings * 50px = 250px below settings start)
+            if i == 0:  # Resume button - below title
+                y_offset = 225  # Below pause title at 120, moved down 15px more
+            else:  # Exit to menu button - after settings panel
+                y_offset = 295 + 5*50 + 30  # Settings start at 295, 5 settings * 50px, plus 30px spacing
             self.pause_options_button_list.append(Button(
                 game=self.game,
                 id=option['id'],
                 width=300,
-                height=80,
-                pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
+                height=60,
+                pos=(constants.canvas_width/2, y_offset),
                 pos_anchor='center'
             ))
 
         # Day title
         self.day_title_text = None
         self.day_title_text_props = None
+        
+        # Initialize cursor
+        self.cursor = cursors.normal
     
     def update(self, dt, events):
         tween.update(passed_time=dt)
@@ -605,16 +678,67 @@ class PlayState(BaseState):
                 for button in self.pause_options_button_list:
                     button.update(dt=dt, events=events)
                     if button.hovered:
-                        self.cursor = button.hover_cursor
+                        if button.hover_cursor is not None:
+                            self.cursor = button.hover_cursor
+                        
+                        # Handle settings hover effects
+                        for i, option in enumerate(self.pause_settings_surface_list):
+                            if button.id == option['id']:
+                                self.setting_index = option['settings_list_index']
+                                option['left_arrow_scale'] = min(option['left_arrow_scale'] + 10*dt, 1.0)
+                                option['right_arrow_scale'] = min(option['right_arrow_scale'] + 10*dt, 1.0)
+                        
+                        # Handle regular button hover effects
                         for option in self.pause_options_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
                     else:
+                        # Reset hover effects
+                        for option in self.pause_settings_surface_list:
+                            if button.id == option['id']:
+                                option['left_arrow_scale'] = max(option['left_arrow_scale'] - 10*dt, 0)
+                                option['right_arrow_scale'] = max(option['right_arrow_scale'] - 10*dt, 0)
+                        
                         for option in self.pause_options_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+                    
                     if button.clicked:
-                        if button.id == 'resume':
+                        # Handle settings arrow clicks
+                        if button.id.endswith('_left') or button.id.endswith('_right'):
+                            if button.id.endswith('_left'):
+                                self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] - 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
+                                self.settings_manager.save_setting(self.current_settings_index)
+                                left_arrow_scale = 0.25
+                                right_arrow_scale = 1
+                            elif button.id.endswith('_right'):
+                                self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] + 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
+                                self.settings_manager.save_setting(self.current_settings_index)
+                                left_arrow_scale = 1
+                                right_arrow_scale = 0.25
+                            
+                            # Update the setting surface text
+                            text_string = self.settings_manager.settings_list[self.setting_index]['label']+':  '+self.settings_manager.settings_list[self.setting_index]['value_label'][self.current_settings_index[self.setting_index]]
+                            text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
+                            
+                            # Find and update the correct settings surface
+                            setting_id = self.settings_manager.settings_list[self.setting_index]['id']
+                            for i, setting_surface in enumerate(self.pause_settings_surface_list):
+                                if setting_surface['id'] == setting_id:
+                                    self.pause_settings_surface_list[i] = {
+                                        'id': setting_id,
+                                        'surface': text,
+                                        'left_arrow_scale': left_arrow_scale,
+                                        'right_arrow_scale': right_arrow_scale,
+                                        'settings_list_index': self.setting_index
+                                    }
+                                    break
+                            
+                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                            self.game.apply_settings(self.setting_index)
+                        
+                        # Handle regular pause menu buttons
+                        elif button.id == 'resume':
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.paused = False
                         elif button.id == 'quit' and not self.transitioning:
@@ -675,6 +799,15 @@ class PlayState(BaseState):
 
                 if random.random() <= spawn_chance:
                     self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
+
+                # Update spacebar hint animation (tick-based, stops when paused)
+                self.spacebar_animation_time += dt
+                # Use sine wave for smooth breathing animation between min and max values
+                cycle_progress = (self.spacebar_animation_time % self.spacebar_animation_cycle_duration) / self.spacebar_animation_cycle_duration
+                # Calculate the center point and amplitude
+                center_scale = (self.spacebar_hint_scale_min + self.spacebar_hint_scale_max) / 2
+                amplitude = (self.spacebar_hint_scale_max - self.spacebar_hint_scale_min) / 2
+                self.spacebar_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
 
                 if not self.transitioning:
                     # update buttons
@@ -1319,32 +1452,32 @@ class PlayState(BaseState):
                         self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
                     else:
                         self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
-                    self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_50)
+                    self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_35)
                     utils.blit(dest=canvas, source=self.day1_fruit_image, pos=(45, 83), pos_anchor='center')
                 if self.day2_fruit:
                     if self.current_day == 2:
                         self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
                     else:
                         self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
-                    self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_50)
+                    self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_35)
                     utils.blit(dest=canvas, source=self.day2_fruit_image, pos=(45, 128), pos_anchor='center')
                 if self.day3_fruit:
                     if self.current_day == 3:
                         self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
                     else:
                         self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
-                    self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_50)
+                    self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_35)
                     utils.blit(dest=canvas, source=self.day3_fruit_image, pos=(45, 173), pos_anchor='center')
                 if self.day4_fruit:
                     if self.current_day == 4:
                         self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
                     else:
                         self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
-                    self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_50)
+                    self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_35)
                     utils.blit(dest=canvas, source=self.day4_fruit_image, pos=(45, 218), pos_anchor='center')
                 if self.seasonal_fruit:
                     self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
-                    self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_50)
+                    self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_35)
                     utils.blit(dest=canvas, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
 
                 ## Render right white box
@@ -1562,13 +1695,40 @@ class PlayState(BaseState):
         # pause menu
         if self.paused:
             utils.blit(dest=canvas, source=self.pause_background)
-            utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 220), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
+            
+            # Render settings options with arrows (between Resume and Exit)
+            for i, option in enumerate(self.pause_settings_surface_list):
+                y_pos = 295 + i*50  # Start at 295 (moved down 15px from 280)
+                utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, y_pos), pos_anchor='center')
+                
+                # Render arrows with scaling
+                scaled_left_arrow = pygame.transform.scale_by(surface=self.arrow_left, factor=option['left_arrow_scale'])
+                scaled_right_arrow = pygame.transform.scale_by(surface=self.arrow_right, factor=option['right_arrow_scale'])
+                utils.blit(
+                    dest=canvas,
+                    source=scaled_left_arrow,
+                    pos=(constants.canvas_width/2 - 180, y_pos),
+                    pos_anchor='center'
+                )
+                utils.blit(
+                    dest=canvas,
+                    source=scaled_right_arrow,
+                    pos=(constants.canvas_width/2 + 180, y_pos),
+                    pos_anchor='center'
+                )
+            
+            # Render regular pause menu buttons (Resume, Exit to menu)
             for i, option in enumerate(self.pause_options_surface_list):
                 scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                if i == 0:  # Resume button - below title
+                    y_offset = 225  # Below pause title at 120, moved down 15px more
+                else:  # Exit to menu button - after settings panel
+                    y_offset = 295 + 5*50 + 30  # Settings start at 295, 5 settings * 50px, plus 30px spacing
                 utils.blit(
                     dest=canvas,
                     source=scaled_surface,
-                    pos=(constants.canvas_width/2, constants.canvas_height/2 + i*80),
+                    pos=(constants.canvas_width/2, y_offset),
                     pos_anchor='center'
                 )
 
@@ -1613,7 +1773,7 @@ class PlayState(BaseState):
             self.day_title_text_props = None
             self.shown_day_title = True
             self.tween_list.clear()
-            self.start_spacebar_hint_animation()
+            
         utils.multitween(
             tween_list=self.tween_list,
             container=self.day_title_text_props,
@@ -1623,31 +1783,3 @@ class PlayState(BaseState):
             ease_type=[tweencurves.easeOutExpo, tweencurves.easeOutCubic],
             on_complete=on_complete1
         )
-
-    def start_spacebar_hint_animation(self):
-
-        self.spacebar_hint_scale = 1.0
-        
-        self.spacebar_animation_growing = True
-        
-        def toggle_animation():
-            if hasattr(self, 'spacebar_animation_growing'):
-                if self.spacebar_animation_growing:
-                    self.tween_list.append(tween.to(
-                        container=self,
-                        key='spacebar_hint_scale',
-                        end_value=1.15,
-                        time=1,
-                        ease_type=tweencurves.easeInOutSine
-                    ).on_complete(lambda: toggle_animation() if hasattr(self, 'spacebar_animation_growing') else None))
-                else:
-                    self.tween_list.append(tween.to(
-                        container=self,
-                        key='spacebar_hint_scale',
-                        end_value=1.0,
-                        time=1,
-                        ease_type=tweencurves.easeInOutSine
-                    ).on_complete(lambda: toggle_animation() if hasattr(self, 'spacebar_animation_growing') else None))
-                self.spacebar_animation_growing = not self.spacebar_animation_growing
-        
-        toggle_animation()

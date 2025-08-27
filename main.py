@@ -11,8 +11,8 @@ class Game:
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap'] + 1
 
-        self.version_number = 'v2.0.0-beta3'
-        self.title = f'Greedy Gardens {self.version_number}'
+        self.version_number = 'v2.0.0-beta4'
+        self.title = f'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
         pygame.init()
@@ -85,13 +85,13 @@ class Game:
             self.music_channel.play()
 
     def show_error_popup(self, error):
-        error_message = f"{type(error).__name__}: {str(error)}\n\nFull traceback:\n{traceback.format_exc()}"
+        error_message = f"{traceback.format_exc()}"
 
         # Create a minimal tkinter window as parent (for taskbar support)
         root = tk.Tk()
         root.title("Greedy Gardens - Fatal Error")
-        root.geometry("1x1+0+0")  # Make it tiny and position at top-left
-        root.attributes('-alpha', 0.0)  # Make it invisible but keep in taskbar
+        root.geometry("1x1+0+0") 
+        root.attributes('-alpha', 0.0) 
         
         # Make sure the messagebox appears in front
         root.lift()
@@ -100,8 +100,8 @@ class Game:
         
         # Create error message with version info
         full_message = f"Greedy Gardens has encountered a fatal error.\n\n"
-        full_message += f"Error Details:\n{error_message}\n\n"
-        full_message += f"Please report this error to the developer."
+        full_message += f"\n{error_message}\n\n"
+        full_message += f"Please screenshot this error and report it to the developer. Thanks!"
         
         # Show the error dialog with parent for taskbar visibility
         messagebox.showerror("Greedy Gardens - Fatal Error", full_message, parent=root)
@@ -128,7 +128,6 @@ class Game:
             # if event.type == pygame.KEYDOWN:
             #     keys = pygame.key.get_pressed()
             #     if keys[pygame.K_LCTRL] and keys[pygame.K_LSHIFT] and event.key == pygame.K_c:
-            #         # Simulate different types of crashes for testing
             #         raise RuntimeError("This is a test crash! Press Ctrl+Shift+C was pressed to simulate an error.")
     
 
@@ -161,6 +160,7 @@ class Game:
                 pygame.quit()
                 sys.exit()
             except Exception as e:
+                traceback.print_exc()
                 self.show_error_popup(e)
                 pygame.mixer.stop()
                 pygame.quit()
@@ -172,5 +172,6 @@ if __name__ == '__main__':
     try:
         game.game_loop()
     except Exception as e:
+        traceback.print_exc()
         game.show_error_popup(e)
         sys.exit(1)

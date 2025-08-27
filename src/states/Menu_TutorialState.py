@@ -60,7 +60,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="Balance your daily scores carefully!",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You must score more fruits than the previous day, or",
@@ -82,7 +82,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="All about fruits",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="Each day you can only score a specific fruit.",
@@ -104,7 +104,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="All about paths",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You can place paths based on the path cards you draw.",
@@ -122,7 +122,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="All about events",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="Strikes from path cards will trigger events.",
@@ -140,7 +140,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="All about magic fruits",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="There are 3 magic fruits on the board.",

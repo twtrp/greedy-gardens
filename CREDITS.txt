@@ -3,6 +3,8 @@
     - https://soundcloud.com/roccow/why-did-the-crow-cross-the-road
 - Gameplay music
     - https://towball.itch.io/towballs-crossing
+- Sound effects
+    - https://filmcow.itch.io/filmcow-sfx
 - Fonts
     - https://takwolf.itch.io/retro-pixel-font
     - https://lazy-fox.itch.io/lazy-pixel-fonts
@@ -16,8 +18,6 @@
     - https://robson.plus/white-noise-image-generator/ (noise texture generator: 320x180, 4x, grey, verylight)
 - Wind particles
     - https://nyknck.itch.io/wind
-- Sound effects
-    - https://drive.google.com/drive/folders/1gkcY1atqp7wWKw-owWr6D_-aerRKtIyI (extracted stardew valley sounds)
 - Tileset sprites
     - https://snowhex.itch.io/harvest-summer-forest-pack
     - https://almostapixel.itch.io/small-burg-village-pack
