@@ -55,27 +55,34 @@ class MenuState(BaseState):
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
 
         self.team_namsom_logo = utils.get_image(dir=dir.graphics, name='team_namsom_logo.png', mode='colorkey')
-        self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=3)
+        self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=5)
         utils.blit(
             dest=self.surface_logo,
             source=self.team_namsom_logo,
-            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 - 30),
-            pos_anchor=posanchors.midtop,
+            pos=(self.surface_logo.get_width()/2 - 70, self.surface_logo.get_height()/2),
+            pos_anchor=posanchors.midright,
         )
 
-        self.my_logo = utils.get_image(dir=dir.graphics, name='my_logo.png', mode='colorkey')
-
-        text = utils.get_text(
-            text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
-            long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
-            outline_color=colors.white
-        )
+        self.my_logo = utils.get_image(dir=dir.graphics, name='ttewtor_logo.png', mode='colorkey')
+        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
         utils.blit(
-            dest=self.surface_logo, 
-            source=text,
-            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2),
-            pos_anchor=posanchors.midtop,
+            dest=self.surface_logo,
+            source=self.my_logo,
+            pos=(self.surface_logo.get_width()/2 + 10, self.surface_logo.get_height()/2),
+            pos_anchor=posanchors.midleft,
         )
+
+        # text = utils.get_text(
+        #     text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
+        #     long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
+        #     outline_color=colors.white
+        # )
+        # utils.blit(
+        #     dest=self.surface_logo, 
+        #     source=text,
+        #     pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 60),
+        #     pos_anchor=posanchors.midtop,
+        # )
 
         # Load menu background assets
         self.sky = utils.get_image(dir=dir.menu_bg, name='1_sky.png', mode='colorkey')
@@ -274,14 +281,13 @@ class MenuState(BaseState):
 
             ## Render logo
             if hasattr(self, 'surface_logo'):
-                processed_surface_logo = pygame.transform.scale_by(surface=self.surface_logo, factor=self.surface_logo_props['scale'])
+                processed_surface_logo = pygame.transform.smoothscale_by(surface=self.surface_logo, factor=self.surface_logo_props['scale'])
                 processed_surface_logo.set_alpha(self.surface_logo_props['alpha'])
                 utils.blit(
                     dest=canvas,
                     source=processed_surface_logo,
-                    pos=(constants.canvas_width/2, constants.canvas_height/2 + self.surface_logo_props['y_offset']),
+                    pos=(constants.canvas_width/2, constants.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
                     pos_anchor=posanchors.center,
-                    debug_outline=True
                 )
                 
             # Render substates
@@ -332,12 +338,12 @@ class MenuState(BaseState):
                 container=self.surface_logo_props,
                 key='scale',
                 end_value=1,
-                time=2.5,
+                time=3,
                 ease_type=tweencurves.easeOutCubic,
                 delay=delay
             ))
 
-            delay += 1.5
+            delay += 2
             self.tween_list.append(tween.to(
                 container=self.overlay_props,
                 key='alpha',
@@ -369,7 +375,7 @@ class MenuState(BaseState):
                 key='y_offset',
                 end_value=-500,
                 time=3.25,
-                ease_type=tweencurves.easeOutQuint,
+                ease_type=tweencurves.easeOutQuart,
                 delay=delay
             ).on_complete(self.finish_bootup))
             

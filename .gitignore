@@ -2,7 +2,7 @@ venv/
 venvlinux/
 venvmac/
 __pycache__/
-data/settings.lst
+data/
 build/
 dist/
 release/
