@@ -221,7 +221,7 @@ class Play_PlayMagicEventState(BaseState):
             self.remove_button_option_list = [
                 {
                     'id': 'remove',
-                    'text': 'Remove',
+                    'text': 'Delete',
                     'color1': colors.mono_175,
                     'color2': colors.white,
                 },
@@ -295,7 +295,7 @@ class Play_PlayMagicEventState(BaseState):
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        if (self.parent.current_event == 'event_keep' or
+                        if (self.parent.current_event == 'event_move' or
                             self.parent.current_event == 'event_point' or
                             self.parent.current_event == 'event_redraw' or
                             self.parent.current_event == 'event_reveal'):
@@ -398,8 +398,8 @@ class Play_PlayMagicEventState(BaseState):
                 #             else:
                 #                 self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
 
-            elif self.parent.current_event == 'event_keep':
-                # print('event_keep')
+            elif self.parent.current_event == 'event_move':
+                # print('event_move')
                 if not self.drawn_keep:
                     self.card_path1 = self.parent.deck_path.draw_card()
                     self.card_path2 = self.parent.deck_path.draw_card()
@@ -1106,27 +1106,25 @@ class Play_PlayMagicEventState(BaseState):
             utils.blit(dest=canvas, source=self.select_frame, pos=(self.parent.grid_start_x + ((self.cell_pos % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.cell_pos // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.choosing:
-            # utils.draw_rect(
-            #     dest=canvas,
-            #     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
-            #     pos=(self.parent.box_width, 0),
-            #     pos_anchor='topleft',
-            #     color=(*colors.black, 90), # 50% transparency
-            #     inner_border_width=0,
-            #     outer_border_width=0,
-            #     outer_border_color=colors.black
-            # )
+            # Only show choice UI for actual choice events, not board manipulation events
+            if self.parent.current_event != 'event_move':
+                # utils.draw_rect(
+                #     dest=canvas,
+                #     size=(constants.canvas_width - 2*self.parent.box_width, constants.canvas_height),
+                #     pos=(self.parent.box_width, 0),
+                #     pos_anchor='topleft',
+                #     color=(*colors.black, 90), # 50% transparency
+                #     inner_border_width=0,
+                #     outer_border_width=0,
+                #     outer_border_color=colors.black
+                # )
+                
+                scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
+                utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
             
-            scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
-            utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
-            
-            if self.parent.current_event == 'event_keep':
-                utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
-                if self.card_path2_image:
-                    scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2*self.card_path1_image_scale)
-                    scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2*self.card_path2_image_scale)
-                    utils.blit(dest=canvas, source=scaled_card_path1, pos=(constants.canvas_width/2 - 105, constants.canvas_height/2), pos_anchor='center')
-                    utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2 + 105, constants.canvas_height/2), pos_anchor='center')
+            if self.parent.current_event == 'event_move':
+                # Move event doesn't show choice title or cards - it's handled by the PlayEventState
+                pass
 
             elif self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)

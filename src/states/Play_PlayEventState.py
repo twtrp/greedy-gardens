@@ -29,15 +29,14 @@ class Play_PlayEventState(BaseState):
         self.selecting_path = False
         self.selected_cell = None
         self.selected_cell_2 = None
-        if (self.parent.current_event == 'event_keep' or
-            self.parent.current_event == 'event_point' or
+        if (self.parent.current_event == 'event_point' or
             self.parent.current_event == 'event_redraw' or
             self.parent.current_event == 'event_reveal'):
             self.choosing = True
             utils.sound_play(sound=sfx.appear, volume=self.game.sfx_volume)
         else:
             self.choosing = False
-        self.drawn_keep = False
+        self.drawn_move = False
 
         self.card_path1_image = None
         self.card_path2_image = None
@@ -52,7 +51,7 @@ class Play_PlayEventState(BaseState):
             'scale': 1,
         }
 
-        # event keep
+        # event move
         self.card_path1_image_scale = 1
         self.card_path2_image_scale = 1
 
@@ -60,7 +59,7 @@ class Play_PlayEventState(BaseState):
 
     def load_assets(self):
         # Load text
-        self.choice_keep_title = utils.get_text(text='Choose a card to keep', font=fonts.lf2, size='large', color=colors.mono_205)
+        self.choice_move_title = utils.get_text(text='Move a path to a blank tile', font=fonts.lf2, size='large', color=colors.mono_205)
         self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_205)
         self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_205)
         # self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
@@ -186,7 +185,7 @@ class Play_PlayEventState(BaseState):
             self.remove_button_option_list = [
                 {
                     'id': 'remove',
-                    'text': 'Remove',
+                    'text': 'Delete',
                     'color1': colors.mono_175,
                     'color2': colors.white,
                 },
@@ -313,64 +312,66 @@ class Play_PlayEventState(BaseState):
                         else:
                             self.select_frame = self.parent.cant_selecting_tile
 
-            elif self.parent.current_event == 'event_keep':
-                # print('event_keep')
-                if not self.drawn_keep:
-                    self.card_path1 = self.parent.deck_path.draw_card()
-                    self.card_path2 = self.parent.deck_path.draw_card()
-                    self.card_path1_image = self.parent.cards_path_sprites[f"card_{self.card_path1.card_name}"]
-                    self.card_path2_image = self.parent.cards_path_sprites[f"card_{self.card_path2.card_name}"]
-                    self.card_path_button_option_list = [
-                        {
-                            'id': 'path 1',
-                        },
-                        {
-                            'id': 'path 2',
-                        },
-                    ]
-                    for i, option in enumerate(self.card_path_button_option_list):
-                        self.button_list.append(Button(
-                            game=self.game,
-                            id=option['id'],
-                            width=192,
-                            height=256,
-                            pos=(constants.canvas_width/2 - 105 + i*210, constants.canvas_height/2),
-                            pos_anchor=posanchors.center
-                        ))
-                    # self.parent.current_path = self.card_drawn.card_name
-                    self.drawn_keep = True
-                elif self.drawn_keep:
-                    for button in self.button_list:
-                        button.update(dt=dt, events=events)
+            elif self.parent.current_event == 'event_move':
+                # print('event_move')
+                # Check if there are any paths on the board to move
+                if any(cell.path and not cell.home for cell in self.parent.game_board.board):
+                    self.cell_pos = -1
+                    for button in self.parent.grid_buttons:
                         if button.hovered:
-                            if button.id == 'path 1':
-                                self.card_path1_image_scale = min(self.card_path1_image_scale + 2.4*dt, 1.1)
-                            elif button.id == 'path 2':
-                                self.card_path2_image_scale = min(self.card_path2_image_scale + 2.4*dt, 1.1)
-                            elif button.id == 'view board':
-                                self.choosing = False
-                            if button.hover_cursor is not None:
-                                self.cursor = button.hover_cursor
-                        else:
-                            if button.id == 'path 1':
-                                self.card_path1_image_scale = max(self.card_path1_image_scale - 2.4*dt, 1.0)
-                            elif button.id == 'path 2':
-                                self.card_path2_image_scale = max(self.card_path2_image_scale - 2.4*dt, 1.0)
-                            elif button.id == 'view board':
-                                self.choosing = True
-                        if button.clicked:
-                            if button.id == 'path 1':
-                                # print(f'select path 1')
-                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                                self.parent.deck_path.cards.append(self.card_path1)
-                                self.choosing = False
-                                self.played_event = True
-                            elif button.id == 'path 2':
-                                # print(f'select path 2')
-                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                                self.parent.deck_path.cards.append(self.card_path2)
-                                self.choosing = False
-                                self.played_event = True
+                            self.cursor = button.hover_cursor
+                            self.cell_pos = button.id
+                            if self.selected_cell is None:
+                                # First selection: must be a path (not home)
+                                if self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
+                                    self.select_frame = self.parent.selecting_tile
+                                    if button.clicked:
+                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                        self.selected_cell = button.id
+                                else:
+                                    self.select_frame = self.parent.cant_selecting_tile
+                            else:
+                                # Second selection: must be a blank tile
+                                if not self.parent.game_board.board[button.id].path:
+                                    self.select_frame = self.parent.selecting_tile
+                                    if button.clicked:
+                                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
+                                        # Move the path from selected_cell to current button.id
+                                        source_cell = self.parent.game_board.board[self.selected_cell]
+                                        target_cell = self.parent.game_board.board[button.id]
+                                        
+                                        # Copy path data to target
+                                        target_cell.north = source_cell.north
+                                        target_cell.south = source_cell.south
+                                        target_cell.east = source_cell.east
+                                        target_cell.west = source_cell.west
+                                        target_cell.path = source_cell.path
+                                        target_cell.path_type = source_cell.path_type
+                                        target_cell.temp = source_cell.temp
+                                        
+                                        # Clear source cell
+                                        source_cell.north = False
+                                        source_cell.south = False
+                                        source_cell.east = False
+                                        source_cell.west = False
+                                        source_cell.path = False
+                                        source_cell.path_type = None
+                                        source_cell.temp = False
+                                        
+                                        self.selected_cell = None
+                                        self.played_event = True
+                                elif button.id == self.selected_cell:
+                                    # Deselect if clicking the same cell
+                                    self.select_frame = self.parent.selecting_tile
+                                    if button.clicked:
+                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                        self.selected_cell = None
+                                else:
+                                    self.select_frame = self.parent.cant_selecting_tile
+                else:
+                    # No paths to move
+                    self.played_event = True
 
             elif self.parent.current_event == 'event_merge':
                 # print('event_merge')
@@ -846,16 +847,14 @@ class Play_PlayEventState(BaseState):
         else:
             self.parent.is_choosing = True
             
-            scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
-            utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
+            # Only show choice UI for actual choice events, not board manipulation events
+            if self.parent.current_event != 'event_move':
+                scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
+                utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
             
-            if self.parent.current_event == 'event_keep':
-                utils.blit(dest=canvas, source=self.choice_keep_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
-                if self.card_path2_image:
-                    scaled_card_path1 = pygame.transform.scale_by(surface=self.card_path1_image, factor=2*self.card_path1_image_scale)
-                    scaled_card_path2 = pygame.transform.scale_by(surface=self.card_path2_image, factor=2*self.card_path2_image_scale)
-                    utils.blit(dest=canvas, source=scaled_card_path1, pos=(constants.canvas_width/2 - 105, constants.canvas_height/2), pos_anchor='center')
-                    utils.blit(dest=canvas, source=scaled_card_path2, pos=(constants.canvas_width/2 + 105, constants.canvas_height/2), pos_anchor='center')
+            if self.parent.current_event == 'event_move':
+                # Move event doesn't show choice title - it's a board manipulation event
+                pass
 
             elif self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
@@ -943,6 +942,14 @@ class Play_PlayEventState(BaseState):
                 else:
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
                 utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
+
+        if self.parent.current_event == 'event_move':
+            utils.blit(
+                dest=canvas,
+                source=self.parent.event_move_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
 
         if self.parent.current_event == 'event_swap':
             utils.blit(

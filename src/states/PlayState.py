@@ -329,12 +329,16 @@ class PlayState(BaseState):
             text='Press            or scroll mouse wheel to choose the path type.',
             font=fonts.lf2, size='tiny', color=colors.white
         )
+        self.event_move_control_hint = utils.get_text(
+            text='Select a path to move, then select a blank tile to move it to.',
+            font=fonts.lf2, size='tiny', color=colors.white
+        )
         self.event_merge_control_hint = utils.get_text(
             text='Select 2 paths. Path 1 will be removed and merged with path 2.',
             font=fonts.lf2, size='tiny', color=colors.white
         )
         self.event_remove_control_hint = utils.get_text(
-            text='Select 1 or 2 paths. Click Remove button to confirm.',
+            text='Select 1 or 2 paths. Click Delete button to confirm.',
             font=fonts.lf2, size='tiny', color=colors.white
         )
         self.event_swap_control_hint = utils.get_text(
@@ -458,7 +462,7 @@ class PlayState(BaseState):
         self.path_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_strike')
 
         self.event_free_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free')
-        self.event_keep_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_keep')
+        self.event_move_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_move')
         self.event_merge_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_merge')
         self.event_point_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_point')
         self.event_redraw_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_redraw')
@@ -1582,10 +1586,19 @@ class PlayState(BaseState):
                             color=(*colors.black, 0),
                             rect=(1165 + 2, 575 + 2, 96 - 4, 128 - 4)
                         )
+                        pygame.draw.rect(
+                            surface=mask_surface,
+                            color=(*colors.black, 90),
+                            rect=(1165 + 40, 575 + 2, 18, 2)
+                        )
+                        pygame.draw.rect(
+                            surface=mask_surface,
+                            color=(*colors.black, 90),
+                            rect=(1165 + 42, 575 + 4, 12, 2)
+                        )
                         utils.blit(dest=canvas, source=mask_surface) 
-                        self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
-                        scaled_image = pygame.transform.scale_by(surface=self.magic_fruit3_event_image, factor=3)
-                        utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                        self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit3_event.replace('event_', 'event_big_')}")
+                        utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     elif self.pop_up_revealed_event_card == 2 and self.magic_fruit2_event != None:
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                         mask_surface.fill((*colors.black, 90))
@@ -1593,6 +1606,16 @@ class PlayState(BaseState):
                             surface=mask_surface,
                             color=(*colors.black, 0),
                             rect=(1095 + 2, 565 + 2, 96 - 4, 128 - 4)
+                        )
+                        pygame.draw.rect(
+                            surface=mask_surface,
+                            color=(*colors.black, 90),
+                            rect=(1095 + 40, 565 + 2, 18, 2)
+                        )
+                        pygame.draw.rect(
+                            surface=mask_surface,
+                            color=(*colors.black, 90),
+                            rect=(1095 + 42, 565 + 4, 12, 2)
                         )
                         # Only shadow magic fruit 3 if it exists
                         if self.magic_fruit3_event != None:
@@ -1607,9 +1630,8 @@ class PlayState(BaseState):
                             rect=(1165, 575, 2, 2)
                         )
                         utils.blit(dest=canvas, source=mask_surface)
-                        self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
-                        scaled_image = pygame.transform.scale_by(surface=self.magic_fruit2_event_image, factor=3)
-                        utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                        self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit2_event.replace('event_', 'event_big_')}")
+                        utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     elif self.pop_up_revealed_event_card == 1 and self.magic_fruit1_event != None:
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                         mask_surface.fill((*colors.black, 90))
@@ -1617,6 +1639,16 @@ class PlayState(BaseState):
                             surface=mask_surface,
                             color=(*colors.black, 0),
                             rect=(1025 + 2, 555 + 2, 96 - 4, 128 - 4)
+                        )
+                        pygame.draw.rect(
+                            surface=mask_surface,
+                            color=(*colors.black, 90),
+                            rect=(1025 + 40, 555 + 2, 18, 2)
+                        )
+                        pygame.draw.rect(
+                            surface=mask_surface,
+                            color=(*colors.black, 90),
+                            rect=(1025 + 42, 555 + 4, 12, 2)
                         )
                         # Only shadow magic fruit 2 if it exists
                         if self.magic_fruit2_event != None:
@@ -1638,9 +1670,8 @@ class PlayState(BaseState):
                             rect=(1095, 565, 2, 2)
                         )
                         utils.blit(dest=canvas, source=mask_surface)
-                        self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
-                        scaled_image = pygame.transform.scale_by(surface=self.magic_fruit1_event_image, factor=3)
-                        utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                        self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit1_event.replace('event_', 'event_big_')}")
+                        utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
 
                     # Handle individual revealed event card hover (negative values)
                     elif self.pop_up_revealed_event_card < 0 and len(self.revealed_event) > 0:
@@ -1659,9 +1690,8 @@ class PlayState(BaseState):
                             )
                             utils.blit(dest=canvas, source=mask_surface)
                             card = self.revealed_event[index]
-                            card_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{card.card_name}")
-                            scaled_image = pygame.transform.scale_by(surface=card_image, factor=3)
-                            utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
+                            card_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{card.card_name.replace('event_', 'event_big_')}")
+                            utils.blit(dest=canvas, source=card_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
                     if self.play_event_state == True and self.is_current_task_event:
                         if self.pop_up_revealed_event_card == 4:
                             mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
@@ -1673,8 +1703,8 @@ class PlayState(BaseState):
                             )
                             utils.blit(dest=canvas, source=mask_surface)
                             #self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
-                            scaled_image = pygame.transform.scale_by(surface=self.current_event_image, factor=3)
-                            utils.blit(dest=canvas, source=scaled_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
+                            self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.current_event.replace('event_', 'event_big_')}")
+                            utils.blit(dest=canvas, source=self.current_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
 
 
         # pause menu
