@@ -395,11 +395,11 @@ cards_event = {
             'x': 0,
             'y': 0,
         },
-        'card_event_keep': {
+        'card_event_merge': {
             'x': 96,
             'y': 0,
         },
-        'card_event_merge': {
+        'card_event_keep': {
             'x': 192,
             'y': 0,
         },
@@ -426,6 +426,52 @@ cards_event = {
         'card_event_back': {
             'x': 192,
             'y': 256,
+        },
+    }
+}
+
+cards_event_big = {
+    'file': 'cards_event_big.png',
+    'shared_data': {
+        'width': 288,
+        'height': 384,
+    },
+    'sprites': {
+        'card_event_big_free': {
+            'x': 0,
+            'y': 0,
+        },
+        'card_event_big_merge': {
+            'x': 288,
+            'y': 0,
+        },
+        'card_event_big_keep': {
+            'x': 576,
+            'y': 0,
+        },
+        'card_event_big_point': {
+            'x': 0,
+            'y': 384,
+        },
+        'card_event_big_redraw': {
+            'x': 288,
+            'y': 384,
+        },
+        'card_event_big_remove': {
+            'x': 576,
+            'y': 384,
+        },
+        'card_event_big_reveal': {
+            'x': 0,
+            'y': 768,
+        },
+        'card_event_big_swap': {
+            'x': 288,
+            'y': 768,
+        },
+        'card_event_big_back': {
+            'x': 576,
+            'y': 768,
         },
     }
 }
