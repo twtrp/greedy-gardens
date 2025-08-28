@@ -119,12 +119,12 @@ class Play_PlayMagicEventState(BaseState):
                     {
                         'id': 'add today',
                         'text1': 'Get 1 point today,',
-                        'text2': 'Lose 1 point next day',
+                        'text2': 'Lose 1 point tomorrow',
                     },
                     {
                         'id': 'lose today',
                         'text1': 'Lose 1 point today,',
-                        'text2': 'Get 1 point next day',
+                        'text2': 'Get 1 point tomorrow',
                     },
                 ]
             else:
@@ -295,6 +295,17 @@ class Play_PlayMagicEventState(BaseState):
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
+                        if (self.parent.current_event == 'event_move' or
+                            self.parent.current_event == 'event_point' or
+                            self.parent.current_event == 'event_redraw' or
+                            self.parent.current_event == 'event_reveal'):
+                            self.choosing = True
+                            utils.sound_play(sound=sfx.appear, volume=self.game.sfx_volume)
+                        self.parent.is_current_task_event = True
+                        self.shown_event = True
+                        self.parent.playing_magic_event = True
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 3:  # Right click
                         if (self.parent.current_event == 'event_move' or
                             self.parent.current_event == 'event_point' or
                             self.parent.current_event == 'event_redraw' or
@@ -756,6 +767,9 @@ class Play_PlayMagicEventState(BaseState):
                         if event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_SPACE:
                                 self.played_event = True
+                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                            if event.button == 3:  # Right click
+                                self.played_event = True
 
             elif self.parent.current_event == 'event_remove':
                 # print('event_remove')
@@ -1203,18 +1217,6 @@ class Play_PlayMagicEventState(BaseState):
                 dest=canvas,
                 source=self.parent.event_free_control_hint,
                 pos=(constants.canvas_width//2, 2),
-                pos_anchor=posanchors.midtop
-            )
-            utils.blit(
-                dest=canvas,
-                source=self.parent.up_key_hint,
-                pos=(constants.canvas_width//2 - 225, 2),
-                pos_anchor=posanchors.midtop                          
-            )
-            utils.blit(
-                dest=canvas,
-                source=self.parent.down_key_hint,
-                pos=(constants.canvas_width//2 - 225 + 32, 2),
                 pos_anchor=posanchors.midtop
             )
 

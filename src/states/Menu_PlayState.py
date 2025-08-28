@@ -125,6 +125,10 @@ class Menu_PlayState(BaseState):
                                     long_shadow=False,
                                     outline=False
                                 )
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 2:
+                        utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                        self.exit_state()
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.textbox_mode == 'active':

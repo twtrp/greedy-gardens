@@ -318,15 +318,11 @@ class PlayState(BaseState):
         self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
 
         # Event Control Hints
-        self.up_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='up')
-        self.up_key_hint = pygame.transform.scale_by(surface=self.up_key_hint, factor=2)
-        self.down_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
-        self.down_key_hint = pygame.transform.scale_by(surface=self.down_key_hint, factor=2)
-        self.press_spacebar_hint = utils.get_text(text='Press', font=fonts.lf2, size='tiny', color=colors.mono_205)
-        self.spacebar_key_hint = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
-        self.spacebar_key_hint = pygame.transform.scale_by(surface=self.spacebar_key_hint, factor=3)
+        self.press_rightclick_hint = utils.get_text(text='Press', font=fonts.lf2, size='tiny', color=colors.mono_205)
+        self.right_click_hint = utils.get_text(text='right', font=fonts.lf2, size='tiny', color=colors.mono_205)
+        self.click_hint = utils.get_text(text='click!', font=fonts.lf2, size='tiny', color=colors.mono_205)
         self.event_free_control_hint = utils.get_text(
-            text='Press            or scroll mouse wheel to choose the path type.',
+            text='Scroll mouse wheel to choose the path type.',
             font=fonts.lf2, size='tiny', color=colors.white
         )
         self.event_move_control_hint = utils.get_text(
@@ -346,28 +342,30 @@ class PlayState(BaseState):
             font=fonts.lf2, size='tiny', color=colors.white
         )
 
-        combined_width = max(self.press_spacebar_hint.get_width(), self.spacebar_key_hint.get_width())
-        combined_height = self.press_spacebar_hint.get_height() + self.spacebar_key_hint.get_height() + 3
-        self.combined_spacebar_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
+        combined_width = max(self.press_rightclick_hint.get_width(), self.right_click_hint.get_width(), self.click_hint.get_width())
+        combined_height = self.press_rightclick_hint.get_height() + self.right_click_hint.get_height() + self.click_hint.get_height() + 6
+        self.combined_rightclick_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
         
-        press_x = (combined_width - self.press_spacebar_hint.get_width()) // 2
-        spacebar_x = (combined_width - self.spacebar_key_hint.get_width()) // 2
-        self.combined_spacebar_hint.blit(self.press_spacebar_hint, (press_x, 0))
-        self.combined_spacebar_hint.blit(self.spacebar_key_hint, (spacebar_x, self.press_spacebar_hint.get_height() + 3))
+        press_x = (combined_width - self.press_rightclick_hint.get_width()) // 2
+        right_x = (combined_width - self.right_click_hint.get_width()) // 2
+        click_x = (combined_width - self.click_hint.get_width()) // 2
+        self.combined_rightclick_hint.blit(self.press_rightclick_hint, (press_x, 0))
+        self.combined_rightclick_hint.blit(self.right_click_hint, (right_x, self.press_rightclick_hint.get_height() + 3))
+        self.combined_rightclick_hint.blit(self.click_hint, (click_x, self.press_rightclick_hint.get_height() + self.right_click_hint.get_height() + 6))
         
-        self.spacebar_hint_scale_min = 1.0
-        self.spacebar_hint_scale_max = 1.15
+        self.rightclick_hint_scale_min = 1.0
+        self.rightclick_hint_scale_max = 1.2
 
-        self.spacebar_hint_scale = 1.0
-        self.spacebar_animation_time = 0.0
-        self.spacebar_animation_cycle_duration = 2
+        self.rightclick_hint_scale = 1.0
+        self.rightclick_animation_time = 0.0
+        self.rightclick_animation_cycle_duration = 2
 
         self.right_box_title = utils.get_text(text='Turn 1', font=fonts.lf2, size='small', color=colors.white)
 
         self.deck_list = [
-            {'text': 'Fruit',},
-            {'text': 'Path',},
-            {'text': 'Event',},
+            {'text': 'Fruit cards',},
+            {'text': 'Path cards',},
+            {'text': 'Event cards',},
         ]
 
         self.deck_title_list = []
@@ -375,7 +373,7 @@ class PlayState(BaseState):
             text = utils.get_text(text=score['text'], font=fonts.lf2, size='tiny', color=colors.white)
             self.deck_title_list.append(text)
 
-        self.right_remaining = utils.get_text(text='Remaining', font=fonts.lf2, size='tiny', color=colors.white)
+        self.right_remaining = utils.get_text(text='remaining', font=fonts.lf2, size='tiny', color=colors.white)
         self.right_magic_fruits = utils.get_text(text='Magic Fruits', font=fonts.lf2, size='small', color=colors.white)
 
         self.next_text = utils.get_text(text='Next', font=fonts.lf2, size='tiny', color=colors.white)
@@ -742,9 +740,9 @@ class PlayState(BaseState):
                                 self.game.music_channel.play()
                                 self.timer_manager.StopTimer(self.water_timer)
                                 
-                                # Clean up spacebar animation system
-                                if hasattr(self, 'spacebar_animation_growing'):
-                                    delattr(self, 'spacebar_animation_growing')
+                                # Clean up rightclick animation system
+                                if hasattr(self, 'rightclick_animation_growing'):
+                                    delattr(self, 'rightclick_animation_growing')
                                 
                                 self.tween_list.clear()
                                 self.game.state_stack.clear()
@@ -761,7 +759,11 @@ class PlayState(BaseState):
                         if event.key == pygame.K_ESCAPE:
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.paused = not self.paused
-                
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 2:
+                            utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                            self.paused = not self.paused
+            
                 if not self.transitioning:
                     utils.set_cursor(cursor=self.cursor)
                 else:
@@ -789,14 +791,14 @@ class PlayState(BaseState):
                 if random.random() <= spawn_chance:
                     self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
 
-                # Update spacebar hint animation (tick-based, stops when paused)
-                self.spacebar_animation_time += dt
+                # Update rightclick hint animation (tick-based, stops when paused)
+                self.rightclick_animation_time += dt
                 # Use sine wave for smooth breathing animation between min and max values
-                cycle_progress = (self.spacebar_animation_time % self.spacebar_animation_cycle_duration) / self.spacebar_animation_cycle_duration
+                cycle_progress = (self.rightclick_animation_time % self.rightclick_animation_cycle_duration) / self.rightclick_animation_cycle_duration
                 # Calculate the center point and amplitude
-                center_scale = (self.spacebar_hint_scale_min + self.spacebar_hint_scale_max) / 2
-                amplitude = (self.spacebar_hint_scale_max - self.spacebar_hint_scale_min) / 2
-                self.spacebar_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
+                center_scale = (self.rightclick_hint_scale_min + self.rightclick_hint_scale_max) / 2
+                amplitude = (self.rightclick_hint_scale_max - self.rightclick_hint_scale_min) / 2
+                self.rightclick_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
 
                 if not self.transitioning:
                     # update buttons
@@ -842,6 +844,10 @@ class PlayState(BaseState):
                     for event in events:
                         if event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_ESCAPE:
+                                utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                self.paused = not self.paused
+                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                            if event.button == 2:
                                 utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                                 self.paused = not self.paused
                         elif event.type == self.water_timer:
@@ -1395,14 +1401,14 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
                 utils.blit(dest=canvas, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
-                ## Render spacebar hint (hide only when a card is being rendered at position 630)
+                ## Render rightclick hint (hide only when a card is being rendered at position 630)
                 card_being_rendered = (self.current_path or 
                                      (self.current_event and self.playing_magic_event and self.is_current_task_event) or
                                      (self.current_event and not self.playing_magic_event))
                 if not card_being_rendered:
                     # Use fixed scale during end day state, animated scale otherwise
-                    scale_factor = 1.0 if self.is_choosing else self.spacebar_hint_scale
-                    scaled_combined_hint = pygame.transform.scale_by(surface=self.combined_spacebar_hint, factor=scale_factor)
+                    scale_factor = 1.0 if self.is_choosing else self.rightclick_hint_scale
+                    scaled_combined_hint = pygame.transform.scale_by(surface=self.combined_rightclick_hint, factor=scale_factor)
                     utils.blit(dest=canvas, source=scaled_combined_hint, pos=(self.box_width/2, 620), pos_anchor='center')   
 
                 ## Render value in left white box
@@ -1483,16 +1489,16 @@ class PlayState(BaseState):
                 ## Render text in right white box
                 utils.blit(dest=canvas, source=self.right_box_title, pos=(constants.canvas_width - self.box_width/2, 35), pos_anchor='center')
                 for i, deck in enumerate(self.deck_title_list):
-                    utils.blit(dest=canvas, source=deck, pos=(1145, 85 + i*135), pos_anchor='topleft')
-                    utils.blit(dest=canvas, source=self.right_remaining, pos=(1145, 110 + i*135), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=deck, pos=(1140, 85 + i*135), pos_anchor='topleft')
+                    utils.blit(dest=canvas, source=self.right_remaining, pos=(1140, 110 + i*135), pos_anchor='topleft')
 
                 ## Render value in right white box
                 self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
-                utils.blit(dest=canvas, source=self.fruit_deck_remaining_amount, pos=(1145, 135), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.fruit_deck_remaining_amount, pos=(1140, 135), pos_anchor='topleft')
                 self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
-                utils.blit(dest=canvas, source=self.path_deck_remaining_amount, pos=(1145, 270), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.path_deck_remaining_amount, pos=(1140, 270), pos_anchor='topleft')
                 self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
-                utils.blit(dest=canvas, source=self.event_deck_remaining_amount, pos=(1145, 405), pos_anchor='topleft')
+                utils.blit(dest=canvas, source=self.event_deck_remaining_amount, pos=(1140, 405), pos_anchor='topleft')
 
                 ## Render card backs in right white box
                 utils.blit(dest=canvas, source=self.card_fruit_back_image, pos=(1080, 130), pos_anchor='center')

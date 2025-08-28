@@ -10,9 +10,8 @@ class MenuState(BaseState):
         self.substate_stack = []
 
         self.ready = False
-        self.load_assets()
-
         self.finished_boot_up = finished_bootup
+        self.load_assets()
 
         self.tween_list = []
         if not self.finished_boot_up:
@@ -161,8 +160,22 @@ class MenuState(BaseState):
             size='small',
             color=colors.white, 
             long_shadow=False,
-            outline=False
+            outline_color=colors.mono_100
         )
+        
+        self.copyright_text = utils.get_text(
+            text='(c) 2025 ttewtor',
+            font=fonts.lf7,
+            size='small',
+            color=colors.white, 
+            long_shadow=False,
+            outline_color=colors.mono_100
+        )
+
+        # Animation properties for version and copyright text
+        self.version_copyright_props = {
+            'alpha': 0 if not self.finished_boot_up else 255
+        }
 
     def update(self, dt, events):
         if self.ready:
@@ -224,12 +237,22 @@ class MenuState(BaseState):
             ## Render final menu_bg to canvas
             utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
 
-            ## Render version number
+            ## Render version number and copyright
+            version_text_copy = self.version_number_text.copy()
+            version_text_copy.set_alpha(self.version_copyright_props['alpha'])
             utils.blit(
                 dest=canvas,
-                source=self.version_number_text,
+                source=version_text_copy,
                 pos=(12, constants.canvas_height - 2),
                 pos_anchor=posanchors.bottomleft
+            )
+            copyright_text_copy = self.copyright_text.copy()
+            copyright_text_copy.set_alpha(self.version_copyright_props['alpha'])
+            utils.blit(
+                dest=canvas,
+                source=copyright_text_copy,
+                pos=(constants.canvas_width - 12, constants.canvas_height - 2),
+                pos_anchor=posanchors.bottomright
             )
 
             # Build intro
@@ -379,6 +402,17 @@ class MenuState(BaseState):
                     ease_type=tweencurves.easeOutCirc,
                     delay=delay
                 ))
+
+            # Add version and copyright fade-in after all other animations
+            delay += 0.25  # Small additional delay after the last button
+            self.tween_list.append(tween.to(
+                container=self.version_copyright_props,
+                key='alpha',
+                end_value=255,
+                time=1.0,
+                ease_type=tweencurves.easeOutQuad,
+                delay=delay
+            ))
                 
         else:
             self.game.start_menu_music()
@@ -408,6 +442,7 @@ class MenuState(BaseState):
             for option in self.title_button_option_surface_list:
                 option['scale'] = 1
                 option['alpha'] = 255
+            self.version_copyright_props['alpha'] = 255
 
         # Convert surfaces to static
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])

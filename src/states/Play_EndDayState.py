@@ -6,7 +6,7 @@ class Play_EndDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
         
-        # Stop the spacebar hint animation loop
+        # Stop the rightclick hint animation loop
         self.parent.tween_list.clear()
         
         # Get current day's info
@@ -105,9 +105,9 @@ class Play_EndDayState(BaseState):
                     if self.parent.current_day >= 4:
                         self.parent.end_game=True
                     self.parent.is_choosing = False
-                    # Restart the spacebar hint animation when returning to normal gameplay
-                    if hasattr(self.parent, 'start_spacebar_hint_animation'):
-                        self.parent.start_spacebar_hint_animation()
+                    # Restart the rightclick hint animation when returning to normal gameplay
+                    if hasattr(self.parent, 'start_rightclick_hint_animation'):
+                        self.parent.start_rightclick_hint_animation()
                     self.exit_state()
  
     def render(self, canvas):

@@ -943,35 +943,3 @@ dark_grass_flowers = {
         },    
     }
 }
-
-keyboard_keys = {
-    'file': 'keyboard_keys.png',
-    'shared_data': {
-        'width': 16,
-        'height': 16,
-    },
-    'sprites': {
-        'up': {
-            'x': 0,
-            'y': 0,
-        },
-        'down': {
-            'x': 16,
-            'y': 0,
-        },
-    }
-}
-
-keyboard_keys_long = {
-    'file': 'keyboard_keys_long.png',
-    'shared_data': {
-        'width': 32,
-        'height': 16,
-    },
-    'sprites': {
-        'spacebar': {
-            'x': 64,
-            'y': 32,
-        }
-    }
-}

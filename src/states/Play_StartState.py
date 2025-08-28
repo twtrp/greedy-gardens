@@ -38,111 +38,117 @@ class Play_StartState(BaseState):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and not self.parent.transitioning and self.parent.shown_day_title:
-                    # for testing
-                    if self.day2_not_drawn:
-                        self.card_drawn = self.parent.deck_fruit.draw_card()
-                        self.card_drawn_image_props = {
-                            'x': 1080,
-                            'y': 130,
-                            'scale': 1,
-                        }
-                        def on_complete():
-                            self.parent.tween_list.clear()
-                        utils.multitween(
-                            tween_list=self.parent.tween_list,
-                            container=self.card_drawn_image_props,
-                            keys=['x', 'y', 'scale'],
-                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                            time=0.3,
-                            ease_type=tweencurves.easeOutQuint,
-                            on_complete=on_complete
-                        )
-                        if self.card_drawn and self.seasonal_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
-                            # self.parent.seasonal_fruit = self.card_drawn.card_name
-                            # self.parent.drawn_cards_fruit.append(self.card_drawn)
-                            self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.card_drawn_text = utils.get_text(text='Seasonal Fruit', font=fonts.lf2, size='large', color=colors.white)
-                            self.seasonal_not_drawn = False
-                            self.parent.left_box_none_text = utils.get_text(text='Draw day 1 fruit', font=fonts.lf2, size='tiny', color=colors.white)
-                            self.previous_card_drawn = self.card_drawn
-                        elif self.card_drawn and self.day1_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
-                            self.parent.seasonal_fruit = self.previous_card_drawn.card_name
-                            # self.parent.day1_fruit = self.card_drawn.card_name
-                            # self.parent.drawn_cards_fruit.append(self.card_drawn)
-                            self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.card_drawn_text = utils.get_text(text='Day 1 Fruit', font=fonts.lf2, size='large', color=colors.white)
-                            self.day1_not_drawn = False
-                            self.parent.left_box_none_text = utils.get_text(text='Draw day 2 fruit', font=fonts.lf2, size='tiny', color=colors.white)
-                            self.previous_card_drawn = self.card_drawn
-                        elif self.card_drawn and self.day2_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
-                            self.parent.day1_fruit = self.previous_card_drawn.card_name
-                            # self.parent.day2_fruit = self.card_drawn.card_name
-                            # self.parent.drawn_cards_fruit.append(self.card_drawn)
-                            self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.card_drawn_text = utils.get_text(text='Day 2 Fruit', font=fonts.lf2, size='large', color=colors.white)
-                            self.day2_not_drawn = False
-                            self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 1 event', font=fonts.lf2, size='tiny', color=colors.white)
-                            self.previous_card_drawn = self.card_drawn
-                    elif self.magic_fruit3_not_drawn:
-                        self.card_drawn = self.parent.deck_event.draw_card()
-                        self.card_drawn_image_props = {
-                            'x': 1080,
-                            'y': 400,
-                            'scale': 1,
-                        }
-                        def on_complete():
-                            self.parent.tween_list.clear()
-                        utils.multitween(
-                            tween_list=self.parent.tween_list,
-                            container=self.card_drawn_image_props,
-                            keys=['x', 'y', 'scale'],
-                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                            time=0.3,
-                            ease_type=tweencurves.easeOutQuint,
-                            on_complete=on_complete
-                        )
-                        if self.card_drawn and self.magic_fruit1_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
-                            self.parent.day2_fruit = self.previous_card_drawn.card_name
-                            # self.parent.magic_fruit1_event = self.card_drawn.card_name
-                            self.parent.drawn_cards_event.append(self.card_drawn)
-                            self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.card_drawn_text = utils.get_text(text='Magic fruit 1 Event', font=fonts.lf2, size='large', color=colors.white)
-                            self.magic_fruit1_not_drawn = False
-                            self.parent.magicing_number = 1
-                            self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 2 event', font=fonts.lf2, size='tiny', color=colors.white)
-                            self.previous_card_drawn = self.card_drawn
-                        elif self.card_drawn and self.magic_fruit2_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
-                            self.parent.magic_fruit1_event = self.previous_card_drawn.card_name
-                            # self.parent.magic_fruit2_event = self.card_drawn.card_name
-                            self.parent.drawn_cards_event.append(self.card_drawn)
-                            self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.card_drawn_text = utils.get_text(text='Magic fruit 2 Event', font=fonts.lf2, size='large', color=colors.white)
-                            self.magic_fruit2_not_drawn = False
-                            self.parent.magicing_number = 2
-                            self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 3 event', font=fonts.lf2, size='tiny', color=colors.white)
-                            self.previous_card_drawn = self.card_drawn
-                        elif self.card_drawn and self.magic_fruit3_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
-                            self.parent.magic_fruit2_event = self.previous_card_drawn.card_name
-                            # self.parent.magic_fruit3_event = self.card_drawn.card_name
-                            self.parent.drawn_cards_event.append(self.card_drawn)
-                            self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.card_drawn_text = utils.get_text(text='Magic fruit 3 Event', font=fonts.lf2, size='large', color=colors.white)
-                            self.magic_fruit3_not_drawn = False
-                            self.parent.magicing_number = 3
-                            self.parent.left_box_none_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
-                            self.previous_card_drawn = self.card_drawn
-                    else: 
-                        self.parent.magic_fruit3_event = self.previous_card_drawn.card_name
-                        self.parent.magicing_number = 0
-                        self.parent.drawing = True
-                        self.parent.setup_start_state=True
-                        self.exit_state()
+                    self._handle_card_drawing()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 3 and not self.parent.transitioning and self.parent.shown_day_title:  # Right click
+                    self._handle_card_drawing()
+
+    def _handle_card_drawing(self):
+        # for testing
+        if self.day2_not_drawn:
+            self.card_drawn = self.parent.deck_fruit.draw_card()
+            self.card_drawn_image_props = {
+                'x': 1080,
+                'y': 130,
+                'scale': 1,
+            }
+            def on_complete():
+                self.parent.tween_list.clear()
+            utils.multitween(
+                tween_list=self.parent.tween_list,
+                container=self.card_drawn_image_props,
+                keys=['x', 'y', 'scale'],
+                end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                time=0.3,
+                ease_type=tweencurves.easeOutQuint,
+                on_complete=on_complete
+            )
+            if self.card_drawn and self.seasonal_not_drawn:
+                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                # self.parent.seasonal_fruit = self.card_drawn.card_name
+                # self.parent.drawn_cards_fruit.append(self.card_drawn)
+                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                self.card_drawn_text = utils.get_text(text='Seasonal Fruit', font=fonts.lf2, size='large', color=colors.white)
+                self.seasonal_not_drawn = False
+                self.parent.left_box_none_text = utils.get_text(text='Draw day 1 fruit', font=fonts.lf2, size='tiny', color=colors.white)
+                self.previous_card_drawn = self.card_drawn
+            elif self.card_drawn and self.day1_not_drawn:
+                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                self.parent.seasonal_fruit = self.previous_card_drawn.card_name
+                # self.parent.day1_fruit = self.card_drawn.card_name
+                # self.parent.drawn_cards_fruit.append(self.card_drawn)
+                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                self.card_drawn_text = utils.get_text(text='Day 1 Fruit', font=fonts.lf2, size='large', color=colors.white)
+                self.day1_not_drawn = False
+                self.parent.left_box_none_text = utils.get_text(text='Draw day 2 fruit', font=fonts.lf2, size='tiny', color=colors.white)
+                self.previous_card_drawn = self.card_drawn
+            elif self.card_drawn and self.day2_not_drawn:
+                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                self.parent.day1_fruit = self.previous_card_drawn.card_name
+                # self.parent.day2_fruit = self.card_drawn.card_name
+                # self.parent.drawn_cards_fruit.append(self.card_drawn)
+                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                self.card_drawn_text = utils.get_text(text='Day 2 Fruit', font=fonts.lf2, size='large', color=colors.white)
+                self.day2_not_drawn = False
+                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 1 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.previous_card_drawn = self.card_drawn
+        elif self.magic_fruit3_not_drawn:
+            self.card_drawn = self.parent.deck_event.draw_card()
+            self.card_drawn_image_props = {
+                'x': 1080,
+                'y': 400,
+                'scale': 1,
+            }
+            def on_complete():
+                self.parent.tween_list.clear()
+            utils.multitween(
+                tween_list=self.parent.tween_list,
+                container=self.card_drawn_image_props,
+                keys=['x', 'y', 'scale'],
+                end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                time=0.3,
+                ease_type=tweencurves.easeOutQuint,
+                on_complete=on_complete
+            )
+            if self.card_drawn and self.magic_fruit1_not_drawn:
+                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                self.parent.day2_fruit = self.previous_card_drawn.card_name
+                # self.parent.magic_fruit1_event = self.card_drawn.card_name
+                self.parent.drawn_cards_event.append(self.card_drawn)
+                self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
+                self.card_drawn_text = utils.get_text(text='Magic fruit 1 Event', font=fonts.lf2, size='large', color=colors.white)
+                self.magic_fruit1_not_drawn = False
+                self.parent.magicing_number = 1
+                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 2 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.previous_card_drawn = self.card_drawn
+            elif self.card_drawn and self.magic_fruit2_not_drawn:
+                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                self.parent.magic_fruit1_event = self.previous_card_drawn.card_name
+                # self.parent.magic_fruit2_event = self.card_drawn.card_name
+                self.parent.drawn_cards_event.append(self.card_drawn)
+                self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
+                self.card_drawn_text = utils.get_text(text='Magic fruit 2 Event', font=fonts.lf2, size='large', color=colors.white)
+                self.magic_fruit2_not_drawn = False
+                self.parent.magicing_number = 2
+                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 3 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.previous_card_drawn = self.card_drawn
+            elif self.card_drawn and self.magic_fruit3_not_drawn:
+                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                self.parent.magic_fruit2_event = self.previous_card_drawn.card_name
+                # self.parent.magic_fruit3_event = self.card_drawn.card_name
+                self.parent.drawn_cards_event.append(self.card_drawn)
+                self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
+                self.card_drawn_text = utils.get_text(text='Magic fruit 3 Event', font=fonts.lf2, size='large', color=colors.white)
+                self.magic_fruit3_not_drawn = False
+                self.parent.magicing_number = 3
+                self.parent.left_box_none_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
+                self.previous_card_drawn = self.card_drawn
+        else: 
+            self.parent.magic_fruit3_event = self.previous_card_drawn.card_name
+            self.parent.magicing_number = 0
+            self.parent.drawing = True
+            self.parent.setup_start_state=True
+            self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

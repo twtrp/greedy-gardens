@@ -219,6 +219,9 @@ class Menu_RecordsState(BaseState):
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 2:
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                    self.exit_state()
                 for button in self.button_list:
                     if button.id == 'table' and button.hovered:
                         if event.button == 4:

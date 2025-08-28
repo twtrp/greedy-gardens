@@ -83,6 +83,36 @@ class Play_NextDayState(BaseState):
                             self.parent.drawing = True
                             self.parent.set_start_state=True
                             self.exit_state()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 3 and self.parent.shown_day_title:  # Right click
+                        if self.fruit_not_drawn:
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                            self.card_drawn_image_props = {
+                                'x': 1080,
+                                'y': 130,
+                                'scale': 1,
+                            }
+                            def on_complete():
+                                self.parent.tween_list.clear()
+                            utils.multitween(
+                                tween_list=self.parent.tween_list,
+                                container=self.card_drawn_image_props,
+                                keys=['x', 'y', 'scale'],
+                                end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                                time=0.5,
+                                ease_type=tweencurves.easeOutQuint,
+                                on_complete=on_complete
+                            )
+                            self.card_drawn = self.parent.deck_fruit.draw_card()
+                            if self.card_drawn:
+                                setattr(self.parent, f"day{self.parent.current_day + 1}_fruit", self.card_drawn.card_name)
+                                self.parent.drawn_cards_fruit.append(self.card_drawn)
+                                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                self.fruit_not_drawn = False
+                        else:
+                            self.parent.drawing = True
+                            self.parent.set_start_state=True
+                            self.exit_state()
         elif self.parent.current_day == self.parent.day:
             self.parent.drawing = True
             self.parent.set_start_state=True

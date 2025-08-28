@@ -209,6 +209,10 @@ class Menu_TutorialState(BaseState):
                 if event.key == pygame.K_ESCAPE:
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 2:
+                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                    self.exit_state()
 
         for button in self.button_list:
             button.update(dt=dt, events=events)

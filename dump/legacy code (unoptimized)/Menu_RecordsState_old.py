@@ -152,6 +152,9 @@ class Menu_RecordsState(BaseState):
                 if event.key == pygame.K_ESCAPE:
                     self.exit_state()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 2:
+                    self.exit_state()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 for button in self.button_list:
                     if button.id == 'table' and button.hovered:
                         if event.button == 4:

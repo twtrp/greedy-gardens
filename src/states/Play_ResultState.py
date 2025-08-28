@@ -220,9 +220,9 @@ class Play_ResultStage(BaseState):
                             self.game.music_channel.play()
                             self.parent.timer_manager.StopTimer(self.parent.water_timer)
                             
-                            # Clean up spacebar animation system
-                            if hasattr(self.parent, 'spacebar_animation_growing'):
-                                delattr(self.parent, 'spacebar_animation_growing')
+                            # Clean up rightclick animation system
+                            if hasattr(self.parent, 'rightclick_animation_growing'):
+                                delattr(self.parent, 'rightclick_animation_growing')
                             
                             self.parent.tween_list.clear()
                             self.game.state_stack.clear()
