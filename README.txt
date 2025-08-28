@@ -31,7 +31,8 @@ To build:
 macOS
 
 Dependencies:
--> brew install python@3.12
+-> brew install tcl-tk
+-> brew install python@3.12 --with-tcl-tk
 -> $(brew --prefix)/bin/python3.12 -m venv venvmacos
 -> source venvmacos/bin/activate
 -> python -m pip install --upgrade pip setuptools wheel
