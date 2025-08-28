@@ -221,7 +221,7 @@ class GameBoard():
     
     '''
     Check Connected Path
-    - Recursively checking West -> North -> East -> South for the connection
+    - Recursively checking West     North     East     South for the connection
     - Have additional condition to check if the index is already included in the connected path to prevent infinite cycle
     '''
 

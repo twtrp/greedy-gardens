@@ -7,7 +7,7 @@ def blit(dest: pygame.Surface,
          pos_anchor: str = posanchors.topleft,
          debug_outline: bool = False,
          debug_outline_color: pygame.Color = (255, 0, 0)
-        ) -> None:
+        )     None:
     '''
     Use this instead of pygame's blit.
     Returns nothing
@@ -33,7 +33,7 @@ def blit(dest: pygame.Surface,
 
 def effect_silhouette(surface: pygame.Surface, 
                       color: pygame.Color = (0, 0, 0)
-                     ) -> pygame.Surface:
+                     )     pygame.Surface:
     '''
     Use this to create a silhouette of a surface
     Returns Surface
@@ -57,7 +57,7 @@ def effect_long_shadow(surface: pygame.Surface,
                        direction: str = 'top-left',
                        distance: int = 1,
                        color: pygame.Color = (255, 255, 255)
-                      ) -> pygame.Surface:
+                      )     pygame.Surface:
     '''
     Use this to apply 3D on a surface
     Returns Surface
@@ -102,7 +102,7 @@ def effect_outline(surface: pygame.Surface,
                    distance: int = 1,
                    color: pygame.Color = (255, 255, 255),
                    no_corner: bool = False
-                  ) -> pygame.Surface:
+                  )     pygame.Surface:
     '''
     Use this to outline a surface
     Returns Surface

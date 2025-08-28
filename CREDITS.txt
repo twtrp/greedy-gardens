@@ -5,6 +5,8 @@
     - https://towball.itch.io/towballs-crossing
 - Sound effects
     - https://filmcow.itch.io/filmcow-sfx
+    - https://jdwasabi.itch.io/8-bit-16-bit-sound-effects-pack
+    - https://hunteraudio.itch.io/8bit-sfx-and-music-pack
 - Fonts
     - https://takwolf.itch.io/retro-pixel-font
     - https://lazy-fox.itch.io/lazy-pixel-fonts

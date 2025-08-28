@@ -9,7 +9,7 @@ from typing import List
 def color_darken(
         color: pygame.Color,
         factor: int
-    ) -> pygame.Color:
+    )     pygame.Color:
     '''
     Darken a color by a given percentage.
     Returns Color
@@ -25,7 +25,7 @@ def color_darken(
 def color_lighten(
         color: pygame.Color,
         factor: int
-    ) -> pygame.Color:
+    )     pygame.Color:
     '''
     Lighten a color by a given percentage.
     Returns Color
@@ -52,7 +52,7 @@ def draw_rect(
         outer_border_color: pygame.Color = colors.white,
         outest_border_width: int = 0,
         outest_border_color: pygame.Color = colors.mono_35
-    ) -> None:
+    )     None:
     """
     Use this to draw a rectangle
     Returns nothing
@@ -98,7 +98,7 @@ def blit(
         pos_anchor: str = posanchors.topleft,
         debug_outline: bool = False,
         debug_outline_color: pygame.Color = (255, 0, 0)
-    ) -> None:
+    )     None:
     '''
     Use this instead of pygame's blit.
     Returns nothing
@@ -131,7 +131,7 @@ def get_text(
         long_shadow_color: pygame.Color = None,
         outline: bool = True,
         outline_color: pygame.Color = colors.mono_35,
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to get a text surface
     Returns Surface
@@ -160,7 +160,7 @@ def get_text(
 
 def get_font_deco_distance(font: dict,
                            size: str
-                          ) -> int:
+                          )     int:
     '''
     Returns int
 
@@ -177,7 +177,7 @@ def get_image(
         name: str,
         mode: str = None,
         colorkey: pygame.Color = (0, 0, 0)
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this instead of pygame's load image
     Returns Surface
@@ -203,7 +203,7 @@ def get_sprite(
         target_sprite: str,
         mode: str = 'colorkey',
         colorkey: pygame.Color = (0, 0, 0)
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to get a single sprite from a sprite sheet
     Returns Surface
@@ -232,7 +232,7 @@ def get_sprite(
 def get_sprite_sheet(sprite_sheet: str,
                       mode: str = 'colorkey',
                       colorkey: pygame.Color = (0, 0, 0)
-                     ) -> dict:
+                     )     dict:
     '''
     Use this to get all sprites from a sprite sheet as set
     Returns dict of Surfaces
@@ -251,7 +251,7 @@ def get_sprite_sheet(sprite_sheet: str,
 def effect_pixelate(
         surface: pygame.Surface,
         pixel_size: int = 2
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to pixelate a surface
     Returns Surface
@@ -269,7 +269,7 @@ def effect_pixelate(
 
 def effect_grayscale(
         surface: pygame.Surface
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to grayscale a surface
     Returns Surface
@@ -282,7 +282,7 @@ def effect_grayscale(
 def effect_silhouette(
         surface: pygame.Surface, 
         color: pygame.Color = (0, 0, 0)
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to create a silhouette of a surface
     Returns Surface
@@ -300,7 +300,7 @@ def effect_long_shadow(
         direction: str = 'bottom', 
         distance: int = 1,
         color: pygame.Color = (255, 255, 255)
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to apply 3D on a surface
     Returns Surface
@@ -343,7 +343,7 @@ def effect_outline(
         distance: int = 1,
         color: pygame.Color = colors.mono_35,
         no_corner: bool = False
-    ) -> pygame.Surface:
+    )     pygame.Surface:
     '''
     Use this to outline a surface
     Returns Surface
@@ -387,7 +387,7 @@ def effect_outline(
 def music_load(
         music_channel: pygame.mixer.music,
         name: str
-    ) -> None:
+    )     None:
     '''
     Use this to load music if the queue is empty
     Returns nothing
@@ -402,7 +402,7 @@ def music_queue(
         music_channel: pygame.mixer.music,
         name: str,
         loops: int = 0
-    ) -> None:
+    )     None:
     '''
     Use this to add music to the queue
     Returns nothing
@@ -421,7 +421,7 @@ def sound_play(
         loops: int = 0,
         maxtime: int = 0,
         fade_ms: int = 0
-    ) -> None:
+    )     None:
     '''
     Use this to play sound effects
     Returns nothing
@@ -445,7 +445,7 @@ def sound_play(
 
 def set_cursor(
         cursor: dict,
-    ) -> None:
+    )     None:
     '''
     Use this to set the cursor
     Returns nothing
@@ -473,7 +473,7 @@ def multitween(
         ease_type: callable | List[callable],
         delay: float = 0,
         on_complete: callable = None
-    ) -> None:
+    )     None:
     '''
     Use this to tween multiple values
     Returns nothing
