@@ -1,5 +1,3 @@
-Project Setup Guide
-
 Windows
 
 Dependencies:
@@ -33,7 +31,8 @@ To build:
 macOS
 
 Dependencies:
--> /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+-> /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+)"
 -> brew install xz zlib bzip2 openssl readline tcl-tk
 -> brew install pyenv
 -> touch ~/.zshrc
@@ -42,6 +41,11 @@ Dependencies:
 -> command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 -> eval "$(pyenv init -)"
 -> source ~/.zshrc
+-> export TK_PREFIX="$(brew --prefix tcl-tk)"
+-> export PATH="$TK_PREFIX/bin:$PATH"
+-> export LDFLAGS="-L$TK_PREFIX/lib"
+-> export CPPFLAGS="-I$TK_PREFIX/include"
+-> export PKG_CONFIG_PATH="$TK_PREFIX/lib/pkgconfig"
 -> pyenv install 3.12.0
 -> pyenv global 3.12.0
 -> python -m venv venvmac
