@@ -33,17 +33,8 @@ To build:
 macOS
 
 Dependencies:
-    brew install tcl-tk
-    nano ~/.zshrc
-    -Put these in then press ctrl+o, enter, ctrl+x
-        export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
-        export LDFLAGS="-L/usr/local/opt/tcl-tk/lib"
-        export CPPFLAGS="-I/usr/local/opt/tcl-tk/include"
-        export PKG_CONFIG_PATH="/usr/local/opt/tcl-tk/lib/pkgconfig"
-    brew install python3
     python3 -m venv venvmacos
     source venvmacos/bin/activate
-    python3 -m pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt
 
 To run:
