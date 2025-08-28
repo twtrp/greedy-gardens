@@ -76,7 +76,7 @@ class Deck:
         elif self.deck_type == 'event':
             for i in range(2):
                 name.append('event_free')
-                name.append('event_keep')
+                name.append('event_move')
                 name.append('event_merge')
                 name.append('event_point')
                 name.append('event_redraw')
@@ -86,7 +86,7 @@ class Deck:
         # For Testing events
         # elif self.deck_type == 'event':
         #     for i in range(16):
-        #         name.append('event_free')
+        #         name.append('event_move')
 
 
 
@@ -97,40 +97,26 @@ class Deck:
             else:
                 self.cards.append(Cards(self.deck_type, i, True))
     
-    # This function make sure that there will be no 3 strike cards in a row at the start of a day
+    # This function ensures there are no 3 consecutive strike cards anywhere in the deck
     def organize_deck(self):
-        disorganized = True
-        while disorganized:
-            strike_index = []   
-            strike_consecutive_count = 0    # This count strikes that are consecutive
-            strike_count = 0    # This count strikes to keep track of days
-            start_of_today_index = 0    # This keep track of the strike index at the start of today
-            start_of_next_day_index = 0   # This keep track of the strike index at the start of the next day
-            disorganized = False # The deck is clean until proven otherwise
-            for i, card in enumerate(self.cards):
-                if card.strike:
-                    strike_count += 1
-                    strike_consecutive_count += 1
-                    strike_index.append(i)
-                    # The third strike has been reached, update the start of the day
-                    if strike_count == 3:
-                        start_of_today_index = start_of_next_day_index
-                        start_of_next_day_index = i + 1
-                        strike_count = 0
-                    # The third strike has been reached consecutively
-                    if strike_consecutive_count == 3:
-                        # if it is at the start of the day, reshuffle and restart
-                        if strike_index[0] == start_of_today_index:
-                            random.shuffle(self.cards)
-                            disorganized = True
-                            break
-                        else:
-                            strike_index = []
-                            strike_consecutive_count = 0
-                else:
-                    strike_index = []
-                    strike_consecutive_count = 0
+        while self.has_three_consecutive_strikes():
+            random.shuffle(self.cards)
+        
         self.cards.reverse()
+    
+    def has_three_consecutive_strikes(self):
+        """Check if there are 3 consecutive strike cards anywhere in the deck"""
+        consecutive_strikes = 0
+        
+        for card in self.cards:
+            if card.strike:
+                consecutive_strikes += 1
+                if consecutive_strikes >= 3:
+                    return True
+            else:
+                consecutive_strikes = 0
+        
+        return False
 
     def verify_consecutive_strike(self):
         strike_indices = []

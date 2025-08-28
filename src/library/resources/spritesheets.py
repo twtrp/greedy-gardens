@@ -189,7 +189,7 @@ gui = {
             'width': 48,
             'height': 48,
         },
-        'event_keep': {
+        'event_move': {
             'x': 48,
             'y': 288,
             'width': 48,
@@ -399,7 +399,7 @@ cards_event = {
             'x': 96,
             'y': 0,
         },
-        'card_event_keep': {
+        'card_event_move': {
             'x': 192,
             'y': 0,
         },
@@ -445,7 +445,7 @@ cards_event_big = {
             'x': 288,
             'y': 0,
         },
-        'card_event_big_keep': {
+        'card_event_big_move': {
             'x': 576,
             'y': 0,
         },

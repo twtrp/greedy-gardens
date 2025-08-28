@@ -182,7 +182,7 @@ class Menu_TutorialState(BaseState):
 
         self.event_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free'),
-            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_keep'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_move'),
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_merge'),
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_point'),
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_redraw'),
