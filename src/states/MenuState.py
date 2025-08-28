@@ -51,11 +51,20 @@ class MenuState(BaseState):
         self.overlay.fill(color=(*colors.white, self.overlay_props['alpha']))
         
         # Load intro assets
-        self.logo = utils.get_image(dir=dir.graphics, name='namsom_logo.png', mode='colorkey')
-        self.logo = pygame.transform.scale_by(surface=self.logo, factor=7)
-        self.surface_logo = pygame.Surface(size=(self.logo.get_width(), self.logo.get_height()+50), flags=pygame.SRCALPHA)
+        self.surface_logo = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
-        utils.blit(dest=self.surface_logo, source=self.logo)
+
+        self.team_namsom_logo = utils.get_image(dir=dir.graphics, name='team_namsom_logo.png', mode='colorkey')
+        self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=3)
+        utils.blit(
+            dest=self.surface_logo,
+            source=self.team_namsom_logo,
+            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 - 30),
+            pos_anchor=posanchors.midtop,
+        )
+
+        self.my_logo = utils.get_image(dir=dir.graphics, name='my_logo.png', mode='colorkey')
+
         text = utils.get_text(
             text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
             long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
@@ -64,8 +73,8 @@ class MenuState(BaseState):
         utils.blit(
             dest=self.surface_logo, 
             source=text,
-            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 30),
-            pos_anchor=posanchors.midtop
+            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2),
+            pos_anchor=posanchors.midtop,
         )
 
         # Load menu background assets
@@ -270,8 +279,9 @@ class MenuState(BaseState):
                 utils.blit(
                     dest=canvas,
                     source=processed_surface_logo,
-                    pos=(constants.canvas_width/2, constants.canvas_height/2 - 20 + self.surface_logo_props['y_offset']),
-                    pos_anchor=posanchors.center
+                    pos=(constants.canvas_width/2, constants.canvas_height/2 + self.surface_logo_props['y_offset']),
+                    pos_anchor=posanchors.center,
+                    debug_outline=True
                 )
                 
             # Render substates
