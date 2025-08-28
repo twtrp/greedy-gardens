@@ -83,7 +83,7 @@ def get_platform_name():
 def create_release_folder(version, exe_name):
     """Create release folder structure and copy all necessary files"""
     platform_name = get_platform_name()
-    release_folder = f"release/GreedyGardens-{version}-{platform_name}"
+    release_folder = f"release/GreedyGardens-v{version}-{platform_name}"
     
     print(f"📁 Creating release folder: {release_folder}")
     
