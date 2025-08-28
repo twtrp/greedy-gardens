@@ -7,7 +7,7 @@ def blit(dest: pygame.Surface,
          pos_anchor: str = posanchors.topleft,
          debug_outline: bool = False,
          debug_outline_color: pygame.Color = (255, 0, 0)
-        )     None:
+        ) -> None:
     '''
     Use this instead of pygame's blit.
     Returns nothing
