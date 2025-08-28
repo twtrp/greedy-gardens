@@ -529,7 +529,7 @@ class PlayState(BaseState):
         # wind
         self.wind_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.wind_entities_list = []
-        self.wind_spawn_rate_per_second = 1.5
+        self.wind_spawn_rate_per_second = 2
         self.wind_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.wind, mode='alpha')
         for wind_sprite in self.wind_sprites:
             self.wind_sprites[wind_sprite] = pygame.transform.scale_by(self.wind_sprites[wind_sprite], (2, 1))

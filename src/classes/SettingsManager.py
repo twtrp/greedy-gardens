@@ -43,15 +43,15 @@ class SettingsManager():
             {
                 'id': 'fps_cap',
                 'label': 'Framerate',
-                'value': [30, 60, 999],
-                'value_label': ['30', '60', 'uncapped'],
+                'value': [30, 999],
+                'value_label': ['30', 'uncapped'],
                 'value_default': 30,
                 'value_default_label': '30',
                 'value_default_index': 0,
             },
             {
                 'id': 'skip_bootup',
-                'label': 'Skip Intro',
+                'label': 'Skip Bootup',
                 'value': [0, 1],
                 'value_label': ['off', 'on'],
                 'value_default': 0,

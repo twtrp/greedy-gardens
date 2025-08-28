@@ -822,12 +822,7 @@ class Play_PlayEventState(BaseState):
                 self.parent.is_3_strike = True
                 self.parent.strikes = 0
             else:
-                # Check if path deck is empty - if so, end the day instead of trying to draw
-                if self.parent.deck_path.remaining_cards() <= 0:
-                    self.parent.is_3_strike = True
-                    self.parent.strikes = 0
-                else:
-                    self.parent.drawing = True
+                self.parent.drawing = True
             self.parent.current_event = None
             # print("exiting play event")
             self.parent.play_event_state= False
@@ -1005,7 +1000,7 @@ class Play_PlayEventState(BaseState):
 
         if self.fruit_drawn_image:
             scaled_fruit_drawn = pygame.transform.scale_by(surface=self.fruit_drawn_image, factor=self.fruit_drawn_image_props['scale'])
-            scaled_fruit_drawn = utils.effect_outline(surface=scaled_fruit_drawn, distance=4, color=colors.white)
+            # scaled_fruit_drawn = utils.effect_outline(surface=scaled_fruit_drawn, distance=4, color=colors.white)
             utils.blit(
                 dest=canvas,
                 source=scaled_fruit_drawn,
