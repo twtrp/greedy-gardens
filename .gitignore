@@ -1,6 +1,6 @@
 venv/
 venvlinux/
-venvwindows/
+venvmac/
 __pycache__/
 data/settings.lst
 build/
