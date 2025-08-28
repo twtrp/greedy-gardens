@@ -31,16 +31,16 @@ To build:
 macOS
 
 Dependencies:
--> brew install python@3.11
--> $(brew --prefix)/bin/python3.11 -m venv venvmac
--> source venvmac/bin/activate
+-> brew install python@3.12
+-> $(brew --prefix)/bin/python3.12 -m venv venvmacos
+-> source venvmacos/bin/activate
 -> python -m pip install --upgrade pip setuptools wheel
 -> pip install -r requirements.txt
 
 To run:
--> source venvmac/bin/activate
+-> source venvmacos/bin/activate
 -> python main.py
 
 To build:
--> source venvmac/bin/activate
+-> source venvmacos/bin/activate
 -> python build.py
