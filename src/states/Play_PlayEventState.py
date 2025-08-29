@@ -257,17 +257,17 @@ class Play_PlayEventState(BaseState):
                 for event in events:
                     if event.type == pygame.KEYDOWN:
                         if (event.key == pygame.K_w or event.key == pygame.K_UP) and self.choice > 0:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
                             self.choice -= 1
                         elif (event.key == pygame.K_s or event.key == pygame.K_DOWN) and self.choice < 5:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
                             self.choice += 1
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 4 and self.choice > 0:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
                             self.choice -= 1
                         elif event.button == 5 and self.choice < 5:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*1.25)
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
                             self.choice += 1
 
                 self.cell_pos = -1
@@ -349,7 +349,7 @@ class Play_PlayEventState(BaseState):
                                     # Deselect if clicking the same cell
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                         self.selected_cell = None
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -435,7 +435,7 @@ class Play_PlayEventState(BaseState):
                                 elif button.id == self.selected_cell:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                         self.selected_cell = None
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -593,7 +593,7 @@ class Play_PlayEventState(BaseState):
                             elif button.id == self.selected_cell_2:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
-                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                    utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                     self.selected_cell_2 = None
                             else:
                                 self.select_frame = self.parent.cant_selecting_tile
@@ -608,7 +608,7 @@ class Play_PlayEventState(BaseState):
                             elif button.id == self.selected_cell:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
-                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                    utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                     self.selected_cell = None
                             else:
                                 self.select_frame = self.parent.cant_selecting_tile
@@ -621,7 +621,7 @@ class Play_PlayEventState(BaseState):
                             elif button.id == self.selected_cell_2:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
-                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                    utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                     self.selected_cell_2 = None
                             else:
                                 self.select_frame = self.parent.cant_selecting_tile
@@ -642,7 +642,6 @@ class Play_PlayEventState(BaseState):
                     if button.clicked:
                         if self.selected_cell or self.selected_cell_2:
                             if button.id == 'remove':
-                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
                                 if self.selected_cell:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
@@ -777,7 +776,7 @@ class Play_PlayEventState(BaseState):
                                 elif button.id == self.selected_cell:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                         self.selected_cell = None
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
@@ -816,6 +815,9 @@ class Play_PlayEventState(BaseState):
             self.parent.is_choosing = False
         else:
             self.parent.is_choosing = True
+
+            scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
+            utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
 
             if self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)

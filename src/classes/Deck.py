@@ -85,7 +85,7 @@ class Deck:
         # For Testing events
         elif self.deck_type == 'event':
             for i in range(16):
-                name.append('event_redraw')
+                name.append('event_swap')
 
 
 

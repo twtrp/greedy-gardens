@@ -783,12 +783,12 @@ class PlayState(BaseState):
                                     }
                                     break
                             
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume)
                             self.game.apply_settings(self.setting_index)
                         
                         # Handle regular pause menu buttons
                         elif button.id == 'resume':
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
                             self.paused = False
                         elif button.id == 'quit' and not self.transitioning:
                             self.transitioning = True
@@ -914,11 +914,17 @@ class PlayState(BaseState):
                     for event in events:
                         if event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_ESCAPE:
-                                utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                if self.paused:
+                                    utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
+                                else:
+                                    utils.sound_play(sound=sfx.pause, volume=self.game.sfx_volume)
                                 self.paused = not self.paused
                         elif event.type == pygame.MOUSEBUTTONDOWN:
                             if event.button == 2:
-                                utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                if self.paused:
+                                    utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
+                                else:
+                                    utils.sound_play(sound=sfx.pause, volume=self.game.sfx_volume)
                                 self.paused = not self.paused
                         elif event.type == self.water_timer:
                             self.water_is_high = not self.water_is_high

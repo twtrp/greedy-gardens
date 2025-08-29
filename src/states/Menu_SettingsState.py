@@ -155,7 +155,7 @@ class Menu_SettingsState(BaseState):
                         'left_arrow_scale': left_arrow_scale,
                         'right_arrow_scale': right_arrow_scale
                     }
-                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                    utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume)
                     self.game.apply_settings(self.setting_index)
 
                 if button.id == 'reset':
