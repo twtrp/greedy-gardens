@@ -849,17 +849,8 @@ class Play_PlayEventState(BaseState):
             self.parent.is_choosing = False
         else:
             self.parent.is_choosing = True
-            
-            # Only show choice UI for actual choice events, not board manipulation events
-            if self.parent.current_event != 'event_move':
-                scaled_point_button = pygame.transform.scale_by(surface=self.hover_to_view_surface[0]['surface'], factor=self.hover_to_view_surface[0]['scale'])
-                utils.blit(dest=canvas, source=scaled_point_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)
-            
-            if self.parent.current_event == 'event_move':
-                # Move event doesn't show choice title - it's a board manipulation event
-                pass
 
-            elif self.parent.current_event == 'event_point':
+            if self.parent.current_event == 'event_point':
                 utils.blit(dest=canvas, source=self.choice_point_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
                 for i, option in enumerate(self.point_button_option_surface_list):
                     scaled_point_button1 = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
