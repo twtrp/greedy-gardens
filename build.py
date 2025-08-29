@@ -162,9 +162,6 @@ def create_release_folder(version, exe_name):
             if os.path.exists(src_icon):
                 os.makedirs(os.path.dirname(dst_icon), exist_ok=True)
                 shutil.move(src_icon, dst_icon)
-                print(f"✅ Moved {icon_format} to release assets folder")
-            else:
-                print(f"⚠️  {icon_format} not found in assets/graphics")
     else:
         print("⚠️  Assets folder not found")
 
@@ -348,7 +345,6 @@ def main():
     if release_folder:
         print(f"\n🎉 Release package created successfully!")
         print(f"📁 Release folder: {release_folder}")
-        print(f"🎮 Ready for distribution!")
     else:
         print("\n💥 Release package creation failed!")
         sys.exit(1)
