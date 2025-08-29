@@ -154,23 +154,34 @@ def create_release_folder(version, exe_name):
             shutil.rmtree(dst_assets)
         shutil.copytree("assets", dst_assets)
         print(f"✅ Copied assets folder")
+
+        # Move icons to release assets folder
+        for icon_format in ["icon.svg", "icon.icns", "icon.ico"]:
+            src_icon = f"assets/graphics/{icon_format}"
+            dst_icon = f"{dst_assets}/graphics/{icon_format}"
+            if os.path.exists(src_icon):
+                os.makedirs(os.path.dirname(dst_icon), exist_ok=True)
+                shutil.move(src_icon, dst_icon)
+                print(f"✅ Moved {icon_format} to release assets folder")
+            else:
+                print(f"⚠️  {icon_format} not found in assets/graphics")
     else:
         print("⚠️  Assets folder not found")
-    
+
     # Copy CREDITS.txt
     if os.path.exists("CREDITS.txt"):
         shutil.copy2("CREDITS.txt", f"{release_folder}/CREDITS.txt")
         print(f"✅ Copied CREDITS.txt")
     else:
         print("⚠️  CREDITS.txt not found")
-    
+
     # Copy LICENSE
     if os.path.exists("LICENSE"):
         shutil.copy2("LICENSE", f"{release_folder}/LICENSE")
         print(f"✅ Copied LICENSE")
     else:
         print("⚠️  LICENSE file not found")
-    
+
     return release_folder
 
 def build_executable(version):
