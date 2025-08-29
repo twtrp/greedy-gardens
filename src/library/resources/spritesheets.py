@@ -943,3 +943,47 @@ dark_grass_flowers = {
         },    
     }
 }
+
+keyboard_keys_long = {
+    'file': 'keyboard_keys_long.png',
+    'shared_data': {
+
+    },
+    'sprites': {
+        'spacebar': {
+            'x': 65,
+            'y': 34,
+            'width': 30,
+            'height': 12,
+        },
+        'esc': {
+            'x': 39,
+            'y': 2,
+            'width': 18,
+            'height': 12,
+        }
+    }
+}
+
+mouse = {
+    'file': 'mouse.png',
+    'shared_data': {
+        'y': 0,
+        'width': 15,
+        'height': 16
+    },
+    'sprites': {
+        'left_click': {
+            'x': 0,
+        },
+        'right_click': {
+            'x': 16,
+        },
+        'middle_click': {
+            'x': 32,
+        },
+        'scroll_up_down': {
+            'x': 144,
+        },
+    }
+}

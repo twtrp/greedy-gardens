@@ -36,6 +36,7 @@ class Menu_TutorialState(BaseState):
             (650, 40),
             (650, 210),
             (650, 380),
+            (650, 550),
         ]
 
         self.tutorial_surface_list = [
@@ -93,11 +94,11 @@ class Menu_TutorialState(BaseState):
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Fruits connected to Farmhouse are scored when a day ends.",
+                    text="Fruits connected to Farmhouse are scored when day ends.",
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Seasonal fruits are bonus points scored when the game ends.",
+                    text="Seasonal fruits are bonus points scored when game ends.",
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
@@ -155,7 +156,34 @@ class Menu_TutorialState(BaseState):
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
+            [
+                utils.get_text(
+                    text="Controls",
+                    font=fonts.minecraftia, size='medium', color=colors.green_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="         Action                /                 Draw card                /           Pause menu",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ]
         ]
+
+        #Control button icons
+        self.left_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='left_click')
+        self.left_click_sprite = pygame.transform.scale_by(surface=self.left_click_sprite, factor=2)
+        self.left_click_sprite_coords = (650, 585)
+        self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
+        self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
+        self.right_click_sprite_coords = (778, 585)
+        self.spacebar_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
+        self.spacebar_sprite = pygame.transform.scale_by(surface=self.spacebar_sprite, factor=2)
+        self.spacebar_sprite_coords = (826, 592)
+        self.middle_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='middle_click')
+        self.middle_click_sprite = pygame.transform.scale_by(surface=self.middle_click_sprite, factor=2)
+        self.middle_click_sprite_coords = (1022, 585)
+        self.esc_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='esc')
+        self.esc_sprite = pygame.transform.scale_by(surface=self.esc_sprite, factor=2)
+        self.esc_sprite_coords = (1070, 592)
 
         self.fruit_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_orange'),
@@ -201,7 +229,6 @@ class Menu_TutorialState(BaseState):
         ]
         for i, surface in enumerate(self.magic_fruit_sprites):
             self.magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
-
 
     def update(self, dt, events):
         for event in events:
@@ -301,3 +328,29 @@ class Menu_TutorialState(BaseState):
                 pos=(start_x + i * x_increment, start_y),
                 pos_anchor=posanchors.topleft
             )
+
+        utils.blit(
+            dest=canvas, source=self.left_click_sprite,
+            pos=self.left_click_sprite_coords,
+            pos_anchor=posanchors.topleft
+        )
+        utils.blit(
+            dest=canvas, source=self.right_click_sprite,
+            pos=self.right_click_sprite_coords,
+            pos_anchor=posanchors.topleft
+        )
+        utils.blit(
+            dest=canvas, source=self.spacebar_sprite,
+            pos=self.spacebar_sprite_coords,
+            pos_anchor=posanchors.topleft
+        )
+        utils.blit(
+            dest=canvas, source=self.middle_click_sprite,
+            pos=self.middle_click_sprite_coords,
+            pos_anchor=posanchors.topleft
+        )
+        utils.blit(
+            dest=canvas, source=self.esc_sprite,
+            pos=self.esc_sprite_coords,
+            pos_anchor=posanchors.topleft
+        )
