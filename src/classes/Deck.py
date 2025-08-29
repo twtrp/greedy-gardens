@@ -39,38 +39,38 @@ class Deck:
         if self.deck_type == 'fruit':
             name = ['fruit_blueberry', 'fruit_coconut', 'fruit_grape', 'fruit_orange', 'fruit_peach', 'fruit_strawberry']
             
-        # elif self.deck_type == 'path':
-        #     for i in range(6):
-        #         name.append('path_WS')
-        #         name.append('path_ES')
-        #         name.append('path_WE')
-        #         name.append('path_NS')
-        #         name.append('path_NW')
-        #         name.append('path_NE')
-        #     for i in range(3):
-        #         name.append('path_strike_WS')
-        #         name.append('path_strike_ES')
-        #         name.append('path_strike_WE')
-        #         name.append('path_strike_NS')
-        #         name.append('path_strike_NW')
-        #         name.append('path_strike_NE')
-        #     for i in range(1):
-        #         name.append('path_WES')
-        #         name.append('path_NWS')
-        #         name.append('path_NES')
-        #         name.append('path_NWE')
-        #     for i in range(1):
-        #         name.append('path_strike_WES')
-        #         name.append('path_strike_NWS')
-        #         name.append('path_strike_NES')
-        #         name.append('path_strike_NWE')
-        # For Testing path
         elif self.deck_type == 'path':
-            for i in range(16):
+            for i in range(6):
+                name.append('path_WS')
+                name.append('path_ES')
+                name.append('path_WE')
+                name.append('path_NS')
+                name.append('path_NW')
+                name.append('path_NE')
+            for i in range(3):
+                name.append('path_strike_WS')
+                name.append('path_strike_ES')
+                name.append('path_strike_WE')
+                name.append('path_strike_NS')
+                name.append('path_strike_NW')
+                name.append('path_strike_NE')
+            for i in range(1):
+                name.append('path_WES')
+                name.append('path_NWS')
+                name.append('path_NES')
+                name.append('path_NWE')
+            for i in range(1):
                 name.append('path_strike_WES')
                 name.append('path_strike_NWS')
-                name.append('path_NES')
-                name.append('path_NWE') # Should always have a non-strike card or it will freeze
+                name.append('path_strike_NES')
+                name.append('path_strike_NWE')
+        # For Testing path
+        # elif self.deck_type == 'path':
+        #     for i in range(16):
+        #         name.append('path_strike_WES')
+        #         name.append('path_strike_NWS')
+        #         name.append('path_NES')
+        #         name.append('path_NWE') # Should always have a non-strike card or it will freeze
 
         # elif self.deck_type == 'event':
         #     for i in range(2):
@@ -85,7 +85,7 @@ class Deck:
         # For Testing events
         elif self.deck_type == 'event':
             for i in range(16):
-                name.append('event_swap')
+                name.append('event_remove')
 
 
 

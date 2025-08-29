@@ -616,7 +616,7 @@ class Play_PlayEventState(BaseState):
                             if button.id == self.selected_cell:
                                 self.select_frame = self.parent.selecting_tile
                                 if button.clicked:
-                                    utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                    utils.sound_play(sound=sfx.unclick, volume=self.game.sfx_volume)
                                     self.selected_cell = None
                             elif button.id == self.selected_cell_2:
                                 self.select_frame = self.parent.selecting_tile
@@ -664,8 +664,8 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[self.selected_cell].south = False
                                     self.parent.game_board.board[self.selected_cell].path = False
                                     self.parent.game_board.board[self.selected_cell].temp = False
-                                if self.selected_cell_2:
-                                    if not self.parent.game_board.board[self.selected_cell].temp:
+                                if self.selected_cell_2 is not None:
+                                    if not self.parent.game_board.board[self.selected_cell_2].temp:
                                         old_path2 = ""
                                         if self.parent.game_board.board[self.selected_cell_2].north:
                                             old_path2 += "N"
@@ -684,7 +684,8 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[self.selected_cell_2].east = False
                                     self.parent.game_board.board[self.selected_cell_2].south = False
                                     self.parent.game_board.board[self.selected_cell_2].path = False
-                                    self.parent.game_board.board[self.selected_cell].temp = False
+                                    if self.selected_cell_2 is not None:
+                                        self.parent.game_board.board[self.selected_cell_2].temp = False
                                 # print(self.parent.drawn_cards_path)
                                 self.played_event = True
                                 
