@@ -118,24 +118,35 @@ def create_release_folder(version, exe_name):
     """Create release folder structure and copy all necessary files"""
     platform_name = get_platform_name()
     release_folder = f"release/GreedyGardens-v{version}-{platform_name}"
-    
+
     print(f"📁 Creating release folder: {release_folder}")
-    
+
     # Create release directory
     os.makedirs(release_folder, exist_ok=True)
-    
-    # Copy executable
-    exe_extension = ".exe" if platform_name == "Windows" else ""
-    src_exe = f"dist/{exe_name}{exe_extension}"
-    dst_exe = f"{release_folder}/PlayGreedyGardens-v{version}{exe_extension}"
-    
-    if os.path.exists(src_exe):
-        shutil.copy2(src_exe, dst_exe)
-        print(f"✅ Copied executable")
+
+    # Copy executable or .app bundle
+    if platform_name == "macOS":
+        src_app = f"dist/{exe_name}.app"
+        dst_app = f"{release_folder}/PlayGreedyGardens-v{version}.app"
+
+        if os.path.exists(src_app):
+            shutil.copytree(src_app, dst_app)
+            print(f"✅ Copied .app bundle")
+        else:
+            print(f"❌ .app bundle not found: {src_app}")
+            return False
     else:
-        print(f"❌ Executable not found: {src_exe}")
-        return False
-    
+        exe_extension = ".exe" if platform_name == "Windows" else ""
+        src_exe = f"dist/{exe_name}{exe_extension}"
+        dst_exe = f"{release_folder}/PlayGreedyGardens-v{version}{exe_extension}"
+
+        if os.path.exists(src_exe):
+            shutil.copy2(src_exe, dst_exe)
+            print(f"✅ Copied executable")
+        else:
+            print(f"❌ Executable not found: {src_exe}")
+            return False
+
     # Copy assets folder
     if os.path.exists("assets"):
         dst_assets = f"{release_folder}/assets"
