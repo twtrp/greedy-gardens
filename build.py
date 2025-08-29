@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """
 Automated build script for Greedy Gardens
-Extracts version from main.py and builds the executable with correct naming
-Creates release folder with all necessary files for distribution
+- Extracts version from main.py
+- Builds platform-specific executable/bundle with correct icon
+- Creates /release/<name> folder with all required files
+- Tries to minimize Gatekeeper issues on macOS (ad-hoc sign, quarantine strip)
+
+Tested with:
+- Windows 10/11 (PyInstaller + .ico)
+- macOS 12+ (PyInstaller + .icns via iconutil)
+- Linux (PyInstaller, sets exec perms)
 """
 
 import os
@@ -11,343 +18,293 @@ import subprocess
 import sys
 import shutil
 import platform
-from PIL import Image
+import tempfile
+from pathlib import Path
 
-def extract_version_from_main():
-    """Extract version number from main.py"""
+try:
+    from PIL import Image
+except Exception:
+    Image = None
+
+# ---------------------------
+# Utility helpers
+# ---------------------------
+
+ROOT = Path(__file__).resolve().parent
+
+def log(s: str):
+    print(s, flush=True)
+
+def run_ok(cmd, check=True, **kwargs):
+    log(f"🚀 Running: {' '.join(map(str, cmd))}")
+    return subprocess.run(cmd, check=check, **kwargs)
+
+def which(tool: str) -> bool:
+    return shutil.which(tool) is not None
+
+def is_macos() -> bool:
+    return platform.system() == "Darwin"
+
+def is_windows() -> bool:
+    return platform.system() == "Windows"
+
+def is_linux() -> bool:
+    return platform.system() == "Linux"
+
+# ---------------------------
+# Version extraction
+# ---------------------------
+
+def extract_version_from_main() -> str | None:
+    """Extracts version string from main.py looking for: self.version_number = 'vX.Y.Z'"""
+    main_py = ROOT / "main.py"
+    if not main_py.exists():
+        log("❌ main.py not found. Make sure you're in the project root directory.")
+        return None
+
     try:
-        with open('main.py', 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Look for the version_number line
-        version_match = re.search(r"self\.version_number\s*=\s*['\"]([^'\"]+)['\"]", content)
-        if version_match:
-            version = version_match.group(1)
-            # Remove 'v' prefix if present for cleaner exe name
-            clean_version = version.lstrip('v')
-            return clean_version
-        else:
-            print("❌ Could not find version number in main.py")
+        content = main_py.read_text(encoding="utf-8")
+        m = re.search(r"self\.version_number\s*=\s*['\"]([^'\"]+)['\"]", content)
+        if not m:
+            log("❌ Could not find version number in main.py (self.version_number = '...').")
             return None
-    except FileNotFoundError:
-        print("❌ main.py not found. Make sure you're in the project root directory.")
-        return None
+        raw = m.group(1)
+        clean = raw.lstrip('v')  # drop leading 'v' for filenames
+        return clean
     except Exception as e:
-        print(f"❌ Error reading main.py: {e}")
+        log(f"❌ Error reading main.py: {e}")
         return None
 
-def convert_png_to_ico():
-    """Convert PNG icon to ICO format for better Windows compatibility"""
-    png_path = "assets/graphics/icon.png"
-    ico_path = "assets/graphics/icon.ico"
-    
-    if not os.path.exists(png_path):
+# ---------------------------
+# Icon handling (temp only)
+# ---------------------------
+
+def pil_to_png_bytes(img) -> bytes:
+    from io import BytesIO
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
+def convert_png_to_ico_temp(png_path: Path, version: str) -> Path | None:
+    """Convert PNG to ICO for PyInstaller, saved in temp folder."""
+    if not png_path.exists() or Image is None:
         return None
-    
-    # Check if ICO already exists and is newer than PNG
-    if os.path.exists(ico_path):
-        png_time = os.path.getmtime(png_path)
-        ico_time = os.path.getmtime(ico_path)
-        if ico_time >= png_time:
-            return ico_path  # ICO is up to date
-    
     try:
-        print("🎨 Converting PNG icon to ICO format...")
+        tmpdir = Path(tempfile.gettempdir())
+        ico_path = tmpdir / f"PlayGreedyGardens-{version}.ico"
+        log("🎨 Creating ICO (temp for build)...")
         img = Image.open(png_path)
-        
-        # Convert to RGBA if not already
-        if img.mode != 'RGBA':
-            img = img.convert('RGBA')
-        
-        # Save as ICO with multiple sizes for better Windows support
-        img.save(ico_path, format='ICO', sizes=[(16,16), (32,32), (48,48), (64,64), (128,128), (256,256)])
-        print("✅ Icon converted successfully")
+        if img.mode != "RGBA":
+            img = img.convert("RGBA")
+        sizes = [(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)]
+        img.save(ico_path, format="ICO", sizes=sizes)
         return ico_path
-        
     except Exception as e:
-        print(f"⚠️  Icon conversion failed: {e}")
-        return png_path  # Fall back to PNG
-
-def convert_png_to_icns():
-    """Convert PNG icon to ICNS format for macOS compatibility"""
-    png_path = "assets/graphics/icon.png"
-    icns_path = "assets/graphics/icon.icns"
-
-    if not os.path.exists(png_path):
+        log(f"⚠️  ICO creation failed: {e}")
         return None
 
-    # Check if ICNS already exists and is newer than PNG
-    if os.path.exists(icns_path):
-        png_time = os.path.getmtime(png_path)
-        icns_time = os.path.getmtime(icns_path)
-        if icns_time >= png_time:
-            return icns_path  # ICNS is up to date
+def convert_png_to_icns_temp(png_path: Path, version: str) -> Path | None:
+    """Convert PNG to ICNS for PyInstaller, saved in temp folder."""
+    if not png_path.exists() or not is_macos() or not which("iconutil") or Image is None:
+        return None
+    try:
+        tmpdir = Path(tempfile.gettempdir())
+        icns_path = tmpdir / f"PlayGreedyGardens-{version}.icns"
+        log("🎨 Creating ICNS (temp for build)...")
+        with tempfile.TemporaryDirectory() as tmpbuild:
+            iconset = Path(tmpbuild) / "icon.iconset"
+            iconset.mkdir(parents=True, exist_ok=True)
+            base = Image.open(png_path).convert("RGBA")
+            sizes = [16, 32, 64, 128, 256, 512, 1024]
+            for s in sizes:
+                img = base.resize((s, s), Image.LANCZOS)
+                (iconset / f"icon_{s}x{s}.png").write_bytes(pil_to_png_bytes(img))
+                if s != 1024:
+                    img2x = base.resize((s*2, s*2), Image.LANCZOS)
+                    (iconset / f"icon_{s}x{s}@2x.png").write_bytes(pil_to_png_bytes(img2x))
+            run_ok(["iconutil", "-c", "icns", "-o", str(icns_path), str(iconset)], check=True)
+        return icns_path
+    except Exception as e:
+        log(f"⚠️  ICNS creation failed: {e}")
+        return None
+
+def choose_icon_for_platform(version: str) -> Path | None:
+    """Return a temp icon path for PyInstaller (never in assets/graphics)."""
+    png_icon = ROOT / "assets/graphics/icon.png"
+    if is_windows():
+        return convert_png_to_ico_temp(png_icon, version)
+    if is_macos():
+        return convert_png_to_icns_temp(png_icon, version)
+    return png_icon if png_icon.exists() else None
+
+# ---------------------------
+# Building with PyInstaller
+# ---------------------------
+
+def ensure_pyinstaller():
+    if not which("pyinstaller"):
+        log("❌ PyInstaller not found. Install with: pip install pyinstaller")
+        sys.exit(1)
+
+def build_windows_linux(version: str) -> tuple[str, Path] | tuple[None, None]:
+    exe_name = f"PlayGreedyGardens-{version}"
+    icon = choose_icon_for_platform(version)
+    cmd = ["pyinstaller", "--onefile", "--noconsole", "--name", exe_name, "main.py"]
+    if icon:
+        cmd.extend(["--icon", str(icon)])
 
     try:
-        print("🎨 Converting PNG icon to ICNS format...")
-        img = Image.open(png_path)
+        run_ok(cmd, check=True)
+        out = ROOT / "dist" / (exe_name + (".exe" if is_windows() else ""))
+        if out.exists() and is_linux():
+            ensure_executable_permissions(out)
+        log(f"✅ Build complete: {out}")
+        return exe_name, out
+    except subprocess.CalledProcessError as e:
+        log(f"❌ Build failed (exit {e.returncode}).")
+        return None, None
 
-        # Convert to RGBA if not already
-        if img.mode != 'RGBA':
-            img = img.convert('RGBA')
+def build_macos_app(version: str) -> tuple[str, Path] | tuple[None, None]:
+    exe_name = f"PlayGreedyGardens-{version}"
+    icon = choose_icon_for_platform(version)
+    cmd = ["pyinstaller", "--onefile", "--windowed", "--name", exe_name, "main.py"]
+    if icon:
+        cmd.extend(["--icon", str(icon)])
 
-        # Save as ICNS (requires py2icns or similar tool installed)
-        temp_icns = "temp_icon.icns"
-        img.save(temp_icns, format="ICNS")
-        shutil.move(temp_icns, icns_path)
-        print("✅ Icon converted successfully")
-        return icns_path
+    try:
+        run_ok(cmd, check=True)
+        app_path = ROOT / "dist" / f"{exe_name}.app"
+        if not app_path.exists():
+            log("⚠️  PyInstaller completed but .app not found.")
+            return None, None
+        codesign_mac_app(app_path)
+        remove_quarantine(app_path)
+        log(f"✅ Build complete: {app_path}")
+        return exe_name, app_path
+    except subprocess.CalledProcessError as e:
+        log(f"❌ Build failed (exit {e.returncode}).")
+        return None, None
 
-    except Exception as e:
-        print(f"⚠️  Icon conversion failed: {e}")
-        return png_path  # Fall back to PNG
+def codesign_mac_app(app_path: Path):
+    if not is_macos() or not which("codesign"):
+        return
+    try:
+        log(f"🔏 Ad-hoc signing {app_path}")
+        run_ok(["codesign", "--deep", "--force", "--sign", "-", str(app_path)], check=True)
+        log("✅ Signed (ad-hoc)")
+    except subprocess.CalledProcessError as e:
+        log(f"⚠️  Code signing failed (exit {e.returncode}). Continuing unsigned.")
 
-def get_platform_name():
-    """Get the platform name for release folder"""
-    system = platform.system()
-    if system == "Windows":
-        return "Windows"
-    elif system == "Linux":
-        return "Linux"
-    elif system == "Darwin":
-        return "macOS"
+def remove_quarantine(path: Path):
+    if not is_macos() or not which("xattr"):
+        return
+    try:
+        run_ok(["xattr", "-dr", "com.apple.quarantine", str(path)], check=False)
+        log("🧼 Removed quarantine attribute (best effort).")
+    except Exception:
+        pass
+
+def ensure_executable_permissions(file_path: Path):
+    if is_linux():
+        try:
+            file_path.chmod(0o755)
+            log(f"✅ chmod +x {file_path}")
+        except Exception as e:
+            log(f"⚠️ chmod failed: {e}")
+
+# ---------------------------
+# Release packaging
+# ---------------------------
+
+def get_platform_name() -> str:
+    s = platform.system()
+    return {"Windows":"Windows", "Linux":"Linux", "Darwin":"macOS"}.get(s, s)
+
+def create_release_folder(version: str, built_name: str, built_path: Path) -> Path | None:
+    release_folder = ROOT / "release" / f"GreedyGardens-v{version}-{get_platform_name()}"
+    log(f"📁 Creating release folder: {release_folder}")
+    release_folder.mkdir(parents=True, exist_ok=True)
+
+    # Copy binary/app
+    if is_macos() and built_path.suffix == ".app":
+        dst_app = release_folder / f"PlayGreedyGardens-v{version}.app"
+        if dst_app.exists(): shutil.rmtree(dst_app)
+        shutil.copytree(built_path, dst_app)
+        log("✅ Copied .app bundle")
     else:
-        return system
+        dst_bin = release_folder / f"PlayGreedyGardens-v{version}{built_path.suffix}"
+        shutil.copy2(built_path, dst_bin)
+        log("✅ Copied executable")
 
-def create_release_folder(version, exe_name):
-    """Create release folder structure and copy all necessary files"""
-    platform_name = get_platform_name()
-    release_folder = f"release/GreedyGardens-v{version}-{platform_name}"
+    # Copy assets
+    src_assets = ROOT / "assets"
+    if src_assets.exists():
+        dst_assets = release_folder / "assets"
+        if dst_assets.exists(): shutil.rmtree(dst_assets)
+        shutil.copytree(src_assets, dst_assets)
+        log("✅ Copied assets folder")
 
-    print(f"📁 Creating release folder: {release_folder}")
+        # Generate platform-specific icon inside release/assets/graphics
+        png_icon = dst_assets / "graphics" / "icon.png"
+        if png_icon.exists():
+            if is_windows():
+                ico_path = dst_assets / "graphics" / "icon.ico"
+                convert_png_to_ico_temp(png_icon, version) and shutil.copy2(
+                    Path(tempfile.gettempdir()) / f"PlayGreedyGardens-{version}.ico", ico_path)
+                log(f"✅ Wrote release icon: {ico_path}")
+            elif is_macos():
+                icns_path = dst_assets / "graphics" / "icon.icns"
+                convert_png_to_icns_temp(png_icon, version) and shutil.copy2(
+                    Path(tempfile.gettempdir()) / f"PlayGreedyGardens-{version}.icns", icns_path)
+                log(f"✅ Wrote release icon: {icns_path}")
+    else:
+        log("⚠️ assets/ not found")
 
-    # Create release directory
-    os.makedirs(release_folder, exist_ok=True)
-
-    # Copy executable or .app bundle
-    if platform_name == "macOS":
-        src_app = f"dist/{exe_name}.app"
-        dst_app = f"{release_folder}/PlayGreedyGardens-v{version}.app"
-
-        if os.path.exists(src_app):
-            shutil.copytree(src_app, dst_app)
-            print(f"✅ Copied .app bundle")
+    # CREDITS + LICENSE
+    for name in ("CREDITS.txt", "LICENSE"):
+        src = ROOT / name
+        if src.exists():
+            shutil.copy2(src, release_folder / name)
+            log(f"✅ Copied {name}")
         else:
-            print(f"❌ .app bundle not found: {src_app}")
-            return False
-    else:
-        exe_extension = ".exe" if platform_name == "Windows" else ""
-        src_exe = f"dist/{exe_name}{exe_extension}"
-        dst_exe = f"{release_folder}/PlayGreedyGardens-v{version}{exe_extension}"
-
-        if os.path.exists(src_exe):
-            shutil.copy2(src_exe, dst_exe)
-            print(f"✅ Copied executable")
-        else:
-            print(f"❌ Executable not found: {src_exe}")
-            return False
-
-    # Copy assets folder
-    if os.path.exists("assets"):
-        dst_assets = f"{release_folder}/assets"
-        if os.path.exists(dst_assets):
-            shutil.rmtree(dst_assets)
-        shutil.copytree("assets", dst_assets)
-        print(f"✅ Copied assets folder")
-
-        # Move icons to release assets folder
-        for icon_format in ["icon.svg", "icon.icns", "icon.ico"]:
-            src_icon = f"assets/graphics/{icon_format}"
-            dst_icon = f"{dst_assets}/graphics/{icon_format}"
-            if os.path.exists(src_icon):
-                os.makedirs(os.path.dirname(dst_icon), exist_ok=True)
-                shutil.move(src_icon, dst_icon)
-    else:
-        print("⚠️  Assets folder not found")
-
-    # Copy CREDITS.txt
-    if os.path.exists("CREDITS.txt"):
-        shutil.copy2("CREDITS.txt", f"{release_folder}/CREDITS.txt")
-        print(f"✅ Copied CREDITS.txt")
-    else:
-        print("⚠️  CREDITS.txt not found")
-
-    # Copy LICENSE
-    if os.path.exists("LICENSE"):
-        shutil.copy2("LICENSE", f"{release_folder}/LICENSE")
-        print(f"✅ Copied LICENSE")
-    else:
-        print("⚠️  LICENSE file not found")
+            log(f"⚠️ {name} not found")
 
     return release_folder
 
-def build_executable(version):
-    """Build the executable using PyInstaller"""
-    exe_name = f"PlayGreedyGardens-{version}"
-    
-    print(f"🔨 Building executable: {exe_name}")
-    print(f"📦 Version: {version}")
-    
-    # Handle icon conversion and selection
-    png_icon = "assets/graphics/icon.png"
-    ico_icon = "assets/graphics/icon.ico"
-    
-    icon_path = None
-    if os.path.exists(png_icon):
-        # Try to convert PNG to ICO for better Windows compatibility
-        converted_icon = convert_png_to_ico()
-        if converted_icon and os.path.exists(converted_icon):
-            icon_path = converted_icon
-            print(f"🎨 Using converted ICO icon: {icon_path}")
-        else:
-            icon_path = png_icon
-            print(f"🎨 Using PNG icon: {icon_path}")
-    elif os.path.exists(ico_icon):
-        icon_path = ico_icon
-        print(f"🎨 Using existing ICO icon: {icon_path}")
-    
-    # Build PyInstaller command
-    if icon_path:
-        cmd = [
-            "pyinstaller",
-            "--onefile",
-            "--noconsole", 
-            "--name", exe_name,
-            "--icon", icon_path,
-            "main.py"
-        ]
-    else:
-        print("⚠️  No icon found, building without icon")
-        cmd = [
-            "pyinstaller",
-            "--onefile",
-            "--noconsole", 
-            "--name", exe_name,
-            "main.py"
-        ]
-    
-    print(f"🚀 Running: {' '.join(cmd)}")
-    
-    try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print("✅ Build completed successfully!")
-        print(f"📁 Executable created: dist/{exe_name}.exe")
-        
-        # Set executable permissions on Linux
-        if platform.system() == "Linux":
-            ensure_executable_permissions(f"dist/{exe_name}")
-        
-        return exe_name
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Build failed with exit code {e.returncode}")
-        
-        # Check for common issues
-        if "PIL" in e.stderr or "Pillow" in e.stderr:
-            print("💡 Tip: Install Pillow for PNG icon support: pip install Pillow")
-        elif "icon" in e.stderr.lower():
-            print("💡 Tip: Try converting icon.png to icon.ico or remove --icon flag")
-        
-        print(f"Error output: {e.stderr}")
-        return None
-    except FileNotFoundError:
-        print("❌ PyInstaller not found. Please install it with: pip install pyinstaller")
-        return None
-
-def build_mac_app(version):
-    """Build a macOS .app bundle using PyInstaller"""
-    exe_name = f"PlayGreedyGardens-{version}"
-
-    print(f"🔨 Building macOS .app bundle: {exe_name}")
-    print(f"📦 Version: {version}")
-
-    # Handle icon conversion and selection
-    png_icon = "assets/graphics/icon.png"
-    icns_icon = "assets/graphics/icon.icns"
-
-    icon_path = None
-    if os.path.exists(png_icon):
-        # Try to convert PNG to ICNS for macOS compatibility
-        converted_icon = convert_png_to_icns()
-        if converted_icon and os.path.exists(converted_icon):
-            icon_path = converted_icon
-            print(f"🎨 Using converted ICNS icon: {icon_path}")
-        else:
-            icon_path = png_icon
-            print(f"🎨 Using PNG icon: {icon_path}")
-    elif os.path.exists(icns_icon):
-        icon_path = icns_icon
-        print(f"🎨 Using existing ICNS icon: {icon_path}")
-
-    # Build PyInstaller command for macOS .app
-    cmd = [
-        "pyinstaller",
-        "--onefile",
-        "--windowed",
-        "--name", exe_name,
-        "--icon", icon_path if icon_path else "",
-        "main.py"
-    ]
-
-    print(f"🚀 Running: {' '.join(cmd)}")
-
-    try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print("✅ Build completed successfully!")
-        print(f"📁 .app bundle created: dist/{exe_name}.app")
-        return exe_name
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Build failed with exit code {e.returncode}")
-        print(f"Error output: {e.stderr}")
-        return None
-    except FileNotFoundError:
-        print("❌ PyInstaller not found. Please install it with: pip install pyinstaller")
-        return None
-
-def ensure_executable_permissions(file_path):
-    """Ensure the output file has executable permissions on Linux"""
-    try:
-        if platform.system() == "Linux":
-            os.chmod(file_path, 0o755)
-            print(f"✅ Set executable permissions for {file_path}")
-    except Exception as e:
-        print(f"⚠️  Failed to set executable permissions: {e}")
+# ---------------------------
+# Main
+# ---------------------------
 
 def main():
-    """Main build function"""
-    print("🎮 Greedy Gardens Build Script")
-    print("=" * 40)
-    
-    # Check if we're in the right directory
-    if not os.path.exists('main.py'):
-        print("❌ main.py not found. Please run this script from the project root directory.")
+    log("🎮 Greedy Gardens Build Script")
+    log("=" * 40)
+
+    if not (ROOT / "main.py").exists():
+        log("❌ main.py not found in project root.")
         sys.exit(1)
-    
-    # Extract version
+
+    ensure_pyinstaller()
+
     version = extract_version_from_main()
     if not version:
         sys.exit(1)
-    
-    exe_name = None
-    # Build executable or macOS app
-    if platform.system() == "Darwin":
-        exe_name = build_mac_app(version)
+
+    if is_macos():
+        built_name, built_path = build_macos_app(version)
     else:
-        exe_name = build_executable(version)
-    
-    if not exe_name:
-        print("\n💥 Build failed!")
+        built_name, built_path = build_windows_linux(version)
+
+    if not built_name or not built_path:
+        log("\n💥 Build failed!")
         sys.exit(1)
-    
-    # Create release folder and copy files
-    print("\n📦 Creating release package...")
-    release_folder = create_release_folder(version, exe_name)
-    
-    if release_folder:
-        print(f"\n🎉 Release package created successfully!")
-        print(f"📁 Release folder: {release_folder}")
-    else:
-        print("\n💥 Release package creation failed!")
+
+    log("\n📦 Creating release package...")
+    release = create_release_folder(version, built_name, built_path)
+    if not release:
+        log("\n💥 Release package creation failed!")
         sys.exit(1)
+
+    log(f"\n🎉 Release package ready: {release}")
 
 if __name__ == "__main__":
     main()
