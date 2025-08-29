@@ -131,6 +131,7 @@ class PlayState(BaseState):
         self.freeze_frame = None
 
         self.shown_day_title = False
+        self.music_started = False
 
         self.is_current_task_event = False
         self.is_choosing = False
@@ -319,7 +320,7 @@ class PlayState(BaseState):
 
         # Event Control Hints
         self.event_free_control_hint = utils.get_text(
-            text='Scroll mouse wheel to choose the path type.',
+            text='Scroll              or press            to choose the path type.',
             font=fonts.lf2, size='tiny', color=colors.white
         )
         self.event_move_control_hint = utils.get_text(
@@ -339,6 +340,43 @@ class PlayState(BaseState):
             font=fonts.lf2, size='tiny', color=colors.white
         )
 
+        self.mouse_up_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='scroll_up')
+        self.mouse_down_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='scroll_down')
+        self.mouse_up_sprite = pygame.transform.scale_by(surface=self.mouse_up_sprite, factor=2)
+        self.mouse_down_sprite = pygame.transform.scale_by(surface=self.mouse_down_sprite, factor=2)
+        self.mouse_hint_surface = pygame.Surface((self.mouse_up_sprite.get_width() + self.mouse_down_sprite.get_width() + 8, self.mouse_up_sprite.get_height()), pygame.SRCALPHA)
+        utils.blit(
+            dest=self.mouse_hint_surface,
+            source=self.mouse_up_sprite,
+            pos=(0, 0),
+            pos_anchor=posanchors.topleft
+        )
+        utils.blit(
+            dest=self.mouse_hint_surface,
+            source=self.mouse_down_sprite,
+            pos=(self.mouse_up_sprite.get_width() + 8, 0),
+            pos_anchor=posanchors.topleft
+        )
+
+        self.key_up_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='up')
+        self.key_down_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
+        self.key_up_sprite = pygame.transform.scale_by(surface=self.key_up_sprite, factor=2)
+        self.key_down_sprite = pygame.transform.scale_by(surface=self.key_down_sprite, factor=2)
+        self.key_hint_surface = pygame.Surface((self.key_up_sprite.get_width() + self.key_down_sprite.get_width() + 8, self.key_up_sprite.get_height()), pygame.SRCALPHA)
+        utils.blit(
+            dest=self.key_hint_surface,
+            source=self.key_up_sprite,
+            pos=(0, 0),
+            pos_anchor=posanchors.topleft
+        )
+        utils.blit(
+            dest=self.key_hint_surface,
+            source=self.key_down_sprite,
+            pos=(self.key_up_sprite.get_width() + 8, 0),
+            pos_anchor=posanchors.topleft
+        )
+
+        # Draw card hint
         self.press_text = utils.get_text(text="Press", font=fonts.lf2, size='tiny', color=colors.mono_175)
         self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
         self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
@@ -581,7 +619,6 @@ class PlayState(BaseState):
         self.music_end_event = pygame.USEREVENT + 2
         pygame.mixer.music.set_endevent(self.music_end_event)
         self.current_song = 0
-        self.game.music_channel.play()
 
         self.paused = False
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
@@ -685,6 +722,10 @@ class PlayState(BaseState):
 
         if self.ready:
 
+            if not self.transitioning and not self.music_started:
+                self.music_started = True
+                self.game.music_channel.play()
+
             if self.paused:
                 for button in self.pause_options_button_list:
                     button.update(dt=dt, events=events)
@@ -758,7 +799,7 @@ class PlayState(BaseState):
                                 # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
                                 utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
                                 utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
-                                self.game.music_channel.play()
+                                self.game.start_menu_music()
                                 self.timer_manager.StopTimer(self.water_timer)
                                 
                                 # Clean up rightclick animation system
@@ -791,8 +832,8 @@ class PlayState(BaseState):
                             if self.current_song >= len(self.songs):
                                 self.current_song = 0
                             utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
-                            self.game.music_channel.play()    
-            
+                            self.game.music_channel.play()
+
                 if not self.transitioning:
                     utils.set_cursor(cursor=self.cursor)
                 else:
@@ -886,7 +927,7 @@ class PlayState(BaseState):
                             if self.current_song >= len(self.songs):
                                 self.current_song = 0
                             utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
-                            self.game.music_channel.play()        
+                            self.game.music_channel.play()
 
                 # Update deck remaining
                 self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)

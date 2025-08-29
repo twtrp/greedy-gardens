@@ -38,7 +38,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.music_channel = pygame.mixer.music
-        self.music_channel.set_volume(self.settings['music_volume'] * 0.75)
+        self.music_channel.set_volume(self.settings['music_volume'] * 0.65)
         self.sfx_volume = self.settings['sfx_volume']
         self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(self.settings['ambience_volume'] * 0.75)

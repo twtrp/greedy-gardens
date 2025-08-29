@@ -217,7 +217,6 @@ class Play_ResultStage(BaseState):
                             # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
                             utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
                             utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
-                            self.game.music_channel.play()
                             self.parent.timer_manager.StopTimer(self.parent.water_timer)
                             
                             # Clean up rightclick animation system

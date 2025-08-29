@@ -965,12 +965,30 @@ keyboard_keys_long = {
     }
 }
 
+keyboard_keys = {
+    'file': 'keyboard_keys.png',
+    'shared_data': {
+        'width': 13,
+        'height': 12
+    },
+    'sprites': {
+        'up': {
+            'x': 1,
+            'y': 2,
+        },
+        'down': {
+            'x': 17,
+            'y': 2,
+        }
+    }
+}
+
 mouse = {
     'file': 'mouse.png',
     'shared_data': {
         'y': 0,
         'width': 15,
-        'height': 16
+        'height': 15
     },
     'sprites': {
         'left_click': {
@@ -982,8 +1000,11 @@ mouse = {
         'middle_click': {
             'x': 32,
         },
-        'scroll_up_down': {
-            'x': 144,
+        'scroll_up': {
+            'x': 48,
+        },
+        'scroll_down': {
+            'x': 64,
         },
     }
 }

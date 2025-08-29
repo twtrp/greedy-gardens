@@ -3,40 +3,40 @@ ambience = {
     'volume': 0.5,
 }
 deselect = {
-    'name': '00000002_bigDeSelect.wav',
-    'volume': 1,
+    'name': 'SFX_UI_CloseMenu.ogg',
+    'volume': 0.65,
 }
 select = {
-    'name': '00000003_bigSelect.wav',
-    'volume': 1,
+    'name': 'SFX_UI_OpenMenu.ogg',
+    'volume': 0.65,
 }
 click = {
-    'name': '0000001b_toolSwap.wav',
-    'volume': 1.75,
+    'name': 'SFX_UI_Confirm.ogg',
+    'volume': 0.65,
 }
 scroll = {
-    'name': '00000007.wav',
-    'volume': 1,
+    'name': 'SFX_UI_MenuSelections.ogg',
+    'volume': 0.65,
 }
 appear = {
-    'name': '00000008.wav',
+    'name': 'SFX_UI_Shop.ogg',
     'volume': 0.5,
 }
 chicken_crowing = {
-    'name': '00000149_rooster.wav',
-    'volume': 1,
+    'name': 'rooster-crow-105568.ogg',
+    'volume': 0.75,
 }
 woop_in = {
-    'name': '0000013e_fallDown.wav',
-    'volume': 2,
+    'name': 'Life_Lose.ogg',
+    'volume': 0.75,
 }
 woop_out = {
-    'name': '0000013e_fallDown_reverse.wav',
-    'volume': 2,
+    'name': 'Life_Gain.ogg',
+    'volume': 1,
 }
 card = {
-    'name': '0000013d_shwip.wav',
-    'volume': 5,
+    'name': 'card-mixing-48088.ogg',
+    'volume': 0.75,
 }
 magic_fruit = {
     'name': '00000174_GoldenWalnut.wav',

@@ -4,9 +4,12 @@
 - Gameplay music
     - https://towball.itch.io/towballs-crossing
 - Sound effects
-    - https://filmcow.itch.io/filmcow-sfx
-    - https://jdwasabi.itch.io/8-bit-16-bit-sound-effects-pack
+    - https://filmcow.itch.io/filmcow-sfx (unconfirmed)
     - https://hunteraudio.itch.io/8bit-sfx-and-music-pack
+    - https://hitrison.itch.io/menu-sfx-pack
+    - https://souptonic.itch.io/souptonic-sfx-pack-1-ui-sounds
+    - https://pixabay.com/sound-effects/search/rooster-crow-105568/
+    - https://pixabay.com/sound-effects/search/card-mixing-48088/
 - Fonts
     - https://takwolf.itch.io/retro-pixel-font
     - https://lazy-fox.itch.io/lazy-pixel-fonts

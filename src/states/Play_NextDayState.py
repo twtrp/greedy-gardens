@@ -21,7 +21,7 @@ class Play_NextDayState(BaseState):
         self.parent.left_box_none_text = utils.get_text(text=f'Draw day {self.parent.current_day + 1} fruit', font=fonts.lf2, size='tiny', color=colors.white)
         self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.lf2, size='large', color=colors.white)
 
-        if self.parent.current_day < 5:
+        if self.parent.current_day < 5 and not self.parent.current_day == 1:
             utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
             self.parent.day_title_tween_chain()
 
