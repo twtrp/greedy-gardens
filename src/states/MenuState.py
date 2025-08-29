@@ -357,7 +357,7 @@ class MenuState(BaseState):
                     container=layer,
                     key='y_offset',
                     end_value=0,
-                    time=3.25,
+                    time=3,
                     ease_type=tweencurves.easeOutQuint,
                     delay=delay
                 ))
@@ -366,7 +366,7 @@ class MenuState(BaseState):
                 container=self.winds_props,
                 key='y_offset',
                 end_value=0,
-                time=3.25,
+                time=3,
                 ease_type=tweencurves.easeOutQuint,
                 delay=delay
             ))
@@ -374,12 +374,12 @@ class MenuState(BaseState):
                 container=self.surface_logo_props,
                 key='y_offset',
                 end_value=-500,
-                time=3.25,
+                time=3,
                 ease_type=tweencurves.easeOutQuart,
                 delay=delay
             ).on_complete(self.finish_bootup))
             
-            delay += 2.25
+            delay += 1.85
             def start_music():
                 self.game.start_menu_music()
             

@@ -68,6 +68,40 @@ def convert_png_to_ico():
         print(f"⚠️  Icon conversion failed: {e}")
         return png_path  # Fall back to PNG
 
+def convert_png_to_icns():
+    """Convert PNG icon to ICNS format for macOS compatibility"""
+    png_path = "assets/graphics/icon.png"
+    icns_path = "assets/graphics/icon.icns"
+
+    if not os.path.exists(png_path):
+        return None
+
+    # Check if ICNS already exists and is newer than PNG
+    if os.path.exists(icns_path):
+        png_time = os.path.getmtime(png_path)
+        icns_time = os.path.getmtime(icns_path)
+        if icns_time >= png_time:
+            return icns_path  # ICNS is up to date
+
+    try:
+        print("🎨 Converting PNG icon to ICNS format...")
+        img = Image.open(png_path)
+
+        # Convert to RGBA if not already
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
+
+        # Save as ICNS (requires py2icns or similar tool installed)
+        temp_icns = "temp_icon.icns"
+        img.save(temp_icns, format="ICNS")
+        shutil.move(temp_icns, icns_path)
+        print("✅ Icon converted successfully")
+        return icns_path
+
+    except Exception as e:
+        print(f"⚠️  Icon conversion failed: {e}")
+        return png_path  # Fall back to PNG
+
 def get_platform_name():
     """Get the platform name for release folder"""
     system = platform.system()
@@ -179,6 +213,11 @@ def build_executable(version):
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
         print("✅ Build completed successfully!")
         print(f"📁 Executable created: dist/{exe_name}.exe")
+        
+        # Set executable permissions on Linux
+        if platform.system() == "Linux":
+            ensure_executable_permissions(f"dist/{exe_name}")
+        
         return exe_name
     except subprocess.CalledProcessError as e:
         print(f"❌ Build failed with exit code {e.returncode}")
@@ -195,6 +234,65 @@ def build_executable(version):
         print("❌ PyInstaller not found. Please install it with: pip install pyinstaller")
         return None
 
+def build_mac_app(version):
+    """Build a macOS .app bundle using PyInstaller"""
+    exe_name = f"PlayGreedyGardens-{version}"
+
+    print(f"🔨 Building macOS .app bundle: {exe_name}")
+    print(f"📦 Version: {version}")
+
+    # Handle icon conversion and selection
+    png_icon = "assets/graphics/icon.png"
+    icns_icon = "assets/graphics/icon.icns"
+
+    icon_path = None
+    if os.path.exists(png_icon):
+        # Try to convert PNG to ICNS for macOS compatibility
+        converted_icon = convert_png_to_icns()
+        if converted_icon and os.path.exists(converted_icon):
+            icon_path = converted_icon
+            print(f"🎨 Using converted ICNS icon: {icon_path}")
+        else:
+            icon_path = png_icon
+            print(f"🎨 Using PNG icon: {icon_path}")
+    elif os.path.exists(icns_icon):
+        icon_path = icns_icon
+        print(f"🎨 Using existing ICNS icon: {icon_path}")
+
+    # Build PyInstaller command for macOS .app
+    cmd = [
+        "pyinstaller",
+        "--onefile",
+        "--windowed",
+        "--name", exe_name,
+        "--icon", icon_path if icon_path else "",
+        "main.py"
+    ]
+
+    print(f"🚀 Running: {' '.join(cmd)}")
+
+    try:
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        print("✅ Build completed successfully!")
+        print(f"📁 .app bundle created: dist/{exe_name}.app")
+        return exe_name
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Build failed with exit code {e.returncode}")
+        print(f"Error output: {e.stderr}")
+        return None
+    except FileNotFoundError:
+        print("❌ PyInstaller not found. Please install it with: pip install pyinstaller")
+        return None
+
+def ensure_executable_permissions(file_path):
+    """Ensure the output file has executable permissions on Linux"""
+    try:
+        if platform.system() == "Linux":
+            os.chmod(file_path, 0o755)
+            print(f"✅ Set executable permissions for {file_path}")
+    except Exception as e:
+        print(f"⚠️  Failed to set executable permissions: {e}")
+
 def main():
     """Main build function"""
     print("🎮 Greedy Gardens Build Script")
@@ -210,8 +308,13 @@ def main():
     if not version:
         sys.exit(1)
     
-    # Build executable
-    exe_name = build_executable(version)
+    exe_name = None
+    # Build executable or macOS app
+    if platform.system() == "Darwin":
+        exe_name = build_mac_app(version)
+    else:
+        exe_name = build_executable(version)
+    
     if not exe_name:
         print("\n💥 Build failed!")
         sys.exit(1)

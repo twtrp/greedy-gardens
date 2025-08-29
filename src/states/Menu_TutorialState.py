@@ -59,7 +59,7 @@ class Menu_TutorialState(BaseState):
             ],
             [
                 utils.get_text(
-                    text="Balance your daily scores carefully!",
+                    text="Be greedy, but not too much!",
                     font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
@@ -71,7 +71,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Scoring too high early can make the next day harder.",
+                    text="Scoring too high can make the next day harder.",
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
@@ -97,7 +97,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Seasonal fruits are bonus objectives scored when the game ends.",
+                    text="Seasonal fruits are bonus points scored when the game ends.",
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],
@@ -129,7 +129,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Every event can either help or disrupt your plans.",
+                    text="Events can either help or ruin your plans.",
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
@@ -151,7 +151,7 @@ class Menu_TutorialState(BaseState):
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="as well as providing 1 bonus score for that day.",
+                    text="as well as scoring 1 bonus point for that day.",
                     font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
                 ),
             ],

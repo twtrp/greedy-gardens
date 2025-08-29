@@ -67,7 +67,7 @@ class Menu_PlayState(BaseState):
                 ))
         
             
-        self.textbox_label = utils.get_text(text='Seed', font=fonts.lf2, size='small', color=colors.white)
+        self.textbox_label = utils.get_text(text='Seed number', font=fonts.lf2, size='small', color=colors.mono_205)
         self.textbox_mode = 'inactive'
         self.textbox_text = ''
         self.textbox_limit = 6

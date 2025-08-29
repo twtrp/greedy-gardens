@@ -763,6 +763,14 @@ class PlayState(BaseState):
                         if event.button == 2:
                             utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                             self.paused = not self.paused
+
+                    if not self.transitioning:
+                        if event.type == self.music_end_event:
+                            self.current_song += 1
+                            if self.current_song >= len(self.songs):
+                                self.current_song = 0
+                            utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
+                            self.game.music_channel.play()    
             
                 if not self.transitioning:
                     utils.set_cursor(cursor=self.cursor)

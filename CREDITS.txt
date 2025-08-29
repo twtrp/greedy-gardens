@@ -27,6 +27,8 @@
     - https://kenmi-art.itch.io/cute-fantasy-rpg
 - Event card icons
     - https://free-game-assets.itch.io/free-skill-3232-icons-for-cyberpunk-game
-- Some UI elements
+- UI elements
     - https://crusenho.itch.io/complete-ui-essential-pack
     - https://danieldiggle.itch.io/sunnyside
+    - https://greenpixels.itch.io/pixel-art-asset-3
+    - https://dreammix.itch.io/keyboard-keys-for-ui
