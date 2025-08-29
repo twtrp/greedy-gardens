@@ -106,8 +106,8 @@ class Play_EndDayState(BaseState):
                         self.parent.end_game=True
                     self.parent.is_choosing = False
                     # Restart the rightclick hint animation when returning to normal gameplay
-                    if hasattr(self.parent, 'start_draw_card_hint_animation'):
-                        self.parent.start_draw_card_hint_animation()
+                    if hasattr(self.parent, 'start_rightclick_hint_animation'):
+                        self.parent.start_rightclick_hint_animation()
                     self.exit_state()
  
     def render(self, canvas):

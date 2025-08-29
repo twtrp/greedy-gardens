@@ -221,8 +221,8 @@ class Play_ResultStage(BaseState):
                             self.parent.timer_manager.StopTimer(self.parent.water_timer)
                             
                             # Clean up rightclick animation system
-                            if hasattr(self.parent, 'draw_card_animation_growing'):
-                                delattr(self.parent, 'draw_card_animation_growing')
+                            if hasattr(self.parent, 'rightclick_animation_growing'):
+                                delattr(self.parent, 'rightclick_animation_growing')
                             
                             self.parent.tween_list.clear()
                             self.game.state_stack.clear()
