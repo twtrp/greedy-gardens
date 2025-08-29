@@ -358,23 +358,7 @@ class Play_PlayMagicEventState(BaseState):
                                 if self.parent.game_board.magic_fruit_index:
                                     self.parent.game_board.eval_new_tile(button.id)
                                     self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                                    if self.parent.magic_eventing:
-                                        utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
-                                        if magic_number == 1:
-                                            self.parent.current_event = self.parent.magic_fruit1_event
-                                        elif magic_number == 2:
-                                            self.parent.current_event = self.parent.magic_fruit2_event
-                                        elif magic_number == 3:
-                                            self.parent.current_event = self.parent.magic_fruit3_event
-                                        self.parent.game_board.board[cell_pos].magic_fruit = 0
-                                        self.parent.magicing_number = magic_number
-                                        current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                                        new_score = current_score + 1
-                                        setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                                        setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-                                        self.parent.playing_magic_event = False
-                                        self.play_event_state = False
-                                        self.exit_state()
+                                    self.check_magic_fruit_collection(button)
                                 self.played_event = True
                         else:
                             self.select_frame = self.parent.cant_selecting_tile
@@ -452,6 +436,8 @@ class Play_PlayMagicEventState(BaseState):
                                         source_cell.path = False
                                         source_cell.path_type = None
                                         source_cell.temp = False
+
+                                        self.check_magic_fruit_collection(button)
 
                                         self.selected_cell = None
                                         self.played_event = True
@@ -537,26 +523,7 @@ class Play_PlayMagicEventState(BaseState):
                                                 self.parent.drawn_cards_path.pop(m)  
                                                 break
                                         self.parent.drawn_cards_path.append(Cards("path", new_path, False))
-                                        if self.parent.game_board.magic_fruit_index:
-                                            self.parent.game_board.eval_new_tile(button.id)
-                                            self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                                            if self.parent.magic_eventing:
-                                                utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
-                                                if magic_number == 1:
-                                                    self.parent.current_event = self.parent.magic_fruit1_event
-                                                elif magic_number == 2:
-                                                    self.parent.current_event = self.parent.magic_fruit2_event
-                                                elif magic_number == 3:
-                                                    self.parent.current_event = self.parent.magic_fruit3_event
-                                                self.parent.game_board.board[cell_pos].magic_fruit = 0
-                                                self.parent.magicing_number = magic_number
-                                                current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                                                new_score = current_score + 1
-                                                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                                                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-                                                self.parent.playing_magic_event = False
-                                                self.play_event_state = False
-                                                self.exit_state()
+                                        self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
@@ -1008,6 +975,7 @@ class Play_PlayMagicEventState(BaseState):
                                         utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
+                                        self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
@@ -1257,3 +1225,25 @@ class Play_PlayMagicEventState(BaseState):
                 pos_anchor='center'
             )
 
+
+    # Class methods
+    def check_magic_fruit_collection(self, button):
+        if self.parent.game_board.magic_fruit_index:
+            self.parent.game_board.eval_new_tile(button.id)
+            self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
+            if self.parent.magic_eventing:
+                utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                if magic_number == 1:
+                    self.parent.current_event = self.parent.magic_fruit1_event
+                elif magic_number == 2:
+                    self.parent.current_event = self.parent.magic_fruit2_event
+                elif magic_number == 3:
+                    self.parent.current_event = self.parent.magic_fruit3_event
+                self.parent.game_board.board[cell_pos].magic_fruit = 0
+                self.parent.magicing_number = magic_number
+                current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
+                new_score = current_score + 1
+                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
+                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                self.parent.play_event_state= False
+                self.exit_state()

@@ -318,9 +318,6 @@ class PlayState(BaseState):
         self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
 
         # Event Control Hints
-        self.press_rightclick_hint = utils.get_text(text='Press', font=fonts.lf2, size='tiny', color=colors.mono_205)
-        self.right_click_hint = utils.get_text(text='right', font=fonts.lf2, size='tiny', color=colors.mono_205)
-        self.click_hint = utils.get_text(text='click!', font=fonts.lf2, size='tiny', color=colors.mono_205)
         self.event_free_control_hint = utils.get_text(
             text='Scroll mouse wheel to choose the path type.',
             font=fonts.lf2, size='tiny', color=colors.white
@@ -342,23 +339,47 @@ class PlayState(BaseState):
             font=fonts.lf2, size='tiny', color=colors.white
         )
 
-        combined_width = max(self.press_rightclick_hint.get_width(), self.right_click_hint.get_width(), self.click_hint.get_width())
-        combined_height = self.press_rightclick_hint.get_height() + self.right_click_hint.get_height() + self.click_hint.get_height() + 6
-        self.combined_rightclick_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
+        self.press_text = utils.get_text(text="Press", font=fonts.lf2, size='tiny', color=colors.mono_175)
+        self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
+        self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
+        self.slash_text = utils.get_text(text="/", font=fonts.minecraftia, size='small', color=colors.mono_175, long_shadow=False)
+        self.spacebar_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
+        self.spacebar_sprite = pygame.transform.scale_by(surface=self.spacebar_sprite, factor=2)
+        combined_width = self.right_click_sprite.get_width() + self.slash_text.get_width() + self.spacebar_sprite.get_width() + 2
+        combined_height = max(self.right_click_sprite.get_height(), self.slash_text.get_height(), self.spacebar_sprite.get_height()) + self.press_text.get_height() + 10
+        self.draw_card_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
         
-        press_x = (combined_width - self.press_rightclick_hint.get_width()) // 2
-        right_x = (combined_width - self.right_click_hint.get_width()) // 2
-        click_x = (combined_width - self.click_hint.get_width()) // 2
-        self.combined_rightclick_hint.blit(self.press_rightclick_hint, (press_x, 0))
-        self.combined_rightclick_hint.blit(self.right_click_hint, (right_x, self.press_rightclick_hint.get_height() + 3))
-        self.combined_rightclick_hint.blit(self.click_hint, (click_x, self.press_rightclick_hint.get_height() + self.right_click_hint.get_height() + 6))
+        utils.blit(
+            dest=self.draw_card_hint,
+            source=self.press_text,
+            pos=(combined_width//2, 10),
+            pos_anchor=posanchors.midtop
+        )
+        utils.blit(
+            dest=self.draw_card_hint,
+            source=self.right_click_sprite,
+            pos=(0, combined_height//2 + 20),
+            pos_anchor=posanchors.midleft
+        )
+        utils.blit(
+            dest=self.draw_card_hint,
+            source=self.slash_text,
+            pos=(self.right_click_sprite.get_width() + 2, combined_height//2 + 20),
+            pos_anchor=posanchors.midleft
+        )
+        utils.blit(
+            dest=self.draw_card_hint,
+            source=self.spacebar_sprite,
+            pos=(self.right_click_sprite.get_width() + self.slash_text.get_width() + 2, combined_height//2 + 20),
+            pos_anchor=posanchors.midleft
+        )
         
-        self.rightclick_hint_scale_min = 1.0
-        self.rightclick_hint_scale_max = 1.2
+        self.draw_card_hint_scale_min = 1.0
+        self.draw_card_hint_scale_max = 1.25
 
-        self.rightclick_hint_scale = 1.0
-        self.rightclick_animation_time = 0.0
-        self.rightclick_animation_cycle_duration = 2
+        self.draw_card_hint_scale = 1.0
+        self.draw_card_hint_animation_time = 0.0
+        self.draw_card_hint_animation_cycle_duration = 2
 
         self.right_box_title = utils.get_text(text='Turn 1', font=fonts.lf2, size='small', color=colors.white)
 
@@ -741,8 +762,8 @@ class PlayState(BaseState):
                                 self.timer_manager.StopTimer(self.water_timer)
                                 
                                 # Clean up rightclick animation system
-                                if hasattr(self, 'rightclick_animation_growing'):
-                                    delattr(self, 'rightclick_animation_growing')
+                                if hasattr(self, 'draw_card_animation_growing'):
+                                    delattr(self, 'draw_card_animation_growing')
                                 
                                 self.tween_list.clear()
                                 self.game.state_stack.clear()
@@ -800,13 +821,13 @@ class PlayState(BaseState):
                     self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
 
                 # Update rightclick hint animation (tick-based, stops when paused)
-                self.rightclick_animation_time += dt
+                self.draw_card_hint_animation_time += dt
                 # Use sine wave for smooth breathing animation between min and max values
-                cycle_progress = (self.rightclick_animation_time % self.rightclick_animation_cycle_duration) / self.rightclick_animation_cycle_duration
+                cycle_progress = (self.draw_card_hint_animation_time % self.draw_card_hint_animation_cycle_duration) / self.draw_card_hint_animation_cycle_duration
                 # Calculate the center point and amplitude
-                center_scale = (self.rightclick_hint_scale_min + self.rightclick_hint_scale_max) / 2
-                amplitude = (self.rightclick_hint_scale_max - self.rightclick_hint_scale_min) / 2
-                self.rightclick_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
+                center_scale = (self.draw_card_hint_scale_min + self.draw_card_hint_scale_max) / 2
+                amplitude = (self.draw_card_hint_scale_max - self.draw_card_hint_scale_min) / 2
+                self.draw_card_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
 
                 if not self.transitioning:
                     # update buttons
@@ -1415,9 +1436,9 @@ class PlayState(BaseState):
                                      (self.current_event and not self.playing_magic_event))
                 if not card_being_rendered:
                     # Use fixed scale during end day state, animated scale otherwise
-                    scale_factor = 1.0 if self.is_choosing else self.rightclick_hint_scale
-                    scaled_combined_hint = pygame.transform.scale_by(surface=self.combined_rightclick_hint, factor=scale_factor)
-                    utils.blit(dest=canvas, source=scaled_combined_hint, pos=(self.box_width/2, 620), pos_anchor='center')   
+                    scale_factor = 1.0 if self.is_choosing else self.draw_card_hint_scale
+                    scaled_draw_card_hint = pygame.transform.scale_by(surface=self.draw_card_hint, factor=scale_factor)
+                    utils.blit(dest=canvas, source=scaled_draw_card_hint, pos=(self.box_width/2, 620), pos_anchor='center')   
 
                 ## Render value in left white box
                 for i, score in enumerate(self.score_amount_list):
