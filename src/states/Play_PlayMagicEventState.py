@@ -358,7 +358,7 @@ class Play_PlayMagicEventState(BaseState):
                                 if self.parent.game_board.magic_fruit_index:
                                     self.parent.game_board.eval_new_tile(button.id)
                                     self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                                    self.check_magic_fruit_collection(button)
+                                self.check_magic_fruit_collection(button)
                                 self.played_event = True
                         else:
                             self.select_frame = self.parent.cant_selecting_tile
@@ -392,6 +392,7 @@ class Play_PlayMagicEventState(BaseState):
                 #                 self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
 
             elif self.parent.current_event == 'event_move':
+                # print('event_move')
                 # Check if there are any paths on the board to move
                 if any(cell.path and not cell.home for cell in self.parent.game_board.board):
                     self.cell_pos = -1
@@ -418,7 +419,7 @@ class Play_PlayMagicEventState(BaseState):
                                         # Move the path from selected_cell to current button.id
                                         source_cell = self.parent.game_board.board[self.selected_cell]
                                         target_cell = self.parent.game_board.board[button.id]
-
+                                        
                                         # Copy path data to target
                                         target_cell.north = source_cell.north
                                         target_cell.south = source_cell.south
@@ -427,7 +428,7 @@ class Play_PlayMagicEventState(BaseState):
                                         target_cell.path = source_cell.path
                                         target_cell.path_type = source_cell.path_type
                                         target_cell.temp = source_cell.temp
-
+                                        
                                         # Clear source cell
                                         source_cell.north = False
                                         source_cell.south = False
@@ -438,7 +439,7 @@ class Play_PlayMagicEventState(BaseState):
                                         source_cell.temp = False
 
                                         self.check_magic_fruit_collection(button)
-
+                                        
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
@@ -1169,7 +1170,7 @@ class Play_PlayMagicEventState(BaseState):
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
                 utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
 
-        if self.parent.current_event == 'event_move':
+        if self.parent.current_event == 'event_move' and self.shown_event:
             utils.blit(
                 dest=canvas,
                 source=self.parent.event_move_control_hint,
@@ -1266,9 +1267,9 @@ class Play_PlayMagicEventState(BaseState):
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                 
-                # Check if the path that triggered magic fruit was also a strike
-                if "strike" in self.parent.current_path:
-                    self.parent.is_striking = True
+                # # Check if the path that triggered magic fruit was also a strike
+                # if "strike" in self.parent.current_path:
+                #     self.parent.is_striking = True
                     
             self.parent.game_board.eval_new_tile(button.id)
             self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
@@ -1287,4 +1288,4 @@ class Play_PlayMagicEventState(BaseState):
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                 self.parent.play_event_state= False
-
+                self.exit_state()

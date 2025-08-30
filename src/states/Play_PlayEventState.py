@@ -1003,9 +1003,9 @@ class Play_PlayEventState(BaseState):
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                 
-                # Check if the path that triggered magic fruit was also a strike
-                if "strike" in self.parent.current_path:
-                    self.parent.is_striking = True
+                # # Check if the path that triggered magic fruit was also a strike
+                # if "strike" in self.parent.current_path:
+                #     self.parent.is_striking = True
                     
             self.parent.game_board.eval_new_tile(button.id)
             self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
@@ -1024,4 +1024,4 @@ class Play_PlayEventState(BaseState):
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
                 self.parent.play_event_state= False
-
+                self.exit_state()
