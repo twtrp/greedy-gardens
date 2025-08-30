@@ -50,7 +50,7 @@ dig = {
     'name': 'zapsplat_impacts_dirt_soil_dry_hit_wood_stake.ogg',
     'volume': 1,
 }
-dirt = {
+scratch = {
     'name': 'Walking_On_Grass_Fast.ogg',
     'volume': 1.25,
 }
