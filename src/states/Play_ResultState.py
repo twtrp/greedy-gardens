@@ -11,6 +11,7 @@ class Play_ResultStage(BaseState):
         self.is_hovering = False
         self.is_continue = False
 
+        utils.sound_play(sound=sfx.end_jingle, volume=self.game.sfx_volume)
         self.load_assets()
 
     def load_assets(self):

@@ -72,20 +72,20 @@ class Deck:
         #         name.append('path_NES')
         #         name.append('path_NWE') # Should always have a non-strike card or it will freeze
 
-        # elif self.deck_type == 'event':
-        #     for i in range(2):
-        #         name.append('event_free')
-        #         name.append('event_move')
-        #         name.append('event_merge')
-        #         name.append('event_point')
-        #         name.append('event_redraw')
-        #         name.append('event_remove')
-        #         name.append('event_reveal')
-        #         name.append('event_swap')
-        # For Testing events
         elif self.deck_type == 'event':
-            for i in range(16):
+            for i in range(2):
+                name.append('event_free')
+                name.append('event_move')
+                name.append('event_merge')
+                name.append('event_point')
+                name.append('event_redraw')
                 name.append('event_remove')
+                name.append('event_reveal')
+                name.append('event_swap')
+        # For Testing events
+        # elif self.deck_type == 'event':
+        #     for i in range(16):
+        #         name.append('event_remove')
 
 
 

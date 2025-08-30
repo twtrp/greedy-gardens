@@ -118,13 +118,13 @@ class Play_PlayMagicEventState(BaseState):
                 self.point_button_option_list = [
                     {
                         'id': 'add today',
-                        'text1': 'Get 1 point today,',
-                        'text2': 'Lose 1 point tomorrow',
+                        'text1': '+1 point today,',
+                        'text2': '-1 point tomorrow',
                     },
                     {
                         'id': 'lose today',
-                        'text1': 'Lose 1 point today,',
-                        'text2': 'Get 1 point tomorrow',
+                        'text1': '-1 point today,',
+                        'text2': '+1 point tomorrow',
                     },
                 ]
             else:
@@ -413,7 +413,7 @@ class Play_PlayMagicEventState(BaseState):
                                 if not self.parent.game_board.board[button.id].path:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
                                         # Move the path from selected_cell to current button.id
                                         source_cell = self.parent.game_board.board[self.selected_cell]
@@ -480,7 +480,7 @@ class Play_PlayMagicEventState(BaseState):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
-                                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
                                         old_path1 = ""
                                         if self.parent.game_board.board[button.id].north:
                                             old_path1 += "N"
@@ -848,7 +848,7 @@ class Play_PlayMagicEventState(BaseState):
                     if button.clicked:
                         if self.selected_cell or self.selected_cell_2:
                             if button.id == 'remove':
-                                utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
+                                utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
                                 if self.selected_cell:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
                                         old_path1 = ""
@@ -974,7 +974,7 @@ class Play_PlayMagicEventState(BaseState):
                                     not self.parent.game_board.board[button.id].is_the_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.dirt, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
                                         self.check_magic_fruit_collection(button)

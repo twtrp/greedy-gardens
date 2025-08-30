@@ -40,10 +40,10 @@ woop_out = {
 }
 card = {
     'name': 'card-mixing-48088.ogg',
-    'volume': 0.75,
+    'volume': 1,
 }
 magic_fruit = {
-    'name': 'Collect_Big_Point.wav',
+    'name': 'Collect_Big_Point.ogg',
     'volume': 0.65,
 }
 dig = {
@@ -51,7 +51,7 @@ dig = {
     'volume': 1,
 }
 dirt = {
-    'name': 'Walking_On_Grass_Fast.wav',
+    'name': 'Walking_On_Grass_Fast.ogg',
     'volume': 1.25,
 }
 resume = {
@@ -61,4 +61,8 @@ resume = {
 pause = {
     'name': 'SFX_UI_Pause.ogg',
     'volume': 0.75,
+}
+end_jingle = {
+    'name': 'High_Score.ogg',
+    'volume': 1.25,
 }
