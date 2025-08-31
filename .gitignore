@@ -1,9 +1,10 @@
 venv/
+venvlinux/
+venvmac/
 __pycache__/
-data/settings.lst
-windowsvenv/
-linuxvenv/
-macvenv/
+data/
 build/
 dist/
 release/
+*.spec
+.DS_Store
