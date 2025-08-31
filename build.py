@@ -91,7 +91,7 @@ def convert_png_to_ico_temp(png_path: Path, version: str) -> Path | None:
         return None
     try:
         tmpdir = Path(tempfile.gettempdir())
-        ico_path = tmpdir / f"PlayGreedyGardens-{version}.ico"
+        ico_path = tmpdir / f"PlayGreedyGardens-v{version}.ico"
         log("🎨 Creating ICO (temp for build)...")
         img = Image.open(png_path)
         if img.mode != "RGBA":
@@ -109,7 +109,7 @@ def convert_png_to_icns_temp(png_path: Path, version: str) -> Path | None:
         return None
     try:
         tmpdir = Path(tempfile.gettempdir())
-        icns_path = tmpdir / f"PlayGreedyGardens-{version}.icns"
+        icns_path = tmpdir / f"PlayGreedyGardens-v{version}.icns"
         log("🎨 Creating ICNS (temp for build)...")
         with tempfile.TemporaryDirectory() as tmpbuild:
             iconset = Path(tmpbuild) / "icon.iconset"
@@ -147,7 +147,7 @@ def ensure_pyinstaller():
         sys.exit(1)
 
 def build_windows_linux(version: str) -> tuple[str, Path] | tuple[None, None]:
-    exe_name = f"PlayGreedyGardens-{version}"
+    exe_name = f"PlayGreedyGardens-v{version}"
     icon = choose_icon_for_platform(version)
     cmd = ["pyinstaller", "--onefile", "--noconsole", "--name", exe_name, "main.py"]
     if icon:
@@ -165,7 +165,7 @@ def build_windows_linux(version: str) -> tuple[str, Path] | tuple[None, None]:
         return None, None
 
 def build_macos_app(version: str) -> tuple[str, Path] | tuple[None, None]:
-    exe_name = f"PlayGreedyGardens-{version}"
+    exe_name = f"PlayGreedyGardens-v{version}"
     icon = choose_icon_for_platform(version)
     cmd = ["pyinstaller", "--onefile", "--windowed", "--name", exe_name, "main.py"]
     if icon:
@@ -250,12 +250,12 @@ def create_release_folder(version: str, built_name: str, built_path: Path) -> Pa
             if is_windows():
                 ico_path = dst_assets / "graphics" / "icon.ico"
                 convert_png_to_ico_temp(png_icon, version) and shutil.copy2(
-                    Path(tempfile.gettempdir()) / f"PlayGreedyGardens-{version}.ico", ico_path)
+                    Path(tempfile.gettempdir()) / f"PlayGreedyGardens-v{version}.ico", ico_path)
                 log(f"✅ Wrote release icon: {ico_path}")
             elif is_macos():
                 icns_path = dst_assets / "graphics" / "icon.icns"
                 convert_png_to_icns_temp(png_icon, version) and shutil.copy2(
-                    Path(tempfile.gettempdir()) / f"PlayGreedyGardens-{version}.icns", icns_path)
+                    Path(tempfile.gettempdir()) / f"PlayGreedyGardens-v{version}.icns", icns_path)
                 log(f"✅ Wrote release icon: {icns_path}")
     else:
         log("⚠️ assets/ not found")

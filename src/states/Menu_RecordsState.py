@@ -297,7 +297,7 @@ class Menu_RecordsState(BaseState):
                                 elif self.parent.records_sorter['column'] == 'seed':
                                     query += ', score DESC, seed_type ASC'
                                 elif self.parent.records_sorter['column'] == 'seed_type':
-                                    query += ', seed ASC, score DESC'
+                                    query += ', score DESC, seed ASC'
                                 self.sql_cursor.execute(query)
                                 self.ordered_row_ids = [row[0] for row in self.sql_cursor.fetchall()]
                             except Exception as e:
