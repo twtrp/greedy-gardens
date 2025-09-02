@@ -10,15 +10,8 @@ class Play_PlayMagicEventState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
          
-        print(f"DEBUG: Play_PlayMagicEventState.__init__() - Creating magic event state")
-        print(f"DEBUG: __init__() - Magic eventing: {self.parent.magic_eventing}")
-        print(f"DEBUG: __init__() - Magic number: {self.parent.magicing_number}")
-        print(f"DEBUG: __init__() - Current event: {self.parent.current_event}")
-        print(f"DEBUG: __init__() - Queue: {self.parent.magic_fruit_queue}")
-
         # Flag to indicate we're using queue system (disable all legacy detection)
         self.using_queue_system = bool(self.parent.magic_fruit_queue)
-        print(f"DEBUG: __init__() - Using queue system: {self.using_queue_system}")
 
         # value
         self.box_width = 60
@@ -92,29 +85,24 @@ class Play_PlayMagicEventState(BaseState):
         self.load_assets()
 
     def load_assets(self):
-        print(f"DEBUG: load_assets() called - Queue: {self.parent.magic_fruit_queue}")
         # Process magic fruit when event starts (first magic fruit or from queue)
         if self.parent.magic_fruit_queue:
             # Get the current magic fruit from queue
             magic_number, cell_pos = self.parent.magic_fruit_queue[0]
-            print(f"DEBUG: load_assets() - Processing magic fruit {magic_number} at position {cell_pos}")
             
             # IMMEDIATELY remove from queue to prevent reprocessing
             self.parent.magic_fruit_queue.pop(0)
-            print(f"DEBUG: load_assets() - Queue after pop: {self.parent.magic_fruit_queue}")
             
             # Play magic fruit sound and update score
             utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
             current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
             setattr(self.parent, f'day{self.parent.current_day}_score', current_score + 1)
-            print(f"DEBUG: load_assets() - Score updated for magic fruit {magic_number}")
             
             # Remove the magic fruit from the board and tracking (only for current magic fruit)
             self.parent.game_board.board[cell_pos].magic_fruit = 0
             if cell_pos in self.parent.game_board.magic_fruit_index:
                 self.parent.game_board.magic_fruit_index.remove(cell_pos)
             setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-            print(f"DEBUG: load_assets() - Magic fruit {magic_number} removed from board and tracking")
         
         # update state
         if self.parent.current_path:
@@ -323,18 +311,14 @@ class Play_PlayMagicEventState(BaseState):
 
     def update(self, dt, events):
 
-        print(f"DEBUG: update() called - played_event: {self.played_event}, queue: {self.parent.magic_fruit_queue}")
-
         # Handle event completion and queue transitions
         if self.played_event:
-            print(f"DEBUG: update() - Event completed, checking queue: {self.parent.magic_fruit_queue}")
             # Magic fruit event completed, handle queue transition
             if self.parent.magic_fruit_queue:
                 # Check if there are more magic fruits to process
                 if self.parent.magic_fruit_queue:
                     # Set up next magic fruit event and trigger state re-entry
                     next_magic_number, next_cell_pos = self.parent.magic_fruit_queue[0]
-                    print(f"DEBUG: update() - Setting up next magic fruit {next_magic_number} at position {next_cell_pos}")
                     
                     if next_magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
@@ -343,17 +327,13 @@ class Play_PlayMagicEventState(BaseState):
                     elif next_magic_number == 3:
                         self.parent.current_event = self.parent.magic_fruit3_event
                     
-                    print(f"DEBUG: update() - Set current_event to: {self.parent.current_event}")
                     self.parent.magicing_number = next_magic_number
-                    print(f"DEBUG: update() - Set magicing_number to: {self.parent.magicing_number}")
                     self.parent.magic_eventing = True
                     self.parent.playing_magic_event = False
                     self.parent.play_event_state = False
-                    print("DEBUG: update() - Exiting state to trigger re-entry for next magic fruit")
                     self.exit_state()
                     return
             
-            print("DEBUG: update() - No more magic fruits in queue, exiting normally")
             # No more magic fruits in queue, exit normally
             if self.parent.is_striking:
                 self.parent.is_strike = True
@@ -1106,11 +1086,9 @@ class Play_PlayMagicEventState(BaseState):
         else:
             # Skip legacy magic fruit fallback logic if we started with queue system
             if self.using_queue_system:
-                print("DEBUG: update() - Skipping legacy fallback, using queue system")
                 self.played_event = True
                 return
                 
-            print("DEBUG: update() - Running legacy magic fruit detection (no queue system)")
             # Legacy single magic fruit detection (only when queue was never active)
             self.parent.game_board.eval_new_tile(self.parent.game_board.home_index)
             self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
@@ -1333,10 +1311,8 @@ class Play_PlayMagicEventState(BaseState):
     def check_magic_fruit_collection(self, button):
         # Skip old magic fruit detection if we started with queue system
         if self.using_queue_system:
-            print("DEBUG: check_magic_fruit_collection() - Skipping legacy detection, using queue system")
             return
             
-        print("DEBUG: check_magic_fruit_collection() - Running legacy magic fruit detection")
         if self.parent.game_board.magic_fruit_index:
             self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
             # print(self.parent.magic_eventing)

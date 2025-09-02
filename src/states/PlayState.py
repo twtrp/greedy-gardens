@@ -929,6 +929,10 @@ class PlayState(BaseState):
                     Play_PlacePathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.placing = False
                 elif self.magic_eventing:
+                    # Set magicing_number from queue before creating magic event state
+                    if self.magic_fruit_queue:
+                        next_magic_number, _ = self.magic_fruit_queue[0]
+                        self.magicing_number = next_magic_number
                     self.play_event_state = True
                     Play_PlayMagicEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.magic_eventing = False
