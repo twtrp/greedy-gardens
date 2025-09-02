@@ -232,9 +232,10 @@ def create_release_folder(version: str, built_name: str, built_path: Path) -> Pa
         shutil.copytree(built_path, dst_app)
         log("✅ Copied .app bundle")
     else:
-        dst_bin = release_folder / f"PlayGreedyGardens-v{version}{built_path.suffix}"
-        shutil.copy2(built_path, dst_bin)
-        log("✅ Copied executable")
+        # Move the file to preserve original filename
+        dst_bin = release_folder / built_path.name
+        shutil.move(str(built_path), str(dst_bin))
+        log("✅ Moved executable")
 
     # Copy assets
     src_assets = ROOT / "assets"
