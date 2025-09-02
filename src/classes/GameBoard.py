@@ -280,6 +280,23 @@ class GameBoard():
         
         return (False, -1, -1)
     
+    def find_all_connected_magic_fruits(self):
+        """
+        Find all magic fruits that are currently connected to the home.
+        Returns a list of tuples (magic_fruit_number, cell_index) sorted by magic fruit number (1->2->3).
+        """
+        connected_magic_fruits = []
+        
+        if self.magic_fruit_index:
+            for i in self.magic_fruit_index[:]:  # Use slice copy to avoid modification during iteration
+                if i in self.connected_indices:
+                    magic_fruit_number = self.board[i].magic_fruit
+                    connected_magic_fruits.append((magic_fruit_number, i))
+        
+        # Sort by magic fruit number to ensure 1->2->3 processing order
+        connected_magic_fruits.sort(key=lambda x: x[0])
+        return connected_magic_fruits
+    
     def check_adjacent(self, center_index, check_index, direction):
         if 0 <= check_index <= 63:
             if direction == 0:

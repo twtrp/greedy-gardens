@@ -11,7 +11,6 @@ class Play_DrawPathState(BaseState):
         self.not_drawn = True
         self.card_drawn_image = None
         self.parent.drawing_path_card = True
-        self.parent.current_turn += 1
         self.parent.right_box_title = utils.get_text(text=f'Turn {self.parent.current_turn}', font=fonts.lf2, size='small', color=colors.white)
 
     def update(self, dt, events):

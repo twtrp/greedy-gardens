@@ -87,6 +87,7 @@ class PlayState(BaseState):
         self.magic_fruit2_event = None
         self.magic_fruit3_event = None
         self.magicing_number = 0
+        self.magic_fruit_queue = []  # Queue for multiple magic fruits: [(magic_number, cell_pos), ...]
 
         self.current_path = None
         self.current_event = None
@@ -717,6 +718,44 @@ class PlayState(BaseState):
         # Initialize cursor
         self.cursor = cursors.normal
     
+    def process_next_magic_fruit_in_queue(self):
+        """Process the next magic fruit in the queue if any exist. Returns True if a magic fruit was started."""
+        if len(self.magic_fruit_queue) > 1:
+            # Remove the completed magic fruit from queue
+            self.magic_fruit_queue.pop(0)
+            
+            # Start the next magic fruit event
+            next_magic_number, next_cell_pos = self.magic_fruit_queue[0]
+            
+            # Play the magic fruit sound for each subsequent magic fruit
+            utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+            
+            # Set up the next magic fruit event
+            if next_magic_number == 1:
+                self.current_event = self.magic_fruit1_event
+            elif next_magic_number == 2:
+                self.current_event = self.magic_fruit2_event
+            elif next_magic_number == 3:
+                self.current_event = self.magic_fruit3_event
+            
+            # Remove the magic fruit from the board (safely)
+            self.game_board.board[next_cell_pos].magic_fruit = 0
+            if next_cell_pos in self.game_board.magic_fruit_index:
+                self.game_board.magic_fruit_index.remove(next_cell_pos)
+            self.magicing_number = next_magic_number
+            
+            # Update score
+            current_score = getattr(self, f'day{self.current_day}_score')
+            new_score = current_score + 1
+            setattr(self, f'day{self.current_day}_score', new_score)
+            setattr(self, f'magic_fruit{next_magic_number}_event', None)
+            
+            return True
+        else:
+            # Clear the queue as we're done
+            self.magic_fruit_queue = []
+            return False
+
     def update(self, dt, events):
         tween.update(passed_time=dt)
 
@@ -883,6 +922,7 @@ class PlayState(BaseState):
                     Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.started = True
                 elif self.drawing:
+                    self.current_turn += 1
                     Play_DrawPathState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.drawing = False
                 elif self.placing:
@@ -893,6 +933,7 @@ class PlayState(BaseState):
                     Play_PlayMagicEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.magic_eventing = False
                 elif self.is_strike and not self.magic_eventing:
+                    self.current_turn += 1
                     Play_DrawEventState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.is_strike = False
                 elif self.eventing:
@@ -987,6 +1028,9 @@ class PlayState(BaseState):
                 for score in self.score_list:
                     amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
                     self.score_amount_list.append(amount)
+
+                # Update turn display
+                self.right_box_title = utils.get_text(text=f'Turn {max(1, self.current_turn)}', font=fonts.lf2, size='small', color=colors.white)
 
                 # hover function 
                 if self.setup_start_state==True and not self.transitioning:

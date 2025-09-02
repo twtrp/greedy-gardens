@@ -84,6 +84,22 @@ class Play_PlayMagicEventState(BaseState):
         self.load_assets()
 
     def load_assets(self):
+        # Process magic fruit when event starts (first magic fruit or from queue)
+        if self.parent.magic_fruit_queue:
+            # Get the current magic fruit from queue
+            magic_number, cell_pos = self.parent.magic_fruit_queue[0]
+            
+            # Play magic fruit sound and update score
+            utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+            current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
+            setattr(self.parent, f'day{self.parent.current_day}_score', current_score + 1)
+            
+            # Remove the magic fruit from the board and tracking
+            self.parent.game_board.board[cell_pos].magic_fruit = 0
+            if cell_pos in self.parent.game_board.magic_fruit_index:
+                self.parent.game_board.magic_fruit_index.remove(cell_pos)
+            setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+        
         # update state
         if self.parent.current_path:
             if "strike" in self.parent.current_path:
@@ -1042,11 +1058,46 @@ class Play_PlayMagicEventState(BaseState):
                 new_score = current_score + 1
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                
+                # Remove the current magic fruit from the queue as it has been processed
+                if self.parent.magic_fruit_queue:
+                    self.parent.magic_fruit_queue.pop(0)
+                
+                # Check if there are more magic fruits in the queue to process
+                if self.parent.magic_fruit_queue:
+                    # Set up next magic fruit for state re-entry 
+                    magic_number, cell_pos = self.parent.magic_fruit_queue[0]
+                    self.parent.magicing_number = magic_number
+                    self.parent.magicing_cell = cell_pos
+                    
+                    # Trigger state re-entry for proper animation setup
+                    self.parent.magic_eventing = True
+                    self.parent.playing_magic_event = False
+                    self.parent.play_event_state = False
+                    self.exit_state()
+                    return
+                
                 self.parent.playing_magic_event = False
                 self.parent.play_event_state = False
                 # print(self.parent.play_event_state)
                 self.exit_state()
             else:
+                # Remove the current magic fruit from the queue as it has been processed
+                if self.parent.magic_fruit_queue:
+                    self.parent.magic_fruit_queue.pop(0)
+                
+                # Check if there are more magic fruits in the queue to process
+                if self.parent.magic_fruit_queue:
+                    # Set up next magic fruit for state re-entry 
+                    magic_number, cell_pos = self.parent.magic_fruit_queue[0]
+                    self.parent.magicing_number = magic_number
+                    self.parent.magicing_cell = cell_pos
+                    
+                    # Trigger state re-entry for proper animation setup
+                    self.parent.magic_eventing = True
+                    self.exit_state()
+                    return
+                
                 if self.parent.is_striking:
                     self.parent.is_strike = True
                 elif self.parent.strikes >= 3:

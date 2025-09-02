@@ -76,10 +76,18 @@ class Play_PlacePathState(BaseState):
             if self.parent.game_board.magic_fruit_index and not self.finding_magic:
                 self.finding_magic = True
                 # print(self.finding_magic)
-                self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-                # print(self.parent.magic_eventing)
-                if self.parent.magic_eventing:
-                    utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                
+                # Find ALL connected magic fruits at once
+                connected_magic_fruits = self.parent.game_board.find_all_connected_magic_fruits()
+                
+                if connected_magic_fruits:
+                    # Store all magic fruits in queue for processing in order (1->2->3)
+                    self.parent.magic_fruit_queue = connected_magic_fruits.copy()
+                    
+                    # Set up the first magic fruit event without processing it here
+                    magic_number, cell_pos = connected_magic_fruits[0]
+                    self.parent.magic_eventing = True
+                    
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
                         # print('PlacePath Magic 1:', self.parent.magic_fruit1_event)
@@ -89,12 +97,10 @@ class Play_PlacePathState(BaseState):
                     elif magic_number == 3:
                         self.parent.current_event = self.parent.magic_fruit3_event
                         # print('PlacePath Magic 3:', self.parent.magic_fruit3_event)
-                    self.parent.game_board.board[cell_pos].magic_fruit = 0
+                    
+                    # Set up magic number for the event state
                     self.parent.magicing_number = magic_number
-                    current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                    new_score = current_score + 1
-                    setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                    setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                    self.parent.magicing_cell = cell_pos
                     
                     # Check if the path that triggered magic fruit was also a strike
                     if "strike" in self.parent.current_path:
@@ -102,8 +108,9 @@ class Play_PlacePathState(BaseState):
                     
                     # print("exiting place")
                     self.exit_state()
-
-                elif not self.parent.magic_eventing:
+                else:
+                    # No magic fruits found
+                    self.parent.magic_eventing = False
                     if "strike" in self.parent.current_path:
                         self.parent.is_strike = True
                     else: 
