@@ -51,6 +51,9 @@ def is_windows() -> bool:
 def is_linux() -> bool:
     return platform.system() == "Linux"
 
+def is_linux() -> bool:
+    return platform.system() == "Linux"
+
 # ---------------------------
 # Version extraction
 # ---------------------------
@@ -150,6 +153,82 @@ def build_windows_linux(version: str) -> tuple[str, Path] | tuple[None, None]:
     exe_name = f"PlayGreedyGardens-v{version}"
     icon = choose_icon_for_platform(version)
     cmd = ["pyinstaller", "--onefile", "--noconsole", "--name", exe_name, "main.py"]
+    
+    # Add Linux-specific flags to help with shared library issues
+    if is_linux():
+        cmd.extend([
+            "--collect-all", "pygame",
+            "--hidden-import", "pygame",
+            "--exclude-module", "tkinter",
+            "--strip",  # Remove debug symbols to reduce size
+            "--runtime-tmpdir", ".",  # Use current directory for runtime files
+            "--noupx"  # Disable UPX compression which can cause issues
+        ])
+        
+        # Try to include Python shared library more reliably
+        try:
+            import sysconfig
+            
+            # Method 1: Get library directory and add all Python libs
+            python_lib_dir = sysconfig.get_config_var('LIBDIR')
+            if python_lib_dir and os.path.exists(python_lib_dir):
+                python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+                
+                # Look for common Python library names
+                lib_names = [
+                    f"libpython{python_version}.so",
+                    f"libpython{python_version}.so.1.0",
+                    f"libpython{python_version}m.so",
+                    f"libpython{python_version}m.so.1.0"
+                ]
+                
+                for lib_name in lib_names:
+                    lib_path = os.path.join(python_lib_dir, lib_name)
+                    if os.path.exists(lib_path):
+                        cmd.extend(["--add-binary", f"{lib_path}:."])
+                        log(f"📚 Adding Python library: {lib_path}")
+                        break
+                else:
+                    log(f"⚠️ No Python shared library found in {python_lib_dir}")
+            
+            # Method 2: Also try to get the library file directly
+            lib_file = sysconfig.get_config_var('LDLIBRARY')
+            if lib_file:
+                # Find the full path to this library
+                lib_dirs = [
+                    sysconfig.get_config_var('LIBDIR'),
+                    sysconfig.get_config_var('LIBPL'),
+                    '/usr/lib',
+                    '/usr/lib64',
+                    '/lib',
+                    '/lib64'
+                ]
+                
+                for lib_dir in lib_dirs:
+                    if lib_dir and os.path.exists(lib_dir):
+                        full_lib_path = os.path.join(lib_dir, lib_file)
+                        if os.path.exists(full_lib_path):
+                            cmd.extend(["--add-binary", f"{full_lib_path}:."])
+                            log(f"📚 Adding Python library (method 2): {full_lib_path}")
+                            break
+                            
+        except Exception as e:
+            log(f"⚠️ Could not determine Python library location: {e}")
+            # Fallback: try common system locations
+            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+            fallback_paths = [
+                f"/usr/lib/x86_64-linux-gnu/libpython{python_version}.so",
+                f"/usr/lib/libpython{python_version}.so",
+                f"/lib/x86_64-linux-gnu/libpython{python_version}.so",
+                f"/lib/libpython{python_version}.so"
+            ]
+            
+            for fallback_path in fallback_paths:
+                if os.path.exists(fallback_path):
+                    cmd.extend(["--add-binary", f"{fallback_path}:."])
+                    log(f"📚 Adding Python library (fallback): {fallback_path}")
+                    break
+    
     if icon:
         cmd.extend(["--icon", str(icon)])
 
