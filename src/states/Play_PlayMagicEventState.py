@@ -323,6 +323,8 @@ class Play_PlayMagicEventState(BaseState):
 
     def update(self, dt, events):
 
+        print(f"DEBUG: update() called - played_event: {self.played_event}, queue: {self.parent.magic_fruit_queue}")
+
         # Handle event completion and queue transitions
         if self.played_event:
             print(f"DEBUG: update() - Event completed, checking queue: {self.parent.magic_fruit_queue}")
