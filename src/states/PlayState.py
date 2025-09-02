@@ -9,6 +9,7 @@ from src.states.Play_PlayMagicEventState import Play_PlayMagicEventState
 from src.states.Play_NextDayState import Play_NextDayState
 from src.states.Play_EndDayState import Play_EndDayState
 from src.states.Play_ResultState import Play_ResultStage
+from src.states.Play_TutorialState import Play_TutorialState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -137,6 +138,8 @@ class PlayState(BaseState):
         self.is_current_task_event = False
         self.is_choosing = False
 
+        self.paused = False
+        self.in_tutorial = False
 
     #Main methods
 
@@ -621,7 +624,6 @@ class PlayState(BaseState):
         pygame.mixer.music.set_endevent(self.music_end_event)
         self.current_song = 0
 
-        self.paused = False
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.pause_background.fill((*colors.black, 200))
         self.pause_title = utils.get_text(text='Paused', font=fonts.lf2, size='huge', color=colors.mono_205)
@@ -653,6 +655,10 @@ class PlayState(BaseState):
                 'text': 'Resume',
             },
             {
+                'id': 'how_to_play',
+                'text': 'How to Play',
+            },
+            {
                 'id': 'quit',
                 'text': 'Exit to menu',
             }
@@ -667,7 +673,7 @@ class PlayState(BaseState):
                 group='setting',
                 width=500,
                 height=50,
-                pos=(constants.canvas_width/2, 295 + i*50),
+                pos=(constants.canvas_width/2, 370 + i*50),
                 pos_anchor='center',
                 hover_cursor=None,
                 enable_click=False
@@ -678,7 +684,7 @@ class PlayState(BaseState):
                 group='arrow',
                 width=48,
                 height=50,
-                pos=(constants.canvas_width/2 - 180, 295 + i*50),
+                pos=(constants.canvas_width/2 - 180, 370 + i*50),
                 pos_anchor='center'
             ))
             self.pause_options_button_list.append(Button(
@@ -687,7 +693,7 @@ class PlayState(BaseState):
                 group='arrow',
                 width=48,
                 height=50,
-                pos=(constants.canvas_width/2 + 180, 295 + i*50),
+                pos=(constants.canvas_width/2 + 180, 370 + i*50),
                 pos_anchor='center'
             ))
         
@@ -698,10 +704,12 @@ class PlayState(BaseState):
                 'surface': text,
                 'scale': 1,
             })
-            if i == 0:
+            if i == 0:  # Resume
                 y_offset = 225
-            else:
-                y_offset = 295 + 5*50 + 30
+            elif i == 1:  # How to Play - directly below Resume
+                y_offset = 295  # Just below Resume
+            else:  # Exit to menu - after settings panel (moved down)
+                y_offset = 370 + 5*50 + 30  # Moved down from 295 to 370
             self.pause_options_button_list.append(Button(
                 game=self.game,
                 id=option['id'],
@@ -765,7 +773,7 @@ class PlayState(BaseState):
                 self.music_started = True
                 self.game.music_channel.play()
 
-            if self.paused:
+            if self.paused and not self.in_tutorial:
                 for button in self.pause_options_button_list:
                     button.update(dt=dt, events=events)
                     if button.hovered:
@@ -829,6 +837,9 @@ class PlayState(BaseState):
                         elif button.id == 'resume':
                             utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
                             self.paused = False
+                        elif button.id == 'how_to_play':
+                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                            self.in_tutorial = True
                         elif button.id == 'quit' and not self.transitioning:
                             self.transitioning = True
                             self.game.music_channel.fadeout(1500)
@@ -878,6 +889,11 @@ class PlayState(BaseState):
                 else:
                     utils.set_cursor(cursor=cursors.normal)
                 self.cursor = cursors.normal
+
+                # Check for tutorial even when paused
+                if self.in_tutorial:
+                    Play_TutorialState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+
 
             else: 
                 # Update substates
@@ -1838,13 +1854,13 @@ class PlayState(BaseState):
 
 
         # pause menu
-        if self.paused:
+        if self.paused and not self.in_tutorial:
             utils.blit(dest=canvas, source=self.pause_background)
             utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
             
             # Render settings options with arrows (between Resume and Exit)
             for i, option in enumerate(self.pause_settings_surface_list):
-                y_pos = 295 + i*50  # Start at 295 (moved down 15px from 280)
+                y_pos = 370 + i*50  # Start at 370 (moved down from 295)
                 utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, y_pos), pos_anchor='center')
                 
                 # Render arrows with scaling
@@ -1863,13 +1879,15 @@ class PlayState(BaseState):
                     pos_anchor='center'
                 )
             
-            # Render regular pause menu buttons (Resume, Exit to menu)
+            # Render regular pause menu buttons (Resume, How to Play, Exit to menu)
             for i, option in enumerate(self.pause_options_surface_list):
                 scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                 if i == 0:  # Resume button - below title
-                    y_offset = 225  # Below pause title at 120, moved down 15px more
-                else:  # Exit to menu button - after settings panel
-                    y_offset = 295 + 5*50 + 30  # Settings start at 295, 5 settings * 50px, plus 30px spacing
+                    y_offset = 225  # Below pause title at 120
+                elif i == 1:  # How to Play button - directly below Resume
+                    y_offset = 295  # Just below Resume
+                else:  # Exit to menu button - after settings panel (moved down)
+                    y_offset = 370 + 5*50 + 30  # Moved down from 295 to 370
                 utils.blit(
                     dest=canvas,
                     source=scaled_surface,
