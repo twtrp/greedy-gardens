@@ -715,7 +715,7 @@ class PlayState(BaseState):
                 game=self.game,
                 id=option['id'],
                 width=300,
-                height=60,
+                height=70,
                 pos=(constants.canvas_width/2, y_offset),
                 pos_anchor='center'
             ))

@@ -24,5 +24,5 @@ purple_light = (177, 152, 225)
 purple_medium = (143, 121, 195)
 purple_dark = (122, 103, 160)
 
-red_light = (255, 99, 71)
+red_light = (216, 82, 75)
 

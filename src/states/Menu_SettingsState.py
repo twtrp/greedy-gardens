@@ -68,7 +68,7 @@ class Menu_SettingsState(BaseState):
         self.button_option_list = [
             {
                 'id': 'reset',
-                'text': 'Reset',
+                'text': 'Reset to default',
             },
             {
                 'id': 'back',
@@ -208,5 +208,5 @@ class Menu_SettingsState(BaseState):
             
         for i, option in enumerate(self.button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 515 + i*65), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 500 + i*80), pos_anchor=posanchors.center)
             
