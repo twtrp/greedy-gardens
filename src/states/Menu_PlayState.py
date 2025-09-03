@@ -112,7 +112,7 @@ class Menu_PlayState(BaseState):
                                 long_shadow=False,
                                 outline=False
                             )
-                            utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
                         elif event.key == pygame.K_RETURN:
                             self.textbox_mode = 'inactive'
                         else:
@@ -126,7 +126,7 @@ class Menu_PlayState(BaseState):
                                     long_shadow=False,
                                     outline=False
                                 )
-                                utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume)
+                                utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 2:
                         utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)

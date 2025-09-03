@@ -34,7 +34,7 @@ class Play_DrawPathState(BaseState):
                             ease_type=tweencurves.easeOutQuint,
                             on_complete=on_complete
                         )
-                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                         self.card_drawn = self.parent.deck_path.draw_card()
                         self.parent.drawn_cards_path.append(self.card_drawn)
                         self.card_drawn_image = self.parent.cards_path_sprites[f"card_{self.card_drawn.card_name}"]
@@ -68,7 +68,7 @@ class Play_DrawPathState(BaseState):
                             ease_type=tweencurves.easeOutQuint,
                             on_complete=on_complete
                         )
-                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                         self.card_drawn = self.parent.deck_path.draw_card()
                         self.parent.drawn_cards_path.append(self.card_drawn)
                         self.card_drawn_image = self.parent.cards_path_sprites[f"card_{self.card_drawn.card_name}"]

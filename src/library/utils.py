@@ -1,6 +1,7 @@
 from src.library.core import *
 from src.library.resource_loader import *
 import tween
+import numpy
 from typing import List
 
 
@@ -420,7 +421,8 @@ def sound_play(
         sound_channel: pygame.mixer.Channel = None,
         loops: int = 0,
         maxtime: int = 0,
-        fade_ms: int = 0
+        fade_ms: int = 0,
+        pitch_variation: float = 0.0
     ) -> None:
     '''
     Use this to play sound effects
@@ -432,9 +434,32 @@ def sound_play(
     loops = number of times to loop the sound effect. 0 means no loop. -1 means infinite loop
     maxtime = number of milliseconds to play the sound effect
     fade_ms = number of milliseconds to fade the sound effect in or out
+    pitch_variation = amount of pitch randomization (0.0 = no variation, 0.1 = ±10% pitch variation)
     '''
+    
     sound_audio = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound['name']))
     sound_audio.set_volume(sound['volume'] * volume)
+    
+    if pitch_variation > 0:
+        pitch_multiplier = 1.0 + random.uniform(-pitch_variation, pitch_variation)
+        
+        raw_data = pygame.sndarray.array(sound_audio)
+        
+        if len(raw_data.shape) == 1:
+            target_length = int(len(raw_data) / pitch_multiplier)
+            indices = (raw_data.shape[0] / target_length * numpy.arange(target_length)).astype(int)
+            resampled_data = raw_data[indices]
+        else:
+            target_length = int(raw_data.shape[0] / pitch_multiplier)
+            indices = (raw_data.shape[0] / target_length * numpy.arange(target_length)).astype(int)
+            resampled_data = raw_data[indices]
+        
+        try:
+            sound_audio = pygame.sndarray.make_sound(resampled_data.astype(raw_data.dtype))
+            sound_audio.set_volume(sound['volume'] * volume)
+        except:
+            pass
+    
     if sound_channel is not None:
         sound_channel.play(sound_audio, loops=loops, maxtime=maxtime, fade_ms=fade_ms)
     else:

@@ -4,6 +4,7 @@ from src.classes.Button import Button
 from src.states.Menu_PlayState import Menu_PlayState
 from src.states.Menu_RecordsState import Menu_RecordsState
 from src.states.Menu_SettingsState import Menu_SettingsState
+from src.states.Menu_CreditsState import Menu_CreditsState
 
 class Menu_TitleState(BaseState):
     def __init__(self, game, parent, stack):
@@ -49,6 +50,9 @@ class Menu_TitleState(BaseState):
                     elif button.id == 'settings':
                         utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                         Menu_SettingsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
+                    elif button.id == 'credits':
+                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                        Menu_CreditsState(game=self.game, parent=self.parent, stack=self.stack).enter_state()
                     elif button.id == 'quit':
                         utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                         pygame.mixer.stop()

@@ -344,6 +344,13 @@ class PlayState(BaseState):
             font=fonts.lf2, size='tiny', color=colors.white
         )
 
+        # Event cancelled popup
+        self.event_cancelled_popup = utils.get_text(
+            text='Impossible event cancelled!',
+            font=fonts.lf2, size='tiny', color=colors.red_light
+        )
+        self.event_cancelled_popup_props = None
+
         self.mouse_up_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='scroll_up')
         self.mouse_down_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='scroll_down')
         self.mouse_up_sprite = pygame.transform.scale_by(surface=self.mouse_up_sprite, factor=2)
@@ -1769,6 +1776,16 @@ class PlayState(BaseState):
                         source=self.day_title_text,
                         pos=(constants.canvas_width/2, self.day_title_text_props['y']),
                         pos_anchor='center'
+                    )
+
+                ## Render event cancelled popup
+                if self.event_cancelled_popup_props:
+                    self.event_cancelled_popup.set_alpha(self.event_cancelled_popup_props['alpha'])
+                    utils.blit(
+                        dest=canvas,
+                        source=self.event_cancelled_popup,
+                        pos=(constants.canvas_width//2, self.event_cancelled_popup_props['y']),
+                        pos_anchor=posanchors.midtop
                     )
                 
                 ## Render left white box

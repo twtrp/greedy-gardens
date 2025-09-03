@@ -48,7 +48,7 @@ magic_fruit = {
 }
 dig = {
     'name': 'zapsplat_impacts_dirt_soil_dry_hit_wood_stake.ogg',
-    'volume': 1,
+    'volume': 0.75,
 }
 scratch = {
     'name': 'Walking_On_Grass_Fast.ogg',
@@ -68,5 +68,5 @@ end_jingle = {
 }
 keyboard = {
     'name': 'keyboard.ogg',
-    'volume': 0.35
+    'volume': 0.4
 }

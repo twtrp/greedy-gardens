@@ -56,7 +56,7 @@ class Play_NextDayState(BaseState):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.parent.shown_day_title:
                         if self.fruit_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             self.card_drawn_image_props = {
                                 'x': 1080,
                                 'y': 130,
@@ -86,7 +86,7 @@ class Play_NextDayState(BaseState):
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 3 and self.parent.shown_day_title:  # Right click
                         if self.fruit_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             self.card_drawn_image_props = {
                                 'x': 1080,
                                 'y': 130,

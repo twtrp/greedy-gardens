@@ -402,7 +402,7 @@ class Play_PlayMagicEventState(BaseState):
                         if not self.parent.game_board.board[button.id].path and not self.parent.game_board.board[button.id].home:
                             self.select_frame = self.parent.selecting_tile
                             if button.clicked:
-                                utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
+                                utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                 if "N" in self.choices[self.choice]:
                                     self.parent.game_board.board[button.id].north = True
                                 if "W" in self.choices[self.choice]:
@@ -472,8 +472,8 @@ class Play_PlayMagicEventState(BaseState):
                                 if not self.parent.game_board.board[button.id].path:
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
-                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         # Move the path from selected_cell to current button.id
                                         source_cell = self.parent.game_board.board[self.selected_cell]
                                         target_cell = self.parent.game_board.board[button.id]
@@ -538,8 +538,8 @@ class Play_PlayMagicEventState(BaseState):
                                     not self.parent.game_board.board[button.id].would_be_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
-                                        utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         old_path1 = ""
                                         if self.parent.game_board.board[button.id].north:
                                             old_path1 += "N"
@@ -749,7 +749,7 @@ class Play_PlayMagicEventState(BaseState):
                         
                         if button.id == 'today fruit':
                             # print('redraw today fruit')
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
@@ -761,7 +761,7 @@ class Play_PlayMagicEventState(BaseState):
                             self.parent.drawing_path_card = True
                         elif button.id == 'tomorrow fruit':
                             # print('redraw tomorrow fruit')
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
@@ -773,7 +773,7 @@ class Play_PlayMagicEventState(BaseState):
                             self.parent.drawing_path_card = True
                         elif button.id == 'seasonal fruit':
                             # print('redraw seasonal fruit')
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume)
+                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             old_fruit = self.parent.seasonal_fruit
@@ -907,7 +907,7 @@ class Play_PlayMagicEventState(BaseState):
                     if button.clicked:
                         if self.selected_cell or self.selected_cell_2:
                             if button.id == 'remove':
-                                utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
+                                utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                 if self.selected_cell:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
                                         old_path1 = ""
@@ -1033,8 +1033,8 @@ class Play_PlayMagicEventState(BaseState):
                                     not self.parent.game_board.board[button.id].is_the_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        utils.sound_play(sound=sfx.scratch, volume=self.game.sfx_volume)
-                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                        utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
                                         self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
