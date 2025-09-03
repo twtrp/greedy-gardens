@@ -338,9 +338,8 @@ class Menu_RecordsState(BaseState):
                 text="No games played yet",
                 font=fonts.lf2,
                 size='small',
-                color=colors.mono_50,
+                color=colors.white,
                 long_shadow=False,
-                outline=False
             )
             utils.blit(
                 dest=table_surface,

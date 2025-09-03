@@ -18,6 +18,7 @@ class Play_StartState(BaseState):
         self.magic_fruit1_not_drawn = True
         self.magic_fruit2_not_drawn = True
         self.magic_fruit3_not_drawn = True
+        self.path_card_text_shown = False
 
         self.previous_card_drawn = None
 
@@ -71,6 +72,7 @@ class Play_StartState(BaseState):
                 self.card_drawn_text = utils.get_text(text='Seasonal Fruit', font=fonts.lf2, size='large', color=colors.white)
                 self.seasonal_not_drawn = False
                 self.parent.left_box_none_text = utils.get_text(text='Draw day 1 fruit', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.day1_not_drawn:
                 utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
@@ -81,6 +83,7 @@ class Play_StartState(BaseState):
                 self.card_drawn_text = utils.get_text(text='Day 1 Fruit', font=fonts.lf2, size='large', color=colors.white)
                 self.day1_not_drawn = False
                 self.parent.left_box_none_text = utils.get_text(text='Draw day 2 fruit', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.day2_not_drawn:
                 utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
@@ -91,6 +94,7 @@ class Play_StartState(BaseState):
                 self.card_drawn_text = utils.get_text(text='Day 2 Fruit', font=fonts.lf2, size='large', color=colors.white)
                 self.day2_not_drawn = False
                 self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 1 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
         elif self.magic_fruit3_not_drawn:
             self.card_drawn = self.parent.deck_event.draw_card()
@@ -120,6 +124,7 @@ class Play_StartState(BaseState):
                 self.magic_fruit1_not_drawn = False
                 self.parent.magicing_number = 1
                 self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 2 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.magic_fruit2_not_drawn:
                 utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
@@ -131,6 +136,7 @@ class Play_StartState(BaseState):
                 self.magic_fruit2_not_drawn = False
                 self.parent.magicing_number = 2
                 self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 3 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.magic_fruit3_not_drawn:
                 utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
@@ -141,13 +147,18 @@ class Play_StartState(BaseState):
                 self.card_drawn_text = utils.get_text(text='Magic fruit 3 Event', font=fonts.lf2, size='large', color=colors.white)
                 self.magic_fruit3_not_drawn = False
                 self.parent.magicing_number = 3
-                self.parent.left_box_none_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
+                if not self.path_card_text_shown:
+                    self.parent.left_box_none_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
+                    self.parent.animate_task_text()  # Trigger task text animation
+                    self.path_card_text_shown = True
                 self.previous_card_drawn = self.card_drawn
         else: 
             self.parent.magic_fruit3_event = self.previous_card_drawn.card_name
             self.parent.magicing_number = 0
             self.parent.drawing = True
             self.parent.setup_start_state=True
+            # Set the previous task state to match what the main state will use to prevent double animation
+            self.parent.previous_task_state = "draw_path"
             self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)

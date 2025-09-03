@@ -62,7 +62,7 @@ class Play_PlayEventState(BaseState):
         self.choice_move_title = utils.get_text(text='Move a path to a blank tile', font=fonts.lf2, size='large', color=colors.mono_205)
         self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_205)
         self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_205)
-        # self.remaining_fruit_title = utils.get_text(text='Remaining Fruit', font=fonts.lf2, size='large', color=colors.mono_175)
+        self.remaining_fruits_title = utils.get_text(text='Remaining Fruits', font=fonts.lf2, size='small', color=colors.mono_205)
         self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.white)
         self.hover_to_view_surface = [{
                     'id': 'view board',
@@ -181,6 +181,11 @@ class Play_PlayEventState(BaseState):
                     pos_anchor=posanchors.center
                 ))
                 visual_index += 1  # Increment only for non-dummy entries
+            
+            # Create shuffled remaining fruits display for redraw event
+            remaining_fruits = self.parent.deck_fruit.cards.copy()
+            random.shuffle(remaining_fruits)
+            self.remaining_fruits_display = remaining_fruits[:6]  # Show first 6 fruits
         elif self.parent.current_event == 'event_remove':
             self.remove_button_option_list = [
                 {
@@ -856,6 +861,32 @@ class Play_PlayEventState(BaseState):
 
             elif self.parent.current_event == 'event_redraw':
                 utils.blit(dest=canvas, source=self.choice_redraw_title, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
+                
+                # Render remaining fruits display
+                # Calculate surface dimensions
+                title_width = self.remaining_fruits_title.get_width()
+                fruit_count = len(self.remaining_fruits_display)
+                fruit_width = fruit_count * 40 - 20  # Total width of all fruits (subtract 20 because last fruit doesn't need spacing)
+                total_width = title_width + 30 + fruit_width  # 30px gap between title and fruits
+                total_height = max(self.remaining_fruits_title.get_height(), 32)  # Height of scaled fruit is 32px
+                
+                # Create surface for the entire display
+                remaining_fruits_surface = pygame.Surface((total_width, total_height), pygame.SRCALPHA)
+                
+                # Blit title to surface (moved up by 4 pixels)
+                utils.blit(dest=remaining_fruits_surface, source=self.remaining_fruits_title, pos=(0, total_height/2 - 4), pos_anchor=posanchors.midleft)
+                
+                # Blit fruits to surface with outlines, centered relative to the fruit group
+                fruits_start_x = title_width + 30
+                for i, fruit in enumerate(self.remaining_fruits_display):
+                    fruit_sprite = self.parent.fruit_sprites[fruit.card_name]
+                    scaled_fruit = pygame.transform.scale_by(surface=fruit_sprite, factor=2.0)
+                    outlined_fruit = utils.effect_outline(surface=scaled_fruit, distance=2, color=colors.mono_35)
+                    utils.blit(dest=remaining_fruits_surface, source=outlined_fruit, pos=(fruits_start_x + i*40, total_height/2), pos_anchor=posanchors.center)
+                
+                # Blit the entire surface centered to canvas
+                utils.blit(dest=canvas, source=remaining_fruits_surface, pos=(constants.canvas_width/2, 600), pos_anchor=posanchors.center)
+                
                 visual_index = 0  # Track visual position independent of list index
                 for i, option in enumerate(self.redraw_button_option_surface_list):
                     if option['id'] == 'dummy':
