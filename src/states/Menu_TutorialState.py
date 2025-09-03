@@ -25,7 +25,7 @@ class Menu_TutorialState(BaseState):
             id='back',
             width=300,
             height=80,
-            pos=(constants.canvas_width/2, 660),
+            pos=(constants.canvas_width/2, 680),
             pos_anchor=posanchors.center
         ))
 

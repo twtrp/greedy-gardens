@@ -732,7 +732,7 @@ class PlayState(BaseState):
             id='back',
             width=300,
             height=80,
-            pos=(constants.canvas_width/2, 660),
+            pos=(constants.canvas_width/2, 680),
             pos_anchor=posanchors.center
         ))
 
@@ -1893,7 +1893,8 @@ class PlayState(BaseState):
                 utils.blit(dest=canvas, source=self.card_event_back_image, pos=(1080, 400), pos_anchor='center')
 
                 ## Render Magic Fruit Event cards
-                utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 500), pos_anchor='center')
+                if self.magic_fruit1_event or self.magic_fruit2_event or self.magic_fruit3_event:
+                    utils.blit(dest=canvas, source=self.right_magic_fruits, pos=(constants.canvas_width - self.box_width/2, 500), pos_anchor='center')
                 if self.magic_fruit1_event:
                     self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
                     utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(1073, 619), pos_anchor='center')
