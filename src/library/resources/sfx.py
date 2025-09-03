@@ -66,3 +66,7 @@ end_jingle = {
     'name': 'High_Score.ogg',
     'volume': 1.25,
 }
+keyboard = {
+    'name': 'keyboard.ogg',
+    'volume': 0.35
+}

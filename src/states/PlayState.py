@@ -9,7 +9,6 @@ from src.states.Play_PlayMagicEventState import Play_PlayMagicEventState
 from src.states.Play_NextDayState import Play_NextDayState
 from src.states.Play_EndDayState import Play_EndDayState
 from src.states.Play_ResultState import Play_ResultStage
-from src.states.Play_TutorialState import Play_TutorialState
 from src.classes.Deck import Deck
 from src.classes.GameBoard import GameBoard
 from src.classes.Cell import Cell
@@ -720,6 +719,225 @@ class PlayState(BaseState):
                 pos_anchor='center'
             ))
 
+        # Tutorial assets
+        self.tutorial_button_option_surface_list = []
+        self.tutorial_button_list = []
+        self.tutorial_button_option_surface_list.append({
+            'id': 'back',
+            'surface':  utils.get_text(text='Back', font=fonts.lf2, size='medium', color=colors.white),
+            'scale': 1.0
+        })
+        self.tutorial_button_list.append(Button(
+            game=self.game,
+            id='back',
+            width=300,
+            height=80,
+            pos=(constants.canvas_width/2, 660),
+            pos_anchor=posanchors.center
+        ))
+
+        self.tutorial_coords_list = [
+            (50, 40),
+            (50, 210),
+            (50, 420),
+            (650, 40),
+            (650, 210),
+            (650, 380),
+            (650, 550),
+        ]
+
+        self.tutorial_surface_list = [
+            [
+                utils.get_text(
+                    text="Welcome to Greedy Gardens!",
+                    font=fonts.minecraftia, size='medium', color=colors.green_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="You're a fruit picker working on a 4-day contract.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Your job is to collect fruits by building paths",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="to connect fruits to the Farmhouse.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ],
+            [
+                utils.get_text(
+                    text="Be greedy, but not too much!",
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="You must score more fruits than the previous day, or",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="you will earn zero points for that day.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Scoring too high can make the next day harder.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Aim for the highest total score by the end of day 4.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ],
+            [
+                utils.get_text(
+                    text="All about fruits",
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Each day you can only score a specific fruit.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="You only know today's, tomorrow's, and seasonal fruit.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Fruits connected to Farmhouse are scored when day ends.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Seasonal fruits are bonus points scored when game ends.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ],
+            [
+                utils.get_text(
+                    text="All about paths",
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="You can place paths based on the path cards you draw.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Some cards path cards gives you a strike.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="After 3 strikes, the day ends.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ],
+            [
+                utils.get_text(
+                    text="All about events",
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Strikes from path cards will trigger events.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Events can either help or ruin your plans.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Each game has 16 event cards: 8 types with 2 of each.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ],
+            [
+                utils.get_text(
+                    text="All about magic fruits",
+                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="There are 3 magic fruits on the board.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="Collecting a magic fruit will trigger an event assigned to it,",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+                utils.get_text(
+                    text="as well as scoring 1 bonus point for that day.",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ],
+            [
+                utils.get_text(
+                    text="Controls",
+                    font=fonts.minecraftia, size='medium', color=colors.green_light, long_shadow=False
+                ),
+                utils.get_text(
+                    text="         Action                /                 Draw card                /           Pause menu",
+                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                ),
+            ]
+        ]
+
+        #Control button icons
+        self.left_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='left_click')
+        self.left_click_sprite = pygame.transform.scale_by(surface=self.left_click_sprite, factor=2)
+        self.left_click_sprite_coords = (650, 586)
+        self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
+        self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
+        self.right_click_sprite_coords = (778, 586)
+        self.spacebar_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
+        self.spacebar_sprite = pygame.transform.scale_by(surface=self.spacebar_sprite, factor=2)
+        self.spacebar_sprite_coords = (826, 592)
+        self.middle_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='middle_click')
+        self.middle_click_sprite = pygame.transform.scale_by(surface=self.middle_click_sprite, factor=2)
+        self.middle_click_sprite_coords = (1022, 586)
+        self.esc_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='esc')
+        self.esc_sprite = pygame.transform.scale_by(surface=self.esc_sprite, factor=2)
+        self.esc_sprite_coords = (1070, 592)
+
+        self.tutorial_fruit_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_orange'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_blueberry'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_grape'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_strawberry'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_peach'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_coconut'),
+        ]
+        for i, surface in enumerate(self.tutorial_fruit_sprites):
+            self.tutorial_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+
+        self.tutorial_path_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NS'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NW'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_NE'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WS'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_ES'),
+        ]
+        for i, surface in enumerate(self.tutorial_path_sprites):
+            self.tutorial_path_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
+            self.tutorial_path_sprites[i] = utils.effect_outline(surface=self.tutorial_path_sprites[i], distance=2, color=colors.mono_35)
+
+        self.tutorial_event_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_move'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_merge'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_point'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_redraw'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_remove'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_reveal'),
+            utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_swap'),
+        ]
+        for i, surface in enumerate(self.tutorial_event_sprites):
+            self.tutorial_event_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
+            self.tutorial_event_sprites[i] = utils.effect_outline(surface=self.tutorial_event_sprites[i], distance=2, color=colors.mono_35)
+
+        self.tutorial_magic_fruit_sprites = [
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_2'),
+            utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3'),
+        ]
+        for i, surface in enumerate(self.tutorial_magic_fruit_sprites):
+            self.tutorial_magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+
+
         # Day title
         self.day_title_text = None
         self.day_title_text_props = None
@@ -774,108 +992,117 @@ class PlayState(BaseState):
                 self.music_started = True
                 self.game.music_channel.play()
 
-            if self.paused and not self.in_tutorial:
-                for button in self.pause_options_button_list:
-                    button.update(dt=dt, events=events)
-                    if button.hovered:
-                        if button.hover_cursor is not None:
-                            self.cursor = button.hover_cursor
-                        
-                        for i, option in enumerate(self.pause_settings_surface_list):
-                            if button.id == option['id']:
-                                self.setting_index = option['settings_list_index']
-                                option['left_arrow_scale'] = min(option['left_arrow_scale'] + 10*dt, 1.0)
-                                option['right_arrow_scale'] = min(option['right_arrow_scale'] + 10*dt, 1.0)
-                        
-                        for option in self.pause_options_surface_list:
-                            if button.id == option['id']:
-                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
-                    else:
-                        for option in self.pause_settings_surface_list:
-                            if button.id == option['id']:
-                                option['left_arrow_scale'] = max(option['left_arrow_scale'] - 10*dt, 0)
-                                option['right_arrow_scale'] = max(option['right_arrow_scale'] - 10*dt, 0)
-                        
-                        for option in self.pause_options_surface_list:
-                            if button.id == option['id']:
-                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
-                    
-                    if button.clicked:
-                        # Handle settings arrow clicks
-                        if button.id.endswith('_left') or button.id.endswith('_right'):
-                            if button.id.endswith('_left'):
-                                self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] - 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
-                                self.settings_manager.save_setting(self.current_settings_index)
-                                left_arrow_scale = 0.25
-                                right_arrow_scale = 1
-                            elif button.id.endswith('_right'):
-                                self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] + 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
-                                self.settings_manager.save_setting(self.current_settings_index)
-                                left_arrow_scale = 1
-                                right_arrow_scale = 0.25
+            if self.paused:
+                if not self.in_tutorial:
+                    for button in self.pause_options_button_list:
+                        button.update(dt=dt, events=events)
+                        if button.hovered:
+                            if button.hover_cursor is not None:
+                                self.cursor = button.hover_cursor
                             
-                            # Update the setting surface text
-                            text_string = self.settings_manager.settings_list[self.setting_index]['label']+':  '+self.settings_manager.settings_list[self.setting_index]['value_label'][self.current_settings_index[self.setting_index]]
-                            text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
+                            for i, option in enumerate(self.pause_settings_surface_list):
+                                if button.id == option['id']:
+                                    self.setting_index = option['settings_list_index']
+                                    option['left_arrow_scale'] = min(option['left_arrow_scale'] + 10*dt, 1.0)
+                                    option['right_arrow_scale'] = min(option['right_arrow_scale'] + 10*dt, 1.0)
                             
-                            # Find and update the correct settings surface
-                            setting_id = self.settings_manager.settings_list[self.setting_index]['id']
-                            for i, setting_surface in enumerate(self.pause_settings_surface_list):
-                                if setting_surface['id'] == setting_id:
-                                    self.pause_settings_surface_list[i] = {
-                                        'id': setting_id,
-                                        'surface': text,
-                                        'left_arrow_scale': left_arrow_scale,
-                                        'right_arrow_scale': right_arrow_scale,
-                                        'settings_list_index': self.setting_index
-                                    }
-                                    break
+                            for option in self.pause_options_surface_list:
+                                if button.id == option['id']:
+                                    option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                        else:
+                            for option in self.pause_settings_surface_list:
+                                if button.id == option['id']:
+                                    option['left_arrow_scale'] = max(option['left_arrow_scale'] - 10*dt, 0)
+                                    option['right_arrow_scale'] = max(option['right_arrow_scale'] - 10*dt, 0)
                             
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume)
-                            self.game.apply_settings(self.setting_index)
+                            for option in self.pause_options_surface_list:
+                                if button.id == option['id']:
+                                    option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                         
-                        # Handle regular pause menu buttons
-                        elif button.id == 'resume':
-                            utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
-                            self.paused = False
-                        elif button.id == 'how_to_play':
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                            self.in_tutorial = True
-                        elif button.id == 'quit' and not self.transitioning:
-                            self.transitioning = True
-                            self.game.music_channel.fadeout(1500)
-                            utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
-                            self.freeze_frame = self.game.canvas.copy()
-                            def on_complete():
-                                # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
-                                utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
-                                utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
-                                self.game.start_menu_music()
-                                self.timer_manager.StopTimer(self.water_timer)
+                        if button.clicked:
+                            # Handle settings arrow clicks
+                            if button.id.endswith('_left') or button.id.endswith('_right'):
+                                if button.id.endswith('_left'):
+                                    self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] - 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
+                                    self.settings_manager.save_setting(self.current_settings_index)
+                                    left_arrow_scale = 0.25
+                                    right_arrow_scale = 1
+                                elif button.id.endswith('_right'):
+                                    self.current_settings_index[self.setting_index] = (self.current_settings_index[self.setting_index] + 1) % len(self.settings_manager.settings_list[self.setting_index]['value'])
+                                    self.settings_manager.save_setting(self.current_settings_index)
+                                    left_arrow_scale = 1
+                                    right_arrow_scale = 0.25
                                 
-                                # Clean up rightclick animation system
-                                if hasattr(self, 'draw_card_animation_growing'):
-                                    delattr(self, 'draw_card_animation_growing')
+                                # Update the setting surface text
+                                text_string = self.settings_manager.settings_list[self.setting_index]['label']+':  '+self.settings_manager.settings_list[self.setting_index]['value_label'][self.current_settings_index[self.setting_index]]
+                                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
                                 
-                                self.tween_list.clear()
-                                self.game.state_stack.clear()
-                            self.tween_list.append(tween.to(
-                                container=self,
-                                key='mask_circle_radius',
-                                end_value=0,
-                                time=1,
-                                ease_type=tweencurves.easeOutQuint
-                            ).on_complete(on_complete))
+                                # Find and update the correct settings surface
+                                setting_id = self.settings_manager.settings_list[self.setting_index]['id']
+                                for i, setting_surface in enumerate(self.pause_settings_surface_list):
+                                    if setting_surface['id'] == setting_id:
+                                        self.pause_settings_surface_list[i] = {
+                                            'id': setting_id,
+                                            'surface': text,
+                                            'left_arrow_scale': left_arrow_scale,
+                                            'right_arrow_scale': right_arrow_scale,
+                                            'settings_list_index': self.setting_index
+                                        }
+                                        break
+                                
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume)
+                                self.game.apply_settings(self.setting_index)
+                            
+                            # Handle regular pause menu buttons
+                            elif button.id == 'resume':
+                                utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
+                                self.paused = False
+                            elif button.id == 'how_to_play':
+                                utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                                self.in_tutorial = True
+                            elif button.id == 'quit' and not self.transitioning:
+                                self.transitioning = True
+                                self.game.music_channel.fadeout(1500)
+                                utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
+                                self.freeze_frame = self.game.canvas.copy()
+                                def on_complete():
+                                    # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                                    utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
+                                    utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
+                                    self.game.start_menu_music()
+                                    self.timer_manager.StopTimer(self.water_timer)
+                                    
+                                    # Clean up rightclick animation system
+                                    if hasattr(self, 'draw_card_animation_growing'):
+                                        delattr(self, 'draw_card_animation_growing')
+                                    
+                                    self.tween_list.clear()
+                                    self.game.state_stack.clear()
+                                self.tween_list.append(tween.to(
+                                    container=self,
+                                    key='mask_circle_radius',
+                                    end_value=0,
+                                    time=1,
+                                    ease_type=tweencurves.easeOutQuint
+                                ).on_complete(on_complete))
 
                 for event in events:
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE and not self.in_tutorial:
-                            utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                            self.paused = not self.paused
-                    elif event.type == pygame.MOUSEBUTTONDOWN  and not self.in_tutorial:
+                        if event.key == pygame.K_ESCAPE:
+                            if not self.in_tutorial:
+                                utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
+                                self.paused = not self.paused
+                            else:
+                                utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                self.in_tutorial = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 2:
-                            utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
-                            self.paused = not self.paused
+                            if not self.in_tutorial:
+                                utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
+                                self.paused = not self.paused
+                            else:
+                                utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                self.in_tutorial = False
 
                     if not self.transitioning:
                         if event.type == self.music_end_event:
@@ -885,15 +1112,27 @@ class PlayState(BaseState):
                             utils.music_load(music_channel=self.game.music_channel, name=self.songs[self.current_song])
                             self.game.music_channel.play()
 
+                for button in self.tutorial_button_list:
+                    button.update(dt=dt, events=events)
+                    
+                    if button.hovered:
+                        self.cursor = button.hover_cursor
+                        for option in self.tutorial_button_option_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                                if button.clicked:
+                                    utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                                    self.in_tutorial = False
+                    else:
+                        for option in self.tutorial_button_option_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+
                 if not self.transitioning:
                     utils.set_cursor(cursor=self.cursor)
                 else:
                     utils.set_cursor(cursor=cursors.normal)
                 self.cursor = cursors.normal
-
-                # Check for tutorial even when paused
-                if self.in_tutorial:
-                    Play_TutorialState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
 
 
             else: 
@@ -1902,6 +2141,101 @@ class PlayState(BaseState):
                     pos=(constants.canvas_width/2, y_offset),
                     pos_anchor='center'
                 )
+        elif self.paused and self.in_tutorial:
+            utils.blit(dest=canvas, source=self.pause_background)
+
+            utils.draw_rect(
+                dest=canvas,
+                size=(constants.canvas_width - 40, constants.canvas_height - 100),
+                pos=(20, 20),
+                pos_anchor=posanchors.topleft,
+                color=(*colors.mono_50, 225),
+                inner_border_width=3
+            )
+
+            for i, option in enumerate(self.tutorial_button_option_surface_list):
+                processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 680), pos_anchor=posanchors.center)
+
+            for i, group in enumerate(self.tutorial_surface_list):
+                header_y_offset = -8
+                y_increment = 0
+                x, y = self.tutorial_coords_list[i]
+                for text in group:
+                    utils.blit(
+                        dest=canvas,
+                        source=text,
+                        pos=(x, y + header_y_offset + y_increment),
+                        pos_anchor=posanchors.topleft
+                    )
+                    header_y_offset = 0
+                    y_increment += 40
+
+            start_x = 280
+            start_y = self.tutorial_coords_list[2][1] - 5
+            x_increment = 40
+            for i, surface in enumerate(self.tutorial_fruit_sprites):
+                utils.blit(
+                    dest=canvas, source=surface,
+                    pos=(start_x + i * x_increment, start_y),
+                    pos_anchor=posanchors.topleft
+                )
+
+            start_x = 880
+            start_y = self.tutorial_coords_list[3][1] - 8
+            x_increment = 40
+            for i, surface in enumerate(self.tutorial_path_sprites):
+                utils.blit(
+                    dest=canvas, source=surface,
+                    pos=(start_x + i * x_increment, start_y),
+                    pos_anchor=posanchors.topleft
+                )
+
+            start_x = 895
+            start_y = self.tutorial_coords_list[4][1] - 8
+            x_increment = 40
+            for i, surface in enumerate(self.tutorial_event_sprites):
+                utils.blit(
+                    dest=canvas, source=surface,
+                    pos=(start_x + i * x_increment, start_y),
+                    pos_anchor=posanchors.topleft
+                )
+
+            start_x = 965
+            start_y = self.tutorial_coords_list[5][1] - 5
+            x_increment = 40
+            for i, surface in enumerate(self.tutorial_magic_fruit_sprites):
+                utils.blit(
+                    dest=canvas, source=surface,
+                    pos=(start_x + i * x_increment, start_y),
+                    pos_anchor=posanchors.topleft
+                )
+
+            utils.blit(
+                dest=canvas, source=self.left_click_sprite,
+                pos=self.left_click_sprite_coords,
+                pos_anchor=posanchors.topleft
+            )
+            utils.blit(
+                dest=canvas, source=self.right_click_sprite,
+                pos=self.right_click_sprite_coords,
+                pos_anchor=posanchors.topleft
+            )
+            utils.blit(
+                dest=canvas, source=self.spacebar_sprite,
+                pos=self.spacebar_sprite_coords,
+                pos_anchor=posanchors.topleft
+            )
+            utils.blit(
+                dest=canvas, source=self.middle_click_sprite,
+                pos=self.middle_click_sprite_coords,
+                pos_anchor=posanchors.topleft
+            )
+            utils.blit(
+                dest=canvas, source=self.esc_sprite,
+                pos=self.esc_sprite_coords,
+                pos_anchor=posanchors.topleft
+            )
 
         if self.transitioning:
             # transition mask 

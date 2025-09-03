@@ -61,9 +61,8 @@ class Menu_RecordsState(BaseState):
                             text=str(row_data[key]),
                             font=fonts.lf2,
                             size='small',
-                            color=colors.mono_50,
+                            color=colors.white,
                             long_shadow=False,
-                            outline=False
                         )
                         utils.blit(dest=surface,
                                    source=cell,
@@ -329,7 +328,7 @@ class Menu_RecordsState(BaseState):
             size=(self.table_width, self.table_height),
             pos=(constants.canvas_width/2, 380),
             pos_anchor=posanchors.center,
-            color=(*colors.white, 165),
+            color=(*colors.mono_50, 225),
             inner_border_width=3
         )
         

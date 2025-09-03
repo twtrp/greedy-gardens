@@ -13,7 +13,7 @@ green_medium = (90, 200, 134)
 green_dark = (76, 170, 114)
 
 yellow_light = (246, 238, 123)
-yellow_medium = (216, 208, 108) 
+yellow_medium = (228, 206, 114) 
 yellow_dark = (187, 180, 93)
 
 orange_light = (255, 190, 112)
