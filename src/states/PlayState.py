@@ -140,6 +140,7 @@ class PlayState(BaseState):
 
         self.paused = False
         self.in_tutorial = False
+        self._tutorial_just_exited = False
 
     #Main methods
 
@@ -868,10 +869,10 @@ class PlayState(BaseState):
 
                 for event in events:
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE:
+                        if event.key == pygame.K_ESCAPE and not self.in_tutorial:
                             utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                             self.paused = not self.paused
-                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                    elif event.type == pygame.MOUSEBUTTONDOWN  and not self.in_tutorial:
                         if event.button == 2:
                             utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                             self.paused = not self.paused
@@ -900,6 +901,12 @@ class PlayState(BaseState):
                 if self.substate_stack:
                     self.substate_stack[-1].update(dt=dt, events=events)
 
+                # Handle tutorial exit flag
+                if self._tutorial_just_exited:
+                    self._tutorial_just_exited = False
+                    self.in_tutorial = False
+                    # Don't resume game - return to pause menu instead
+
                 # Update winds
                 for wind in self.wind_entities_list:
                     if wind.active:
@@ -916,14 +923,15 @@ class PlayState(BaseState):
                 if random.random() <= spawn_chance:
                     self.wind_entities_list.append(Wind(surface=self.wind_surface, sprites=self.wind_sprites))
 
-                # Update rightclick hint animation (tick-based, stops when paused)
-                self.draw_card_hint_animation_time += dt
-                # Use sine wave for smooth breathing animation between min and max values
-                cycle_progress = (self.draw_card_hint_animation_time % self.draw_card_hint_animation_cycle_duration) / self.draw_card_hint_animation_cycle_duration
-                # Calculate the center point and amplitude
-                center_scale = (self.draw_card_hint_scale_min + self.draw_card_hint_scale_max) / 2
-                amplitude = (self.draw_card_hint_scale_max - self.draw_card_hint_scale_min) / 2
-                self.draw_card_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
+                if not self.in_tutorial and not self.paused:
+                    # Update rightclick hint animation (tick-based, stops when paused)
+                    self.draw_card_hint_animation_time += dt
+                    # Use sine wave for smooth breathing animation between min and max values
+                    cycle_progress = (self.draw_card_hint_animation_time % self.draw_card_hint_animation_cycle_duration) / self.draw_card_hint_animation_cycle_duration
+                    # Calculate the center point and amplitude
+                    center_scale = (self.draw_card_hint_scale_min + self.draw_card_hint_scale_max) / 2
+                    amplitude = (self.draw_card_hint_scale_max - self.draw_card_hint_scale_min) / 2
+                    self.draw_card_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
 
                 if not self.transitioning:
                     # update buttons
@@ -974,13 +982,13 @@ class PlayState(BaseState):
                 if not self.transitioning:
                     for event in events:
                         if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_ESCAPE:
+                            if event.key == pygame.K_ESCAPE and not self.in_tutorial:
                                 if self.paused:
                                     utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
                                 else:
                                     utils.sound_play(sound=sfx.pause, volume=self.game.sfx_volume)
                                 self.paused = not self.paused
-                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                        elif event.type == pygame.MOUSEBUTTONDOWN and not self.in_tutorial:
                             if event.button == 2:
                                 if self.paused:
                                     utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)

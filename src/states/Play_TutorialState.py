@@ -6,6 +6,7 @@ class Play_TutorialState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
 
+        self.parent.paused = True
         self.load_assets()
 
 
@@ -230,16 +231,26 @@ class Play_TutorialState(BaseState):
             self.magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
 
     def update(self, dt, events):
+        events_to_remove = []
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                    events_to_remove.append(event)  # Consume this event
+                    self.parent._tutorial_just_exited = True
                     self.exit_state()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 2:
+                if event.button == 2:  # Middle click
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
+                    events_to_remove.append(event)  # Consume this event
+                    self.parent._tutorial_just_exited = True
                     self.exit_state()
+        
+        # Remove consumed events from keyboard/middle-click
+        for event in events_to_remove:
+            events.remove(event)
 
+        # Process buttons first
         for button in self.button_list:
             button.update(dt=dt, events=events)
             
@@ -251,11 +262,22 @@ class Play_TutorialState(BaseState):
                         if button.clicked:
                             utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                             self.parent.in_tutorial = False
+                            self.parent._tutorial_just_exited = True
                             self.exit_state()
             else:
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+
+        # Now consume all remaining mouse events to prevent bleed-through
+        mouse_events_to_remove = []
+        for event in events:
+            if event.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
+                mouse_events_to_remove.append(event)
+        
+        # Remove all mouse events
+        for event in mouse_events_to_remove:
+            events.remove(event)
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
