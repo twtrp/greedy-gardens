@@ -43,127 +43,127 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="Welcome to Greedy Gardens!",
-                    font=fonts.minecraftia, size='medium', color=colors.green_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.green_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You're a fruit picker working on a 4-day contract.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Your job is to collect fruits by building paths",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="to connect fruits to the Farmhouse.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
                     text="Be greedy, but not too much!",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You must score more fruits than the previous day, or",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="you will earn zero points for that day.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Scoring too high can make the next day harder.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Aim for the highest total score by the end of day 4.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
                     text="All about fruits",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="Each day you can only score a specific fruit.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="You only know today's, tomorrow's, and seasonal fruit.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Fruits connected to Farmhouse are scored when day ends.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Seasonal fruits are bonus points scored when game ends.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
                     text="All about paths",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You can place paths based on the path cards you draw.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Some cards path cards gives you a strike.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="After 3 strikes, the day ends.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
                     text="All about events",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="Strikes from path cards will trigger events.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Events can either help or ruin your plans.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Each game has 16 event cards: 8 types with 2 of each.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
                     text="All about magic fruits",
-                    font=fonts.minecraftia, size='medium', color=colors.yellow_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.yellow_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="There are 3 magic fruits on the board.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="Collecting a magic fruit will trigger an event assigned to it,",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
                     text="as well as scoring 1 bonus point for that day.",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
             [
                 utils.get_text(
                     text="Controls",
-                    font=fonts.minecraftia, size='medium', color=colors.green_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.green_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="         Action                /                 Draw card                /           Pause menu",
-                    font=fonts.minecraftia, size='small', color=colors.white, long_shadow=False
+                    font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ]
         ]

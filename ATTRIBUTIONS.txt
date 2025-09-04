@@ -4,7 +4,6 @@
 - Gameplay music
     - https://towball.itch.io/towballs-crossing
 - Sound effects
-    - https://filmcow.itch.io/filmcow-sfx (unconfirmed)
     - https://hunteraudio.itch.io/8bit-sfx-and-music-pack
     - https://souptonic.itch.io/souptonic-sfx-pack-1-ui-sounds
     - https://pixabay.com/sound-effects/search/rooster-crow-105568/
@@ -17,6 +16,7 @@
     - https://takwolf.itch.io/retro-pixel-font
     - https://lazy-fox.itch.io/lazy-pixel-fonts
     - https://font.download/font/minecraftia
+    - https://nimblebeastscollective.itch.io/magosfonts
 - Fruit sprites
     - https://ninjikin.itch.io/fruit
 - Menu background

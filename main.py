@@ -7,9 +7,6 @@ from tkinter import messagebox
 
 class Game:
     def __init__(self):
-        # macOS fullscreen fix toggle - set to False to disable if it causes issues
-        self.macos_fullscreen_fix = True
-        
         self.settings_manager = SettingsManager()
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap']
@@ -59,37 +56,26 @@ class Game:
     def apply_settings(self, setting_index):
         self.settings = self.settings_manager.load_all_settings()
         if setting_index == 0:
-            self.music_channel.set_volume(self.settings['music_volume']*1)
+            self.music_channel.set_volume(self.settings['music_volume']*0.75)
         if setting_index == 1:
             self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 2:
             self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
-        if setting_index == 3:
-            pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
-            
-            # Store current display mode for comparison
-            was_fullscreen = (pygame.display.get_surface().get_flags() & pygame.FULLSCREEN) != 0
-            
+        if setting_index == 3:          
+            pygame.display.quit()
+            pygame.display.init()
+            pygame.display.set_caption(self.title)
             if self.settings['fullscreen']:
                 self.screen_width = self.display_info.current_w
                 self.screen_height = self.display_info.current_h
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                        flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+                                                      flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
             else:
-                # On macOS, when switching from fullscreen to windowed, we need to 
-                # reinitialize the display to avoid window sizing issues
-                if was_fullscreen and sys.platform == "darwin" and self.macos_fullscreen_fix:
-                    pygame.display.quit()
-                    pygame.display.init()
-                    pygame.display.set_caption(self.title)
-                    pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
-                
                 self.screen_width = constants.window_width
                 self.screen_height = constants.window_height
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                    flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
-            
-            pygame.mouse.set_pos((self.screen_width/2, self.screen_height/2))
+                                                      flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+            pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
         if setting_index == 4:
             self.fps_cap = self.settings['fps_cap'] + 1
 

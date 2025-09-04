@@ -54,7 +54,7 @@ class MenuState(BaseState):
         self.surface_logo = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
 
-        self.team_namsom_logo = utils.get_image(dir=dir.graphics, name='team_namsom_logo.png', mode='colorkey')
+        self.team_namsom_logo = utils.get_image(dir=dir.branding, name='team_namsom_logo.png', mode='colorkey')
         self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=5)
         utils.blit(
             dest=self.surface_logo,
@@ -63,7 +63,7 @@ class MenuState(BaseState):
             pos_anchor=posanchors.midright,
         )
 
-        self.my_logo = utils.get_image(dir=dir.graphics, name='ttewtor_logo.png', mode='colorkey')
+        self.my_logo = utils.get_image(dir=dir.branding, name='ttewtor_logo.png', mode='colorkey')
         self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
         utils.blit(
             dest=self.surface_logo,
@@ -131,7 +131,7 @@ class MenuState(BaseState):
         self.menu_bg_pixel_size = 2
 
         # Load game logo
-        self.game_logo = utils.get_image(dir=dir.graphics, name='game_logo.png', mode='colorkey')
+        self.game_logo = utils.get_image(dir=dir.branding, name='game_logo.png', mode='colorkey')
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=4)
         self.game_logo_props = {'scale': 0.5, 'alpha': 0}
 

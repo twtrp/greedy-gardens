@@ -16,9 +16,9 @@ yellow_light = (246, 238, 123)
 yellow_medium = (228, 206, 114) 
 yellow_dark = (187, 180, 93)
 
-orange_light = (255, 190, 112)
-orange_medium = (226, 169, 99)
-orange_dark = (197, 147, 87)
+orange_light  = (255, 183,  64)
+orange_medium = (245, 166,  35) 
+orange_dark   = (187, 134,  47)
 
 purple_light = (177, 152, 225)
 purple_medium = (143, 121, 195)
@@ -27,3 +27,5 @@ purple_dark = (122, 103, 160)
 red_light = (255, 114, 118)
 
 blue_light = (128, 179, 255)
+
+namsom_color = (253, 83, 1)
