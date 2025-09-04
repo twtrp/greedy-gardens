@@ -160,10 +160,7 @@ class MenuState(BaseState):
         ]
         self.title_button_option_surface_list = []
         for option in self.title_button_option_list:
-            if option['id'] == 'quit':
-                text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.mono_175)
-            else:
-                text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
+            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
             self.title_button_option_surface_list.append({
                 'id': option['id'],
                 'surface': text,

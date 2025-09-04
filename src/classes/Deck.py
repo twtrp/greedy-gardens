@@ -13,9 +13,15 @@ class Deck:
         self.build_deck()
         random.shuffle(self.cards)
 
+        self.developer_mode = True
+
         # # comment if want to test card or deck
         if self.deck_type == 'path':
             self.organize_deck()
+
+    def add_card_to_top(self, card_name, is_strike=False):
+        """Add a card to the top of the deck (for developer mode)"""
+        self.cards.append(Cards(self.deck_type, card_name, is_strike))
 
     def draw_card(self):
         if self.cards:
@@ -72,18 +78,18 @@ class Deck:
             #     name.append('path_NWE') # Should always have a non-strike card or it will freeze
 
         elif self.deck_type == 'event':
-            for i in range(2):
-                name.append('event_free')
-                name.append('event_move')
-                name.append('event_merge')
-                name.append('event_point')
-                name.append('event_redraw')
-                name.append('event_remove')
-                name.append('event_reveal')
-                name.append('event_swap')
-        # For Testing events
-            # for i in range(16):
+            # for i in range(2):
+            #     name.append('event_free')
+            #     name.append('event_move')
+            #     name.append('event_merge')
+            #     name.append('event_point')
             #     name.append('event_redraw')
+            #     name.append('event_remove')
+            #     name.append('event_reveal')
+            #     name.append('event_swap')
+        # For Testing events
+            for i in range(16):
+                name.append('event_reveal')
 
 
 

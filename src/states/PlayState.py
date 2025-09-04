@@ -119,6 +119,14 @@ class PlayState(BaseState):
         self.is_striking = False
         self.current_turn = 0
 
+        # Developer mode
+        self.developer_mode = True  # Set to True to enable, False to disable
+        
+        # Developer mode alert system
+        self.dev_alert_text = ""
+        self.dev_alert_timer = 0.0
+        self.dev_alert_duration = 2.0  # Show alert for 2 seconds
+
         self.load_assets()
 
         self.tween_list = []
@@ -1269,6 +1277,10 @@ class PlayState(BaseState):
                                 else:
                                     utils.sound_play(sound=sfx.pause, volume=self.game.sfx_volume)
                                 self.paused = not self.paused
+                            
+                            # Developer mode controls
+                            elif self.developer_mode:
+                                self._handle_developer_keys(event)
                         elif event.type == pygame.MOUSEBUTTONDOWN and not self.in_tutorial:
                             if event.button == 2:
                                 if self.paused:
@@ -1289,6 +1301,10 @@ class PlayState(BaseState):
                 self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
                 self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
                 self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
+                
+                # Update developer mode alert
+                if self.dev_alert_timer > 0:
+                    self.dev_alert_timer -= dt
                 
                 # Check for deck count changes and trigger animations
                 current_deck_counts = [self.fruit_deck_remaining, self.path_deck_remaining, self.event_deck_remaining]
@@ -2195,9 +2211,10 @@ class PlayState(BaseState):
                     utils.blit(dest=canvas, source=self.path_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 74), pos_anchor='center')
                 
                 if len(self.revealed_event) > 0:
+                    box_height = len(self.revealed_event) * 58 + 8
                     utils.draw_rect(
                         dest=canvas,
-                        size=(60, len(self.revealed_event)*60),
+                        size=(60, box_height),
                         pos=(constants.canvas_width - self.box_width + 4, 0),
                         pos_anchor='topright',
                         color=(*colors.white, 150),
@@ -2494,6 +2511,32 @@ class PlayState(BaseState):
             )
             self.pixelated_mask_surface = utils.effect_pixelate(surface=self.mask_surface, pixel_size=4)
             utils.blit(dest=canvas, source=self.pixelated_mask_surface)
+        
+        # Render developer mode alert
+        if self.developer_mode and self.dev_alert_timer > 0:
+            # Simple debug-style text
+            alert_text_surface = utils.get_text(
+                text=self.dev_alert_text,
+                font=fonts.lf2,
+                size='small',
+                color=colors.white,
+                long_shadow=False,
+                outline=False
+            )
+            
+            # Simple black background rectangle
+            text_width = alert_text_surface.get_width()
+            text_height = alert_text_surface.get_height()
+            bg_rect = pygame.Rect(0, 0, text_width + 20, text_height + 10)
+            bg_rect.center = (constants.canvas_width // 2, 50)  # Top of screen
+            
+            # Draw simple black background
+            pygame.draw.rect(canvas, colors.black, bg_rect)
+            
+            # Draw text
+            text_rect = alert_text_surface.get_rect()
+            text_rect.center = bg_rect.center
+            canvas.blit(alert_text_surface, text_rect)
                 
 
     def random_dirt(self):
@@ -2562,7 +2605,7 @@ class PlayState(BaseState):
     
     def animate_score(self, score_index):
         """Animate a score number with a scale-up then scale-down effect."""
-        self.score_scales[score_index] = 1.4
+        self.score_scales[score_index] = 1.5
         self.tween_list.append(tween.to(
             container=self.score_scales,
             key=score_index,
@@ -2580,7 +2623,7 @@ class PlayState(BaseState):
     
     def animate_deck_count(self, deck_index):
         """Animate a deck count number with a scale-up then scale-down effect."""
-        self.deck_scales[deck_index] = 1.35
+        self.deck_scales[deck_index] = 1.5
         self.tween_list.append(tween.to(
             container=self.deck_scales,
             key=deck_index,
@@ -2649,7 +2692,7 @@ class PlayState(BaseState):
     
     def animate_current_task_card(self):
         """Animate current task card with a scale-up then scale-down effect."""
-        self.current_task_card_scale = 1.1
+        self.current_task_card_scale = 1.15
         self.tween_list.append(tween.to(
             container=self,
             key='current_task_card_scale',
@@ -2682,6 +2725,92 @@ class PlayState(BaseState):
         self.previous_day3_fruit = self.day3_fruit
         self.previous_day4_fruit = self.day4_fruit
         self.previous_seasonal_fruit = self.seasonal_fruit
+
+    def show_dev_alert(self, text):
+        """Show developer mode alert with the given text"""
+        self.dev_alert_text = text
+        self.dev_alert_timer = self.dev_alert_duration
+
+    def _handle_developer_keys(self, event):
+        """Handle developer mode key presses"""
+        mods = pygame.key.get_pressed()
+        shift_pressed = mods[pygame.K_LSHIFT] or mods[pygame.K_RSHIFT]
+        
+        # Event cards - letters
+        if event.key == pygame.K_f:  # Free
+            self.deck_event.add_card_to_top('event_free')
+            self.show_dev_alert("Added: Event Free")
+        elif event.key == pygame.K_m:  # Merge
+            self.deck_event.add_card_to_top('event_merge')
+            self.show_dev_alert("Added: Event Merge")
+        elif event.key == pygame.K_o:  # Move (O for mOve)
+            self.deck_event.add_card_to_top('event_move')
+            self.show_dev_alert("Added: Event Move")
+        elif event.key == pygame.K_p:  # Point
+            self.deck_event.add_card_to_top('event_point')
+            self.show_dev_alert("Added: Event Point")
+        elif event.key == pygame.K_r:  # Redraw
+            self.deck_event.add_card_to_top('event_redraw')
+            self.show_dev_alert("Added: Event Redraw")
+        elif event.key == pygame.K_d:  # Delete (remove)
+            self.deck_event.add_card_to_top('event_remove')
+            self.show_dev_alert("Added: Event Remove")
+        elif event.key == pygame.K_v:  # Reveal
+            self.deck_event.add_card_to_top('event_reveal')
+            self.show_dev_alert("Added: Event Reveal")
+        elif event.key == pygame.K_s:  # Swap
+            self.deck_event.add_card_to_top('event_swap')
+            self.show_dev_alert("Added: Event Swap")
+        
+        # Path cards - numbers
+        elif event.key == pygame.K_1:  # WS
+            card_name = 'path_strike_WS' if shift_pressed else 'path_WS'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}WS")
+        elif event.key == pygame.K_2:  # ES
+            card_name = 'path_strike_ES' if shift_pressed else 'path_ES'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}ES")
+        elif event.key == pygame.K_3:  # WE
+            card_name = 'path_strike_WE' if shift_pressed else 'path_WE'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}WE")
+        elif event.key == pygame.K_4:  # NS
+            card_name = 'path_strike_NS' if shift_pressed else 'path_NS'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NS")
+        elif event.key == pygame.K_5:  # NW
+            card_name = 'path_strike_NW' if shift_pressed else 'path_NW'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NW")
+        elif event.key == pygame.K_6:  # NE
+            card_name = 'path_strike_NE' if shift_pressed else 'path_NE'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NE")
+        elif event.key == pygame.K_7:  # WES
+            card_name = 'path_strike_WES' if shift_pressed else 'path_WES'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}WES")
+        elif event.key == pygame.K_8:  # NWS
+            card_name = 'path_strike_NWS' if shift_pressed else 'path_NWS'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NWS")
+        elif event.key == pygame.K_9:  # NES
+            card_name = 'path_strike_NES' if shift_pressed else 'path_NES'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NES")
+        elif event.key == pygame.K_0:  # NWE
+            card_name = 'path_strike_NWE' if shift_pressed else 'path_NWE'
+            self.deck_path.add_card_to_top(card_name, shift_pressed)
+            self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NWE")
+        
+        # Strike removal - Backspace
+        elif event.key == pygame.K_BACKSPACE:
+            if self.strikes > 0:
+                self.strikes -= 1
+                self.show_dev_alert(f"Strike Removed! ({self.strikes}/3)")
+            else:
+                self.show_dev_alert("No strikes to remove")
     
     def animate_day_fruit(self, fruit_index):
         """Animate a specific day fruit with a scale-up then scale-down effect."""

@@ -26,3 +26,4 @@ purple_dark = (122, 103, 160)
 
 red_light = (255, 114, 118)
 
+blue_light = (128, 179, 255)
