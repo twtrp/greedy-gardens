@@ -14,15 +14,17 @@ class Menu_CreditsState(BaseState):
         self.mouse_scroll_amount = 100  # pixels per mouse scroll input
         self.manual_scroll = False
         self.manual_scroll_timer = 0  # Timer to resume auto-scroll
-        self.auto_scroll_delay = 1.0  # Resume auto-scroll after seconds
+        self.auto_scroll_delay = 1.0  # Resume auto-scroll after seconds (manual scroll cooldown)
         self.auto_scroll_start_delay = 1.0  # Wait seconds before starting auto-scroll
-        self.auto_scroll_start_timer = 0  # Timer for initial delay
+        self.auto_scroll_start_timer = 0  # Timer for initial delay & post-click delay
         self.auto_scroll_started = False  # Track if auto-scroll has started
         self.total_height = 0
 
-        # NEW: hold-to-pause state
+        # Hold/drag state
         self.hold_pause = False
-        
+        self.drag_active = False
+        self.drag_last_y = 0
+
         # Link handling
         self.clickable_links = []  # Store clickable link areas
         self.hovered_link = None
@@ -67,52 +69,96 @@ class Menu_CreditsState(BaseState):
                 elif event.key == pygame.K_UP:
                     self.manual_scroll = True
                     self.manual_scroll_timer = 0  # Reset timer
-                    self.auto_scroll_start_timer = 0  # Reset start delay
+                    # Also push back auto-scroll start
+                    self.auto_scroll_started = False
+                    self.auto_scroll_start_timer = 0
                     self.scroll_y -= 100
                 elif event.key == pygame.K_DOWN:
                     self.manual_scroll = True
                     self.manual_scroll_timer = 0  # Reset timer
-                    self.auto_scroll_start_timer = 0  # Reset start delay
+                    # Also push back auto-scroll start
+                    self.auto_scroll_started = False
+                    self.auto_scroll_start_timer = 0
                     self.scroll_y += 100
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left click
                     if self.hovered_link:
                         utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                         webbrowser.open(self.hovered_link['url'])
-                        # Note: we intentionally do NOT set hold_pause when clicking a link.
+                        # Note: we intentionally do NOT set hold_pause/drag when clicking a link.
                     else:
-                        # NEW: holding LMB on empty area pauses auto-scroll
+                        # Hold to pause AND drag-to-scroll
                         self.hold_pause = True
+                        self.drag_active = True
+                        self.drag_last_y = event.pos[1]
+                        # Apply "start delay" semantics to left-click, so auto-scroll
+                        # waits self.auto_scroll_start_delay after the click/drag ends.
+                        self.auto_scroll_started = False
+                        self.auto_scroll_start_timer = 0
+                        # We don't want the manual cooldown here; touch-like interactions
+                        # should rely on start delay instead of manual delay.
+                        self.manual_scroll = False
+                        self.manual_scroll_timer = 0
+
                 elif event.button == 2:  # Middle mouse
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
+
                 elif event.button == 4:  # Scroll up
                     self.manual_scroll = True
                     self.manual_scroll_timer = 0  # Reset timer
-                    self.auto_scroll_start_timer = 0  # Reset start delay
+                    self.auto_scroll_started = False
+                    self.auto_scroll_start_timer = 0  # Reset start delay as well
                     self.scroll_y -= self.mouse_scroll_amount
+
                 elif event.button == 5:  # Scroll down
                     self.manual_scroll = True
                     self.manual_scroll_timer = 0  # Reset timer
-                    self.auto_scroll_start_timer = 0  # Reset start delay
+                    self.auto_scroll_started = False
+                    self.auto_scroll_start_timer = 0  # Reset start delay as well
                     self.scroll_y += self.mouse_scroll_amount
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
-                    # NEW: release the hold-to-pause
+                    # Release the hold-to-pause / drag
                     self.hold_pause = False
+                    self.drag_active = False
+                    # After releasing LMB, restart the "start delay" timer so auto-scroll resumes after delay
+                    self.auto_scroll_started = False
+                    self.auto_scroll_start_timer = 0
+                    # Ensure manual cooldown doesn't interfere; we want start-delay behavior
+                    self.manual_scroll = False
+                    self.manual_scroll_timer = 0
 
-        # Handle manual scroll timer
+            elif event.type == pygame.MOUSEMOTION:
+                # Drag-to-scroll (like touch): while holding LMB on empty area
+                if self.drag_active and self.hold_pause and not self.hovered_link:
+                    # Move opposite of mouse delta so dragging up scrolls down (touch-like)
+                    dy = event.pos[1] - self.drag_last_y
+                    self.drag_last_y = event.pos[1]
+                    self.scroll_y -= dy  # invert for natural touch feel
+                    # Keep auto-scroll off until the start delay elapses after release
+                    self.auto_scroll_started = False
+                    self.auto_scroll_start_timer = 0
+                    # Make sure manual cooldown isn't running
+                    self.manual_scroll = False
+                    self.manual_scroll_timer = 0
+
+        # Handle manual scroll timer (used for wheel/keys only)
         if self.manual_scroll:
             self.manual_scroll_timer += dt
             if self.manual_scroll_timer >= self.auto_scroll_delay:
                 self.manual_scroll = False
                 self.manual_scroll_timer = 0
 
-        # Handle initial auto-scroll delay
-        if not self.auto_scroll_started and not self.manual_scroll:
-            self.auto_scroll_start_timer += dt
-            if self.auto_scroll_start_timer >= self.auto_scroll_start_delay:
-                self.auto_scroll_started = True
+        # Handle initial auto-scroll delay and left-click/drag post-delay
+        # Only count if we're not in manual scroll mode and not currently holding
+        if not self.manual_scroll and not self.hold_pause:
+            if not self.auto_scroll_started:
+                self.auto_scroll_start_timer += dt
+                if self.auto_scroll_start_timer >= self.auto_scroll_start_delay:
+                    self.auto_scroll_started = True
 
         # Auto-scroll if not manually controlled, not paused by hold, and delay has passed
         if not self.manual_scroll and not self.hold_pause and self.auto_scroll_started:
@@ -149,8 +195,8 @@ class Menu_CreditsState(BaseState):
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
 
-        # NEW: cursor hint while holding to pause (avoid overriding link-hand cursor)
-        if self.hold_pause and not self.hovered_link:
+        # Cursor hint while holding to pause/drag (avoid overriding link-hand cursor)
+        if (self.hold_pause or self.drag_active) and not self.hovered_link:
             self.cursor = cursors.normal
 
         utils.set_cursor(cursor=self.cursor)
