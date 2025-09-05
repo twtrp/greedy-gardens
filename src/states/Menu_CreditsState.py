@@ -651,7 +651,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': [
-                        ['Lazy Fox -', 'LazyFox pixel font', '<itch.io>'],
+                        ['Lazy Fox -', 'LazyFox pixel font library', '<itch.io>'],
                         ['Nimble Beasts - Mago pixel font', '<itch.io>'],
                         ['Andrew Tyler - Minecraftia', '<font.download>'],
                     ],
@@ -1185,11 +1185,12 @@ class Menu_CreditsState(BaseState):
         if self.credits_surface:
             # Simply blit the pre-rendered surface with scroll offset
             source_rect = pygame.Rect(0, int(self.scroll_y), constants.canvas_width, constants.canvas_height - 106)
-            dest_pos = (23, 23)  # Match the clipping area
+            dest_pos = (0, 23)  # Match the clipping area
             
             # Only blit if there's content to show
             if source_rect.y < self.credits_surface_height:
                 canvas.blit(self.credits_surface, dest_pos, source_rect)
+            
 
     def _render_back_button(self, canvas):
         """Render the back button"""
