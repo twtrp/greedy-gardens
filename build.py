@@ -167,7 +167,7 @@ def build_windows_linux(version: str) -> tuple[str, Path] | tuple[None, None]:
 def build_macos_app(version: str) -> tuple[str, Path] | tuple[None, None]:
     exe_name = f"PlayGreedyGardens-v{version}"
     icon = choose_icon_for_platform(version)
-    cmd = ["pyinstaller", "--onefile", "--windowed", "--name", exe_name, "main.py"]
+    cmd = ["pyinstaller", "--name", exe_name, "--noconsole", "--onedir", "--add-data", "assets:assets", "main.py"]
     if icon:
         cmd.extend(["--icon", str(icon)])
 
