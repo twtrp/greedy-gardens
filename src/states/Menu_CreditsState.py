@@ -14,11 +14,14 @@ class Menu_CreditsState(BaseState):
         self.mouse_scroll_amount = 100  # pixels per mouse scroll input
         self.manual_scroll = False
         self.manual_scroll_timer = 0  # Timer to resume auto-scroll
-        self.auto_scroll_delay = 1.25  # Resume auto-scroll after seconds
+        self.auto_scroll_delay = 1.0  # Resume auto-scroll after seconds
         self.auto_scroll_start_delay = 1.0  # Wait seconds before starting auto-scroll
         self.auto_scroll_start_timer = 0  # Timer for initial delay
         self.auto_scroll_started = False  # Track if auto-scroll has started
         self.total_height = 0
+
+        # NEW: hold-to-pause state
+        self.hold_pause = False
         
         # Link handling
         self.clickable_links = []  # Store clickable link areas
@@ -76,6 +79,10 @@ class Menu_CreditsState(BaseState):
                     if self.hovered_link:
                         utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                         webbrowser.open(self.hovered_link['url'])
+                        # Note: we intentionally do NOT set hold_pause when clicking a link.
+                    else:
+                        # NEW: holding LMB on empty area pauses auto-scroll
+                        self.hold_pause = True
                 elif event.button == 2:  # Middle mouse
                     utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                     self.exit_state()
@@ -89,6 +96,10 @@ class Menu_CreditsState(BaseState):
                     self.manual_scroll_timer = 0  # Reset timer
                     self.auto_scroll_start_timer = 0  # Reset start delay
                     self.scroll_y += self.mouse_scroll_amount
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    # NEW: release the hold-to-pause
+                    self.hold_pause = False
 
         # Handle manual scroll timer
         if self.manual_scroll:
@@ -103,8 +114,8 @@ class Menu_CreditsState(BaseState):
             if self.auto_scroll_start_timer >= self.auto_scroll_start_delay:
                 self.auto_scroll_started = True
 
-        # Auto-scroll if not manually controlled and delay has passed
-        if not self.manual_scroll and self.auto_scroll_started:
+        # Auto-scroll if not manually controlled, not paused by hold, and delay has passed
+        if not self.manual_scroll and not self.hold_pause and self.auto_scroll_started:
             # Calculate max scroll position using actual viewable area height
             viewable_height = constants.canvas_height - 106  # Match clipping area
             max_scroll_y = self.total_height - viewable_height + 50
@@ -137,6 +148,10 @@ class Menu_CreditsState(BaseState):
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+
+        # NEW: cursor hint while holding to pause (avoid overriding link-hand cursor)
+        if self.hold_pause and not self.hovered_link:
+            self.cursor = cursors.normal
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.scroll
@@ -186,7 +201,7 @@ class Menu_CreditsState(BaseState):
         self.bts_paper = utils.get_image(dir=dir.bts, name='paper.png')
         self.bts_paper = utils.effect_outline(surface=self.bts_paper, color=colors.mono_35, distance=3)
 
-        self.bts_figma_paper = utils.get_image(dir=dir.bts, name='figma_paper.jpg')
+        self.bts_figma_paper = utils.get_image(dir=dir.bts, name='figma_paper.png')
         self.bts_figma_paper = utils.effect_outline(surface=self.bts_figma_paper, color=colors.mono_35, distance=3)
 
         self.bts_figma_game = utils.get_image(dir=dir.bts, name='figma_game.png')
@@ -202,7 +217,7 @@ class Menu_CreditsState(BaseState):
                     'size': 'huge',
                     'padding': 0
                 },
-                'padding_top': 220,
+                'padding_top': 210,
                 'padding_bottom': 50
             },
             {
@@ -211,7 +226,7 @@ class Menu_CreditsState(BaseState):
                     'size': 'large',
                     'padding': 0
                 },
-                'padding_bottom': 60
+                'padding_bottom': 65
             },
             {
                 'image': self.my_logo,
@@ -226,13 +241,13 @@ class Menu_CreditsState(BaseState):
                     'link': ['https://ttewtor.short.gy/itchio', 'https://ttewtor.short.gy/linktree']
                 },
                 'inline': True,
-                'padding_bottom': 390,
+                'padding_bottom': 340,
             },
 
 
             {
                 'image': self.bts_paper,
-                'padding_bottom': -255
+                'padding_bottom': -210
             },
             {
                 'texts': {
@@ -321,13 +336,13 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 350
+                'padding_bottom': 300
             },
 
 
             {
                 'image': self.bts_figma_paper,
-                'padding_bottom': -255
+                'padding_bottom': -215
             },
             {
                 'texts': {
@@ -474,7 +489,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                     'text': ['Game UI Design in Figma'],
+                     'text': ['Art and UI Design in Figma'],
                     'size': 'tiny',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -486,7 +501,7 @@ class Menu_CreditsState(BaseState):
 
             {
                 'texts': {
-                    'text': ['Inspired by'],
+                    'text': ['Gameplay Inspired by'],
                     'size': 'medium',
                     'color': colors.white,
                 },
@@ -506,7 +521,7 @@ class Menu_CreditsState(BaseState):
 
             {
                 'texts': {
-                    'text': ['Attributions'],
+                    'text': ['Assets Attributions'],
                     'size': 'medium',
                     'color': colors.white,
                 },
@@ -785,7 +800,7 @@ class Menu_CreditsState(BaseState):
                     ],
                     'padding': 20
                 },
-                'padding_bottom': 310
+                'padding_bottom': 300
             },
 
             {
@@ -840,7 +855,7 @@ class Menu_CreditsState(BaseState):
                         # Additional padding between lines (but not after the last line)
                         if len(text_array) > 1:
                             total += (len(text_array) - 1) * text_padding
-                
+                                
                 total += section.get('padding_bottom', 0)
                     
             elif 'image' in section:

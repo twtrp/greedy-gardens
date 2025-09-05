@@ -43,10 +43,10 @@ class SettingsManager():
             {
                 'id': 'fps_cap',
                 'label': 'Framerate',
-                'value': [30, 999],
-                'value_label': ['30', 'uncapped'],
-                'value_default': 30,
-                'value_default_label': '30',
+                'value': [60, 999],
+                'value_label': ['60', 'uncapped'],
+                'value_default': 60,
+                'value_default_label': '60',
                 'value_default_index': 0,
             },
             {
@@ -63,12 +63,24 @@ class SettingsManager():
 
     def load_all_settings_index(self):
         self.current_settings_index = []
+        settings_corrected = False
+        
         with open(self.settings_file, 'r') as fp:
             for line in fp.readlines():
                 key, value = line.strip().split('=')
                 for i in range(len(self.settings_list)):
                     if self.settings_list[i]['id'] == key:
-                        self.current_settings_index.append(self.settings_list[i]['value'].index(float(value)))
+                        try:
+                            self.current_settings_index.append(self.settings_list[i]['value'].index(float(value)))
+                        except ValueError:
+                            # Value not found in list, reset to default (index 0)
+                            print(f"Warning: Invalid setting value {value} for {key}, resetting to default")
+                            self.current_settings_index.append(0)
+                            settings_corrected = True
+        
+        # If any settings were corrected, save the corrected values back to file
+        if settings_corrected:
+            self.save_setting(self.current_settings_index)
 
         return self.current_settings_index
 
@@ -88,10 +100,39 @@ class SettingsManager():
                     self.current_settings[setting['id']] = setting['value_default']
 
         else:
-            with open(self.settings_file, 'r+') as fp:
+            settings_corrected = False
+            with open(self.settings_file, 'r') as fp:
                 for line in fp.readlines():
                     key, value = line.strip().split('=')
-                    self.current_settings[key] = float(value)
+                    float_value = float(value)
+                    
+                    # Validate that this value exists in the corresponding setting's value list
+                    setting_found = False
+                    for setting in self.settings_list:
+                        if setting['id'] == key:
+                            if float_value in setting['value']:
+                                self.current_settings[key] = float_value
+                            else:
+                                # Invalid value, reset to default
+                                print(f"Warning: Invalid setting value {float_value} for {key}, resetting to default")
+                                self.current_settings[key] = setting['value_default']
+                                settings_corrected = True
+                            setting_found = True
+                            break
+                    
+                    # If setting ID not found in settings_list, ignore it
+                    if not setting_found:
+                        print(f"Warning: Unknown setting {key}, ignoring")
+            
+            # If any settings were corrected, save them back to file
+            if settings_corrected:
+                with open(self.settings_file, 'w') as fp:
+                    for setting in self.settings_list:
+                        if setting['id'] in self.current_settings:
+                            fp.write(f'{setting['id']}={self.current_settings[setting['id']]}\n')
+                        else:
+                            fp.write(f'{setting['id']}={setting['value_default']}\n')
+                            self.current_settings[setting['id']] = setting['value_default']
 
         return self.current_settings
     
