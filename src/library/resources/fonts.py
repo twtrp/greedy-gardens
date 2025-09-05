@@ -15,7 +15,7 @@ lf7 = {
     'sizes': {
         'tiny': 18,
         'small': 24,
-        'medium': 36,
+        'medium': 32,
         'large': 48,
     },
     'pixel_size_divisor': 8

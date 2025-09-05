@@ -24,6 +24,11 @@ class Menu_CreditsState(BaseState):
         self.clickable_links = []  # Store clickable link areas
         self.hovered_link = None
         
+        # Pre-rendered surface for maximum performance
+        self.credits_surface = None  # Will hold the entire credits as one surface
+        self.credits_surface_height = 0
+        self.static_links = []  # Store link positions relative to the surface
+        
         self.load_assets()
 
 
@@ -34,8 +39,19 @@ class Menu_CreditsState(BaseState):
         self.hovered_link = None
         
         # Check for link hovers and clicks
-        for link in self.clickable_links:
-            if link['rect'].collidepoint(mouse_pos):
+        self.hovered_link = None
+        for link in self.static_links:
+            # Adjust link position based on scroll and clipping area
+            adjusted_rect = pygame.Rect(
+                link['rect'].x + 23,  # Account for clipping area offset
+                link['rect'].y + 23 - int(self.scroll_y),  # Account for scroll and clipping
+                link['rect'].width,
+                link['rect'].height
+            )
+            
+            # Check if the link is within the visible clipping area
+            clip_area = pygame.Rect(23, 23, constants.canvas_width - 46, constants.canvas_height - 106)
+            if clip_area.colliderect(adjusted_rect) and adjusted_rect.collidepoint(mouse_pos):
                 self.hovered_link = link
                 self.cursor = cursors.hand
                 break
@@ -89,8 +105,9 @@ class Menu_CreditsState(BaseState):
 
         # Auto-scroll if not manually controlled and delay has passed
         if not self.manual_scroll and self.auto_scroll_started:
-            # Calculate max scroll position
-            max_scroll_y = self.total_height - constants.canvas_height + 150
+            # Calculate max scroll position using actual viewable area height
+            viewable_height = constants.canvas_height - 106  # Match clipping area
+            max_scroll_y = self.total_height - viewable_height + 50
             
             # Only auto-scroll if we haven't reached the bottom
             if self.scroll_y < max_scroll_y:
@@ -100,7 +117,8 @@ class Menu_CreditsState(BaseState):
         # Top limit: don't scroll above the visible area
         min_scroll_y = 0  # Start position for credits
         # Bottom limit: don't scroll beyond all content being visible
-        max_scroll_y = self.total_height - constants.canvas_height + 150  # Small buffer after content ends
+        viewable_height = constants.canvas_height - 106  # Match clipping area
+        max_scroll_y = self.total_height - viewable_height + 50  # Small buffer after content ends
         
         self.scroll_y = max(min(self.scroll_y, max_scroll_y), min_scroll_y)
 
@@ -165,25 +183,35 @@ class Menu_CreditsState(BaseState):
         self.pygame_ce_logo = utils.get_image(dir=dir.branding, name='pygame_ce_logo.png', mode='colorkey')
         self.pygame_ce_logo = pygame.transform.smoothscale_by(surface=self.pygame_ce_logo, factor=0.15)
 
+        self.bts_paper = utils.get_image(dir=dir.bts, name='paper.png')
+        self.bts_paper = utils.effect_outline(surface=self.bts_paper, color=colors.mono_35, distance=3)
+
+        self.bts_figma_paper = utils.get_image(dir=dir.bts, name='figma_paper.jpg')
+        self.bts_figma_paper = utils.effect_outline(surface=self.bts_figma_paper, color=colors.mono_35, distance=3)
+
+        self.bts_figma_game = utils.get_image(dir=dir.bts, name='figma_game.png')
+        self.bts_figma_game = utils.effect_outline(surface=self.bts_figma_game, color=colors.mono_35, distance=3)
+        
+
     def _setup_credits_content(self):
         """Setup the credits sections - edit this to modify credits content"""
         self.credits_sections = [
             {
                 'texts': {
                     'text': ['Greedy Gardens'],
-                    'size': 'large',
+                    'size': 'huge',
                     'padding': 0
                 },
-                'padding_top': 250,
-                'padding_bottom': 30
+                'padding_top': 220,
+                'padding_bottom': 50
             },
             {
                 'texts': {
                     'text': ['a game by'],
-                    'size': 'medium',
+                    'size': 'large',
                     'padding': 0
                 },
-                'padding_bottom': 55
+                'padding_bottom': 60
             },
             {
                 'image': self.my_logo,
@@ -191,24 +219,30 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['<itch.io>'],
+                    'text': ['<itch.io>', '<Linktree>'],
                     'size': 'small',
                     'font': fonts.mago1,
                     'long_shadow': False,
-                    'link': 'https://ttewtor.short.gy/itchio'
+                    'link': ['https://ttewtor.short.gy/itchio', 'https://ttewtor.short.gy/linktree']
                 },
-                'next_line': False,
-                'padding_right': 10,
+                'inline': True,
+                'padding_bottom': 390,
+            },
+
+
+            {
+                'image': self.bts_paper,
+                'padding_bottom': -255
             },
             {
                 'texts': {
-                    'text': ['<Linktree>'],
-                    'size': 'small',
+                    'text': ['Paper Prototype'],
+                    'size': 'tiny',
+                    'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
-                    'link': 'https://ttewtor.short.gy/linktree'
                 },
-                'padding_bottom': 150,
+                'padding_bottom': 90
             },
 
 
@@ -287,21 +321,23 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 105
+                'padding_bottom': 350
             },
 
 
+            {
+                'image': self.bts_figma_paper,
+                'padding_bottom': -255
+            },
             {
                 'texts': {
-                    'text': ['Made with'],
-                    'size': 'medium',
+                     'text': ['Paper Prototype Printouts in Figma'],
+                    'size': 'tiny',
                     'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
                 },
-                'padding_bottom': 60
-            },
-            {
-                'image': self.pygame_ce_logo,
-                'padding_bottom': 50
+                'padding_bottom': 90
             },
 
 
@@ -325,7 +361,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['promptnut - #1 player'],
+                    'text': ['promptnut #1 player'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -366,23 +402,14 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Ranviee'],
+                    'text': ['Ranviee', '<GitHub>'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
                 },
-                'next_line': False,
-                'padding_right': 10
-            },
-            {
-                'texts': {
-                    'text': ['<GitHub>'],
-                    'size': 'small',
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                    'link': 'https://ttewtor.short.gy/ranvieegithub'
-                },
+                'inline': True,
                 'padding_bottom': 40
             },
             {
@@ -423,6 +450,56 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
+                'padding_bottom': 95
+            },
+
+
+            {
+                'texts': {
+                    'text': ['Made with'],
+                    'size': 'medium',
+                    'color': colors.white,
+                },
+                'padding_bottom': 60
+            },
+            {
+                'image': self.pygame_ce_logo,
+                'padding_bottom': 270
+            },
+
+
+            {
+                'image': self.bts_figma_game,
+                'padding_bottom': -235
+            },
+            {
+                'texts': {
+                     'text': ['Game UI Design in Figma'],
+                    'size': 'tiny',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 90
+            },
+
+
+            {
+                'texts': {
+                    'text': ['Inspired by'],
+                    'size': 'medium',
+                    'color': colors.white,
+                },
+                'padding_bottom': 40
+            },
+            {
+                'texts': {
+                    'text': ['Aporta Game\'s Avenue Board Game'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
                 'padding_bottom': 105
             },
 
@@ -435,6 +512,7 @@ class Menu_CreditsState(BaseState):
                 },
                 'padding_bottom': 50
             },
+
             {
                 'texts': {
                     'text': ['Main Menu Song'],
@@ -447,25 +525,17 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['RoccoW - Why Did the Crow Cross the Road?'],
+                    'text': ['RoccoW - Why Did the Crow Cross the Road?', '<SoundCloud>'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'link': [None, 'https://soundcloud.com/roccow/why-did-the-crow-cross-the-road']
                 },
-                'next_line': False,
-                'padding_right': 10
-            },
-            {
-                'texts': {
-                    'text': ['<SoundCloud>'],
-                    'size': 'small',
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                    'link': 'https://soundcloud.com/roccow/why-did-the-crow-cross-the-road'
-                },
+                'inline': True,
                 'padding_bottom': 40
             },
+
             {
                 'texts': {
                     'text': ['Gameplay Soundtrack'],
@@ -478,25 +548,40 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Towball - Towball\'s Crossing!'],
+                    'text': ['Towball - Towball\'s Crossing!', '<itch.io>'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'link': [None, 'https://towball.itch.io/towballs-crossing']
                 },
-                'next_line': False,
-                'padding_right': 10
+                'inline': True,
+                'padding_bottom': 40
+            },
+
+            {
+                'texts': {
+                    'text': ['Ambience'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
             },
             {
                 'texts': {
-                    'text': ['<itch.io>'],
+                    'text': ['BurghRecords - Forest Ambience', '<YouTube>'],
                     'size': 'small',
+                    'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
-                    'link': 'https://towball.itch.io/towballs-crossing'
+                    'link': [None, 'https://youtu.be/83X26UkmbkM?si=_xANQHf0wvVhEGTz']
                 },
+                'inline': True,
                 'padding_bottom': 40
             },
+
             {
                 'texts': {
                     'text': ['Sound Effects'],
@@ -509,86 +594,254 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Towball - Towball\'s Crossing!'],
+                    'text': [
+                        ['HUNTER AUDIO PRODUCTION - Retro 8bit SFX and Music Pack', '<itch.io>'],
+                        ['SoupTonic - SoupTonic\'s sound SFX Pack 1', '<itch.io>'],
+                        ['freesound community - Rooster crow', '<pixabay>'],
+                        ['freesound community - card mixing', '<pixabay>'],
+                        ['ZapSplat - Wooden stake hit, impact dry dirt, soil 1', '<zapsplat>'],
+                        ['ZapSplat - Wooden stake hit, impact dry dirt, soil 3', '<zapsplat>'],
+                        ['ZapSplat - Wooden stake hit, impact dry dirt, soil 4', '<zapsplat>'],
+                        ['NE Sounds - enter button on a keyboard sound effect', '<YouTube>']
+                    ],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'link': [
+                        [None,'https://hunteraudio.itch.io/8bit-sfx-and-music-pack'],
+                        [None, 'https://souptonic.itch.io/souptonic-sfx-pack-1-ui-sounds'],
+                        [None,'https://pixabay.com/sound-effects/rooster-crow-105568/'],
+                        [None, 'https://pixabay.com/sound-effects/search/card-mixing-48088/'],
+                        [None, 'https://www.zapsplat.com/music/wooden-stake-hit-impact-dry-dirt-soil-1/'],
+                        [None, 'https://www.zapsplat.com/music/wooden-stake-hit-impact-dry-dirt-soil-3/'],
+                        [None, 'https://www.zapsplat.com/music/wooden-stake-hit-impact-dry-dirt-soil-4/'],
+                        [None, 'https://youtu.be/p47fFW2-I0k?si=-LXQlg4GhphGAIhX']
+                    ],
+                    'padding': 15
                 },
-                'next_line': False,
-                'padding_right': 10
+                'padding_bottom': 40
+            },
+
+            {
+                'texts': {
+                    'text': ['Fonts'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
             },
             {
                 'texts': {
-                    'text': ['<itch.io>'],
-                    'size': 'small',
-                    'font': fonts.mago1,
+                    'text': [
+                        ['Lazy Fox -', 'LazyFox pixel font', '<itch.io>'],
+                        ['Nimble Beasts - Mago pixel font', '<itch.io>'],
+                        ['Andrew Tyler - Minecraftia', '<font.download>'],
+                    ],
+                    'size': [
+                        ['medium', 'small', 'medium'],
+                        ['small', 'small'],
+                        ['small', 'small']
+                    ],
+                    'color': colors.white,
+                    'font': [
+                        [fonts.lf7, fonts.lf2, fonts.lf7],
+                        [fonts.mago1, fonts.mago1],
+                        [fonts.minecraftia, fonts.minecraftia],
+                    ],
                     'long_shadow': False,
-                    'link': 'https://towball.itch.io/towballs-crossing'
+                    'link': [
+                        [None, None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
+                        [None, 'https://nimbles.beasts.org/mago'],
+                        [None, 'https://font.download/minecraftia'],
+                    ],
+                    'padding': 20
                 },
                 'padding_bottom': 40
+            },
+
+            {
+                'texts': {
+                    'text': ['Menu Background Art'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': [
+                        ['craftpix.net - Free Summer Pixel Backgrounds', '<itch.io>'],
+                        ['craftpix.net - Nature Landscapes Free Pixel Art', '<itch.io>'],
+                        ['craftpix.net - Free Sky Backgrounds', '<itch.io>'],
+                    ],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'link': [
+                        [None, 'https://free-game-assets.itch.io/free-summer-pixel-art-backgrounds'],
+                        [None, 'https://free-game-assets.itch.io/nature-landscapes-free-pixel-art'],
+                        [None, 'https://free-game-assets.itch.io/free-sky-with-clouds-background-pixel-art-set'],
+                    ],
+                    'padding': 20
+                },
+                'padding_bottom': 40
+            },
+
+            {
+                'texts': {
+                    'text': ['Tileset Sprites'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': [
+                        ['SnowHex - Harvest Summer Forest Pack', '<itch.io>'],
+                        ['almostApixel - SmallBurg Town Pack', '<itch.io>'],
+                        ['danieldiggle - Sunnyside World', '<itch.io>'],
+                        ['Kenmi - Cute Fantasy RPG 16x16', '<itch.io>'],
+                    ],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'link': [
+                        [None, 'https://snowhex.itch.io/harvest-summer-forest-pack'],
+                        [None, 'https://almostapixel.itch.io/smallburg-town-pack'],
+                        [None, 'https://danieldiggle.itch.io/sunnyside'],
+                        [None, 'https://kenmi-art.itch.io/cute-fantasy-rpg']
+                    ],
+                    'padding': 20
+                },
+                'padding_bottom': 40
+            },
+
+            {
+                'texts': {
+                    'text': ['Fruit Sprites'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': [
+                        ['SciGho - Fruit+', '<itch.io>'],
+                    ],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'link': [
+                        [None, 'https://ninjikin.itch.io/fruit'],
+                    ],
+                    'padding': 20
+                },
+                'padding_bottom': 40
+            },
+
+            {
+                'texts': {
+                    'text': ['Miscellaneous Sprites'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': [
+                        ['NYKNCK - Wind Pixel Art', '<itch.io>'],
+                        ['craftpix.net - Free Skill 32x32 Cyberpunk Icons Pixel Art', '<itch.io>'],
+                        ['Crusenho - Complete UI Essential Pack', '<itch.io>'],
+                        ['Dream Mix - Pixel Keyboard Keys for UI', '<itch.io>'],
+                        ['greenpixels - Buttons', '<itch.io>'],
+                    ],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'link': [
+                        [None, 'https://nyknck.itch.io/wind'],
+                        [None, 'https://free-game-assets.itch.io/free-skill-3232-icons-for-cyberpunk-game'],
+                        [None, 'https://crusenho.itch.io/complete-ui-essential-pack'],
+                        [None, 'https://dreammixgames.itch.io/keyboard-keys-for-ui'],
+                        [None, 'https://greenpixels.itch.io/pixel-art-asset-3']
+                    ],
+                    'padding': 20
+                },
+                'padding_bottom': 310
+            },
+
+            {
+                'texts': {
+                    'text': ['Thanks for playing!'],
+                    'size': 'huge',
+                    'color': colors.white,
+                },
+                'padding_bottom': 240
             },
         ]
         
         # Calculate total height
         self._calculate_total_height()
+        
+        # Pre-render entire credits to single surface
+        self._prerender_credits_surface()
 
     def _calculate_total_height(self):
         """Calculate total height for scrolling"""
         total = 0  # Starting offset
-        skip_next = False  # Track if we should skip sections that are part of inline groups
         
-        for i, section in enumerate(self.credits_sections):
-            if skip_next:
-                skip_next = False
-                continue
-                
+        for section in self.credits_sections:
             if 'texts' in section:
                 # Text section
                 total += section.get('padding_top', 0)
                 
-                # Calculate height for new text structure
+                # Calculate height for text structure
                 texts_data = section['texts']
                 text_array = texts_data['text']
                 text_padding = texts_data.get('padding', 0)
                 
-                # Check if this section is inline
-                next_line = section.get('next_line', True)
+                # Check if this section is inline (single line for all elements)
+                is_inline = section.get('inline', False)
                 
-                if not next_line:
-                    # This is an inline section, find all connected inline sections
-                    inline_sections = [section]
-                    for j in range(i + 1, len(self.credits_sections)):
-                        next_section = self.credits_sections[j]
-                        if 'texts' not in next_section:
-                            break
-                        inline_sections.append(next_section)
-                        if next_section.get('next_line', True):
-                            break
-                    
-                    # Count only one line height for all inline sections
-                    total += 30  # One line for all inline content
-                    
-                    # Add bottom padding from the last inline section
-                    if inline_sections:
-                        total += inline_sections[-1].get('padding_bottom', 0)
-                    
-                    # Skip the sections we've already counted
-                    skip_next = len(inline_sections) - 1 > 0
-                    for _ in range(len(inline_sections) - 1):
-                        if i + 1 < len(self.credits_sections):
-                            # Mark to skip next iterations
-                            pass
+                if is_inline:
+                    # Inline sections count as a single line regardless of text count
+                    total += 30
                 else:
-                    # Normal section (not inline)
-                    # Base height for all text lines
-                    total += len(text_array) * 30
-                    
-                    # Additional padding between lines (but not after the last line)
-                    if len(text_array) > 1:
-                        total += (len(text_array) - 1) * text_padding
-                    
-                    total += section.get('padding_bottom', 0)
+                    # Check if we have nested arrays (new format)
+                    if text_array and isinstance(text_array[0], list):
+                        # Nested array format: each sub-array is a line
+                        total += len(text_array) * 30
+                        
+                        # Additional padding between lines (but not after the last line)
+                        if len(text_array) > 1:
+                            total += (len(text_array) - 1) * text_padding
+                    else:
+                        # Normal format: base height for all text lines
+                        total += len(text_array) * 30
+                        
+                        # Additional padding between lines (but not after the last line)
+                        if len(text_array) > 1:
+                            total += (len(text_array) - 1) * text_padding
+                
+                total += section.get('padding_bottom', 0)
                     
             elif 'image' in section:
                 # Image section
@@ -600,6 +853,280 @@ class Menu_CreditsState(BaseState):
                     total += 50  # Default image spacing if image is None
                 total += section.get('padding_bottom', 0)
         self.total_height = total
+
+    def _prerender_credits_surface(self):
+        """Pre-render the entire credits to a single surface for maximum performance"""
+        # Create a surface large enough to hold all credits content
+        surface_height = self.total_height + 100  # Add minimal buffer
+        self.credits_surface = pygame.Surface((constants.canvas_width, surface_height), pygame.SRCALPHA)
+        self.credits_surface_height = surface_height
+        
+        # Clear static links and rebuild them
+        self.static_links.clear()
+        
+        # Render all content to the surface
+        current_y = 0
+        line_height = 30
+        
+        for section in self.credits_sections:
+            if 'texts' in section:
+                # Text section with padding
+                current_y += section.get('padding_top', 0)
+                
+                texts_data = section['texts']
+                text_array = texts_data['text']
+                text_padding = texts_data.get('padding', 0)
+                is_inline = section.get('inline', False)
+                
+                # Handle links - can be string or array
+                links = texts_data.get('link', [])
+                if isinstance(links, str):
+                    links = [links]
+                
+                # Check if we have nested arrays (new format)
+                if text_array and isinstance(text_array[0], list):
+                    # New nested format: each sub-array is a line with its own links
+                    for line_idx, line_array in enumerate(text_array):
+                        # Calculate total width for this line to center it
+                        total_width = 0
+                        text_surfaces = []
+                        
+                        # Get corresponding link array for this line
+                        line_links = links[line_idx] if line_idx < len(links) else []
+                        
+                        # Pre-render all text elements in this line
+                        for element_idx, text_element in enumerate(line_array):
+                            if text_element:
+                                # Check if this element has a corresponding link
+                                has_link = element_idx < len(line_links) and line_links[element_idx] is not None
+                                link_url = line_links[element_idx] if has_link else None
+                                
+                                # Get styling for this specific element
+                                # Support both single values and arrays for per-element styling
+                                font_data = texts_data.get('font', fonts.lf2)
+                                size_data = texts_data.get('size', 'small')
+                                color_data = texts_data.get('color', colors.white)
+                                
+                                # Handle per-element font - support 3D matrix [line][element]
+                                if isinstance(font_data, list):
+                                    # Check if this is a 3D matrix (list of lists)
+                                    if line_idx < len(font_data) and isinstance(font_data[line_idx], list):
+                                        # 3D matrix: font_data[line_idx][element_idx]
+                                        line_fonts = font_data[line_idx]
+                                        element_font = line_fonts[element_idx] if element_idx < len(line_fonts) else line_fonts[-1]
+                                    else:
+                                        # 2D array: font_data[element_idx] (same font array for all lines)
+                                        element_font = font_data[element_idx] if element_idx < len(font_data) else font_data[-1]
+                                else:
+                                    # Single font for all elements
+                                    element_font = font_data
+                                
+                                # Handle per-element size - support 3D matrix [line][element]
+                                if isinstance(size_data, list):
+                                    # Check if this is a 3D matrix (list of lists)
+                                    if line_idx < len(size_data) and isinstance(size_data[line_idx], list):
+                                        # 3D matrix: size_data[line_idx][element_idx]
+                                        line_sizes = size_data[line_idx]
+                                        element_size = line_sizes[element_idx] if element_idx < len(line_sizes) else line_sizes[-1]
+                                    else:
+                                        # 2D array: size_data[element_idx] (same size array for all lines)
+                                        element_size = size_data[element_idx] if element_idx < len(size_data) else size_data[-1]
+                                else:
+                                    # Single size for all elements
+                                    element_size = size_data
+                                
+                                # Handle per-element color - support 3D matrix [line][element] (but links are always blue)
+                                if has_link:
+                                    text_color = colors.blue_light
+                                else:
+                                    if isinstance(color_data, list):
+                                        # Check if this is a 3D matrix (list of lists)
+                                        if line_idx < len(color_data) and isinstance(color_data[line_idx], list):
+                                            # 3D matrix: color_data[line_idx][element_idx]
+                                            line_colors = color_data[line_idx]
+                                            text_color = line_colors[element_idx] if element_idx < len(line_colors) else line_colors[-1]
+                                        else:
+                                            # 2D array: color_data[element_idx] (same color array for all lines)
+                                            text_color = color_data[element_idx] if element_idx < len(color_data) else color_data[-1]
+                                    else:
+                                        # Single color for all elements
+                                        text_color = color_data
+                                
+                                item_surface = utils.get_text(
+                                    text=text_element,
+                                    font=element_font,
+                                    size=element_size,
+                                    color=text_color,
+                                    long_shadow=texts_data.get('long_shadow', True),
+                                    long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
+                                    long_shadow_color=texts_data.get('long_shadow_color', None),
+                                    outline=texts_data.get('outline', True),
+                                    outline_color=texts_data.get('outline_color', colors.mono_35)
+                                )
+                                text_surfaces.append((item_surface, has_link, link_url))
+                                total_width += item_surface.get_width()
+                                if element_idx < len(line_array) - 1:  # Add spacing between elements
+                                    total_width += 10
+                        
+                        # Calculate starting x position to center the entire line
+                        start_x = (constants.canvas_width // 2) - (total_width // 2)
+                        current_x = start_x
+                        
+                        # Render each text element in this line
+                        for element_idx, (item_surface, has_link, link_url) in enumerate(text_surfaces):
+                            text_x = current_x + item_surface.get_width() // 2
+                            
+                            # Check if this is the Minecraftia line
+                            text_y = current_y
+                            font_data = texts_data.get('font', fonts.lf2)
+                            if isinstance(font_data, list) and len(font_data) > 2 and line_idx == 2:
+                                if isinstance(font_data[2], list) and font_data[2][0] == fonts.minecraftia:
+                                    if element_idx == 0:
+                                        text_y = current_y + 5
+                            
+                            # Check if this is the lf7 line
+                            if isinstance(font_data, list) and len(font_data) > 0 and line_idx == 0:
+                                if isinstance(font_data[0], list) and len(font_data[0]) > 1 and (font_data[0][0] == fonts.lf7 or font_data[0][2] == fonts.lf7):
+                                    if element_idx == 0 or element_idx == 2:
+                                        text_y = current_y + 4
+                            
+                            # Store link information if this is a link
+                            if has_link and link_url:
+                                text_rect = pygame.Rect(
+                                    text_x - item_surface.get_width() // 2,
+                                    text_y - item_surface.get_height() // 2,
+                                    item_surface.get_width(),
+                                    item_surface.get_height()
+                                )
+                                self.static_links.append({'rect': text_rect, 'url': link_url})
+                            
+                            # Blit to pre-rendered surface
+                            utils.blit(dest=self.credits_surface, source=item_surface, pos=(text_x, text_y), pos_anchor=posanchors.center)
+                            
+                            # Move to next position
+                            current_x += item_surface.get_width() + 10
+                        
+                        # Move to next line
+                        current_y += line_height
+                        if line_idx < len(text_array) - 1:
+                            current_y += text_padding
+                
+                elif is_inline:
+                    # Inline rendering: calculate total width and center all elements on one line
+                    total_width = 0
+                    text_surfaces = []
+                    
+                    # Pre-render all text elements to calculate total width
+                    for i, text_line in enumerate(text_array):
+                        if text_line:
+                            # Check if this element has a corresponding link
+                            has_link = i < len(links) and links[i] is not None
+                            
+                            # Use blue color for links, otherwise use specified color or white
+                            if has_link:
+                                text_color = colors.blue_light
+                            else:
+                                text_color = texts_data.get('color', colors.white)
+                            
+                            item_surface = utils.get_text(
+                                text=text_line,
+                                font=texts_data.get('font', fonts.lf2),
+                                size=texts_data.get('size', 'small'),
+                                color=text_color,
+                                long_shadow=texts_data.get('long_shadow', True),
+                                long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
+                                long_shadow_color=texts_data.get('long_shadow_color', None),
+                                outline=texts_data.get('outline', True),
+                                outline_color=texts_data.get('outline_color', colors.mono_35)
+                            )
+                            text_surfaces.append((item_surface, has_link, links[i] if has_link else None))
+                            total_width += item_surface.get_width()
+                            if i < len(text_array) - 1:  # Add spacing between elements
+                                total_width += 10
+                    
+                    # Calculate starting x position to center the entire line
+                    start_x = (constants.canvas_width // 2) - (total_width // 2)
+                    current_x = start_x
+                    
+                    # Render each text element
+                    for item_surface, has_link, link_url in text_surfaces:
+                        text_x = current_x + item_surface.get_width() // 2
+                        
+                        # Store link information if this is a link
+                        if has_link and link_url:
+                            text_rect = pygame.Rect(
+                                text_x - item_surface.get_width() // 2,
+                                current_y - item_surface.get_height() // 2,
+                                item_surface.get_width(),
+                                item_surface.get_height()
+                            )
+                            self.static_links.append({'rect': text_rect, 'url': link_url})
+                        
+                        # Blit to pre-rendered surface
+                        utils.blit(dest=self.credits_surface, source=item_surface, pos=(text_x, current_y), pos_anchor=posanchors.center)
+                        
+                        # Move to next position
+                        current_x += item_surface.get_width() + 10
+                    
+                    # Move to next line
+                    current_y += line_height
+                else:
+                    # Normal rendering: each text element on its own line
+                    for i, text_line in enumerate(text_array):
+                        if text_line:
+                            # Check if this element has a corresponding link
+                            has_link = i < len(links) and links[i] is not None
+                            link_url = links[i] if has_link else None
+                            
+                            # Use blue color for links, otherwise use specified color or white
+                            if has_link:
+                                text_color = colors.blue_light
+                            else:
+                                text_color = texts_data.get('color', colors.white)
+                            
+                            item_surface = utils.get_text(
+                                text=text_line,
+                                font=texts_data.get('font', fonts.lf2),
+                                size=texts_data.get('size', 'small'),
+                                color=text_color,
+                                long_shadow=texts_data.get('long_shadow', True),
+                                long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
+                                long_shadow_color=texts_data.get('long_shadow_color', None),
+                                outline=texts_data.get('outline', True),
+                                outline_color=texts_data.get('outline_color', colors.mono_35)
+                            )
+                            
+                            # Position calculation - center horizontally
+                            text_x = constants.canvas_width // 2
+                            
+                            # Store link information with surface-relative coordinates
+                            if has_link and link_url:
+                                text_rect = pygame.Rect(
+                                    text_x - item_surface.get_width() // 2,
+                                    current_y - item_surface.get_height() // 2,
+                                    item_surface.get_width(),
+                                    item_surface.get_height()
+                                )
+                                self.static_links.append({'rect': text_rect, 'url': link_url})
+                            
+                            # Blit to pre-rendered surface
+                            utils.blit(dest=self.credits_surface, source=item_surface, pos=(text_x, current_y), pos_anchor=posanchors.center)
+                        
+                        # Handle line advancement
+                        current_y += line_height
+                        if i < len(text_array) - 1:
+                            current_y += text_padding
+                
+                current_y += section.get('padding_bottom', 0)
+                
+            elif 'image' in section:
+                # Image section
+                current_y += section.get('padding_top', 0)
+                image = section['image']
+                if image:
+                    utils.blit(dest=self.credits_surface, source=image, pos=(constants.canvas_width // 2, current_y), pos_anchor=posanchors.center)
+                    current_y += image.get_height() + 10
+                current_y += section.get('padding_bottom', 0)
 
 
 
@@ -639,137 +1166,15 @@ class Menu_CreditsState(BaseState):
         canvas.set_clip(clip_rect)
 
     def _render_credits_content(self, canvas):
-        """Render all credits sections with scrolling"""
-        current_y = 0 - self.scroll_y
-        current_x = constants.canvas_width // 2  # Start at center
-        line_height = 30  # Standard line height
-        inline_mode = False  # Track if we're in inline mode
-        inline_start_x = 0  # Track where inline content started
-        
-        for section_idx, section in enumerate(self.credits_sections):
-            if 'texts' in section:
-                # Text section with padding
-                current_y += section.get('padding_top', 0)
-                
-                # Check if texts is an array of items or a single object with text array
-                texts_data = section['texts']
-                # New structure: single object with text array
-                text_array = texts_data['text']
-                text_padding = texts_data.get('padding', 0)
-                
-                # Check if this section starts inline mode or continues it
-                next_line = section.get('next_line', True)
-                
-                # If starting inline mode, calculate starting position for centering
-                if not next_line and not inline_mode:
-                    # Calculate total width of inline content to center it
-                    total_width = 0
-                    temp_sections = []
-                    
-                    # Look ahead to find all inline sections
-                    for temp_idx in range(section_idx, len(self.credits_sections)):
-                        temp_section = self.credits_sections[temp_idx]
-                        if 'texts' not in temp_section:
-                            break
-                        
-                        temp_texts_data = temp_section['texts']
-                        temp_text_array = temp_texts_data['text']
-                        
-                        for temp_text in temp_text_array:
-                            if temp_text:
-                                temp_surface = utils.get_text(
-                                    text=temp_text,
-                                    font=temp_texts_data.get('font', fonts.lf2),
-                                    size=temp_texts_data.get('size', 'small'),
-                                    color=temp_texts_data.get('color', colors.white),
-                                    long_shadow=temp_texts_data.get('long_shadow', True),
-                                    long_shadow_direction=temp_texts_data.get('long_shadow_direction', 'bottom'),
-                                    long_shadow_color=temp_texts_data.get('long_shadow_color', None),
-                                    outline=temp_texts_data.get('outline', True),
-                                    outline_color=temp_texts_data.get('outline_color', colors.mono_35)
-                                )
-                                total_width += temp_surface.get_width()
-                                
-                        # Add padding_right if specified
-                        total_width += temp_section.get('padding_right', 0)
-                        
-                        # Stop if next section goes to new line
-                        if temp_section.get('next_line', True):
-                            break
-                    
-                    # Set starting position to center the entire inline content
-                    inline_start_x = (constants.canvas_width // 2) - (total_width // 2)
-                    current_x = inline_start_x
-                    inline_mode = True
-                
-                for i, text_line in enumerate(text_array):
-                    if text_line:  # Skip empty strings
-                        # Determine if this is a clickable link
-                        is_link = 'link' in texts_data
-                        text_color = texts_data.get('color', colors.blue_light if is_link else colors.white)
-                        
-                        item_surface = utils.get_text(
-                            text=text_line,
-                            font=texts_data.get('font', fonts.lf2),
-                            size=texts_data.get('size', 'small'),
-                            color=text_color,
-                            long_shadow=texts_data.get('long_shadow', True),
-                            long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
-                            long_shadow_color=texts_data.get('long_shadow_color', None),
-                            outline=texts_data.get('outline', True),
-                            outline_color=texts_data.get('outline_color', colors.mono_35)
-                        )
-                        
-                        # Position for inline mode (left-aligned from current_x) or centered
-                        if inline_mode:
-                            text_x = current_x + item_surface.get_width() // 2
-                        else:
-                            text_x = constants.canvas_width // 2
-                        
-                        # Create clickable rectangle if it's a link
-                        if is_link:
-                            text_rect = pygame.Rect(
-                                text_x - item_surface.get_width() // 2,
-                                current_y - item_surface.get_height() // 2,
-                                item_surface.get_width(),
-                                item_surface.get_height()
-                            )
-                            self.clickable_links.append({'rect': text_rect, 'url': texts_data['link']})
-                        
-                        utils.blit(dest=canvas, source=item_surface, pos=(text_x, current_y), pos_anchor=posanchors.center)
-                        
-                        # Move current_x for next inline element
-                        if inline_mode:
-                            current_x += item_surface.get_width()
-                    
-                    # Add vertical spacing for normal mode
-                    if not inline_mode:
-                        current_y += line_height
-                        if i < len(text_array) - 1:  # Add padding between items, but not after the last one
-                            current_y += text_padding
-                
-                # Handle end of section
-                if next_line:
-                    # This section ends the line
-                    if inline_mode:
-                        current_y += line_height  # Move to next line
-                        current_x = constants.canvas_width // 2  # Reset to center
-                        inline_mode = False
-                else:
-                    # This section continues inline, add right padding
-                    if inline_mode:
-                        current_x += section.get('padding_right', 10)
-                
-                current_y += section.get('padding_bottom', 0)
-                
-            elif 'image' in section:
-                # Image section
-                current_y += section.get('padding_top', 0)
-                image = section['image']
-                if image:
-                    utils.blit(dest=canvas, source=image, pos=(constants.canvas_width // 2, current_y), pos_anchor=posanchors.center)
-                    current_y += image.get_height() + 10
-                current_y += section.get('padding_bottom', 0)
+        """Render the pre-rendered credits surface with scrolling"""
+        if self.credits_surface:
+            # Simply blit the pre-rendered surface with scroll offset
+            source_rect = pygame.Rect(0, int(self.scroll_y), constants.canvas_width, constants.canvas_height - 106)
+            dest_pos = (23, 23)  # Match the clipping area
+            
+            # Only blit if there's content to show
+            if source_rect.y < self.credits_surface_height:
+                canvas.blit(self.credits_surface, dest_pos, source_rect)
 
     def _render_back_button(self, canvas):
         """Render the back button"""

@@ -3,6 +3,8 @@
     - https://soundcloud.com/roccow/why-did-the-crow-cross-the-road
 - Gameplay music
     - https://towball.itch.io/towballs-crossing
+- Ambience
+    - https://youtu.be/83X26UkmbkM?si=MDbPcM_Uu_GhvdL3
 - Sound effects
     - https://hunteraudio.itch.io/8bit-sfx-and-music-pack
     - https://souptonic.itch.io/souptonic-sfx-pack-1-ui-sounds
@@ -13,7 +15,6 @@
     - https://www.zapsplat.com/music/wooden-stake-hit-impact-dry-dirt-soil-4/
     - https://youtu.be/p47fFW2-I0k?si=zyOmdZVsLGZG4jV2
 - Fonts
-    - https://takwolf.itch.io/retro-pixel-font
     - https://lazy-fox.itch.io/lazy-pixel-fonts
     - https://font.download/font/minecraftia
     - https://nimblebeastscollective.itch.io/magosfonts

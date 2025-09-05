@@ -13,6 +13,7 @@ graphics = os.path.join(assets, 'graphics')
 sounds = os.path.join(assets, 'sounds')
 
 branding = os.path.join(graphics, 'branding')
+bts = os.path.join(graphics, 'bts')
 menu_bg = os.path.join(graphics, 'menu_bg')
 play_bg = os.path.join(graphics, 'play_bg')
 sprites = os.path.join(graphics, 'sprites')
