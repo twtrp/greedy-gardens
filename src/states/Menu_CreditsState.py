@@ -10,7 +10,7 @@ class Menu_CreditsState(BaseState):
         
         # Scrolling properties
         self.scroll_y = 0  # Start at top
-        self.scroll_speed = 100  # pixels per second (auto-scroll speed)
+        self.scroll_speed = 120  # pixels per second (auto-scroll speed)
         self.mouse_scroll_amount = 100  # pixels per mouse scroll input
         self.manual_scroll = False
         self.manual_scroll_timer = 0  # Timer to resume auto-scroll
@@ -432,6 +432,26 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
+                    'text': ['macOS Playtesting and Compiling'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['Noell'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
                     'text': ['macOS Playtesting and ttewtor Logo Dino Idea'],
                     'size': 'small',
                     'color': colors.yellow_light,
@@ -491,26 +511,6 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 40
-            },
-            {
-                'texts': {
-                    'text': ['Being Cute'],
-                    'size': 'small',
-                    'color': colors.yellow_light,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Noell'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
                 'padding_bottom': 95
             },
 
@@ -535,7 +535,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                     'text': ['Art and UI Design in Figma'],
+                     'text': ['Art and UI Concept in Figma'],
                     'size': 'tiny',
                     'color': colors.white,
                     'font': fonts.mago1,

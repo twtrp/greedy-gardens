@@ -44,6 +44,9 @@ class Play_StartState(BaseState):
                 if event.button == 3 and not self.parent.transitioning and self.parent.shown_day_title:  # Right click
                     self._handle_card_drawing()
 
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
+
     def _handle_card_drawing(self):
         # for testing
         if self.day2_not_drawn:
@@ -160,9 +163,6 @@ class Play_StartState(BaseState):
             # Set the previous task state to match what the main state will use to prevent double animation
             self.parent.previous_task_state = "draw_path"
             self.exit_state()
-
-        utils.set_cursor(cursor=self.cursor)
-        self.cursor = cursors.normal
 
     def render(self, canvas):
         if self.card_drawn_image:

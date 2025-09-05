@@ -1223,7 +1223,7 @@ class Play_PlayMagicEventState(BaseState):
                         text_offset = 35 * option['scale']
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + text_offset, 265 + visual_index*75), pos_anchor=posanchors.center)
                         scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
-                        glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.mono_35)
+                        glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_35)
                         if option['id'] == 'seasonal fruit':
                             # Scale the fruit offset with the fruit scale
                             fruit_offset = 540 + (540 - constants.canvas_width/2) * (option['scale_fruit'] - 3.0) / 3.0

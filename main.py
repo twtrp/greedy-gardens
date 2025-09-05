@@ -24,8 +24,7 @@ class Game:
         if self.settings['fullscreen']:
             self.screen_width = self.display_info.current_w
             self.screen_height = self.display_info.current_h
-            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                  flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+            self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
         else:
             self.screen_width = constants.window_width
             self.screen_height = constants.window_height
@@ -64,18 +63,17 @@ class Game:
         if setting_index == 3:          
             pygame.display.quit()
             pygame.display.init()
+            pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
             pygame.display.set_caption(self.title)
             if self.settings['fullscreen']:
                 self.screen_width = self.display_info.current_w
                 self.screen_height = self.display_info.current_h
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+                self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
             else:
                 self.screen_width = constants.window_width
                 self.screen_height = constants.window_height
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
                                                       flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
-            pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
         if setting_index == 4:
             self.fps_cap = self.settings['fps_cap'] + 1
 
