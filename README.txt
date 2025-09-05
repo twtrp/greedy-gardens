@@ -33,6 +33,7 @@ To build:
 macOS
 
 Dependencies:
+    brew install python-tk
     python3 -m venv venvmacos
     source venvmacos/bin/activate
     pip install -r requirements.txt
