@@ -443,7 +443,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['alison (dmx)'],
+                    'text': ['Alison (dmx)'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
