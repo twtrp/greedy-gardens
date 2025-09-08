@@ -432,7 +432,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['macOS Playtesting and Compiling'],
+                    'text': ['macOS Playtesting'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -442,34 +442,14 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Noell'],
+                    'text': ['noellnon', 'Alison (dmx)'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'padding': 15,
                 },
                 'padding_bottom': 50
-            },
-            {
-                'texts': {
-                    'text': ['macOS Playtesting and ttewtor Logo Dino Idea'],
-                    'size': 'small',
-                    'color': colors.yellow_light,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                    'padding': 10,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Alison (dmx)'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 40
             },
             {
                 'texts': {
@@ -491,7 +471,7 @@ class Menu_CreditsState(BaseState):
                     'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
                 },
                 'inline': True,
-                'padding_bottom': 40
+                'padding_bottom': 50
             },
             {
                 'texts': {
@@ -506,6 +486,48 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Dr. SangGyu Nam'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
+                    'text': ['ttewtor Logo Dino Idea'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'padding': 10,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['Alison (dmx)'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
+                    'text': ['Being cute'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'padding': 10,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['noellnon'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
