@@ -11,7 +11,7 @@ class Game:
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap']
 
-        self.version_number = 'v1.0.0'
+        self.version_number = 'v1.0.0-beta12'
         self.title = f'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)

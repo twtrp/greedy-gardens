@@ -345,9 +345,8 @@ class Play_PlayEventState(BaseState):
                                         source_cell.path = False
                                         source_cell.path_type = None
                                         source_cell.temp = False
-
-                                        self.check_magic_fruit_collection(button)
                                         
+                                        self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
@@ -636,7 +635,7 @@ class Play_PlayEventState(BaseState):
                     button.update(dt=dt, events=events)
                     if button.hovered:
                         for option in self.remove_button_option_surface_list:
-                            if self.selected_cell or self.selected_cell_2:
+                            if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                                 if button.hover_cursor is not None:
                                     self.cursor = button.hover_cursor
                                 if button.id == option['id']:
@@ -646,10 +645,10 @@ class Play_PlayEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
-                        if self.selected_cell or self.selected_cell_2:
+                        if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
-                                if self.selected_cell:
+                                if self.selected_cell is not None:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
                                         old_path1 = ""
                                         if self.parent.game_board.board[self.selected_cell].north:
@@ -921,9 +920,9 @@ class Play_PlayEventState(BaseState):
                         pos_anchor=posanchors.center
                     )
 
-        if self.selected_cell:
+        if self.selected_cell is not None:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
-        if self.selected_cell_2:
+        if self.selected_cell_2 is not None:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.parent.current_event == 'event_remove':
@@ -934,7 +933,7 @@ class Play_PlayEventState(BaseState):
                 pos_anchor=posanchors.midtop
             )
             for i, option in enumerate(self.remove_button_option_surface_list):
-                if self.selected_cell or self.selected_cell_2:
+                if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
                 else:
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])

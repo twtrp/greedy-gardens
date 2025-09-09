@@ -260,14 +260,14 @@ def create_release_folder(version: str, built_name: str, built_path: Path) -> Pa
     else:
         log("⚠️ assets/ not found")
 
-    # CREDITS + LICENSE
-    for name in ("CREDITS.txt", "LICENSE"):
-        src = ROOT / name
-        if src.exists():
-            shutil.copy2(src, release_folder / name)
-            log(f"✅ Copied {name}")
-        else:
-            log(f"⚠️ {name} not found")
+    # # CREDITS + LICENSE
+    # for name in ("CREDITS.txt", "LICENSE"):
+    #     src = ROOT / name
+    #     if src.exists():
+    #         shutil.copy2(src, release_folder / name)
+    #         log(f"✅ Copied {name}")
+    #     else:
+    #         log(f"⚠️ {name} not found")
 
     return release_folder
 

@@ -502,7 +502,6 @@ class Play_PlayMagicEventState(BaseState):
                                         source_cell.temp = False
 
                                         self.check_magic_fruit_collection(button)
-                                        
                                         self.selected_cell = None
                                         self.played_event = True
                                 elif button.id == self.selected_cell:
@@ -900,7 +899,7 @@ class Play_PlayMagicEventState(BaseState):
                     button.update(dt=dt, events=events)
                     if button.hovered:
                         for option in self.remove_button_option_surface_list:
-                            if self.selected_cell or self.selected_cell_2:
+                            if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                                 if button.hover_cursor is not None:
                                     self.cursor = button.hover_cursor
                                 if button.id == option['id']:
@@ -910,10 +909,10 @@ class Play_PlayMagicEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
-                        if self.selected_cell or self.selected_cell_2:
+                        if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                             if button.id == 'remove':
                                 utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
-                                if self.selected_cell:
+                                if self.selected_cell is not None:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
                                         old_path1 = ""
                                         if self.parent.game_board.board[self.selected_cell].north:
@@ -1245,9 +1244,9 @@ class Play_PlayMagicEventState(BaseState):
                         pos_anchor=posanchors.center
                     )
 
-        if self.selected_cell:
+        if self.selected_cell is not None:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell // 8) * self.parent.cell_size)), pos_anchor='topleft')
-        if self.selected_cell_2:
+        if self.selected_cell_2 is not None:
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.parent.current_event == 'event_remove':
@@ -1258,7 +1257,7 @@ class Play_PlayMagicEventState(BaseState):
                 pos_anchor=posanchors.midtop
             )
             for i, option in enumerate(self.remove_button_option_surface_list):
-                if self.selected_cell or self.selected_cell_2:
+                if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
                 else:
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
@@ -1340,14 +1339,19 @@ class Play_PlayMagicEventState(BaseState):
 
     # Class methods
     def check_magic_fruit_collection(self, button):
-        # Skip old magic fruit detection if we started with queue system
-        if self.using_queue_system:
-            return
-            
         if self.parent.game_board.magic_fruit_index:
-            self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-            # print(self.parent.magic_eventing)
-            if self.parent.magic_eventing:
+
+            # Find ALL connected magic fruits at once
+            connected_magic_fruits = self.parent.game_board.find_all_connected_magic_fruits()
+            
+            if connected_magic_fruits:
+                # Store all magic fruits in queue for processing in order (1->2->3)
+                self.parent.magic_fruit_queue = connected_magic_fruits.copy()
+                
+                # Process the first magic fruit immediately
+                magic_number, cell_pos = connected_magic_fruits[0]
+                self.parent.magic_eventing = True
+                
                 utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
                 if magic_number == 1:
                     self.parent.current_event = self.parent.magic_fruit1_event
@@ -1358,32 +1362,52 @@ class Play_PlayMagicEventState(BaseState):
                 elif magic_number == 3:
                     self.parent.current_event = self.parent.magic_fruit3_event
                     # print('PlacePath Magic 3:', self.parent.magic_fruit3_event)
+                
+                # Remove the magic fruit from the board and tracking
                 self.parent.game_board.board[cell_pos].magic_fruit = 0
+                self.parent.game_board.magic_fruit_index.remove(cell_pos)
                 self.parent.magicing_number = magic_number
+                
                 current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
                 new_score = current_score + 1
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-
-                # Check if the path that triggered magic fruit was also a strike
-                if "strike" in self.parent.current_path:
-                    self.parent.is_striking = True
-
-            self.parent.game_board.eval_new_tile(button.id)
-            self.parent.magic_eventing, magic_number, cell_pos = self.parent.game_board.magic_fruit_found()
-            if self.parent.magic_eventing:
-                utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
-                if magic_number == 1:
-                    self.parent.current_event = self.parent.magic_fruit1_event
-                elif magic_number == 2:
-                    self.parent.current_event = self.parent.magic_fruit2_event
-                elif magic_number == 3:
-                    self.parent.current_event = self.parent.magic_fruit3_event
-                self.parent.game_board.board[cell_pos].magic_fruit = 0
-                self.parent.magicing_number = magic_number
-                current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                new_score = current_score + 1
-                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
-                self.parent.play_event_state= False
-                self.exit_state()
+                
+                # # Check if the path that triggered magic fruit was also a strike
+                # if "strike" in self.parent.current_path:
+                #     self.parent.is_striking = True
+            else:
+                # No magic fruits found, eval the tile for potential new connections
+                self.parent.game_board.eval_new_tile(button.id)
+                
+                # Check again after eval for newly connected magic fruits
+                connected_magic_fruits = self.parent.game_board.find_all_connected_magic_fruits()
+                
+                if connected_magic_fruits:
+                    # Store all magic fruits in queue for processing in order (1->2->3)
+                    self.parent.magic_fruit_queue = connected_magic_fruits.copy()
+                    
+                    # Process the first magic fruit immediately
+                    magic_number, cell_pos = connected_magic_fruits[0]
+                    self.parent.magic_eventing = True
+                    
+                    utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                    if magic_number == 1:
+                        self.parent.current_event = self.parent.magic_fruit1_event
+                    elif magic_number == 2:
+                        self.parent.current_event = self.parent.magic_fruit2_event
+                    elif magic_number == 3:
+                        self.parent.current_event = self.parent.magic_fruit3_event
+                    
+                    # Remove the magic fruit from the board and tracking
+                    self.parent.game_board.board[cell_pos].magic_fruit = 0
+                    self.parent.game_board.magic_fruit_index.remove(cell_pos)
+                    self.parent.magicing_number = magic_number
+                    
+                    current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
+                    new_score = current_score + 1
+                    setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
+                    setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                    
+                    # Set played_event to True to exit this event and let magic_eventing take over
+                    self.played_event = True

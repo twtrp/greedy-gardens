@@ -569,6 +569,18 @@ fruit_32x32 = {
             'x': 160,
             'y': 0,
         },
+        'magic_fruit_1_small': {
+            'x': 0,
+            'y': 64,
+        },
+        'magic_fruit_2_small': {
+            'x': 32,
+            'y': 64,
+        },
+        'magic_fruit_3_small': {
+            'x': 64,
+            'y': 64,
+        },
         'magic_fruit_1': {
             'x': 96,
             'y': 64,
@@ -616,21 +628,15 @@ fruit_32x32 = {
         'fruit_shadow': {
             'x': 64,
             'y': 96,
-        }
-    }
-}
-
-magic_fruit_shadow = {
-    'file': 'fruits_32x32.png',
-    'shared_data': {
-        'width': 64,
-        'height': 48,
-    },
-    'sprites': {
+        },
         'magic_fruit_shadow': {
             'x': 160,
             'y': 96,
-        }
+        },
+        'magic_fruit_shadow_small': {
+            'x': 192,
+            'y': 64,
+        },
     }
 }
 
@@ -676,6 +682,58 @@ tileset = {
         'dirt_9': {
             'x': 128,
             'y': 0,
+        },
+        'grass_light_path_NWE_home': {
+            'x': 16,
+            'y': 96,
+            'height': 8,
+        },
+        'grass_light_path_NES_home': {
+            'x': 24,
+            'y': 96,
+            'width': 8,
+        },
+        'grass_light_path_NWS_home': {
+            'x': 16,
+            'y': 96,
+            'width': 8,
+        },
+        'grass_light_path_WES_home': {
+            'x': 16,
+            'y': 104,
+            'height': 8,
+        },
+        'grass_light_path_ES_home': {
+            'x': 0,
+            'y': 80,
+        },
+        'grass_light_path_WE_home_N': {
+            'x': 16,
+            'y': 80,
+        },
+        'grass_light_path_WS_home': {
+            'x': 32,
+            'y': 80,
+        },
+        'grass_light_path_NS_home_W': {
+            'x': 0,
+            'y': 96,
+        },
+        'grass_light_path_NS_home_E': {
+            'x': 32,
+            'y': 96,
+        },
+        'grass_light_path_NE_home': {
+            'x': 0,
+            'y': 112,
+        },
+        'grass_light_path_WE_home_S': {
+            'x': 16,
+            'y': 112,
+        },
+        'grass_light_path_NW_home': {
+            'x': 32,
+            'y': 112,
         },
         'grass_light_path_ES': {
             'x': 48,
@@ -740,6 +798,58 @@ tileset = {
         'grass_light_path_N': {
             'x': 112,
             'y': 128,
+        },
+        'grass_dark_path_NWE_home': {
+            'x': 16,
+            'y': 160,
+            'height': 8,
+        },
+        'grass_dark_path_NWS_home': {
+            'x': 16,
+            'y': 160,
+            'width': 8,
+        },
+        'grass_dark_path_NES_home': {
+            'x': 24,
+            'y': 160,
+            'width': 8,
+        },
+        'grass_dark_path_WES_home': {
+            'x': 16,
+            'y': 168,
+            'height': 8,
+        },
+        'grass_dark_path_ES_home': {
+            'x': 0,
+            'y': 144,
+        },
+        'grass_dark_path_WE_home_N': {
+            'x': 16,
+            'y': 144,
+        },
+        'grass_dark_path_WS_home': {
+            'x': 32,
+            'y': 144,
+        },
+        'grass_dark_path_NS_home_W': {
+            'x': 0,
+            'y': 160,
+        },
+        'grass_dark_path_NS_home_E': {
+            'x': 32,
+            'y': 160,
+        },
+        'grass_dark_path_NE_home': {
+            'x': 0,
+            'y': 176,
+        },
+        'grass_dark_path_WE_home_S': {
+            'x': 16,
+            'y': 176,
+        },
+        'grass_dark_path_NW_home': {
+            'x': 32,
+            'y': 176,
         },
         'grass_dark_path_ES': {
             'x': 48,

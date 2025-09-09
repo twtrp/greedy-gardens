@@ -26,13 +26,13 @@ class Play_EndDayState(BaseState):
 
         # Update score if fail to make more than yesterday
         if self.parent.current_day > 1:
-            current_score = getattr(self.parent, f'final_day{self.parent.current_day}_score')
+            self.current_score = getattr(self.parent, f'final_day{self.parent.current_day}_score')
             previous_score = getattr(self.parent, f'final_day{self.parent.current_day - 1}_score')
 
             # If today's score is not higher than yesterday's
-            if current_score <= previous_score:
+            if self.current_score <= previous_score:
                 # Replace today's score with 0 (or keep it if already negative)
-                new_score = current_score if current_score < 0 else 0
+                new_score = self.current_score if self.current_score < 0 else 0
                 setattr(self.parent, f'final_day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 # Set penalty flag to prevent score recalculation
@@ -51,6 +51,7 @@ class Play_EndDayState(BaseState):
         self.pass_title = utils.get_text(text=f'Pass!', font=fonts.lf2, size='large', color=colors.green_light)
         self.fail_title = utils.get_text(text=f'Fail!', font=fonts.lf2, size='large', color=colors.red_light)
         self.fail_description = utils.get_text(text=f'You failed to collect more than yesterday!', font=fonts.lf2, size='tiny', color=colors.red_light)
+        self.fail_description_2 = utils.get_text(text=f'Your score for the day was set to zero.', font=fonts.lf2, size='tiny', color=colors.red_light)
 
         self.result_list = []
         if self.parent.current_day == 1:
@@ -64,7 +65,7 @@ class Play_EndDayState(BaseState):
                                     'fruit': getattr(self.parent, f'day{self.parent.current_day - 1}_fruit'),
                                     })
             self.result_list.append({
-                                    'text': str(getattr(self.parent, f'final_day{self.parent.current_day}_score')),
+                                    'text': str(self.current_score),
                                     'fruit': getattr(self.parent, f'day{self.parent.current_day}_fruit'),
                                     })
         self.result_surface_list = []
@@ -72,7 +73,7 @@ class Play_EndDayState(BaseState):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='large', color=colors.white)
                 fruit = self.parent.fruit_sprites[option['fruit']]
                 scaled_fruit_image = pygame.transform.scale_by(surface=fruit, factor=3)
-                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=2, color=colors.mono_35)
+                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_35)
                 if i == 0 and self.parent.current_day != 1:
                     glow_fruit_image = utils.effect_grayscale(surface=glow_fruit_image)
                 self.result_surface_list.append({
@@ -132,6 +133,7 @@ class Play_EndDayState(BaseState):
             if getattr(self.parent, f'final_day{self.parent.current_day}_score') <= getattr(self.parent, f'final_day{self.parent.current_day -1}_score'):
                 utils.blit(dest=canvas, source=self.fail_title, pos=(constants.canvas_width/2, 515), pos_anchor='center')
                 utils.blit(dest=canvas, source=self.fail_description, pos=(constants.canvas_width/2, 565), pos_anchor='center')
+                utils.blit(dest=canvas, source=self.fail_description_2, pos=(constants.canvas_width/2, 595), pos_anchor='center')
             else:
                 utils.blit(dest=canvas, source=self.pass_title, pos=(constants.canvas_width/2, 515), pos_anchor='center')
                 
