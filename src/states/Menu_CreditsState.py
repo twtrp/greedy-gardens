@@ -41,6 +41,13 @@ class Menu_CreditsState(BaseState):
 
     def update(self, dt, events):
         mouse_pos = pygame.mouse.get_pos()
+        
+        # Adjust mouse position for fullscreen scaling
+        if self.game.screen_width != constants.canvas_width or self.game.screen_height != constants.canvas_height:
+            rel_x = mouse_pos[0] / self.game.screen_width
+            rel_y = mouse_pos[1] / self.game.screen_height
+            mouse_pos = (rel_x * constants.canvas_width, rel_y * constants.canvas_height)
+        
         self.hovered_link = None
         
         # Check for link hovers and clicks
@@ -321,7 +328,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Lead Designing and Programming'],
+                    'text': ['Lead Designer and Programmer'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -341,7 +348,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Core Programming'],
+                    'text': ['Core Programmers'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -366,7 +373,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Development Pattern Designing'],
+                    'text': ['Development Pattern Designer'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -412,7 +419,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Windows Playtesting'],
+                    'text': ['Windows Playtester'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -432,7 +439,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['macOS Playtesting'],
+                    'text': ['macOS Playtesters'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -453,7 +460,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Linux Playtesting'],
+                    'text': ['Linux Playtester'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -471,6 +478,26 @@ class Menu_CreditsState(BaseState):
                     'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
                 },
                 'inline': True,
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
+                    'text': ['Helping with Fullscreen Issues'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['Martinus from the Pygame Community Discord'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
                 'padding_bottom': 50
             },
             {
@@ -1214,6 +1241,7 @@ class Menu_CreditsState(BaseState):
 
 
     def render(self, canvas):
+
         # Draw background
         self._draw_background(canvas)
         
