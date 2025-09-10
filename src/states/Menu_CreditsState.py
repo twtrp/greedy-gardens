@@ -83,14 +83,10 @@ class Menu_CreditsState(BaseState):
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left click
-                    if self.hovered_link:
-                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                        webbrowser.open(self.hovered_link['url'])
-                        # Note: we intentionally do NOT set hold_pause/drag when clicking a link.
-                    else:
-                        # Hold to pause AND drag-to-scroll
-                        self.hold_pause = True
+                    self.hold_pause = True
+                    if not self.hovered_link:
                         self.drag_active = True
+                        # Hold to pause AND drag-to-scroll
                         self.drag_last_y = event.pos[1]
                         # Apply "start delay" semantics to left-click, so auto-scroll
                         # waits self.auto_scroll_start_delay after the click/drag ends.
@@ -130,6 +126,10 @@ class Menu_CreditsState(BaseState):
                     # Ensure manual cooldown doesn't interfere; we want start-delay behavior
                     self.manual_scroll = False
                     self.manual_scroll_timer = 0
+
+                    if self.hovered_link:
+                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
+                        webbrowser.open(self.hovered_link['url'])
 
             elif event.type == pygame.MOUSEMOTION:
                 # Drag-to-scroll (like touch): while holding LMB on empty area

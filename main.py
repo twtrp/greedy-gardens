@@ -60,9 +60,11 @@ class Game:
             self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 2:
             self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
-        if setting_index == 3:          
-            pygame.display.quit()
-            pygame.display.init()
+        if setting_index == 3:
+            mx, my = pygame.mouse.get_pos()
+            current_w, current_h = self.screen.get_size()
+            rel_x = mx / current_w
+            rel_y = my / current_h          
             pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
             pygame.display.set_caption(self.title)
             if self.settings['fullscreen']:
@@ -74,6 +76,10 @@ class Game:
                 self.screen_height = constants.window_height
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
                                                       flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+            current_w, current_h = self.screen.get_size()
+            new_mx = int(rel_x * current_w)
+            new_my = int(rel_y * current_h)
+            pygame.mouse.set_pos((new_mx, new_my))
         if setting_index == 4:
             self.fps_cap = self.settings['fps_cap'] + 1
 

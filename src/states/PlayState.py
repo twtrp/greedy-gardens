@@ -1961,18 +1961,18 @@ class PlayState(BaseState):
                 ## Render left white box (with alpha transition)
                 if self.hud_left_alpha > 0:
                     # Create a temporary surface for the left HUD
-                    left_hud_surface = pygame.Surface((self.box_width, constants.canvas_height), pygame.SRCALPHA)
+                    left_hud_surface = pygame.Surface((self.box_width + 4, constants.canvas_height), pygame.SRCALPHA)
                     
                     # Draw the left box content to the temporary surface
-                    alpha_value = int(150 * self.hud_left_alpha)  # Scale alpha from 0-150
+                    alpha_value = int(135 * self.hud_left_alpha)  # Scale alpha from 0-150
                     utils.draw_rect(
                         dest=left_hud_surface,
                         size=(self.box_width, constants.canvas_height),
-                        pos=(0, 0),
+                        pos=(-4, 0),
                         pos_anchor='topleft',
                         color=(*colors.white, alpha_value),
-                        inner_border_width=4,
-                        inner_border_color=colors.mono_240,
+                        outer_border_width=4,
+                        outer_border_color=(*colors.white, 200),
                     )
                     
                     # Render text in left white box to temporary surface
@@ -2154,18 +2154,18 @@ class PlayState(BaseState):
                 ## Render right white box (with alpha transition)
                 if self.hud_right_alpha > 0:
                     # Create a temporary surface for the right HUD
-                    right_hud_surface = pygame.Surface((self.box_width, constants.canvas_height), pygame.SRCALPHA)
+                    right_hud_surface = pygame.Surface((self.box_width + 4, constants.canvas_height), pygame.SRCALPHA)
                     
                     # Draw the right box content to the temporary surface
-                    alpha_value = int(150 * self.hud_right_alpha)  # Scale alpha from 0-150
+                    alpha_value = int(135 * self.hud_right_alpha)  # Scale alpha from 0-150
                     utils.draw_rect(
                         dest=right_hud_surface,
                         size=(self.box_width, constants.canvas_height),
-                        pos=(0, 0),
+                        pos=(4, 0),
                         pos_anchor='topleft',
                         color=(*colors.white, alpha_value),
-                        inner_border_width=4,
-                        inner_border_color=colors.mono_240,
+                        outer_border_width=4,
+                        outer_border_color=(*colors.white, 200),
                     )
                     
                     ## Render text in right white box to temporary surface
