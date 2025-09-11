@@ -54,13 +54,13 @@ class Game:
 
     def apply_settings(self, setting_index):
         self.settings = self.settings_manager.load_all_settings()
-        if setting_index == 0:
-            self.music_channel.set_volume(self.settings['music_volume']*0.75)
-        if setting_index == 1:
-            self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 2:
-            self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
+            self.music_channel.set_volume(self.settings['music_volume']*0.75)
         if setting_index == 3:
+            self.sfx_volume = self.settings['sfx_volume']
+        if setting_index == 4:
+            self.ambience_channel.set_volume(self.settings['ambience_volume']*0.75)
+        if setting_index == 0:
             mx, my = pygame.mouse.get_pos()
             current_w, current_h = self.screen.get_size()
             rel_x = mx / current_w
@@ -80,7 +80,7 @@ class Game:
             new_mx = int(rel_x * current_w)
             new_my = int(rel_y * current_h)
             pygame.mouse.set_pos((new_mx, new_my))
-        if setting_index == 4:
+        if setting_index == 1:
             self.fps_cap = self.settings['fps_cap'] + 1
 
     def start_menu_music(self):

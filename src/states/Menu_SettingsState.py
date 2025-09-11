@@ -88,8 +88,8 @@ class Menu_SettingsState(BaseState):
                 game=self.game,
                 id=option['id'],
                 width=300,
-                height=60,
-                pos=(constants.canvas_width/2, 515 + i*65),
+                height=70,
+                pos=(constants.canvas_width/2, 510 + i*70),
                 pos_anchor=posanchors.center
             ))
 
@@ -208,5 +208,5 @@ class Menu_SettingsState(BaseState):
             
         for i, option in enumerate(self.button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 500 + i*80), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 510 + i*70), pos_anchor=posanchors.center)
             

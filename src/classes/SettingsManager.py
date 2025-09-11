@@ -5,6 +5,24 @@ class SettingsManager():
         self.settings_file = os.path.join(dir.data, 'settings.lst')
         self.settings_list = [
             {
+                'id': 'fullscreen',
+                'label': 'Fullscreen',
+                'value': [0, 1],
+                'value_label': ['off', 'on'],
+                'value_default': 0,
+                'value_default_label': 'off',
+                'value_default_index': 0,
+            },
+            {
+                'id': 'fps_cap',
+                'label': 'Framerate',
+                'value': [60, 999],
+                'value_label': ['60', 'uncapped'],
+                'value_default': 60,
+                'value_default_label': '60',
+                'value_default_index': 0,
+            },
+            {
                 'id': 'music_volume',
                 'label': 'Music Volume',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
@@ -30,24 +48,6 @@ class SettingsManager():
                 'value_default': 0.8,
                 'value_default_label': '80%',
                 'value_default_index': 8,
-            },
-            {
-                'id': 'fullscreen',
-                'label': 'Fullscreen',
-                'value': [0, 1],
-                'value_label': ['off', 'on'],
-                'value_default': 0,
-                'value_default_label': 'off',
-                'value_default_index': 0,
-            },
-            {
-                'id': 'fps_cap',
-                'label': 'Framerate',
-                'value': [60, 999],
-                'value_label': ['60', 'uncapped'],
-                'value_default': 60,
-                'value_default_label': '60',
-                'value_default_index': 0,
             },
             {
                 'id': 'skip_bootup',

@@ -63,7 +63,7 @@ class Play_PlayEventState(BaseState):
         self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_205)
         self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_205)
         self.remaining_fruits_title = utils.get_text(text='Remaining Fruits', font=fonts.lf2, size='small', color=colors.mono_205)
-        self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.white)
+        self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.yellow_light)
         self.hover_to_view_surface = [{
                     'id': 'view board',
                     'surface': self.hover_to_view_title,
@@ -218,11 +218,11 @@ class Play_PlayEventState(BaseState):
             self.reveal_button_option_list = [
                 {
                     'id': 'reveal path',
-                    'text': 'Reveal top 3 path cards',
+                    'text': 'Reveal next 3 path cards',
                 },
                 {
                     'id': 'reveal event',
-                    'text': 'Reveal top 4 event cards',
+                    'text': 'Reveal next 4 event cards',
                 },
             ]
             self.reveal_button_option_surface_list = []

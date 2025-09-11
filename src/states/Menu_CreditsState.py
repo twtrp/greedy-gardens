@@ -10,7 +10,7 @@ class Menu_CreditsState(BaseState):
         
         # Scrolling properties
         self.scroll_y = 0  # Start at top
-        self.scroll_speed = 120  # pixels per second (auto-scroll speed)
+        self.scroll_speed = 125  # pixels per second (auto-scroll speed)
         self.mouse_scroll_amount = 100  # pixels per mouse scroll input
         self.manual_scroll = False
         self.manual_scroll_timer = 0  # Timer to resume auto-scroll
@@ -33,6 +33,8 @@ class Menu_CreditsState(BaseState):
         self.credits_surface = None  # Will hold the entire credits as one surface
         self.credits_surface_height = 0
         self.static_links = []  # Store link positions relative to the surface
+
+        self.is_hovering_back_button = False
         
         self.load_assets()
 
@@ -55,9 +57,9 @@ class Menu_CreditsState(BaseState):
         for link in self.static_links:
             # Adjust link position based on scroll and clipping area
             adjusted_rect = pygame.Rect(
-                link['rect'].x + 23,  # Account for clipping area offset
+                link['rect'].x,  # Account for clipping area offset
                 link['rect'].y + 23 - int(self.scroll_y),  # Account for scroll and clipping
-                link['rect'].width,
+                link['rect'].width + 5,
                 link['rect'].height
             )
             
@@ -122,7 +124,7 @@ class Menu_CreditsState(BaseState):
                     self.auto_scroll_start_timer = 0  # Reset start delay as well
                     self.scroll_y += self.mouse_scroll_amount
 
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and not self.is_hovering_back_button:
                 if event.button == 1:
                     # Release the hold-to-pause / drag
                     self.hold_pause = False
@@ -190,6 +192,7 @@ class Menu_CreditsState(BaseState):
             button.update(dt=dt, events=events)
             
             if button.hovered:
+                self.is_hovering_back_button = True
                 self.cursor = button.hover_cursor
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
@@ -198,6 +201,7 @@ class Menu_CreditsState(BaseState):
                             utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                             self.exit_state()
             else:
+                self.is_hovering_back_button = False
                 for option in self.button_option_surface_list:
                     if button.id == option['id']:
                         option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
@@ -260,6 +264,9 @@ class Menu_CreditsState(BaseState):
         self.bts_figma_game = utils.get_image(dir=dir.bts, name='figma_game.png')
         self.bts_figma_game = utils.effect_outline(surface=self.bts_figma_game, color=colors.mono_35, distance=3)
         
+        self.bts_pygame_board_sim = utils.get_image(dir=dir.bts, name='pygame_board_sim.png')
+        self.bts_pygame_board_sim = utils.effect_outline(surface=self.bts_pygame_board_sim, color=colors.mono_35, distance=3)
+        
 
     def _setup_credits_content(self):
         """Setup the credits sections - edit this to modify credits content"""
@@ -299,14 +306,24 @@ class Menu_CreditsState(BaseState):
 
 
             {
-                'image': self.bts_paper,
-                'padding_bottom': -210
+                'image': self.bts_pygame_board_sim,
+                'padding_bottom': -192
             },
             {
                 'texts': {
-                    'text': ['Paper Prototype'],
+                     'text': ['Game Board Generator Test in Pygame'],
                     'size': 'tiny',
                     'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 3
+            },
+            {
+                'texts': {
+                     'text': ['We screenshotted the board and then played the game by drawing on our iPad.'],
+                    'size': 'tiny',
+                    'color': colors.mono_205,
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
@@ -395,13 +412,23 @@ class Menu_CreditsState(BaseState):
 
             {
                 'image': self.bts_figma_paper,
-                'padding_bottom': -215
+                'padding_bottom': -205
             },
             {
                 'texts': {
                      'text': ['Paper Prototype Printouts in Figma'],
                     'size': 'tiny',
                     'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 3
+            },
+            {
+                'texts': {
+                     'text': ['We chose a balanced board from the generator to be played in class lab.'],
+                    'size': 'tiny',
+                    'color': colors.mono_205,
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
@@ -482,7 +509,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Helping with Fullscreen Issues'],
+                    'text': ['Help with Display Mode Issues'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -574,19 +601,29 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'image': self.pygame_ce_logo,
-                'padding_bottom': 270
+                'padding_bottom': 250
             },
 
 
             {
-                'image': self.bts_figma_game,
-                'padding_bottom': -235
+                'image': self.bts_paper,
+                'padding_bottom': -200
             },
             {
                 'texts': {
-                     'text': ['Art and UI Concept in Figma'],
+                    'text': ['Paper Prototype Played in Classroom'],
                     'size': 'tiny',
                     'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 3
+            },
+            {
+                'texts': {
+                    'text': ['We decided the house and magic fruit locations with dice rolls.'],
+                    'size': 'tiny',
+                    'color': colors.mono_205,
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
@@ -594,9 +631,10 @@ class Menu_CreditsState(BaseState):
             },
 
 
+
             {
                 'texts': {
-                    'text': ['Gameplay Inspired by'],
+                    'text': ['Inspired by'],
                     'size': 'medium',
                     'color': colors.white,
                 },
@@ -604,19 +642,19 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Aporta Game\'s Avenue Board Game'],
+                    'text': ['Aporta Game\'s Avenue'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 105
+                'padding_bottom': 100
             },
 
 
             {
                 'texts': {
-                    'text': ['Assets Attributions'],
+                    'text': ['Asset Attributions'],
                     'size': 'medium',
                     'color': colors.white,
                 },
@@ -895,8 +933,35 @@ class Menu_CreditsState(BaseState):
                     ],
                     'padding': 20
                 },
-                'padding_bottom': 300
+                'padding_bottom': 330
             },
+
+            {
+                'image': self.bts_figma_game,
+                'padding_bottom': -228
+            },
+            {
+                'texts': {
+                     'text': ['Art and UI Concept in Figma'],
+                    'size': 'tiny',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 3
+            },
+            {
+                'texts': {
+                     'text': ['The rest was history.'],
+                    'size': 'tiny',
+                    'color': colors.mono_205,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 310
+            },
+
+
 
             {
                 'texts': {

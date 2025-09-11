@@ -131,7 +131,7 @@ def get_text(
         long_shadow_direction = 'bottom',
         long_shadow_color: pygame.Color = None,
         outline: bool = True,
-        outline_color: pygame.Color = colors.mono_35,
+        outline_color: pygame.Color = colors.mono_50,
     ) -> pygame.Surface:
     '''
     Use this to get a text surface

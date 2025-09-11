@@ -127,8 +127,6 @@ class PlayState(BaseState):
         self.dev_alert_timer = 0.0
         self.dev_alert_duration = 2.0  # Show alert for 2 seconds
 
-        self.load_assets()
-
         self.tween_list = []
         self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.mask_circle_radius = 0
@@ -167,9 +165,6 @@ class PlayState(BaseState):
         self.previous_seasonal_fruit = None  # Track previous seasonal fruit
         self.day_fruit_scales = [1.0, 1.0, 1.0, 1.0, 1.0]  # Scale for each day fruit (Day1, Day2, Day3, Day4, Seasonal)
 
-        self.ready = True
-        utils.sound_play(sound=sfx.woop_out, volume=self.game.sfx_volume)
-
         self.transitioning = True
         self.freeze_frame = None
 
@@ -182,6 +177,11 @@ class PlayState(BaseState):
         self.paused = False
         self.in_tutorial = False
         self._tutorial_just_exited = False
+
+        self.load_assets()
+
+        self.ready = True
+        utils.sound_play(sound=sfx.woop_out, volume=self.game.sfx_volume)
 
     #Main methods
 
@@ -1979,7 +1979,8 @@ class PlayState(BaseState):
                     utils.blit(dest=left_hud_surface, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
                     for i, score in enumerate(self.score_title_list):
                         utils.blit(dest=left_hud_surface, source=score, pos=(70, 83 + i*45), pos_anchor='midleft')
-                    utils.blit(dest=left_hud_surface, source=self.left_box_strike, pos=(self.box_width/2, 370), pos_anchor='center')
+                    utils.blit(dest=left_hud_surface, source=self.left_box_strike, pos=(self.box_width/2, 365
+                    ), pos_anchor='center')
                     utils.blit(dest=left_hud_surface, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
                     ## Render rightclick hint (hide only when a card is being rendered at position 630)
@@ -2013,12 +2014,12 @@ class PlayState(BaseState):
                             # Use center anchor to make scaling appear centered
                             original_size = self.scaled_live_strike.get_size()
                             center_x = 40 + i*64 + original_size[0] // 2
-                            center_y = 400 + original_size[1] // 2
+                            center_y = 395 + original_size[1] // 2
                             utils.blit(dest=left_hud_surface, source=scaled_strike, pos=(center_x, center_y), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.scaled_live_strike, pos=(40 + i*64, 400), pos_anchor='topleft')
+                            utils.blit(dest=left_hud_surface, source=self.scaled_live_strike, pos=(40 + i*64, 395), pos_anchor='topleft')
                     for i in range(3 - self.strikes):
-                        utils.blit(dest=left_hud_surface, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 400), pos_anchor='topleft')
+                        utils.blit(dest=left_hud_surface, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 395), pos_anchor='topleft')
 
                     ## Render current task image to temporary surface
                     if self.current_path:

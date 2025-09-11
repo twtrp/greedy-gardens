@@ -146,13 +146,13 @@ class Play_ResultStage(BaseState):
                 'id': 'continue',
                 'text': 'Continue to main menu',
                 'size': 'medium',
-                'color': colors.yellow_light,
+                'color': colors.white,
             },
             {
                 'id': 'view board',
                 'text': 'Hover here to view board',
                 'size': 'small',
-                'color': colors.white,
+                'color': colors.yellow_light,
             },
         ]
         self.button_option_surface_list = []

@@ -16,8 +16,8 @@ class Menu_TitleState(BaseState):
                 game=self.game,
                 id=option['id'],
                 width=300,
-                height=80,
-                pos=(constants.canvas_width/2, 340 + i*80),
+                height=70,
+                pos=(constants.canvas_width/2, 300 + i*70),
                 pos_anchor=posanchors.center
             ))
 
@@ -69,5 +69,5 @@ class Menu_TitleState(BaseState):
         # Render menu options
         for i, option in enumerate(self.parent.title_button_option_surface_list):
             scaled_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 340 + i*80), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=scaled_surface, pos=(constants.canvas_width/2, 300 + i*70), pos_anchor=posanchors.center)
         
