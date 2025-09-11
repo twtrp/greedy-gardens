@@ -11,7 +11,7 @@ class Game:
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap']
 
-        self.version_number = 'v1.0.0-beta12'
+        self.version_number = 'v1.0.0.beta12'
         self.title = f'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
@@ -64,7 +64,10 @@ class Game:
             mx, my = pygame.mouse.get_pos()
             current_w, current_h = self.screen.get_size()
             rel_x = mx / current_w
-            rel_y = my / current_h          
+            rel_y = my / current_h
+            if platform.system() == "Darwin":
+                pygame.display.quit()
+                pygame.display.init()       
             pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
             pygame.display.set_caption(self.title)
             if self.settings['fullscreen']:
