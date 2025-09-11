@@ -549,7 +549,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['ttewtor Logo Dino Idea'],
+                    'text': ['Pixel Art Consultant'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
