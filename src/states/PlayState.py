@@ -34,6 +34,9 @@ class PlayState(BaseState):
 
         print('Seed:',self.seed)
 
+        # Developer mode
+        self.developer_mode = False
+        
         self.game.canvas.fill((0, 0, 0))
 
         # config of gui
@@ -119,9 +122,6 @@ class PlayState(BaseState):
         self.is_striking = False
         self.current_turn = 0
 
-        # Developer mode
-        self.developer_mode = True  # Set to True to enable, False to disable
-        
         # Developer mode alert system
         self.dev_alert_text = ""
         self.dev_alert_timer = 0.0

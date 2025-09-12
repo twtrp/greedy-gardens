@@ -529,27 +529,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Game Dev Class Teacher'],
-                    'size': 'small',
-                    'color': colors.yellow_light,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Dr. SangGyu Nam'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 50
-            },
-            {
-                'texts': {
-                    'text': ['Pixel Art Consultant'],
+                    'text': ['Art Consultant'],
                     'size': 'small',
                     'color': colors.yellow_light,
                     'font': fonts.mago1,
@@ -561,6 +541,26 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Alison (dmx)'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
+                    'text': ['Game Dev Class Teacher'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['Dr. SangGyu Nam'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -611,7 +611,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Paper Prototype Played in Classroom'],
+                    'text': ['Paper Prototype Played in Class Lab'],
                     'size': 'tiny',
                     'color': colors.white,
                     'font': fonts.mago1,

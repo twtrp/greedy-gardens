@@ -13,8 +13,6 @@ class Deck:
         self.build_deck()
         random.shuffle(self.cards)
 
-        self.developer_mode = True
-
         # # comment if want to test card or deck
         if self.deck_type == 'path':
             self.organize_deck()
