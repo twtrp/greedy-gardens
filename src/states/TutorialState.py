@@ -1,9 +1,10 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.classes.Wind import Wind
-from src.states.Menu_TitleState import Menu_TitleState
+from src.states.MenuState import MenuState
+from src.classes.Button import Button
 
-class MenuState(BaseState):
+class TutorialState(BaseState):
     def __init__(self, game, parent, stack, finished_bootup=False):
         BaseState.__init__(self, game, parent, stack, finished_bootup)
 
@@ -11,6 +12,7 @@ class MenuState(BaseState):
 
         self.ready = False
         self.finished_boot_up = finished_bootup
+        self.finished_tween = False
         self.load_assets()
 
         self.tween_list = []
@@ -33,11 +35,6 @@ class MenuState(BaseState):
                 time=1,
                 ease_type=tweencurves.easeInQuint
             ).on_complete(on_complete))
-
-        self.records_sorter = {
-            'column': 'rowid',
-            'order': 'DESC',
-        }
 
         self.ready = True
 
@@ -71,18 +68,6 @@ class MenuState(BaseState):
             pos=(self.surface_logo.get_width()/2 + 10, self.surface_logo.get_height()/2),
             pos_anchor=posanchors.midleft,
         )
-
-        # text = utils.get_text(
-        #     text='PRESENTS', font=fonts.retro_arcade, size='small', color=colors.mono_100,
-        #     long_shadow_color=utils.color_lighten(color=colors.mono_100,factor=0.75),
-        #     outline_color=colors.white
-        # )
-        # utils.blit(
-        #     dest=self.surface_logo, 
-        #     source=text,
-        #     pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2 + 60),
-        #     pos_anchor=posanchors.midtop,
-        # )
 
         # Load menu background assets
         self.sky = utils.get_image(dir=dir.menu_bg, name='1_sky.png', mode='colorkey')
@@ -130,76 +115,146 @@ class MenuState(BaseState):
         self.menu_bg = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
         self.menu_bg_pixel_size = 2
 
-        # Load game logo
-        self.game_logo = utils.get_image(dir=dir.branding, name='game_logo.png', mode='colorkey')
-        self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=4)
-        self.game_logo_props = {'scale': 0.5, 'alpha': 0}
-
-        # Load menu options        
-        self.title_button_option_list = [
-            {
-                'id': 'play',
-                'text': 'Play',
-            },
-            {
-                'id': 'records',
-                'text': 'Records',
-            },
-            {
-                'id': 'settings',
-                'text': 'Settings',
-            },
-            {
-                'id': 'credits',
-                'text': 'Credits',
-            },
-            {
-                'id': 'quit',
-                'text': 'Quit',
-            }
-        ]
-        self.title_button_option_surface_list = []
-        for option in self.title_button_option_list:
-            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
-            self.title_button_option_surface_list.append({
-                'id': option['id'],
-                'surface': text,
-                'scale': 0.5,
-                'alpha': 0,
-            })
-
-        self.arrow_left = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_left')
-        self.arrow_right = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='arrow_right')
-
+        # Load mask
         self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.mask_circle_radius = 750
 
-        self.version_number_text = utils.get_text(
-            text=self.parent.version_number,
-            font=fonts.lf7,
-            size='small',
-            color=colors.white, 
-            long_shadow=False,
-            outline_color=colors.mono_100
+        # Load content #@note
+        self.welcome_text = utils.get_text(
+            text='Welcome to',
+            font=fonts.boldpixels,
+            size='large',
+            color=colors.white,
         )
-        
-        self.copyright_text = utils.get_text(
-            text='(c) 2025 ttewtor',
-            font=fonts.lf7,
-            size='small',
-            color=colors.white, 
-            long_shadow=False,
-            outline_color=colors.mono_100
-        )
-
-        # Animation properties for version and copyright text
-        self.version_copyright_props = {
-            'alpha': 0 if not self.finished_boot_up else 255
+        self.welcome_text_props = {
+            'pos': (constants.canvas_width/2, 120),
+            'pos_anchor': posanchors.center,
+            'scale': 0.5,
+            'alpha': 0
         }
 
-        self.dummy = {
-            'dummy': 0
+        self.game_logo = utils.get_image(dir=dir.branding, name='game_logo.png', mode='colorkey')
+        self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=4)
+        self.game_logo_props = {
+            'pos': (constants.canvas_width/2, 270),
+            'pos_anchor': posanchors.center,
+            'scale': 0.5,
+            'alpha': 0
         }
+
+        self.question_text = utils.get_text(
+            text='Do you want to learn how to play?',
+            font=fonts.boldpixels,
+            size='small',
+            color=colors.white,
+        )
+        self.question_text_props = {
+            'pos': (constants.canvas_width/2, 480),
+            'pos_anchor': posanchors.center,
+            'scale': 0.5,
+            'alpha': 0
+        }
+
+        self.no_button_symbol = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='wrong', mode='colorkey')
+        self.no_button_text = utils.get_text(
+            text='Skip',
+            font=fonts.lf2,
+            size='medium',
+        )
+        self.no_button_surface = pygame.Surface(
+            size=(
+                self.no_button_symbol.get_width() + self.no_button_text.get_width() + 8,
+                max(self.no_button_symbol.get_height(), self.no_button_text.get_height())
+            ),
+            flags=pygame.SRCALPHA
+        )
+        utils.blit(
+            dest=self.no_button_surface,
+            source=self.no_button_symbol,
+            pos=(0, self.no_button_surface.get_height()/2),
+            pos_anchor=posanchors.midleft
+        )
+        utils.blit(
+            dest=self.no_button_surface,
+            source=self.no_button_text,
+            pos=(self.no_button_symbol.get_width() + 8, self.no_button_surface.get_height()/2),
+            pos_anchor=posanchors.midleft
+        )
+        self.no_button_props = {
+            'pos': (constants.canvas_width/2 - 120, 580),
+            'pos_anchor': posanchors.center,
+            'scale': 0.5,
+            'alpha': 0,
+        }
+
+        self.yes_button_symbol = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='correct', mode='colorkey')
+        self.yes_button_text = utils.get_text(
+            text='Yes',
+            font=fonts.lf2,
+            size='medium',
+        )
+        self.yes_button_surface = pygame.Surface(
+            size=(
+                self.yes_button_symbol.get_width() + self.yes_button_text.get_width() + 8,
+                max(self.yes_button_symbol.get_height(), self.yes_button_text.get_height())
+            ),
+            flags=pygame.SRCALPHA
+        )
+        utils.blit(
+            dest=self.yes_button_surface,
+            source=self.yes_button_symbol,
+            pos=(0, self.yes_button_surface.get_height()/2),
+            pos_anchor=posanchors.midleft
+        )
+        utils.blit(
+            dest=self.yes_button_surface,
+            source=self.yes_button_text,
+            pos=(self.yes_button_symbol.get_width() + 8, self.yes_button_surface.get_height()/2),
+            pos_anchor=posanchors.midleft
+        )
+        self.yes_button_props = {
+            'pos': (constants.canvas_width/2 + 100, 580),
+            'pos_anchor': posanchors.center,
+            'scale': 0.5,
+            'alpha': 0,
+        }
+
+        # Load buttons
+        self.button_list = []
+        self.button_list.append(Button(
+            game=self.game,
+            id='no',
+            surface=self.no_button_surface,
+            pos=self.no_button_props['pos'],
+            pos_anchor=self.no_button_props['pos_anchor'],
+            padding_x = 20,
+            padding_y = 20,
+        ))
+        self.button_list.append(Button(
+            game=self.game,
+            id='yes',
+            surface=self.yes_button_surface,
+            pos=self.yes_button_props['pos'],
+            pos_anchor=self.yes_button_props['pos_anchor'],
+            padding_x = 20,
+            padding_y = 20,
+        ))
+
+        self.button_surface_list = []
+        self.button_surface_list.append({
+            'id': 'no',
+            'surface': self.no_button_surface,
+            'pos': self.no_button_props['pos'],
+            'pos_anchor': self.no_button_props['pos_anchor'],
+            'scale': 1.0,
+        })
+        self.button_surface_list.append({
+            'id': 'yes',
+            'surface': self.yes_button_surface,
+            'pos': self.yes_button_props['pos'],
+            'pos_anchor': self.yes_button_props['pos_anchor'],
+            'scale': 1.0,
+        })
 
     def update(self, dt, events):
         if self.ready:
@@ -234,9 +289,30 @@ class MenuState(BaseState):
             if random.random() <= spawn_chance:
                 self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
 
+            # Update buttons
+            if self.finished_tween:
+                for button in self.button_list:
+                    button.update(dt=dt, events=events)
+                    
+                    if button.hovered:
+                        self.cursor = button.hover_cursor
+                        for option in self.button_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                    else:
+                        for option in self.button_surface_list:
+                            if button.id == option['id']:
+                                option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
+
+        utils.set_cursor(cursor=self.cursor)
+        self.cursor = cursors.normal
+
 
     def render(self, canvas):
         if self.ready:
+
+            for button in self.button_list: 
+                button.render(canvas)
 
             # Build background
 
@@ -261,23 +337,6 @@ class MenuState(BaseState):
             ## Render final menu_bg to canvas
             utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
 
-            ## Render version number and copyright
-            version_text_copy = self.version_number_text.copy()
-            version_text_copy.set_alpha(self.version_copyright_props['alpha'])
-            utils.blit(
-                dest=canvas,
-                source=version_text_copy,
-                pos=(12, constants.canvas_height - 2),
-                pos_anchor=posanchors.bottomleft
-            )
-            copyright_text_copy = self.copyright_text.copy()
-            copyright_text_copy.set_alpha(self.version_copyright_props['alpha'])
-            utils.blit(
-                dest=canvas,
-                source=copyright_text_copy,
-                pos=(constants.canvas_width - 12, constants.canvas_height - 2),
-                pos_anchor=posanchors.bottomright
-            )
 
             # Build intro
 
@@ -298,22 +357,41 @@ class MenuState(BaseState):
                     pos_anchor=posanchors.center,
                 )
                 
-            # Render substates
+            # Render substates #@note
 
             if not self.substate_stack:
+                ## Render welcome text
+                processed_welcome_text = pygame.transform.scale_by(surface=self.welcome_text, factor=self.welcome_text_props['scale'])
+                processed_welcome_text.set_alpha(self.welcome_text_props['alpha'])
+                utils.blit(dest=canvas, source=processed_welcome_text, pos=self.welcome_text_props['pos'], pos_anchor=self.welcome_text_props['pos_anchor'])
+
                 ## Render game logo
                 processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
                 processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-                utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=processed_game_logo, pos=self.game_logo_props['pos'], pos_anchor=self.welcome_text_props['pos_anchor'])
 
-                ## Render menu options
-                for i, option in enumerate(self.title_button_option_surface_list):
-                    processed_option = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
-                    processed_option.set_alpha(option['alpha'])
-                    utils.blit(dest=canvas, source=processed_option, pos=(constants.canvas_width/2, 300 + i*70), pos_anchor=posanchors.center)
+                ## Render question text
+                processed_question_text = pygame.transform.scale_by(surface=self.question_text, factor=self.question_text_props['scale'])
+                processed_question_text.set_alpha(self.question_text_props['alpha'])
+                utils.blit(dest=canvas, source=processed_question_text, pos=self.question_text_props['pos'], pos_anchor=self.question_text_props['pos_anchor'])
 
+                ## Render buttons
+                if not self.finished_tween:
+                    processed_no_button = pygame.transform.scale_by(surface=self.no_button_surface, factor=self.no_button_props['scale'])
+                    processed_no_button.set_alpha(self.no_button_props['alpha'])
+                    utils.blit(dest=canvas, source=processed_no_button, pos=self.no_button_props['pos'], pos_anchor=self.no_button_props['pos_anchor'])
+
+                    processed_yes_button = pygame.transform.scale_by(surface=self.yes_button_surface, factor=self.yes_button_props['scale'])
+                    processed_yes_button.set_alpha(self.yes_button_props['alpha'])
+                    utils.blit(dest=canvas, source=processed_yes_button, pos=self.yes_button_props['pos'], pos_anchor=self.yes_button_props['pos_anchor'])
+                else:
+                    for option in self.button_surface_list:
+                        processed_button = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
+                        utils.blit(dest=canvas, source=processed_button, pos=option['pos'], pos_anchor=option['pos_anchor'])
+                
             else:
                 self.substate_stack[-1].render(canvas=canvas)
+
 
         if self.transitioning:
             # transition mask     
@@ -333,14 +411,6 @@ class MenuState(BaseState):
   
     def bootup_tween_chain(self, skip=False):
         if not skip:
-            self.tween_list.append(tween.to(
-                container=self.dummy,
-                key='dummy',
-                end_value=1,
-                time=0.1,
-                delay=1
-            ).on_start(lambda: self.game.start_menu_music()))
-
             delay = 0
             self.tween_list.append(tween.to(
                 container=self.surface_logo_props,
@@ -359,7 +429,7 @@ class MenuState(BaseState):
                 delay=delay
             ))
 
-            delay += 2.25
+            delay += 2
             self.tween_list.append(tween.to(
                 container=self.overlay_props,
                 key='alpha',
@@ -395,7 +465,29 @@ class MenuState(BaseState):
                 delay=delay
             ).on_complete(self.finish_bootup))
             
-            delay += 1.85
+            delay += 1.85   
+            def start_music():
+                utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
+                utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
+                self.game.music_channel.play()    
+            self.tween_list.append(tween.to(
+                container=self.welcome_text_props,
+                key='scale',
+                end_value=1,
+                time=0.75,
+                ease_type=tweencurves.easeOutElastic,
+                delay=delay
+            ).on_start(start_music))
+            self.tween_list.append(tween.to(
+                container=self.welcome_text_props,
+                key='alpha',
+                end_value=255,
+                time=0.1,
+                ease_type=tweencurves.easeOutCirc,
+                delay=delay
+            ))
+
+            delay += 0.75
             self.tween_list.append(tween.to(
                 container=self.game_logo_props,
                 key='scale',
@@ -411,38 +503,61 @@ class MenuState(BaseState):
                 time=0.1,
                 ease_type=tweencurves.easeOutCirc,
                 delay=delay
-            ))
-    
-            for option in self.title_button_option_surface_list:
-                delay += 0.05
-                self.tween_list.append(tween.to(
-                    container=option,
-                    key='scale',
-                    end_value=1,
-                    time=0.5,
-                    ease_type=tweencurves.easeOutElastic,
-                    delay=delay
-                ))
-                self.tween_list.append(tween.to(
-                    container=option,
-                    key='alpha',
-                    end_value=255,
-                    time=0.1,
-                    ease_type=tweencurves.easeOutCirc,
-                    delay=delay
-                ))
+            )) #@note
 
-            # Add version and copyright fade-in after all other animations
-            delay += 0.25  # Small additional delay after the last button
+            delay += 0.75
             self.tween_list.append(tween.to(
-                container=self.version_copyright_props,
-                key='alpha',
-                end_value=255,
-                time=1.0,
-                ease_type=tweencurves.easeOutQuad,
+                container=self.question_text_props,
+                key='scale',
+                end_value=1,
+                time=0.75,
+                ease_type=tweencurves.easeOutCirc,
                 delay=delay
             ))
-                
+            self.tween_list.append(tween.to(
+                container=self.question_text_props,
+                key='alpha',
+                end_value=255,
+                time=0.1,
+                ease_type=tweencurves.easeOutCirc,
+                delay=delay
+            ))
+
+            self.tween_list.append(tween.to(
+                container=self.no_button_props,
+                key='scale',
+                end_value=1,
+                time=0.75,
+                ease_type=tweencurves.easeOutCirc,
+                delay=delay
+            ))
+            self.tween_list.append(tween.to(
+                container=self.no_button_props,
+                key='alpha',
+                end_value=255,
+                time=0.1,
+                ease_type=tweencurves.easeOutCirc,
+                delay=delay
+            ))
+            def finished_tween():
+                self.finished_tween = True
+            self.tween_list.append(tween.to(
+                container=self.yes_button_props,
+                key='scale',
+                end_value=1,
+                time=0.75,
+                ease_type=tweencurves.easeOutCirc,
+                delay=delay
+            ).on_complete(finished_tween))
+            self.tween_list.append(tween.to(
+                container=self.yes_button_props,
+                key='alpha',
+                end_value=255,
+                time=0.1,
+                ease_type=tweencurves.easeOutCirc,
+                delay=delay
+            ))
+
         else:
             self.game.start_menu_music()
             self.finish_bootup()
@@ -450,8 +565,6 @@ class MenuState(BaseState):
 
     def finish_bootup(self):
         self.game.finished_bootup = True
-        
-        # self.game.start_menu_music()
 
         # Clear intro assets
         del self.surface_logo
@@ -468,15 +581,9 @@ class MenuState(BaseState):
             self.winds_props['y_offset'] = 0
             self.game_logo_props['scale'] = 1
             self.game_logo_props['alpha'] = 255
-            for option in self.title_button_option_surface_list:
-                option['scale'] = 1
-                option['alpha'] = 255
-            self.version_copyright_props['alpha'] = 255
 
         # Convert surfaces to static
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
-        for option in self.title_button_option_surface_list:
-            option['surface'] = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
         
         # Initiate substate
-        Menu_TitleState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+        # Menu_TitleState(game=self.game, parent=self, stack=self.substate_stack).enter_state()

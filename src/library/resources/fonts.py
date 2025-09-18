@@ -39,3 +39,25 @@ mago1 = {
     },
     'pixel_size_divisor': 16
 }
+
+m6x11 = {
+    'file': 'm6x11plus.ttf',
+    'sizes': {
+        'tiny': 36,
+        'small': 48,
+        'medium': 64,
+        'large': 80
+    },
+    'pixel_size_divisor': 16
+}
+
+boldpixels = {
+    'file': 'BoldPixels.ttf',
+    'sizes': {
+        'tiny': 36,
+        'small': 48,
+        'medium': 64,
+        'large': 80
+    },
+    'pixel_size_divisor': 16
+}

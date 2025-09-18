@@ -99,6 +99,18 @@ gui = {
             'width': 48,
             'height': 48,
         },
+        'correct': {
+            'x': 96,
+            'y': 0,
+            'width': 48,
+            'height': 48,
+        },
+        'wrong': {
+            'x': 144,
+            'y': 0,
+            'width': 48,
+            'height': 48,
+        },
         'strike_blank': {
             'x': 0,
             'y': 48,

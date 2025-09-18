@@ -1,6 +1,6 @@
 ambience = {
     'name': 'forest_ambience.ogg',
-    'volume': 0.2,
+    'volume': 0.25,
 }
 deselect = {
     'name': 'SFX_UI_CloseMenu.ogg',

@@ -43,7 +43,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="Welcome to Greedy Gardens!",
-                    font=fonts.minecraftia, size='small', color=colors.green_light, long_shadow=False
+                    font=fonts.boldpixels, size='small', color=colors.green_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You're a fruit picker working on a 4-day contract.",

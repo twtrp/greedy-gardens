@@ -79,7 +79,7 @@ class Menu_RecordsState(BaseState):
     #Main methods
 
     def load_assets(self):
-        self.page_title = utils.get_text(text='Records', font=fonts.lf2, size='huge', color=colors.yellow_light)
+        self.page_title = utils.get_text(text='Records', font=fonts.boldpixels, size='large', color=colors.yellow_light)
         
         self.table_header_list = [
             {

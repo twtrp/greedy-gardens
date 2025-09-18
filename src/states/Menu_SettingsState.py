@@ -19,7 +19,7 @@ class Menu_SettingsState(BaseState):
 
     def load_assets(self):
 
-        self.page_title = utils.get_text(text='Settings', font=fonts.lf2, size='huge', color=colors.yellow_light)
+        self.page_title = utils.get_text(text='Settings', font=fonts.boldpixels, size='large', color=colors.yellow_light)
         
         self.arrow_left = self.parent.arrow_left
         self.arrow_right = self.parent.arrow_right

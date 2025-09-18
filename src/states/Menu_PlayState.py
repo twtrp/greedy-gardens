@@ -22,7 +22,7 @@ class Menu_PlayState(BaseState):
 
     def load_assets(self):
 
-        self.page_title = utils.get_text(text='Play', font=fonts.lf2, size='huge', color=colors.green_light)
+        self.page_title = utils.get_text(text='Play', font=fonts.boldpixels, size='large', color=colors.green_light)
 
         self.button_option_list = [
             {

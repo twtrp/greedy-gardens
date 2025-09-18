@@ -1,5 +1,5 @@
-# menu_intro = 'menu_intro.ogg'
-menu_loop = 'RoccoW - Why Did the Crow Cross the Road (loop).ogg'
+menu_intro = "26 5am - Goodbye _ Towball's Crossing (intro).ogg"
+menu_loop = "26 5am - Goodbye _ Towball's Crossing (loop).ogg"
 play_1 = '01 Main Theme _ Towballs Crossing.ogg'
 play_2 = '03 7am _ Towballs Crossing.ogg'
 play_3 = "06 10pm _ Towball's Crossing.ogg"

@@ -1,6 +1,7 @@
 from src.library.essentials import *
 from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
+from src.states.TutorialState import TutorialState
 import traceback
 import tkinter as tk
 from tkinter import messagebox
@@ -8,6 +9,11 @@ from tkinter import messagebox
 class Game:
     def __init__(self):
         self.settings_manager = SettingsManager()
+        if not os.path.exists(self.settings_manager.settings_file):
+            self.first_run = True
+        else:
+            self.first_run = False
+
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap']
 
@@ -44,8 +50,10 @@ class Game:
         utils.sound_play(sound=sfx.ambience, sound_channel=self.ambience_channel, loops=-1, fade_ms=3000)
 
         self.state_stack = []
-        utils.music_load(music_channel=self.music_channel, name=music.menu_loop)
-        utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
+
+        if not self.first_run:
+            utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
+            utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
 
         self.finished_bootup = False
 
@@ -121,7 +129,11 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            if self.first_run:
+                self.first_run = False
+                TutorialState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            else:
+                MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
 
         # Handle quit
         for event in events:
