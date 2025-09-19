@@ -47,9 +47,9 @@ class Play_EndDayState(BaseState):
     def load_assets(self):
         # Text
         self.result_title = utils.get_text(text=f'Day {self.current_day} Result', font=fonts.wacky_pixels, size='large', color=colors.white)
-        self.vs_title = utils.get_text(text=f'vs', font=fonts.wacky_pixels, size='smaller', color=colors.mono_205)
-        self.pass_title = utils.get_text(text=f'Pass!', font=fonts.wacky_pixels, size='medium', color=colors.green_light)
-        self.fail_title = utils.get_text(text=f'Fail!', font=fonts.wacky_pixels, size='medium', color=colors.red_light)
+        self.vs_title = utils.get_text(text=f'VS', font=fonts.wacky_pixels, size='smaller', color=colors.mono_205)
+        self.pass_title = utils.get_text(text=f'Pass', font=fonts.wacky_pixels, size='medium', color=colors.green_light)
+        self.fail_title = utils.get_text(text=f'Fail', font=fonts.wacky_pixels, size='medium', color=colors.red_light)
         self.fail_description = utils.get_text(text=f'You failed to collect more than yesterday!', font=fonts.windows, size='smaller', color=colors.red_light)
         self.fail_description_2 = utils.get_text(text=f'Your score for the day was set to zero.', font=fonts.windows, size='smaller', color=colors.red_light)
 
@@ -129,7 +129,7 @@ class Play_EndDayState(BaseState):
         # Title text
         utils.blit(dest=canvas, source=self.result_title, pos=(constants.canvas_width/2, constants.canvas_height/2 - 150), pos_anchor='center')
         if self.parent.current_day > 1:
-            utils.blit(dest=canvas, source=self.vs_title, pos=(constants.canvas_width/2, constants.canvas_height/2 + 2), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.vs_title, pos=(constants.canvas_width/2, constants.canvas_height/2 + 4), pos_anchor='center')
             if getattr(self.parent, f'final_day{self.parent.current_day}_score') <= getattr(self.parent, f'final_day{self.parent.current_day -1}_score'):
                 utils.blit(dest=canvas, source=self.fail_title, pos=(constants.canvas_width/2, 515), pos_anchor='center')
                 utils.blit(dest=canvas, source=self.fail_description, pos=(constants.canvas_width/2, 565), pos_anchor='center')

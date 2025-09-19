@@ -373,11 +373,11 @@ class PlayState(BaseState):
             font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_move_control_hint = utils.get_text(
-            text='Select a path to move, then select a blank tile to move it to.',
+            text='Select a path, then select a blank tile to move it to.',
             font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_merge_control_hint = utils.get_text(
-            text='Select 2 paths. Path 1 will be removed and merged with path 2.',
+            text='Select 2 paths. Path 1 will be gone and merged with path 2.',
             font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_remove_control_hint = utils.get_text(
@@ -2006,7 +2006,7 @@ class PlayState(BaseState):
 
                     ## Render value in left white box to temporary surface
                     for i, score in enumerate(self.score_amount_list):
-                        if i < self.current_day + 1 or i == 4:
+                        if i < self.current_day + 1 or i >= 4:
                             # Apply scale animation to score numbers
                             if self.score_scales[i] != 1.0:
                                 scaled_score = pygame.transform.scale_by(surface=score, factor=self.score_scales[i])
@@ -2713,7 +2713,7 @@ class PlayState(BaseState):
     
     def animate_score(self, score_index):
         """Animate a score number with a scale-up then scale-down effect."""
-        self.score_scales[score_index] = 1.75
+        self.score_scales[score_index] = 1.65
         self.tween_list.append(tween.to(
             container=self.score_scales,
             key=score_index,
@@ -2731,7 +2731,7 @@ class PlayState(BaseState):
     
     def animate_deck_count(self, deck_index):
         """Animate a deck count number with a scale-up then scale-down effect."""
-        self.deck_scales[deck_index] = 1.75
+        self.deck_scales[deck_index] = 1.65
         self.tween_list.append(tween.to(
             container=self.deck_scales,
             key=deck_index,
@@ -2760,7 +2760,7 @@ class PlayState(BaseState):
 
     def animate_turn_text(self):
         """Animate turn text with a scale-down effect."""
-        self.turn_text_scale = 1.15
+        self.turn_text_scale = 1.2
         self.tween_list.append(tween.to(
             container=self,
             key='turn_text_scale',
