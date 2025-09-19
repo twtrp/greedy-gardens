@@ -17,7 +17,7 @@ orange_light = (252, 225, 100)
 
 blue_light = (142, 205, 235)
 
-red_light = (255, 114, 118)
+red_light = (255, 125, 125)
 
 link = (140, 193, 255)
 

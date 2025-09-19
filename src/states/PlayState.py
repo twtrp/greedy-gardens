@@ -364,8 +364,8 @@ class PlayState(BaseState):
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
-        self.scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.625)
-        self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.625)
+        self.scaled_live_strike = pygame.transform.scale_by(surface=self.live_strike_image, factor=0.5)
+        self.scaled_blank_strike = pygame.transform.scale_by(surface=self.blank_strike_image, factor=0.5)
 
         # Event Control Hints
         self.event_free_control_hint = utils.get_text(
@@ -695,6 +695,10 @@ class PlayState(BaseState):
             music.play_11,
             music.play_12,
             music.play_13,
+            music.play_14,
+            music.play_15,
+            music.play_16,
+            music.play_17,
         ]
         random.seed(None)
         random.shuffle(self.songs)
@@ -2002,16 +2006,17 @@ class PlayState(BaseState):
 
                     ## Render value in left white box to temporary surface
                     for i, score in enumerate(self.score_amount_list):
-                        # Apply scale animation to score numbers
-                        if self.score_scales[i] != 1.0:
-                            scaled_score = pygame.transform.scale_by(surface=score, factor=self.score_scales[i])
-                            # Use center anchor to make scaling appear centered
-                            # Calculate the center position based on the original midright position
-                            original_width = score.get_width()
-                            center_x = 240 - (original_width / 2)
-                            utils.blit(dest=left_hud_surface, source=scaled_score, pos=(center_x, 80 + i*45), pos_anchor='center')
-                        else:
-                            utils.blit(dest=left_hud_surface, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
+                        if i < self.current_day + 1 or i == 4:
+                            # Apply scale animation to score numbers
+                            if self.score_scales[i] != 1.0:
+                                scaled_score = pygame.transform.scale_by(surface=score, factor=self.score_scales[i])
+                                # Use center anchor to make scaling appear centered
+                                # Calculate the center position based on the original midright position
+                                original_width = score.get_width()
+                                center_x = 240 - (original_width / 2)
+                                utils.blit(dest=left_hud_surface, source=scaled_score, pos=(center_x, 80 + i*45), pos_anchor='center')
+                            else:
+                                utils.blit(dest=left_hud_surface, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
 
                     ## Render strike in left white box to temporary surface
                     for i in range(self.strikes):
@@ -2020,13 +2025,13 @@ class PlayState(BaseState):
                             scaled_strike = pygame.transform.scale_by(surface=self.scaled_live_strike, factor=self.strike_scales[i])
                             # Use center anchor to make scaling appear centered
                             original_size = self.scaled_live_strike.get_size()
-                            center_x = 40 + i*64 + original_size[0] // 2
+                            center_x = self.box_width/2 + (i-1)*64
                             center_y = 395 + original_size[1] // 2
                             utils.blit(dest=left_hud_surface, source=scaled_strike, pos=(center_x, center_y), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.scaled_live_strike, pos=(40 + i*64, 395), pos_anchor='topleft')
+                            utils.blit(dest=left_hud_surface, source=self.scaled_live_strike, pos=(self.box_width/2 + (i-1)*64, 395), pos_anchor='midtop')
                     for i in range(3 - self.strikes):
-                        utils.blit(dest=left_hud_surface, source=self.scaled_blank_strike, pos=(40 + i*64 + self.strikes*64, 395), pos_anchor='topleft')
+                        utils.blit(dest=left_hud_surface, source=self.scaled_blank_strike, pos=(self.box_width/2 + (i-1)*64 + self.strikes*64, 395), pos_anchor='midtop')
 
                     ## Render current task image to temporary surface
                     if self.current_path:
