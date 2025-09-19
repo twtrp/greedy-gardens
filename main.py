@@ -141,7 +141,7 @@ class Game:
                 pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
-            
+
             # # TEST CRASH: Press Ctrl+Shift+C to simulate a crash
             # if event.type == pygame.KEYDOWN:
             #     keys = pygame.key.get_pressed()
@@ -168,8 +168,8 @@ class Game:
     def game_loop(self):
         while True:
             try:
-                # pygame.display.set_caption(f'{self.title} ({int(self.clock.get_fps())} FPS)')
-                dt = self.clock.tick(self.fps_cap)/1000.0
+                raw_dt = self.clock.tick(self.fps_cap)/1000.0
+                dt = min(raw_dt, 0.1)
                 events = pygame.event.get()
                 self.update(dt=dt, events=events)
                 self.render()
