@@ -59,9 +59,10 @@ class Menu_RecordsState(BaseState):
                     for idx, key in enumerate(row_data.keys()):
                         cell = utils.get_text(
                             text=str(row_data[key]),
-                            font=fonts.lf2,
-                            size='small',
+                            font=fonts.mago1,
+                            size='tiny',
                             color=colors.white,
+                            outline=False,
                             long_shadow=False,
                         )
                         utils.blit(dest=surface,
@@ -79,7 +80,12 @@ class Menu_RecordsState(BaseState):
     #Main methods
 
     def load_assets(self):
-        self.page_title = utils.get_text(text='Records', font=fonts.boldpixels, size='large', color=colors.yellow_light)
+        self.page_title = utils.get_text(
+            text='Records',
+            font=fonts.boldpixels,
+            size='large',
+            color=colors.orange_light,
+        )
         
         self.table_header_list = [
             {
@@ -90,17 +96,17 @@ class Menu_RecordsState(BaseState):
             {
                 'id': 'score',
                 'text': 'Score',
-                'x': 520
+                'x': 535
             },
             {
                 'id': 'seed',
                 'text': 'Seed',
-                'x': 650
+                'x': 675
             },
             {
                 'id': 'seed_type',
                 'text': 'Seed Type',
-                'x': 840
+                'x': 850
             }
         ]
         self.table_header_surface_list = []
@@ -165,8 +171,8 @@ class Menu_RecordsState(BaseState):
             surface = pygame.Surface(size=(constants.canvas_width, 30), flags=pygame.SRCALPHA)
             for key in row_keys:
                 cell = utils.get_text(text=str(row[key]),
-                                      font=fonts.lf2,
-                                      size='small',
+                                      font=fonts.mago1,
+                                      size='tiny',
                                       color=colors.mono_50,
                                       long_shadow=False,
                                       outline=False)
@@ -224,12 +230,12 @@ class Menu_RecordsState(BaseState):
                 for button in self.button_list:
                     if button.id == 'table' and button.hovered:
                         if event.button == 4:
-                            if self.table_scroll_offset != 0:
-                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                            # if self.table_scroll_offset != 0:
+                            #     utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
                             self.table_scroll_offset = min(self.table_scroll_offset + self.table_row_height, 0)
                         elif event.button == 5:
-                            if self.table_scroll_offset != self.table_max_scroll_offset:
-                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                            # if self.table_scroll_offset != self.table_max_scroll_offset:
+                            #     utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
                             self.table_scroll_offset = max(self.table_scroll_offset - self.table_row_height, self.table_max_scroll_offset)
 
         for button in self.button_list:
@@ -273,7 +279,7 @@ class Menu_RecordsState(BaseState):
                                     distance=deco_distance,
                                     color=utils.color_darken(color=colors.white, factor=0.5
                                 ))
-                                deco_arrow_surface = utils.effect_outline(surface=deco_arrow_surface, distance=deco_distance)
+                                deco_arrow_surface = utils.effect_outline(surface=deco_arrow_surface, distance=deco_distance, color=colors.mono_65)
                                 utils.blit(dest=header_surface, source=deco_arrow_surface, pos=(header_surface.get_width(), 3), pos_anchor=posanchors.topright)
                             elif self.parent.records_sorter['order'] == 'DESC':
                                 header_surface = utils.get_text(text=header['text']+' ^', font=fonts.lf2, size='small', color=colors.white)
@@ -328,7 +334,7 @@ class Menu_RecordsState(BaseState):
             size=(self.table_width, self.table_height),
             pos=(constants.canvas_width/2, 380),
             pos_anchor=posanchors.center,
-            color=(*colors.mono_50, 225),
+            color=(*colors.mono_50, 235),
             inner_border_width=3
         )
         
@@ -336,9 +342,10 @@ class Menu_RecordsState(BaseState):
         if not self.ordered_row_ids:
             no_records_text = utils.get_text(
                 text="No games played yet",
-                font=fonts.lf2,
-                size='small',
+                font=fonts.mago1,
+                size='tiny',
                 color=colors.white,
+                outline=False,
                 long_shadow=False,
             )
             utils.blit(

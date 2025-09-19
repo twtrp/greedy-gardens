@@ -204,6 +204,9 @@ class MenuState(BaseState):
     def update(self, dt, events):
         if self.ready:
 
+            # if not self.transitioning:
+            #     self.game.start_menu_music()
+
             # Update substates
             if self.substate_stack:
                 self.substate_stack[-1].update(dt=dt, events=events)
@@ -451,8 +454,6 @@ class MenuState(BaseState):
     def finish_bootup(self):
         self.game.finished_bootup = True
         
-        # self.game.start_menu_music()
-
         # Clear intro assets
         del self.surface_logo
         del self.surface_logo_props

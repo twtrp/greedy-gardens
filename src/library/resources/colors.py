@@ -6,27 +6,19 @@ mono_150 = (150, 150, 150)
 mono_100 = (100, 100, 100)
 mono_65 = (65, 65, 65)
 mono_50 = (50, 50, 50)
-mono_35 = (35, 35, 35)
+mono_40 = (40, 40, 40)
 black = (0, 0, 0)
 
-green_light = (102, 229, 153)
-green_medium = (90, 200, 134)
-green_dark = (76, 170, 114)
+green_light = (35, 229, 130)
 
 yellow_light = (246, 238, 123)
-yellow_medium = (228, 206, 114) 
-yellow_dark = (187, 180, 93)
 
-orange_light  = (255, 183,  64)
-orange_medium = (245, 166,  35) 
-orange_dark   = (187, 134,  47)
+orange_light = (252, 215, 100)
 
-purple_light = (177, 152, 225)
-purple_medium = (143, 121, 195)
-purple_dark = (122, 103, 160)
+blue_light = (142, 205, 235)
 
 red_light = (255, 114, 118)
 
-blue_light = (128, 179, 255)
+link = (128, 179, 255)
 
 namsom_color = (253, 83, 1)

@@ -43,7 +43,7 @@ class Menu_TutorialState(BaseState):
             [
                 utils.get_text(
                     text="Welcome to Greedy Gardens!",
-                    font=fonts.boldpixels, size='small', color=colors.green_light, long_shadow=False
+                    font=fonts.minecraftia, size='small', color=colors.green_light, long_shadow=False
                 ),
                 utils.get_text(
                     text="You're a fruit picker working on a 4-day contract.",
@@ -194,7 +194,7 @@ class Menu_TutorialState(BaseState):
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_coconut'),
         ]
         for i, surface in enumerate(self.fruit_sprites):
-            self.fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+            self.fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_40)
 
         self.path_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE'),
@@ -206,7 +206,7 @@ class Menu_TutorialState(BaseState):
         ]
         for i, surface in enumerate(self.path_sprites):
             self.path_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
-            self.path_sprites[i] = utils.effect_outline(surface=self.path_sprites[i], distance=2, color=colors.mono_35)
+            self.path_sprites[i] = utils.effect_outline(surface=self.path_sprites[i], distance=2, color=colors.mono_40)
 
         self.event_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free'),
@@ -220,7 +220,7 @@ class Menu_TutorialState(BaseState):
         ]
         for i, surface in enumerate(self.event_sprites):
             self.event_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
-            self.event_sprites[i] = utils.effect_outline(surface=self.event_sprites[i], distance=2, color=colors.mono_35)
+            self.event_sprites[i] = utils.effect_outline(surface=self.event_sprites[i], distance=2, color=colors.mono_40)
 
         self.magic_fruit_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1'),
@@ -228,7 +228,7 @@ class Menu_TutorialState(BaseState):
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3'),
         ]
         for i, surface in enumerate(self.magic_fruit_sprites):
-            self.magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+            self.magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_40)
 
     def update(self, dt, events):
         for event in events:

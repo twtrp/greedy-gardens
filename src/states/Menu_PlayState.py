@@ -22,7 +22,12 @@ class Menu_PlayState(BaseState):
 
     def load_assets(self):
 
-        self.page_title = utils.get_text(text='Play', font=fonts.boldpixels, size='large', color=colors.green_light)
+        self.page_title = utils.get_text(
+            text='Play',
+            font=fonts.boldpixels,
+            size='large',
+            color=colors.green_light,
+        )
 
         self.button_option_list = [
             {
@@ -81,7 +86,7 @@ class Menu_PlayState(BaseState):
         )
 
         self.textbox_placeholder_surface = utils.get_text(
-            text='Random', font=fonts.lf2, size='small', color=colors.mono_100,
+            text='Random', font=fonts.mago1, size='tiny', color=colors.mono_100,
             long_shadow=False, outline=False
         )
         self.button_list.append(Button(
@@ -106,8 +111,8 @@ class Menu_PlayState(BaseState):
                             self.textbox_text = self.textbox_text[:-1]
                             self.textbox_text_surface = utils.get_text(
                                 text=self.textbox_text,
-                                font=fonts.lf2,
-                                size='small',
+                                font=fonts.mago1,
+                                size='tiny',
                                 color=colors.mono_50,
                                 long_shadow=False,
                                 outline=False
@@ -120,8 +125,8 @@ class Menu_PlayState(BaseState):
                                 self.textbox_text += event.unicode
                                 self.textbox_text_surface = utils.get_text(
                                     text=self.textbox_text,
-                                    font=fonts.lf2,
-                                    size='small',
+                                    font=fonts.mago1,
+                                    size='tiny',
                                     color=colors.mono_50,
                                     long_shadow=False,
                                     outline=False
@@ -197,11 +202,11 @@ class Menu_PlayState(BaseState):
                     processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])
                     utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 580), pos_anchor=posanchors.center)
 
-            utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 443), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 442), pos_anchor=posanchors.center)
             if self.textbox_mode == 'inactive':
                 utils.draw_rect(
                     dest=canvas,
-                    size=(140, 50),
+                    size=(110, 50),
                     pos=(constants.canvas_width/2, 490), 
                     pos_anchor=posanchors.center,
                     color=(*colors.white, 165),
@@ -214,7 +219,7 @@ class Menu_PlayState(BaseState):
             elif self.textbox_mode == 'hovered':
                 utils.draw_rect(
                     dest=canvas,
-                    size=(140, 50),
+                    size=(110, 50),
                     pos=(constants.canvas_width/2, 490), 
                     pos_anchor=posanchors.center,
                     color=(*colors.white, 165),
@@ -229,7 +234,7 @@ class Menu_PlayState(BaseState):
             elif self.textbox_mode == 'active':
                 utils.draw_rect(
                     dest=canvas,
-                    size=(140, 50),
+                    size=(110, 50),
                     pos=(constants.canvas_width/2, 490), 
                     pos_anchor=posanchors.center,
                     color=(*colors.white, 165),

@@ -256,16 +256,16 @@ class Menu_CreditsState(BaseState):
         self.pygame_ce_logo = pygame.transform.smoothscale_by(surface=self.pygame_ce_logo, factor=0.15)
 
         self.bts_paper = utils.get_image(dir=dir.bts, name='paper.png')
-        self.bts_paper = utils.effect_outline(surface=self.bts_paper, color=colors.mono_35, distance=3)
+        self.bts_paper = utils.effect_outline(surface=self.bts_paper, color=colors.mono_40, distance=3)
 
         self.bts_figma_paper = utils.get_image(dir=dir.bts, name='figma_paper.png')
-        self.bts_figma_paper = utils.effect_outline(surface=self.bts_figma_paper, color=colors.mono_35, distance=3)
+        self.bts_figma_paper = utils.effect_outline(surface=self.bts_figma_paper, color=colors.mono_40, distance=3)
 
         self.bts_figma_game = utils.get_image(dir=dir.bts, name='figma_game.png')
-        self.bts_figma_game = utils.effect_outline(surface=self.bts_figma_game, color=colors.mono_35, distance=3)
+        self.bts_figma_game = utils.effect_outline(surface=self.bts_figma_game, color=colors.mono_40, distance=3)
         
         self.bts_pygame_board_sim = utils.get_image(dir=dir.bts, name='pygame_board_sim.png')
-        self.bts_pygame_board_sim = utils.effect_outline(surface=self.bts_pygame_board_sim, color=colors.mono_35, distance=3)
+        self.bts_pygame_board_sim = utils.effect_outline(surface=self.bts_pygame_board_sim, color=colors.mono_40, distance=3)
         
 
     def _setup_credits_content(self):
@@ -274,8 +274,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Greedy Gardens'],
-                    'size': 'huge',
-                    'padding': 0
+                    'font': fonts.boldpixels,
+                    'size': 'large',
+                    'padding': 0,
                 },
                 'padding_top': 210,
                 'padding_bottom': 50
@@ -283,22 +284,23 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['a game by'],
-                    'size': 'large',
+                    'font': fonts.boldpixels,
+                    'size': 'medium',
                     'padding': 0
                 },
-                'padding_bottom': 65
+                'padding_bottom': 75
             },
             {
                 'image': self.my_logo,
-                'padding_bottom': -25
+                'padding_bottom': -15
             },
             {
                 'texts': {
-                    'text': ['<itch.io>', '<Linktree>'],
+                    'text': ['<itch.io>', ' ','<Linktree>'],
                     'size': 'small',
                     'font': fonts.mago1,
                     'long_shadow': False,
-                    'link': ['https://ttewtor.short.gy/itchio', 'https://ttewtor.short.gy/linktree']
+                    'link': ['https://ttewtor.short.gy/itchio', None, 'https://ttewtor.short.gy/linktree']
                 },
                 'inline': True,
                 'padding_bottom': 340,
@@ -311,7 +313,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                     'text': ['Game Board Generator Test in Pygame'],
+                    'text': ['Game Board Generator Test in Pygame'],
                     'size': 'tiny',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -327,15 +329,17 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 90
+                'padding_bottom': 100
             },
 
 
             {
                 'texts': {
                     'text': ['Originally a college project by'],
-                    'size': 'medium',
+                    'font': fonts.boldpixels,
+                    'size': 'small',
                     'color': colors.white,
+                    'outline': True,
                 },
                 'padding_bottom': 35
             },
@@ -439,8 +443,31 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Special Thanks'],
-                    'size': 'medium',
+                    'font': fonts.boldpixels,
+                    'size': 'small',
                     'color': colors.white,
+                    'outline': True,
+                },
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
+                    'text': ['Visual Consultant'],
+                    'size': 'small',
+                    'color': colors.yellow_light,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'padding': 10,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['Alison (dmx)'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
                 },
                 'padding_bottom': 50
             },
@@ -529,27 +556,6 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Art Consultant'],
-                    'size': 'small',
-                    'color': colors.yellow_light,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                    'padding': 10,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Alison (dmx)'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 50
-            },
-            {
-                'texts': {
                     'text': ['Game Dev Class Teacher'],
                     'size': 'small',
                     'color': colors.yellow_light,
@@ -594,8 +600,10 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Made with'],
-                    'size': 'medium',
+                    'font': fonts.boldpixels,
+                    'size': 'small',
                     'color': colors.white,
+                    'outline': True,
                 },
                 'padding_bottom': 60
             },
@@ -631,12 +639,13 @@ class Menu_CreditsState(BaseState):
             },
 
 
-
             {
                 'texts': {
                     'text': ['Inspired by'],
-                    'size': 'medium',
+                    'font': fonts.boldpixels,
+                    'size': 'small',
                     'color': colors.white,
+                    'outline': True,
                 },
                 'padding_bottom': 40
             },
@@ -655,8 +664,10 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Asset Attributions'],
-                    'size': 'medium',
+                    'font': fonts.boldpixels,
+                    'size': 'small',
                     'color': colors.white,
+                    'outline': True,
                 },
                 'padding_bottom': 50
             },
@@ -784,26 +795,26 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': [
-                        ['Lazy Fox -', 'LazyFox pixel font library', '<itch.io>'],
+                        ['Lazy Fox - LazyFox pixel font library', '<itch.io>'],
+                        ['Yūki - BoldPixels', '<itch.io>'],
                         ['Nimble Beasts - Mago pixel font', '<itch.io>'],
-                        ['Andrew Tyler - Minecraftia', '<font.download>'],
                     ],
                     'size': [
-                        ['medium', 'small', 'medium'],
                         ['small', 'small'],
-                        ['small', 'small']
+                        ['tiny', 'tiny'],
+                        ['small', 'small'],
                     ],
                     'color': colors.white,
                     'font': [
-                        [fonts.lf7, fonts.lf2, fonts.lf7],
+                        [fonts.lf2, fonts.lf2],
+                        [fonts.boldpixels, fonts.boldpixels],
                         [fonts.mago1, fonts.mago1],
-                        [fonts.minecraftia, fonts.minecraftia],
                     ],
                     'long_shadow': False,
                     'link': [
-                        [None, None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
+                        [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
+                        [None, 'https://yukipixels.itch.io/boldpixels'],
                         [None, 'https://nimbles.beasts.org/mago'],
-                        [None, 'https://font.download/minecraftia'],
                     ],
                     'padding': 20
                 },
@@ -966,7 +977,8 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Thanks for playing!'],
-                    'size': 'huge',
+                    'font': fonts.boldpixels,
+                    'size': 'large',
                     'color': colors.white,
                 },
                 'padding_bottom': 240
@@ -1112,7 +1124,7 @@ class Menu_CreditsState(BaseState):
                                 
                                 # Handle per-element color - support 3D matrix [line][element] (but links are always blue)
                                 if has_link:
-                                    text_color = colors.blue_light
+                                    text_color = colors.link
                                 else:
                                     if isinstance(color_data, list):
                                         # Check if this is a 3D matrix (list of lists)
@@ -1135,8 +1147,8 @@ class Menu_CreditsState(BaseState):
                                     long_shadow=texts_data.get('long_shadow', True),
                                     long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
                                     long_shadow_color=texts_data.get('long_shadow_color', None),
-                                    outline=texts_data.get('outline', True),
-                                    outline_color=texts_data.get('outline_color', colors.mono_35)
+                                    outline=texts_data.get('outline', False),
+                                    outline_color=texts_data.get('outline_color', colors.mono_40)
                                 )
                                 text_surfaces.append((item_surface, has_link, link_url))
                                 total_width += item_surface.get_width()
@@ -1150,21 +1162,8 @@ class Menu_CreditsState(BaseState):
                         # Render each text element in this line
                         for element_idx, (item_surface, has_link, link_url) in enumerate(text_surfaces):
                             text_x = current_x + item_surface.get_width() // 2
-                            
-                            # Check if this is the Minecraftia line
                             text_y = current_y
-                            font_data = texts_data.get('font', fonts.lf2)
-                            if isinstance(font_data, list) and len(font_data) > 2 and line_idx == 2:
-                                if isinstance(font_data[2], list) and font_data[2][0] == fonts.minecraftia:
-                                    if element_idx == 0:
-                                        text_y = current_y + 5
-                            
-                            # Check if this is the lf7 line
-                            if isinstance(font_data, list) and len(font_data) > 0 and line_idx == 0:
-                                if isinstance(font_data[0], list) and len(font_data[0]) > 1 and (font_data[0][0] == fonts.lf7 or font_data[0][2] == fonts.lf7):
-                                    if element_idx == 0 or element_idx == 2:
-                                        text_y = current_y + 4
-                            
+
                             # Store link information if this is a link
                             if has_link and link_url:
                                 text_rect = pygame.Rect(
@@ -1199,7 +1198,7 @@ class Menu_CreditsState(BaseState):
                             
                             # Use blue color for links, otherwise use specified color or white
                             if has_link:
-                                text_color = colors.blue_light
+                                text_color = colors.link
                             else:
                                 text_color = texts_data.get('color', colors.white)
                             
@@ -1211,8 +1210,8 @@ class Menu_CreditsState(BaseState):
                                 long_shadow=texts_data.get('long_shadow', True),
                                 long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
                                 long_shadow_color=texts_data.get('long_shadow_color', None),
-                                outline=texts_data.get('outline', True),
-                                outline_color=texts_data.get('outline_color', colors.mono_35)
+                                outline=texts_data.get('outline', False),
+                                outline_color=texts_data.get('outline_color', colors.mono_40)
                             )
                             text_surfaces.append((item_surface, has_link, links[i] if has_link else None))
                             total_width += item_surface.get_width()
@@ -1255,7 +1254,7 @@ class Menu_CreditsState(BaseState):
                             
                             # Use blue color for links, otherwise use specified color or white
                             if has_link:
-                                text_color = colors.blue_light
+                                text_color = colors.link
                             else:
                                 text_color = texts_data.get('color', colors.white)
                             
@@ -1267,8 +1266,8 @@ class Menu_CreditsState(BaseState):
                                 long_shadow=texts_data.get('long_shadow', True),
                                 long_shadow_direction=texts_data.get('long_shadow_direction', 'bottom'),
                                 long_shadow_color=texts_data.get('long_shadow_color', None),
-                                outline=texts_data.get('outline', True),
-                                outline_color=texts_data.get('outline_color', colors.mono_35)
+                                outline=texts_data.get('outline', False),
+                                outline_color=texts_data.get('outline_color', colors.mono_40)
                             )
                             
                             # Position calculation - center horizontally
@@ -1332,7 +1331,7 @@ class Menu_CreditsState(BaseState):
             size=(constants.canvas_width - 40, constants.canvas_height - 100),
             pos=(20, 20),
             pos_anchor=posanchors.topleft,
-            color=(*colors.mono_50, 225),
+            color=(*colors.mono_40, 235),
             inner_border_width=3
         )
 

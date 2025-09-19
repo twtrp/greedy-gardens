@@ -48,11 +48,11 @@ def draw_rect(
         pos_anchor: str = posanchors.topleft,
         color: pygame.Color = colors.white,
         inner_border_width: int = 0,
-        inner_border_color: pygame.Color = colors.mono_35,
+        inner_border_color: pygame.Color = colors.mono_40,
         outer_border_width: int = 0,
         outer_border_color: pygame.Color = colors.white,
         outest_border_width: int = 0,
-        outest_border_color: pygame.Color = colors.mono_35
+        outest_border_color: pygame.Color = colors.mono_40
     ) -> None:
     """
     Use this to draw a rectangle
@@ -131,7 +131,7 @@ def get_text(
         long_shadow_direction = 'bottom',
         long_shadow_color: pygame.Color = None,
         outline: bool = True,
-        outline_color: pygame.Color = colors.mono_65,
+        outline_color: pygame.Color = colors.mono_50,
     ) -> pygame.Surface:
     '''
     Use this to get a text surface
@@ -342,7 +342,7 @@ def effect_long_shadow(
 def effect_outline(
         surface: pygame.Surface,
         distance: int = 1,
-        color: pygame.Color = colors.mono_35,
+        color: pygame.Color = colors.mono_40,
         no_corner: bool = False
     ) -> pygame.Surface:
     '''

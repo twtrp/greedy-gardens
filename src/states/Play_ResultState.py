@@ -112,11 +112,11 @@ class Play_ResultStage(BaseState):
         self.big_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_color_image, factor=2)
         self.big_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_color_image, factor=2)
 
-        self.glow_day1_fruit_image = utils.effect_outline(surface=self.big_day1_fruit_image, distance=2, color=colors.mono_35)
-        self.glow_day2_fruit_image = utils.effect_outline(surface=self.big_day2_fruit_image, distance=2, color=colors.mono_35)
-        self.glow_day3_fruit_image = utils.effect_outline(surface=self.big_day3_fruit_image, distance=2, color=colors.mono_35)
-        self.glow_day4_fruit_image = utils.effect_outline(surface=self.big_day4_fruit_image, distance=2, color=colors.mono_35)
-        self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.mono_35)
+        self.glow_day1_fruit_image = utils.effect_outline(surface=self.big_day1_fruit_image, distance=2, color=colors.mono_40)
+        self.glow_day2_fruit_image = utils.effect_outline(surface=self.big_day2_fruit_image, distance=2, color=colors.mono_40)
+        self.glow_day3_fruit_image = utils.effect_outline(surface=self.big_day3_fruit_image, distance=2, color=colors.mono_40)
+        self.glow_day4_fruit_image = utils.effect_outline(surface=self.big_day4_fruit_image, distance=2, color=colors.mono_40)
+        self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.mono_40)
         
         
         self.day1_text = utils.get_text(text="Day 1", font=fonts.lf2, size='small', color=colors.white)
@@ -139,7 +139,7 @@ class Play_ResultStage(BaseState):
         self.high_score_text = utils.get_text(text='High Score', font=fonts.lf2, size='small', color=colors.white)
         self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.lf2, size='small', color=colors.white)
         
-        self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='small', color=colors.green_medium)
+        self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='small', color=colors.green_light)
         
         self.button_option_list = [
             {

@@ -979,7 +979,7 @@ class PlayState(BaseState):
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_coconut'),
         ]
         for i, surface in enumerate(self.tutorial_fruit_sprites):
-            self.tutorial_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+            self.tutorial_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_40)
 
         self.tutorial_path_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE'),
@@ -991,7 +991,7 @@ class PlayState(BaseState):
         ]
         for i, surface in enumerate(self.tutorial_path_sprites):
             self.tutorial_path_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
-            self.tutorial_path_sprites[i] = utils.effect_outline(surface=self.tutorial_path_sprites[i], distance=2, color=colors.mono_35)
+            self.tutorial_path_sprites[i] = utils.effect_outline(surface=self.tutorial_path_sprites[i], distance=2, color=colors.mono_40)
 
         self.tutorial_event_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free'),
@@ -1005,7 +1005,7 @@ class PlayState(BaseState):
         ]
         for i, surface in enumerate(self.tutorial_event_sprites):
             self.tutorial_event_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
-            self.tutorial_event_sprites[i] = utils.effect_outline(surface=self.tutorial_event_sprites[i], distance=2, color=colors.mono_35)
+            self.tutorial_event_sprites[i] = utils.effect_outline(surface=self.tutorial_event_sprites[i], distance=2, color=colors.mono_40)
 
         self.tutorial_magic_fruit_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1'),
@@ -1013,7 +1013,7 @@ class PlayState(BaseState):
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3'),
         ]
         for i, surface in enumerate(self.tutorial_magic_fruit_sprites):
-            self.tutorial_magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_35)
+            self.tutorial_magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_40)
 
 
         # Day title
@@ -1150,7 +1150,7 @@ class PlayState(BaseState):
                                     # utils.music_load(music_channel=self.game.music_channel, name=music.menu_intro)
                                     utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
                                     utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
-                                    self.game.start_menu_music()
+                                    # self.game.start_menu_music()
                                     self.timer_manager.StopTimer(self.water_timer)
                                     
                                     # Clean up rightclick animation system
@@ -1964,7 +1964,7 @@ class PlayState(BaseState):
                     left_hud_surface = pygame.Surface((self.box_width + 4, constants.canvas_height), pygame.SRCALPHA)
                     
                     # Draw the left box content to the temporary surface
-                    alpha_value = int(135 * self.hud_left_alpha)  # Scale alpha from 0-150
+                    alpha_value = int(140 * self.hud_left_alpha)  # Scale alpha from 0-150
                     utils.draw_rect(
                         dest=left_hud_surface,
                         size=(self.box_width, constants.canvas_height),
@@ -2093,7 +2093,7 @@ class PlayState(BaseState):
                             self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
                         else:
                             self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
-                        self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_35)
+                        self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_40)
                         # Apply scale animation to day 1 fruit
                         if self.day_fruit_scales[0] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=self.day_fruit_scales[0])
@@ -2105,7 +2105,7 @@ class PlayState(BaseState):
                             self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
                         else:
                             self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
-                        self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_35)
+                        self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_40)
                         # Apply scale animation to day 2 fruit
                         if self.day_fruit_scales[1] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=self.day_fruit_scales[1])
@@ -2117,7 +2117,7 @@ class PlayState(BaseState):
                             self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
                         else:
                             self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
-                        self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_35)
+                        self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_40)
                         # Apply scale animation to day 3 fruit
                         if self.day_fruit_scales[2] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=self.day_fruit_scales[2])
@@ -2129,7 +2129,7 @@ class PlayState(BaseState):
                             self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
                         else:
                             self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
-                        self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_35)
+                        self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_40)
                         # Apply scale animation to day 4 fruit
                         if self.day_fruit_scales[3] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=self.day_fruit_scales[3])
@@ -2140,7 +2140,7 @@ class PlayState(BaseState):
                     ## Render seasonal fruit in left white box to temporary surface
                     if self.seasonal_fruit is not None:
                         self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
-                        self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_35)
+                        self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_40)
                         # Apply scale animation to seasonal fruit
                         if self.day_fruit_scales[4] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=self.day_fruit_scales[4])
@@ -2158,7 +2158,7 @@ class PlayState(BaseState):
                     right_hud_surface = pygame.Surface((self.box_width + 4, constants.canvas_height), pygame.SRCALPHA)
                     
                     # Draw the right box content to the temporary surface
-                    alpha_value = int(135 * self.hud_right_alpha)  # Scale alpha from 0-150
+                    alpha_value = int(140 * self.hud_right_alpha)  # Scale alpha from 0-150
                     utils.draw_rect(
                         dest=right_hud_surface,
                         size=(self.box_width, constants.canvas_height),

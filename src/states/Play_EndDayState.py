@@ -73,7 +73,7 @@ class Play_EndDayState(BaseState):
                 text = utils.get_text(text=option['text'], font=fonts.lf2, size='large', color=colors.white)
                 fruit = self.parent.fruit_sprites[option['fruit']]
                 scaled_fruit_image = pygame.transform.scale_by(surface=fruit, factor=3)
-                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_35)
+                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_40)
                 if i == 0 and self.parent.current_day != 1:
                     glow_fruit_image = utils.effect_grayscale(surface=glow_fruit_image)
                 self.result_surface_list.append({
