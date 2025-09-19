@@ -16,6 +16,21 @@ class Menu_PlayState(BaseState):
 
         self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.mask_circle_radius = 750
+        # Backspace hold/repeat state for textboxes
+        # initial delay before repeat (seconds) and repeat interval (seconds)
+        self.backspace_initial_delay = 0.45
+        self.backspace_repeat_interval = 0.08
+        self.backspace_held = False
+        self.backspace_delay_timer = 0.0
+        self.backspace_repeat_timer = 0.0
+        # Number-key hold/repeat state for textboxes (insertion)
+        self.number_initial_delay = 0.45
+        self.number_repeat_interval = 0.08
+        self.number_held = False
+        self.number_hold_key = None
+        self.number_hold_char = None
+        self.number_delay_timer = 0.0
+        self.number_repeat_timer = 0.0
 
 
     #Main methods
@@ -36,7 +51,7 @@ class Menu_PlayState(BaseState):
             },
             {
                 'id': 'tutorial',
-                'text': 'How to play',
+                'text': 'Tutorial',
             },
             {
                 'id': 'back',
@@ -108,20 +123,26 @@ class Menu_PlayState(BaseState):
                         self.exit_state()
                     if self.textbox_mode == 'active':
                         if event.key == pygame.K_BACKSPACE:
-                            self.textbox_text = self.textbox_text[:-1]
-                            self.textbox_text_surface = utils.get_text(
-                                text=self.textbox_text,
-                                font=fonts.mago1,
-                                size='tiny',
-                                color=colors.mono_50,
-                                long_shadow=False,
-                                outline=False
-                            )
-                            utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
+                            # delete one char immediately and start hold/repeat
+                            if len(self.textbox_text) > 0:
+                                self.textbox_text = self.textbox_text[:-1]
+                                self.textbox_text_surface = utils.get_text(
+                                    text=self.textbox_text,
+                                    font=fonts.mago1,
+                                    size='tiny',
+                                    color=colors.mono_50,
+                                    long_shadow=False,
+                                    outline=False
+                                )
+                                utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
+                            self.backspace_held = True
+                            self.backspace_delay_timer = 0.0
+                            self.backspace_repeat_timer = 0.0
                         elif event.key == pygame.K_RETURN:
                             self.textbox_mode = 'inactive'
                         else:
                             if len(self.textbox_text) < self.textbox_limit and event.unicode.isdigit():
+                                # insert one char immediately and start hold/repeat for this digit
                                 self.textbox_text += event.unicode
                                 self.textbox_text_surface = utils.get_text(
                                     text=self.textbox_text,
@@ -132,6 +153,12 @@ class Menu_PlayState(BaseState):
                                     outline=False
                                 )
                                 utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
+                                # start number hold state
+                                self.number_held = True
+                                self.number_hold_key = event.key
+                                self.number_hold_char = event.unicode
+                                self.number_delay_timer = 0.0
+                                self.number_repeat_timer = 0.0
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 2:
                         utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
@@ -140,6 +167,19 @@ class Menu_PlayState(BaseState):
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.textbox_mode == 'active':
                         self.textbox_mode = 'inactive'
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_BACKSPACE:
+                        # stop repeating on key release
+                        self.backspace_held = False
+                        self.backspace_delay_timer = 0.0
+                        self.backspace_repeat_timer = 0.0
+                    # stop number hold when the key is released
+                    if self.number_held and event.key == self.number_hold_key:
+                        self.number_held = False
+                        self.number_hold_key = None
+                        self.number_hold_char = None
+                        self.number_delay_timer = 0.0
+                        self.number_repeat_timer = 0.0
 
             for button in self.button_list:
                 button.update(dt=dt, events=events)
@@ -182,13 +222,58 @@ class Menu_PlayState(BaseState):
                         utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                         Menu_TutorialState(game=self.game, parent=self.parent, stack=self.parent.substate_stack).enter_state()
                     elif button.id == 'textbox':
-                        self.textbox_mode = 'active'            
+                        self.textbox_mode = 'active'
+                        # reset backspace timers when activating textbox
+                        self.backspace_held = False
+                        self.backspace_delay_timer = 0.0
+                        self.backspace_repeat_timer = 0.0
                     elif button.id == 'back':
                         utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                         self.exit_state()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal
+
+        # Handle continuous backspace repeat while textbox is active and key held
+        if self.textbox_mode == 'active' and self.backspace_held:
+            # advance timers
+            self.backspace_delay_timer += dt
+            # only start repeating after initial delay
+            if self.backspace_delay_timer >= self.backspace_initial_delay:
+                self.backspace_repeat_timer += dt
+                # on each repeat interval, delete one char
+                if self.backspace_repeat_timer >= self.backspace_repeat_interval:
+                    self.backspace_repeat_timer -= self.backspace_repeat_interval
+                    if len(self.textbox_text) > 0:
+                        self.textbox_text = self.textbox_text[:-1]
+                        self.textbox_text_surface = utils.get_text(
+                            text=self.textbox_text,
+                            font=fonts.mago1,
+                            size='tiny',
+                            color=colors.mono_50,
+                            long_shadow=False,
+                            outline=False
+                        )
+                        utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
+        # Handle continuous number-key repeat while textbox is active and digit key held
+        if self.textbox_mode == 'active' and self.number_held and self.number_hold_char:
+            self.number_delay_timer += dt
+            if self.number_delay_timer >= self.number_initial_delay:
+                self.number_repeat_timer += dt
+                if self.number_repeat_timer >= self.number_repeat_interval:
+                    self.number_repeat_timer -= self.number_repeat_interval
+                    if len(self.textbox_text) < self.textbox_limit:
+                        # append the held digit
+                        self.textbox_text += self.number_hold_char
+                        self.textbox_text_surface = utils.get_text(
+                            text=self.textbox_text,
+                            font=fonts.mago1,
+                            size='tiny',
+                            color=colors.mono_50,
+                            long_shadow=False,
+                            outline=False
+                        )
+                        utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
 
 
     def render(self, canvas):

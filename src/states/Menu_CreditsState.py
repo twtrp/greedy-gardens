@@ -278,7 +278,7 @@ class Menu_CreditsState(BaseState):
                     'size': 'large',
                     'padding': 0,
                 },
-                'padding_top': 210,
+                'padding_top': 200,
                 'padding_bottom': 50
             },
             {
