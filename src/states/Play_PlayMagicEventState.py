@@ -1249,6 +1249,15 @@ class Play_PlayMagicEventState(BaseState):
             utils.blit(dest=canvas, source=self.selected_tile, pos=(self.parent.grid_start_x + ((self.selected_cell_2 % 8) * self.parent.cell_size), self.parent.grid_start_y + ((self.selected_cell_2 // 8) * self.parent.cell_size)), pos_anchor='topleft')
 
         if self.parent.current_event == 'event_remove':
+            utils.draw_rect(
+                dest=canvas,
+                size=(self.parent.event_remove_control_hint.get_width() + 20, 40),
+                pos=(constants.canvas_width//2, 0),
+                pos_anchor=posanchors.midtop,
+                color=(*colors.white, 150),
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
+            )
             utils.blit(
                 dest=canvas,
                 source=self.parent.event_remove_control_hint,
@@ -1260,7 +1269,7 @@ class Play_PlayMagicEventState(BaseState):
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
                 else:
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
-                utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 690), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 696), pos_anchor=posanchors.center)
 
         if self.parent.current_event == 'event_move' and self.shown_event:
             utils.blit(
@@ -1271,6 +1280,15 @@ class Play_PlayMagicEventState(BaseState):
             )
 
         if self.parent.current_event == 'event_swap':
+            utils.draw_rect(
+                dest=canvas,
+                size=(self.parent.event_swap_control_hint.get_width() + 20, 40),
+                pos=(constants.canvas_width//2, 0),
+                pos_anchor=posanchors.midtop,
+                color=(*colors.white, 150),
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
+            )
             utils.blit(
                 dest=canvas,
                 source=self.parent.event_swap_control_hint,
@@ -1279,6 +1297,15 @@ class Play_PlayMagicEventState(BaseState):
             )
 
         if self.parent.current_event == 'event_merge':
+            utils.draw_rect(
+                dest=canvas,
+                size=(self.parent.event_merge_control_hint.get_width() + 20, 40),
+                pos=(constants.canvas_width//2, 0),
+                pos_anchor=posanchors.midtop,
+                color=(*colors.white, 150),
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
+            )
             utils.blit(
                 dest=canvas,
                 source=self.parent.event_merge_control_hint,
@@ -1286,24 +1313,26 @@ class Play_PlayMagicEventState(BaseState):
                 pos_anchor=posanchors.midtop
             )
 
-
         if self.selecting_path:
-            utils.blit(
+            utils.draw_rect(
                 dest=canvas,
-                source=self.parent.event_free_control_hint,
-                pos=(constants.canvas_width//2, 2),
-                pos_anchor=posanchors.midtop
+                size=(self.parent.event_free_control_hint.get_width() + 20, 40),
+                pos=(constants.canvas_width//2, 0),
+                pos_anchor=posanchors.midtop,
+                color=(*colors.white, 150),
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
             )
             utils.blit(
                 dest=canvas,
                 source=self.parent.mouse_hint_surface,
-                pos=(constants.canvas_width//2 - 210, 2),
+                pos=(constants.canvas_width//2 - 214, 4),
                 pos_anchor=posanchors.topleft,
             )
             utils.blit(
                 dest=canvas,
                 source=self.parent.key_hint_surface,
-                pos=(constants.canvas_width//2 - 38, 6),
+                pos=(constants.canvas_width//2 - 47, 10),
                 pos_anchor=posanchors.topleft,
             )
 

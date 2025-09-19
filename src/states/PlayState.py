@@ -2303,8 +2303,7 @@ class PlayState(BaseState):
                         utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 2, constants.canvas_height - 6 - i*58), pos_anchor='bottomright')
                         if card.strike:
                             utils.blit(dest=canvas, source=self.path_strike_image, pos=(constants.canvas_width - self.box_width - 4, constants.canvas_height - 6 - i*58), pos_anchor='bottomright')
-                    utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 94), pos_anchor='center')
-                    utils.blit(dest=canvas, source=self.path_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - 6 - i*58 - 74), pos_anchor='center')
+                    utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, constants.canvas_height - i*58 - 80), pos_anchor='center')
                 
                 if len(self.revealed_event) > 0:
                     box_height = len(self.revealed_event) * 58 + 8
@@ -2320,8 +2319,7 @@ class PlayState(BaseState):
                     
                     for i, card in enumerate(self.revealed_event):
                         utils.blit(dest=canvas, source=getattr(self, f'{card.card_name}_image'), pos=(constants.canvas_width - self.box_width - 2, 10 + i*58), pos_anchor=posanchors.topright)
-                    utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, 8 + i*58 + 72), pos_anchor='center')
-                    utils.blit(dest=canvas, source=self.event_text, pos=(constants.canvas_width - self.box_width - 28, 8 + i*58 + 92), pos_anchor='center')
+                    utils.blit(dest=canvas, source=self.next_text, pos=(constants.canvas_width - self.box_width - 28, i*58 + 80), pos_anchor='center')
                 
                 #hover function
                 if self.setup_start_state and not self.end_game:
