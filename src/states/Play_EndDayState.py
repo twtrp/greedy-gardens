@@ -46,12 +46,12 @@ class Play_EndDayState(BaseState):
             
     def load_assets(self):
         # Text
-        self.result_title = utils.get_text(text=f'Day {self.current_day} Result', font=fonts.lf2, size='large', color=colors.white)
-        self.vs_title = utils.get_text(text=f'vs', font=fonts.lf2, size='medium', color=colors.mono_205)
-        self.pass_title = utils.get_text(text=f'Pass!', font=fonts.lf2, size='large', color=colors.green_light)
-        self.fail_title = utils.get_text(text=f'Fail!', font=fonts.lf2, size='large', color=colors.red_light)
-        self.fail_description = utils.get_text(text=f'You failed to collect more than yesterday!', font=fonts.lf2, size='tiny', color=colors.red_light)
-        self.fail_description_2 = utils.get_text(text=f'Your score for the day was set to zero.', font=fonts.lf2, size='tiny', color=colors.red_light)
+        self.result_title = utils.get_text(text=f'Day {self.current_day} Result', font=fonts.wacky_pixels, size='large', color=colors.white)
+        self.vs_title = utils.get_text(text=f'vs', font=fonts.wacky_pixels, size='smaller', color=colors.mono_205)
+        self.pass_title = utils.get_text(text=f'Pass!', font=fonts.wacky_pixels, size='medium', color=colors.green_light)
+        self.fail_title = utils.get_text(text=f'Fail!', font=fonts.wacky_pixels, size='medium', color=colors.red_light)
+        self.fail_description = utils.get_text(text=f'You failed to collect more than yesterday!', font=fonts.windows, size='smaller', color=colors.red_light)
+        self.fail_description_2 = utils.get_text(text=f'Your score for the day was set to zero.', font=fonts.windows, size='smaller', color=colors.red_light)
 
         self.result_list = []
         if self.parent.current_day == 1:
@@ -70,10 +70,10 @@ class Play_EndDayState(BaseState):
                                     })
         self.result_surface_list = []
         for i, option in enumerate(self.result_list):
-                text = utils.get_text(text=option['text'], font=fonts.lf2, size='large', color=colors.white)
+                text = utils.get_text(text=option['text'], font=fonts.wacky_pixels, size='medium', color=colors.white)
                 fruit = self.parent.fruit_sprites[option['fruit']]
                 scaled_fruit_image = pygame.transform.scale_by(surface=fruit, factor=3)
-                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_40)
+                glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_50)
                 if i == 0 and self.parent.current_day != 1:
                     glow_fruit_image = utils.effect_grayscale(surface=glow_fruit_image)
                 self.result_surface_list.append({
@@ -90,7 +90,7 @@ class Play_EndDayState(BaseState):
             pos=(0, 0),
             pos_anchor='topleft'
         ))
-        self.continue_text = utils.get_text(text="Click anywhere to continue", font=fonts.lf2, size='small', color=colors.white)
+        self.continue_text = utils.get_text(text="Click anywhere to continue", font=fonts.lf2, size='small', color=colors.yellow_light)
         
     def update(self, dt, events):
             
@@ -140,11 +140,11 @@ class Play_EndDayState(BaseState):
         # Fruit and score
         if self.parent.current_day == 1:
             utils.blit(dest=canvas, source=self.result_surface_list[0]['surface_fruit'], pos=(constants.canvas_width/2 - 32, constants.canvas_height/2), pos_anchor='center')
-            utils.blit(dest=canvas, source=self.result_surface_list[0]['surface'], pos=(constants.canvas_width/2 + 32, constants.canvas_height/2), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.result_surface_list[0]['surface'], pos=(constants.canvas_width/2 + 32, constants.canvas_height/2 + 4), pos_anchor='center')
         else:
             for i, option in enumerate(self.result_surface_list):
                 utils.blit(dest=canvas, source=option['surface_fruit'], pos=(constants.canvas_width/2 - 32, 305 + i*120), pos_anchor='center')
-                utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2 + 32, 305 + i*120), pos_anchor='center')
+                utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2 + 32, 307 + i*120), pos_anchor='center')
         
         # Continue text
         utils.blit(dest=canvas, source=self.continue_text, pos=(constants.canvas_width/2, 695), pos_anchor='center')

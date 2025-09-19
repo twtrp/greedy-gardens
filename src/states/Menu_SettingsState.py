@@ -21,7 +21,7 @@ class Menu_SettingsState(BaseState):
 
         self.page_title = utils.get_text(
             text='Settings',
-            font=fonts.boldpixels,
+            font=fonts.wacky_pixels,
             size='large',
             color=colors.blue_light,
         )
@@ -192,7 +192,7 @@ class Menu_SettingsState(BaseState):
 
 
     def render(self, canvas):
-        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
+        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 125), pos_anchor=posanchors.center)
         for i, option in enumerate(self.settings_option_surface_list):
             if option['id'] != 'skip_bootup':
                 utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 225 + i*50), pos_anchor=posanchors.center)

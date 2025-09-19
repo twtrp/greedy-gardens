@@ -59,10 +59,9 @@ class Play_PlayEventState(BaseState):
 
     def load_assets(self):
         # Load text
-        self.choice_move_title = utils.get_text(text='Move a path to a blank tile', font=fonts.lf2, size='large', color=colors.mono_205)
-        self.choice_point_title = utils.get_text(text='Choose', font=fonts.lf2, size='large', color=colors.mono_205)
-        self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.lf2, size='large', color=colors.mono_205)
-        self.remaining_fruits_title = utils.get_text(text='Remaining Fruits', font=fonts.lf2, size='small', color=colors.mono_205)
+        self.choice_point_title = utils.get_text(text='Choose', font=fonts.wacky_pixels, size='medium', color=colors.mono_205)
+        self.choice_redraw_title = utils.get_text(text='Choose a fruit to redraw', font=fonts.wacky_pixels, size='medium', color=colors.mono_205)
+        self.remaining_fruits_title = utils.get_text(text='Remaining Fruits', font=fonts.windows, size='smaller', color=colors.mono_205)
         self.hover_to_view_title = utils.get_text(text='Hover here to view board', font=fonts.lf2, size='small', color=colors.yellow_light)
         self.hover_to_view_surface = [{
                     'id': 'view board',
@@ -880,7 +879,7 @@ class Play_PlayEventState(BaseState):
                 for i, fruit in enumerate(self.remaining_fruits_display):
                     fruit_sprite = self.parent.fruit_sprites[fruit.card_name]
                     scaled_fruit = pygame.transform.scale_by(surface=fruit_sprite, factor=2.0)
-                    outlined_fruit = utils.effect_outline(surface=scaled_fruit, distance=2, color=colors.mono_40)
+                    outlined_fruit = utils.effect_outline(surface=scaled_fruit, distance=2, color=colors.mono_50)
                     utils.blit(dest=remaining_fruits_surface, source=outlined_fruit, pos=(fruits_start_x + i*40, total_height/2), pos_anchor=posanchors.center)
                 
                 # Blit the entire surface centered to canvas
@@ -898,7 +897,7 @@ class Play_PlayEventState(BaseState):
                         text_offset = 35 * option['scale']
                         utils.blit(dest=canvas, source=scaled_redraw_button, pos=(constants.canvas_width/2 + text_offset, 265 + visual_index*75), pos_anchor=posanchors.center)
                         scaled_fruit_image = pygame.transform.scale_by(surface=option['surface_fruit'], factor=option['scale_fruit'])
-                        glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_40)
+                        glow_fruit_image = utils.effect_outline(surface=scaled_fruit_image, distance=3, color=colors.mono_50)
                         if option['id'] == 'seasonal fruit':
                             # Scale the fruit offset with the fruit scale
                             fruit_offset = 540 + (540 - constants.canvas_width/2) * (option['scale_fruit'] - 3.0) / 3.0

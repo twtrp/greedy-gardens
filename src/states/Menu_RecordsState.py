@@ -82,7 +82,7 @@ class Menu_RecordsState(BaseState):
     def load_assets(self):
         self.page_title = utils.get_text(
             text='Records',
-            font=fonts.boldpixels,
+            font=fonts.wacky_pixels,
             size='large',
             color=colors.orange_light,
         )
@@ -279,7 +279,7 @@ class Menu_RecordsState(BaseState):
                                     distance=deco_distance,
                                     color=utils.color_darken(color=colors.white, factor=0.5
                                 ))
-                                deco_arrow_surface = utils.effect_outline(surface=deco_arrow_surface, distance=deco_distance, color=colors.mono_65)
+                                deco_arrow_surface = utils.effect_outline(surface=deco_arrow_surface, distance=deco_distance, color=colors.mono_50)
                                 utils.blit(dest=header_surface, source=deco_arrow_surface, pos=(header_surface.get_width(), 3), pos_anchor=posanchors.topright)
                             elif self.parent.records_sorter['order'] == 'DESC':
                                 header_surface = utils.get_text(text=header['text']+' ^', font=fonts.lf2, size='small', color=colors.white)
@@ -323,7 +323,7 @@ class Menu_RecordsState(BaseState):
         self.cursor = cursors.normal
 
     def render(self, canvas):
-        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
+        utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 125), pos_anchor=posanchors.center)
 
         for header in self.table_header_surface_list:
             scaled_surface = pygame.transform.scale_by(surface=header['surface'], factor=header['scale'])

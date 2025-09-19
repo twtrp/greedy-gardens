@@ -176,8 +176,8 @@ class MenuState(BaseState):
 
         self.version_number_text = utils.get_text(
             text=self.parent.version_number,
-            font=fonts.lf7,
-            size='small',
+            font=fonts.windows,
+            size='smaller',
             color=colors.white, 
             long_shadow=False,
             outline_color=colors.mono_100
@@ -185,8 +185,8 @@ class MenuState(BaseState):
         
         self.copyright_text = utils.get_text(
             text='(c) 2025 ttewtor',
-            font=fonts.lf7,
-            size='small',
+            font=fonts.windows,
+            size='smaller',
             color=colors.white, 
             long_shadow=False,
             outline_color=colors.mono_100

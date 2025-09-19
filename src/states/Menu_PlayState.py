@@ -24,7 +24,7 @@ class Menu_PlayState(BaseState):
 
         self.page_title = utils.get_text(
             text='Play',
-            font=fonts.boldpixels,
+            font=fonts.wacky_pixels,
             size='large',
             color=colors.green_light,
         )
@@ -193,7 +193,7 @@ class Menu_PlayState(BaseState):
 
     def render(self, canvas):
         if not self.transitioning:
-            utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 120), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 125), pos_anchor=posanchors.center)
             for i, option in enumerate(self.button_option_surface_list):
                 if i != len(self.button_option_surface_list) - 1:
                     processed_surface = pygame.transform.scale_by(surface=option['surface'], factor=option['scale'])

@@ -274,7 +274,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Greedy Gardens'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'large',
                     'padding': 0,
                 },
@@ -283,12 +283,12 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['a game by'],
-                    'font': fonts.boldpixels,
-                    'size': 'medium',
+                    'text': ['made with love by'],
+                    'font': fonts.wacky_pixels,
+                    'size': 'small',
                     'padding': 0
                 },
-                'padding_bottom': 75
+                'padding_bottom': 70
             },
             {
                 'image': self.my_logo,
@@ -336,7 +336,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Originally a college project by'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
                     'outline': True,
@@ -350,9 +350,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Lead Designer and Programmer'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -370,9 +370,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Core Programmers'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -395,9 +395,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Development Pattern Designer'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -443,7 +443,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Special Thanks'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
                     'outline': True,
@@ -453,9 +453,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Visual Consultant'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                     'padding': 10,
                 },
@@ -474,16 +474,16 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Windows Playtester'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
             },
             {
                 'texts': {
-                    'text': ['promptnut #1 player'],
+                    'text': ['promptnut no.1 player'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -494,16 +494,16 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['macOS Playtesters'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
             },
             {
                 'texts': {
-                    'text': ['noellnon', 'Alison (dmx)'],
+                    'text': ['Alison (dmx)', 'noellnon'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -515,9 +515,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Linux Playtester'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -537,16 +537,16 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Help with Display Mode Issues'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
             },
             {
                 'texts': {
-                    'text': ['Martinus from the Pygame Community Discord'],
+                    'text': ['Martinus from Pygame Discord'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -557,9 +557,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Game Dev Class Teacher'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -577,9 +577,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Being cute'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                     'padding': 10,
                 },
@@ -593,14 +593,14 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 95
+                'padding_bottom': 100
             },
 
 
             {
                 'texts': {
                     'text': ['Made with'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
                     'outline': True,
@@ -642,7 +642,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Inspired by'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
                     'outline': True,
@@ -664,7 +664,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Asset Attributions'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
                     'outline': True,
@@ -674,33 +674,10 @@ class Menu_CreditsState(BaseState):
 
             {
                 'texts': {
-                    'text': ['Main Menu Song'],
-                    'size': 'small',
+                    'text': ['Soundtrack'],
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['RoccoW - Why Did the Crow Cross the Road?', '<SoundCloud>'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                    'link': [None, 'https://soundcloud.com/roccow/why-did-the-crow-cross-the-road']
-                },
-                'inline': True,
-                'padding_bottom': 40
-            },
-
-            {
-                'texts': {
-                    'text': ['Gameplay Soundtrack'],
-                    'size': 'small',
-                    'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -721,9 +698,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Ambience'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -744,9 +721,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Sound Effects'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -785,9 +762,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Fonts'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -795,26 +772,30 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': [
-                        ['Lazy Fox - LazyFox pixel font library', '<itch.io>'],
-                        ['Yūki - BoldPixels', '<itch.io>'],
-                        ['Nimble Beasts - Mago pixel font', '<itch.io>'],
+                        ['Lazy Fox - LazyFox pixel font 2', '<itch.io>'],
+                        ['Cool Boy Zone! - Wacky Pixels', '<itch.io>'],
+                        ['Fekete_Tamas - Windows', '<itch.io>'],
+                        ['Nimble Beasts - magofont1', '<itch.io>'],
                     ],
                     'size': [
                         ['small', 'small'],
-                        ['tiny', 'tiny'],
+                        ['smaller', 'smaller'],
                         ['small', 'small'],
+                        ['small', 'small']
                     ],
                     'color': colors.white,
                     'font': [
                         [fonts.lf2, fonts.lf2],
-                        [fonts.boldpixels, fonts.boldpixels],
+                        [fonts.wacky_pixels, fonts.wacky_pixels],
+                        [fonts.windows, fonts.windows],
                         [fonts.mago1, fonts.mago1],
                     ],
                     'long_shadow': False,
                     'link': [
                         [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
-                        [None, 'https://yukipixels.itch.io/boldpixels'],
-                        [None, 'https://nimbles.beasts.org/mago'],
+                        [None, 'https://3d.itch.io/fonts'],
+                        [None, 'https://www.dafont.com/windows-2.font'],
+                        [None, 'https://nimblebeastscollective.itch.io/magosfonts']
                     ],
                     'padding': 20
                 },
@@ -824,9 +805,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Menu Background Art'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -855,9 +836,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Tileset Sprites'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -888,9 +869,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Fruit Sprites'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -915,9 +896,9 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Miscellaneous Sprites'],
-                    'size': 'small',
+                    'size': 'smaller',
                     'color': colors.yellow_light,
-                    'font': fonts.mago1,
+                    'font': fonts.wacky_pixels,
                     'long_shadow': False,
                 },
                 'padding_bottom': 20
@@ -977,7 +958,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     'text': ['Thanks for playing!'],
-                    'font': fonts.boldpixels,
+                    'font': fonts.wacky_pixels,
                     'size': 'large',
                     'color': colors.white,
                 },

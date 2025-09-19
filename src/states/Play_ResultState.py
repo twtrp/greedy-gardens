@@ -89,13 +89,11 @@ class Play_ResultStage(BaseState):
         
         self.button_list = []
         
-        self.final_results_text = utils.get_text(text='Final Results', font=fonts.lf2, size='large', color=colors.white)
+        self.final_results_text = utils.get_text(text='Final Results', font=fonts.wacky_pixels, size='medium', color=colors.white)
         if self.setted_seed:
-            self.seed_text = utils.get_text(text=f'Set Seed', font=fonts.lf2, size='medium', color=colors.white)
+            self.seed_text = utils.get_text(text=f'Set Seed', font=fonts.wacky_pixels, size='smaller', color=colors.white)
         elif not self.setted_seed:
-            self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.lf2, size='medium', color=colors.white)
-            
-        #self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.lf2, size='medium', color=colors.white)
+            self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.wacky_pixels, size='smaller', color=colors.white)
         
         self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
         #Gen chat and not work. Do later ()
@@ -112,34 +110,34 @@ class Play_ResultStage(BaseState):
         self.big_day4_fruit_image = pygame.transform.scale_by(surface=self.day4_fruit_color_image, factor=2)
         self.big_seasonal_fruit_image = pygame.transform.scale_by(surface=self.seasonal_fruit_color_image, factor=2)
 
-        self.glow_day1_fruit_image = utils.effect_outline(surface=self.big_day1_fruit_image, distance=2, color=colors.mono_40)
-        self.glow_day2_fruit_image = utils.effect_outline(surface=self.big_day2_fruit_image, distance=2, color=colors.mono_40)
-        self.glow_day3_fruit_image = utils.effect_outline(surface=self.big_day3_fruit_image, distance=2, color=colors.mono_40)
-        self.glow_day4_fruit_image = utils.effect_outline(surface=self.big_day4_fruit_image, distance=2, color=colors.mono_40)
-        self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.mono_40)
+        self.glow_day1_fruit_image = utils.effect_outline(surface=self.big_day1_fruit_image, distance=2, color=colors.mono_50)
+        self.glow_day2_fruit_image = utils.effect_outline(surface=self.big_day2_fruit_image, distance=2, color=colors.mono_50)
+        self.glow_day3_fruit_image = utils.effect_outline(surface=self.big_day3_fruit_image, distance=2, color=colors.mono_50)
+        self.glow_day4_fruit_image = utils.effect_outline(surface=self.big_day4_fruit_image, distance=2, color=colors.mono_50)
+        self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.mono_50)
         
         
-        self.day1_text = utils.get_text(text="Day 1", font=fonts.lf2, size='small', color=colors.white)
-        self.day2_text = utils.get_text(text='Day 2', font=fonts.lf2, size='small', color=colors.white)
-        self.day3_text = utils.get_text(text='Day 3', font=fonts.lf2, size='small', color=colors.white)
-        self.day4_text = utils.get_text(text='Day 4', font=fonts.lf2, size='small', color=colors.white)
-        self.seasonal_text = utils.get_text(text='Seasonal', font=fonts.lf2, size='small', color=colors.white)
+        self.day1_text = utils.get_text(text="Day 1", font=fonts.windows, size='smaller', color=colors.white)
+        self.day2_text = utils.get_text(text='Day 2', font=fonts.windows, size='smaller', color=colors.white)
+        self.day3_text = utils.get_text(text='Day 3', font=fonts.windows, size='smaller', color=colors.white)
+        self.day4_text = utils.get_text(text='Day 4', font=fonts.windows, size='smaller', color=colors.white)
+        self.seasonal_text = utils.get_text(text='Seasonal', font=fonts.windows, size='smaller', color=colors.white)
         
         # Convert the score to string when calling get_text
-        self.day1_score_text = utils.get_text(text=str(self.parent.final_day1_score),font=fonts.lf2,size='small', color=colors.white)
-        self.day2_score_text = utils.get_text(text=str(self.parent.final_day2_score), font=fonts.lf2, size='small', color=colors.white)
-        self.day3_score_text = utils.get_text(text=str(self.parent.final_day3_score), font=fonts.lf2, size='small', color=colors.white)
-        self.day4_score_text = utils.get_text(text=str(self.parent.final_day4_score), font=fonts.lf2, size='small', color=colors.white)
-        self.seasonal_score_text = utils.get_text(text=str(self.parent.final_seasonal_score), font=fonts.lf2, size='small', color=colors.white)
+        self.day1_score_text = utils.get_text(text=str(self.parent.final_day1_score),font=fonts.windows, size='smaller', color=colors.white)
+        self.day2_score_text = utils.get_text(text=str(self.parent.final_day2_score), font=fonts.windows, size='smaller', color=colors.white)
+        self.day3_score_text = utils.get_text(text=str(self.parent.final_day3_score), font=fonts.windows, size='smaller', color=colors.white)
+        self.day4_score_text = utils.get_text(text=str(self.parent.final_day4_score), font=fonts.windows, size='smaller', color=colors.white)
+        self.seasonal_score_text = utils.get_text(text=str(self.parent.final_seasonal_score), font=fonts.windows, size='smaller', color=colors.white)
         
-        self.total_text = utils.get_text(text='Total', font=fonts.lf2, size='small', color=colors.white)
-        self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.lf2, size='small', color=colors.white)
+        self.total_text = utils.get_text(text='Total', font=fonts.windows, size='smaller', color=colors.white)
+        self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.windows, size='smaller', color=colors.white)
         
         # Display appropriate high score label based on seed type
-        self.high_score_text = utils.get_text(text='High Score', font=fonts.lf2, size='small', color=colors.white)
-        self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.lf2, size='small', color=colors.white)
+        self.high_score_text = utils.get_text(text='High Score', font=fonts.windows, size='smaller', color=colors.white)
+        self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.windows, size='smaller', color=colors.white)
         
-        self.new_text=utils.get_text(text='New ', font=fonts.lf2, size='small', color=colors.green_light)
+        self.new_text=utils.get_text(text='New ', font=fonts.windows, size='smaller', color=colors.green_light)
         
         self.button_option_list = [
             {
@@ -168,7 +166,7 @@ class Play_ResultStage(BaseState):
             id=self.button_option_list[0]['id'],
             width=400,
             height=80,
-            pos=(constants.canvas_width/2, 600),
+            pos=(constants.canvas_width/2, 620),
             pos_anchor=posanchors.center
         ))
         self.button_list.append(Button(
@@ -250,44 +248,43 @@ class Play_ResultStage(BaseState):
                         size=(constants.canvas_width, constants.canvas_height),
                         pos=(0, 0),
                         pos_anchor='topleft',
-                        color=(*colors.black, 160), 
+                        color=(*colors.black, 180), 
                         inner_border_width=0,
                         outer_border_width=0,
                         outer_border_color=colors.black)
             
             # Render all result texts
-            utils.blit(dest=canvas, source=self.final_results_text,pos=(constants.canvas_width/2, 50), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.final_results_text,pos=(constants.canvas_width/2, 70), pos_anchor='center')
             
-            
-            utils.blit(dest=canvas, source=self.seed_text, pos=(constants.canvas_width/2, 100), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.seed_text, pos=(constants.canvas_width/2, 120), pos_anchor='center')
   
-            utils.blit(dest=canvas, source=self.glow_day1_fruit_image, pos=(constants.canvas_width/2 - 175, 150-10), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day1_text, pos=((constants.canvas_width/2 )-135, 140), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day1_score_text, pos=((constants.canvas_width/2 )+160, 140), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.glow_day1_fruit_image, pos=(constants.canvas_width/2 - 180, 160), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day1_text, pos=((constants.canvas_width/2 )-135, 160), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day1_score_text, pos=((constants.canvas_width/2 )+160, 160), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_day2_fruit_image, pos=(constants.canvas_width/2 - 175, 210-10), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day2_text, pos=((constants.canvas_width/2 )-135, 200), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day2_score_text, pos=((constants.canvas_width/2 )+160, 200), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.glow_day2_fruit_image, pos=(constants.canvas_width/2 - 180, 220), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day2_text, pos=((constants.canvas_width/2 )-135, 220), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day2_score_text, pos=((constants.canvas_width/2 )+160, 220), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_day3_fruit_image, pos=(constants.canvas_width/2 - 175, 270-10), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day3_text, pos=((constants.canvas_width/2 )-135, 260), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day3_score_text, pos=((constants.canvas_width/2 )+160, 260), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.glow_day3_fruit_image, pos=(constants.canvas_width/2 - 180, 280), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day3_text, pos=((constants.canvas_width/2 )-135, 280), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day3_score_text, pos=((constants.canvas_width/2 )+160, 280), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_day4_fruit_image, pos=(constants.canvas_width/2 - 175, 330-10), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day4_text, pos=((constants.canvas_width/2 )-135, 320), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+160, 320), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.glow_day4_fruit_image, pos=(constants.canvas_width/2 - 180, 340), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day4_text, pos=((constants.canvas_width/2 )-135, 340), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.day4_score_text, pos=((constants.canvas_width/2 )+160, 340), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 175, 390-10), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.seasonal_text, pos=((constants.canvas_width/2 )-135, 380), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+160, 380), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.glow_seasonal_fruit_image, pos=(constants.canvas_width/2 - 180, 400), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.seasonal_text, pos=((constants.canvas_width/2 )-135, 400), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.seasonal_score_text, pos=((constants.canvas_width/2 )+160, 400), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.total_text, pos=(constants.canvas_width/2 - 135, 440), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.total_score_text, pos=((constants.canvas_width/2 )+160, 440), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.total_text, pos=(constants.canvas_width/2 - 135, 460), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.total_score_text, pos=((constants.canvas_width/2 )+160, 460), pos_anchor=posanchors.topright)
             
-            utils.blit(dest=canvas, source=self.high_score_text ,pos=(constants.canvas_width/2 -135, 500), pos_anchor=posanchors.topleft)
-            utils.blit(dest=canvas, source=self.high_score_fromDB_text, pos=((constants.canvas_width/2 )+160, 500), pos_anchor=posanchors.topright)
+            utils.blit(dest=canvas, source=self.high_score_text ,pos=(constants.canvas_width/2 -135, 520), pos_anchor=posanchors.topleft)
+            utils.blit(dest=canvas, source=self.high_score_fromDB_text, pos=((constants.canvas_width/2 )+160, 520), pos_anchor=posanchors.topright)
             if self.new_record:
-                utils.blit(dest=canvas, source=self.new_text, pos=((constants.canvas_width/2 )-200, 500), pos_anchor=posanchors.topleft)
+                utils.blit(dest=canvas, source=self.new_text, pos=((constants.canvas_width/2 )-200, 520), pos_anchor=posanchors.topleft)
             # for i, option in enumerate(self.button_option_surface_list):
             #     if self.selected_cell or self.selected_cell_2:
             #         scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
@@ -297,7 +294,7 @@ class Play_ResultStage(BaseState):
             
             # Always render hoverable text
             scaled_continue_button = pygame.transform.scale_by(surface=self.button_option_surface_list[0]['surface'], factor=self.button_option_surface_list[0]['scale'])
-            utils.blit(dest=canvas, source=scaled_continue_button, pos=(constants.canvas_width/2, 600), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=scaled_continue_button, pos=(constants.canvas_width/2, 620), pos_anchor=posanchors.center)
 
             scaled_hover_to_button = pygame.transform.scale_by(surface=self.button_option_surface_list[1]['surface'], factor=self.button_option_surface_list[1]['scale'])
             utils.blit(dest=canvas, source=scaled_hover_to_button, pos=(constants.canvas_width/2, 695), pos_anchor=posanchors.center)

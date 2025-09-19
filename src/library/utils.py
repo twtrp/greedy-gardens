@@ -130,8 +130,10 @@ def get_text(
         long_shadow: bool = True,
         long_shadow_direction = 'bottom',
         long_shadow_color: pygame.Color = None,
+        long_shadow_distance: int = None,
         outline: bool = True,
         outline_color: pygame.Color = colors.mono_50,
+        outline_distance: int = None
     ) -> pygame.Surface:
     '''
     Use this to get a text surface
@@ -151,10 +153,16 @@ def get_text(
     if long_shadow:
         if long_shadow_color is None:
             long_shadow_color = color_darken(color=color, factor=0.5)
-        text_surface = effect_long_shadow(surface=text_surface, direction=long_shadow_direction, distance=deco_distance, color=long_shadow_color)
+        if long_shadow_distance is None:
+            text_surface = effect_long_shadow(surface=text_surface, direction=long_shadow_direction, distance=deco_distance, color=long_shadow_color)
+        else:
+            text_surface = effect_long_shadow(surface=text_surface, direction=long_shadow_direction, distance=long_shadow_distance, color=long_shadow_color)
 
     if outline:
-        text_surface = effect_outline(surface=text_surface, distance=deco_distance, color=outline_color)
+        if outline_distance is None:
+            text_surface = effect_outline(surface=text_surface, distance=deco_distance, color=outline_color)
+        else:
+            text_surface = effect_outline(surface=text_surface, distance=outline_distance, color=outline_color)
         
     return text_surface
 
@@ -169,8 +177,8 @@ def get_font_deco_distance(font: dict,
     size = font size key defined in fonts.py
     '''
     font_size = font['sizes'][size]
-    pixel_size_divisor = font['pixel_size_divisor']
-    return font_size//pixel_size_divisor
+    pixel_size = font['pixel_size']
+    return font_size//pixel_size
 
 
 def get_image(
@@ -342,7 +350,7 @@ def effect_long_shadow(
 def effect_outline(
         surface: pygame.Surface,
         distance: int = 1,
-        color: pygame.Color = colors.mono_40,
+        color: pygame.Color = colors.mono_50,
         no_corner: bool = False
     ) -> pygame.Surface:
     '''

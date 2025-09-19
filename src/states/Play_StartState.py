@@ -72,9 +72,9 @@ class Play_StartState(BaseState):
                 # self.parent.seasonal_fruit = self.card_drawn.card_name
                 # self.parent.drawn_cards_fruit.append(self.card_drawn)
                 self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                self.card_drawn_text = utils.get_text(text='Seasonal Fruit', font=fonts.lf2, size='large', color=colors.white)
+                self.card_drawn_text = utils.get_text(text='Seasonal Fruit', font=fonts.wacky_pixels, size='medium', color=colors.white)
                 self.seasonal_not_drawn = False
-                self.parent.left_box_none_text = utils.get_text(text='Draw day 1 fruit', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.left_box_none_text = utils.get_text(text='Draw day 1 fruit', font=fonts.windows, size='smaller', color=colors.white)
                 self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.day1_not_drawn:
@@ -83,9 +83,9 @@ class Play_StartState(BaseState):
                 # self.parent.day1_fruit = self.card_drawn.card_name
                 # self.parent.drawn_cards_fruit.append(self.card_drawn)
                 self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                self.card_drawn_text = utils.get_text(text='Day 1 Fruit', font=fonts.lf2, size='large', color=colors.white)
+                self.card_drawn_text = utils.get_text(text='Day 1 Fruit', font=fonts.wacky_pixels, size='medium', color=colors.white)
                 self.day1_not_drawn = False
-                self.parent.left_box_none_text = utils.get_text(text='Draw day 2 fruit', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.left_box_none_text = utils.get_text(text='Draw day 2 fruit', font=fonts.windows, size='smaller', color=colors.white)
                 self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.day2_not_drawn:
@@ -94,9 +94,9 @@ class Play_StartState(BaseState):
                 # self.parent.day2_fruit = self.card_drawn.card_name
                 # self.parent.drawn_cards_fruit.append(self.card_drawn)
                 self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                self.card_drawn_text = utils.get_text(text='Day 2 Fruit', font=fonts.lf2, size='large', color=colors.white)
+                self.card_drawn_text = utils.get_text(text='Day 2 Fruit', font=fonts.wacky_pixels, size='medium', color=colors.white)
                 self.day2_not_drawn = False
-                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 1 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 1 card', font=fonts.windows, size='smaller', color=colors.white)
                 self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
         elif self.magic_fruit3_not_drawn:
@@ -123,10 +123,10 @@ class Play_StartState(BaseState):
                 # self.parent.magic_fruit1_event = self.card_drawn.card_name
                 self.parent.drawn_cards_event.append(self.card_drawn)
                 self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
-                self.card_drawn_text = utils.get_text(text='Magic fruit 1 Event', font=fonts.lf2, size='large', color=colors.white)
+                self.card_drawn_text = utils.get_text(text='Magic fruit 1 Event', font=fonts.wacky_pixels, size='medium', color=colors.white)
                 self.magic_fruit1_not_drawn = False
                 self.parent.magicing_number = 1
-                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 2 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 2 card', font=fonts.windows, size='smaller', color=colors.white)
                 self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.magic_fruit2_not_drawn:
@@ -135,10 +135,10 @@ class Play_StartState(BaseState):
                 # self.parent.magic_fruit2_event = self.card_drawn.card_name
                 self.parent.drawn_cards_event.append(self.card_drawn)
                 self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
-                self.card_drawn_text = utils.get_text(text='Magic fruit 2 Event', font=fonts.lf2, size='large', color=colors.white)
+                self.card_drawn_text = utils.get_text(text='Magic fruit 2 Event', font=fonts.wacky_pixels, size='medium', color=colors.white)
                 self.magic_fruit2_not_drawn = False
                 self.parent.magicing_number = 2
-                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 3 event', font=fonts.lf2, size='tiny', color=colors.white)
+                self.parent.left_box_none_text = utils.get_text(text='Draw magic fruit 3 card', font=fonts.windows, size='smaller', color=colors.white)
                 self.parent.animate_task_text()  # Trigger task text animation
                 self.previous_card_drawn = self.card_drawn
             elif self.card_drawn and self.magic_fruit3_not_drawn:
@@ -147,11 +147,11 @@ class Play_StartState(BaseState):
                 # self.parent.magic_fruit3_event = self.card_drawn.card_name
                 self.parent.drawn_cards_event.append(self.card_drawn)
                 self.card_drawn_image = self.parent.cards_event_sprites[f"card_{self.card_drawn.card_name}"]
-                self.card_drawn_text = utils.get_text(text='Magic fruit 3 Event', font=fonts.lf2, size='large', color=colors.white)
+                self.card_drawn_text = utils.get_text(text='Magic fruit 3 Event', font=fonts.wacky_pixels, size='medium', color=colors.white)
                 self.magic_fruit3_not_drawn = False
                 self.parent.magicing_number = 3
                 if not self.path_card_text_shown:
-                    self.parent.left_box_none_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
+                    self.parent.left_box_none_text = utils.get_text(text='Draw path card', font=fonts.windows, size='smaller', color=colors.white)
                     self.parent.animate_task_text()  # Trigger task text animation
                     self.path_card_text_shown = True
                 self.previous_card_drawn = self.card_drawn
@@ -166,7 +166,7 @@ class Play_StartState(BaseState):
 
     def render(self, canvas):
         if self.card_drawn_image:
-            utils.blit(dest=canvas, source=self.card_drawn_text, pos=(constants.canvas_width/2, constants.canvas_height/2 - 190), pos_anchor='center')
+            utils.blit(dest=canvas, source=self.card_drawn_text, pos=(constants.canvas_width/2, constants.canvas_height/2 - 170), pos_anchor='center')
             scaled_card_drawn = pygame.transform.scale_by(surface=self.card_drawn_image, factor=self.card_drawn_image_props['scale'])
             # scaled_card_drawn = utils.effect_outline(surface=scaled_card_drawn, distance=4, color=colors.white)
             utils.blit(dest=canvas, source=scaled_card_drawn, pos=(self.card_drawn_image_props['x'], self.card_drawn_image_props['y']), pos_anchor='center')

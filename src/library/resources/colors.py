@@ -13,12 +13,12 @@ green_light = (35, 229, 130)
 
 yellow_light = (246, 238, 123)
 
-orange_light = (252, 215, 100)
+orange_light = (252, 225, 100)
 
 blue_light = (142, 205, 235)
 
 red_light = (255, 114, 118)
 
-link = (128, 179, 255)
+link = (140, 193, 255)
 
 namsom_color = (253, 83, 1)

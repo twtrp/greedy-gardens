@@ -35,7 +35,7 @@ class PlayState(BaseState):
         print('Seed:',self.seed)
 
         # Developer mode
-        self.developer_mode = False
+        self.developer_mode = True
         
         self.game.canvas.fill((0, 0, 0))
 
@@ -121,6 +121,8 @@ class PlayState(BaseState):
         self.strikes = 0
         self.is_striking = False
         self.current_turn = 0
+        # Track previous turn value so turn animations only trigger on changes
+        self.previous_turn = -1
 
         # Developer mode alert system
         self.dev_alert_text = ""
@@ -141,6 +143,7 @@ class PlayState(BaseState):
         self.score_scales = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]  # Scale for each score (Day1, Day2, Day3, Day4, Seasonal, Total)
         
         # Deck count animation properties
+        self.turn_text_scale = 1.0
         self.previous_deck_counts = [0, 0, 0]  # Track previous deck counts (fruit, path, event)
         self.deck_scales = [1.0, 1.0, 1.0]  # Scale for each deck count
         
@@ -329,7 +332,7 @@ class PlayState(BaseState):
         day4_color = colors.mono_150
 
         # left gui
-        self.left_box_title = utils.get_text(text='Score', font=fonts.lf2, size='small', color=colors.white)
+        self.left_box_title = utils.get_text(text='Score', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
 
         self.score_list = [
             {'text': 'Day 1', 'color': day1_color, 'amount': self.day1_score},
@@ -342,22 +345,22 @@ class PlayState(BaseState):
 
         self.score_title_list = []
         for score in self.score_list:
-            text = utils.get_text(text=score['text'], font=fonts.lf2, size='tiny', color=score['color'])
+            text = utils.get_text(text=score['text'], font=fonts.windows, size='smaller', color=score['color'])
             self.score_title_list.append(text)
 
         self.score_amount_list = []
         for score in self.score_list:
-            amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
+            amount = utils.get_text(text=str(score['amount']), font=fonts.windows, size='smaller', color=score['color'])
             self.score_amount_list.append(amount)
 
-        self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.lf2, size='small', color=colors.white)
-        self.left_box_task = utils.get_text(text='Current Task', font=fonts.lf2, size='small', color=colors.white)
-        self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_magic_event_text = utils.get_text(text='Play magic fruit event', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_draw_path_text = utils.get_text(text='Draw path card', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_draw_event_text = utils.get_text(text='Draw event card', font=fonts.lf2, size='tiny', color=colors.white)
-        self.left_box_none_text = utils.get_text(text='Draw seasonal fruit', font=fonts.lf2, size='tiny', color=colors.white)
+        self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
+        self.left_box_task = utils.get_text(text='Current Task', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
+        self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.windows, size='smaller', color=colors.white)
+        self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.windows, size='smaller', color=colors.white)
+        self.left_box_magic_event_text = utils.get_text(text='Play magic fruit event', font=fonts.windows, size='smaller', color=colors.white)
+        self.left_box_draw_path_text = utils.get_text(text='Draw path card', font=fonts.windows, size='smaller', color=colors.white)
+        self.left_box_draw_event_text = utils.get_text(text='Draw event card', font=fonts.windows, size='smaller', color=colors.white)
+        self.left_box_none_text = utils.get_text(text='Draw seasonal fruit', font=fonts.windows, size='smaller', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
@@ -367,29 +370,29 @@ class PlayState(BaseState):
         # Event Control Hints
         self.event_free_control_hint = utils.get_text(
             text='Scroll              or press            to choose the path type.',
-            font=fonts.lf2, size='tiny', color=colors.white
+            font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_move_control_hint = utils.get_text(
             text='Select a path to move, then select a blank tile to move it to.',
-            font=fonts.lf2, size='tiny', color=colors.white
+            font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_merge_control_hint = utils.get_text(
             text='Select 2 paths. Path 1 will be removed and merged with path 2.',
-            font=fonts.lf2, size='tiny', color=colors.white
+            font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_remove_control_hint = utils.get_text(
             text='Select 1 or 2 paths. Click Delete button to confirm.',
-            font=fonts.lf2, size='tiny', color=colors.white
+            font=fonts.windows, size='smaller', color=colors.white
         )
         self.event_swap_control_hint = utils.get_text(
             text='Select 2 paths to swap their positions.',
-            font=fonts.lf2, size='tiny', color=colors.white
+            font=fonts.windows, size='smaller', color=colors.white
         )
 
         # Event cancelled popup
         self.event_cancelled_popup = utils.get_text(
             text='Impossible event cancelled!',
-            font=fonts.lf2, size='tiny', color=colors.red_light
+            font=fonts.windows, size='smaller', color=colors.red_light
         )
         self.event_cancelled_popup_props = None
 
@@ -430,7 +433,7 @@ class PlayState(BaseState):
         )
 
         # Draw card hint
-        self.press_text = utils.get_text(text="Press", font=fonts.lf2, size='tiny', color=colors.mono_175)
+        self.press_text = utils.get_text(text="Press", font=fonts.windows, size='smaller', color=colors.mono_175)
         self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
         self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
         self.slash_text = utils.get_text(text="/", font=fonts.minecraftia, size='tiny', color=colors.mono_175, long_shadow=False)
@@ -472,25 +475,25 @@ class PlayState(BaseState):
         self.draw_card_hint_animation_time = 0.0
         self.draw_card_hint_animation_cycle_duration = 2
 
-        self.right_box_title = utils.get_text(text='Turn 1', font=fonts.lf2, size='small', color=colors.white)
+        self.right_box_title = utils.get_text(text='Turn 1', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
 
         self.deck_list = [
-            {'text': 'Fruit cards',},
-            {'text': 'Path cards',},
-            {'text': 'Event cards',},
+            {'text': 'Fruit',},
+            {'text': 'Path',},
+            {'text': 'Event',},
         ]
 
         self.deck_title_list = []
         for score in self.deck_list:
-            text = utils.get_text(text=score['text'], font=fonts.lf2, size='tiny', color=colors.white)
+            text = utils.get_text(text=score['text'], font=fonts.windows, size='smaller', color=colors.white)
             self.deck_title_list.append(text)
 
-        self.right_remaining = utils.get_text(text='remaining', font=fonts.lf2, size='tiny', color=colors.white)
-        self.right_magic_fruits = utils.get_text(text='Magic Fruits', font=fonts.lf2, size='small', color=colors.white)
+        self.right_remaining = utils.get_text(text='remaining', font=fonts.windows, size='smaller', color=colors.white)
+        self.right_magic_fruits = utils.get_text(text='Magic Fruits', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
 
-        self.next_text = utils.get_text(text='Next', font=fonts.lf2, size='tiny', color=colors.white)
-        self.event_text = utils.get_text(text='event', font=fonts.lf2, size='tiny', color=colors.white)
-        self.path_text = utils.get_text(text='path', font=fonts.lf2, size='tiny', color=colors.white)
+        self.next_text = utils.get_text(text='Next', font=fonts.windows, size='smaller', color=colors.white)
+        self.event_text = utils.get_text(text='event', font=fonts.windows, size='smaller', color=colors.white)
+        self.path_text = utils.get_text(text='path', font=fonts.windows, size='smaller', color=colors.white)
 
         # dirt path
         self.dirt_sprite_1 = []
@@ -703,8 +706,8 @@ class PlayState(BaseState):
         self.current_song = 0
 
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
-        self.pause_background.fill((*colors.white, 200))
-        self.pause_title = utils.get_text(text='Paused', font=fonts.lf2, size='huge', color=colors.mono_205)
+        self.pause_background.fill((*colors.white, 175))
+        self.pause_title = utils.get_text(text='Paused', font=fonts.wacky_pixels, size='large', color=colors.yellow_light, outline=False)
         
         self.settings_manager = SettingsManager()
         self.current_settings_index = self.settings_manager.load_all_settings_index()
@@ -718,7 +721,7 @@ class PlayState(BaseState):
         for i, setting in enumerate(self.settings_manager.settings_list):
             if setting['id'] != 'skip_bootup':
                 text_string = setting['label'] + ':  ' + setting['value_label'][self.current_settings_index[i]]
-                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
+                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white, outline=False)
                 self.pause_settings_surface_list.append({
                     'id': setting['id'],
                     'surface': text,
@@ -776,7 +779,7 @@ class PlayState(BaseState):
             ))
         
         for i, option in enumerate(self.pause_options):
-            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white)
+            text = utils.get_text(text=option['text'], font=fonts.lf2, size='medium', color=colors.white, outline=False)
             self.pause_options_surface_list.append({
                 'id': option['id'],
                 'surface': text,
@@ -979,7 +982,7 @@ class PlayState(BaseState):
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='big_fruit_coconut'),
         ]
         for i, surface in enumerate(self.tutorial_fruit_sprites):
-            self.tutorial_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_40)
+            self.tutorial_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_50)
 
         self.tutorial_path_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='path_WE'),
@@ -991,7 +994,7 @@ class PlayState(BaseState):
         ]
         for i, surface in enumerate(self.tutorial_path_sprites):
             self.tutorial_path_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
-            self.tutorial_path_sprites[i] = utils.effect_outline(surface=self.tutorial_path_sprites[i], distance=2, color=colors.mono_40)
+            self.tutorial_path_sprites[i] = utils.effect_outline(surface=self.tutorial_path_sprites[i], distance=2, color=colors.mono_50)
 
         self.tutorial_event_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='event_free'),
@@ -1005,7 +1008,7 @@ class PlayState(BaseState):
         ]
         for i, surface in enumerate(self.tutorial_event_sprites):
             self.tutorial_event_sprites[i] = pygame.transform.smoothscale_by(surface=surface, factor=0.75)
-            self.tutorial_event_sprites[i] = utils.effect_outline(surface=self.tutorial_event_sprites[i], distance=2, color=colors.mono_40)
+            self.tutorial_event_sprites[i] = utils.effect_outline(surface=self.tutorial_event_sprites[i], distance=2, color=colors.mono_50)
 
         self.tutorial_magic_fruit_sprites = [
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_1'),
@@ -1013,7 +1016,7 @@ class PlayState(BaseState):
             utils.get_sprite(sprite_sheet=spritesheets.fruit_32x32, target_sprite='magic_fruit_3'),
         ]
         for i, surface in enumerate(self.tutorial_magic_fruit_sprites):
-            self.tutorial_magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_40)
+            self.tutorial_magic_fruit_sprites[i] = utils.effect_outline(surface=surface, distance=2, color=colors.mono_50)
 
 
         # Day title
@@ -1116,7 +1119,7 @@ class PlayState(BaseState):
                                 
                                 # Update the setting surface text
                                 text_string = self.settings_manager.settings_list[self.setting_index]['label']+':  '+self.settings_manager.settings_list[self.setting_index]['value_label'][self.current_settings_index[self.setting_index]]
-                                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
+                                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white, outline=False)
                                 
                                 # Find and update the correct settings surface
                                 setting_id = self.settings_manager.settings_list[self.setting_index]['id']
@@ -1383,7 +1386,7 @@ class PlayState(BaseState):
                     elif i == self.current_day:
                         day_colors[f"day{i}_color"] = colors.yellow_light
                     else:
-                        day_colors[f"day{i}_color"] = colors.mono_150
+                        day_colors[f"day{i}_color"] = colors.mono_175
                 
                 #Score calculation
                 if self.current_day < 2 and not self.day1_penalty_applied:
@@ -1412,16 +1415,20 @@ class PlayState(BaseState):
 
                 self.score_title_list = []
                 for score in self.score_list:
-                    text = utils.get_text(text=score['text'], font=fonts.lf2, size='tiny', color=score['color'])
+                    text = utils.get_text(text=score['text'], font=fonts.windows, size='smaller', color=score['color'])
                     self.score_title_list.append(text)
 
                 self.score_amount_list = []
                 for score in self.score_list:
-                    amount = utils.get_text(text=str(score['amount']), font=fonts.lf2, size='small', color=score['color'])
+                    amount = utils.get_text(text=str(score['amount']), font=fonts.windows, size='smaller', color=score['color'])
                     self.score_amount_list.append(amount)
 
-                # Update turn display
-                self.right_box_title = utils.get_text(text=f'Turn {max(1, self.current_turn)}', font=fonts.lf2, size='small', color=colors.white)
+                # Update turn display. Only animate when the turn changes so the
+                # tween isn't restarted every frame.
+                self.right_box_title = utils.get_text(text=f'Turn {max(1, self.current_turn)}', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
+                if self.current_turn != self.previous_turn and self.current_turn > 1:
+                    self.animate_turn_text()
+                    self.previous_turn = self.current_turn
 
                 # hover function 
                 if self.setup_start_state==True and not self.transitioning:
@@ -1964,7 +1971,7 @@ class PlayState(BaseState):
                     left_hud_surface = pygame.Surface((self.box_width + 4, constants.canvas_height), pygame.SRCALPHA)
                     
                     # Draw the left box content to the temporary surface
-                    alpha_value = int(140 * self.hud_left_alpha)  # Scale alpha from 0-150
+                    alpha_value = int(150 * self.hud_left_alpha)  # Scale alpha from 0-150
                     utils.draw_rect(
                         dest=left_hud_surface,
                         size=(self.box_width, constants.canvas_height),
@@ -1978,8 +1985,8 @@ class PlayState(BaseState):
                     # Render text in left white box to temporary surface
                     utils.blit(dest=left_hud_surface, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
                     for i, score in enumerate(self.score_title_list):
-                        utils.blit(dest=left_hud_surface, source=score, pos=(70, 83 + i*45), pos_anchor='midleft')
-                    utils.blit(dest=left_hud_surface, source=self.left_box_strike, pos=(self.box_width/2, 365
+                        utils.blit(dest=left_hud_surface, source=score, pos=(70, 80 + i*45), pos_anchor='midleft')
+                    utils.blit(dest=left_hud_surface, source=self.left_box_strike, pos=(self.box_width/2, 370
                     ), pos_anchor='center')
                     utils.blit(dest=left_hud_surface, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
@@ -2093,7 +2100,7 @@ class PlayState(BaseState):
                             self.day1_fruit_image = self.big_fruit_sprites['big_'+self.day1_fruit]
                         else:
                             self.day1_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day1_fruit])
-                        self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_40)
+                        self.day1_fruit_image = utils.effect_outline(surface=self.day1_fruit_image, distance=2, color=colors.mono_50)
                         # Apply scale animation to day 1 fruit
                         if self.day_fruit_scales[0] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=self.day_fruit_scales[0])
@@ -2105,7 +2112,7 @@ class PlayState(BaseState):
                             self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
                         else:
                             self.day2_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day2_fruit])
-                        self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_40)
+                        self.day2_fruit_image = utils.effect_outline(surface=self.day2_fruit_image, distance=2, color=colors.mono_50)
                         # Apply scale animation to day 2 fruit
                         if self.day_fruit_scales[1] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=self.day_fruit_scales[1])
@@ -2117,7 +2124,7 @@ class PlayState(BaseState):
                             self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
                         else:
                             self.day3_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day3_fruit])
-                        self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_40)
+                        self.day3_fruit_image = utils.effect_outline(surface=self.day3_fruit_image, distance=2, color=colors.mono_50)
                         # Apply scale animation to day 3 fruit
                         if self.day_fruit_scales[2] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=self.day_fruit_scales[2])
@@ -2129,7 +2136,7 @@ class PlayState(BaseState):
                             self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
                         else:
                             self.day4_fruit_image = utils.effect_grayscale(self.big_fruit_sprites['big_'+self.day4_fruit])
-                        self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_40)
+                        self.day4_fruit_image = utils.effect_outline(surface=self.day4_fruit_image, distance=2, color=colors.mono_50)
                         # Apply scale animation to day 4 fruit
                         if self.day_fruit_scales[3] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=self.day_fruit_scales[3])
@@ -2140,7 +2147,7 @@ class PlayState(BaseState):
                     ## Render seasonal fruit in left white box to temporary surface
                     if self.seasonal_fruit is not None:
                         self.seasonal_fruit_image = self.big_fruit_sprites['big_'+self.seasonal_fruit]
-                        self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_40)
+                        self.seasonal_fruit_image = utils.effect_outline(surface=self.seasonal_fruit_image, distance=2, color=colors.mono_50)
                         # Apply scale animation to seasonal fruit
                         if self.day_fruit_scales[4] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=self.day_fruit_scales[4])
@@ -2158,7 +2165,7 @@ class PlayState(BaseState):
                     right_hud_surface = pygame.Surface((self.box_width + 4, constants.canvas_height), pygame.SRCALPHA)
                     
                     # Draw the right box content to the temporary surface
-                    alpha_value = int(140 * self.hud_right_alpha)  # Scale alpha from 0-150
+                    alpha_value = int(150 * self.hud_right_alpha)  # Scale alpha from 0-150
                     utils.draw_rect(
                         dest=right_hud_surface,
                         size=(self.box_width, constants.canvas_height),
@@ -2170,16 +2177,17 @@ class PlayState(BaseState):
                     )
                     
                     ## Render text in right white box to temporary surface
-                    utils.blit(dest=right_hud_surface, source=self.right_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
+                    scaled_turn_text = pygame.transform.scale_by(surface=self.right_box_title, factor=self.turn_text_scale)
+                    utils.blit(dest=right_hud_surface, source=scaled_turn_text, pos=(self.box_width/2, 35), pos_anchor='center')
                     for i, deck in enumerate(self.deck_title_list):
                         # Adjust positions for the surface coordinates (subtract canvas_width - box_width offset)
                         surface_x = 1140 - (constants.canvas_width - self.box_width)
-                        utils.blit(dest=right_hud_surface, source=deck, pos=(surface_x, 85 + i*135), pos_anchor='topleft')
-                        utils.blit(dest=right_hud_surface, source=self.right_remaining, pos=(surface_x, 110 + i*135), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=deck, pos=(surface_x, 80 + i*135), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.right_remaining, pos=(surface_x, 105 + i*135), pos_anchor='topleft')
 
                     ## Render value in right white box to temporary surface
                     # Fruit deck count
-                    self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
+                    self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.windows, size='smaller', color=colors.white)
                     if self.deck_scales[0] != 1.0:
                         scaled_fruit_count = pygame.transform.scale_by(surface=self.fruit_deck_remaining_amount, factor=self.deck_scales[0])
                         # Adjust position to keep the topleft anchor consistent during scaling
@@ -2190,12 +2198,12 @@ class PlayState(BaseState):
                         # Calculate offset to keep the same visual position
                         offset_x = (scaled_width - original_width) / 2
                         offset_y = (scaled_height - original_height) / 2
-                        utils.blit(dest=right_hud_surface, source=scaled_fruit_count, pos=(surface_x - offset_x, 135 - offset_y), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=scaled_fruit_count, pos=(surface_x - offset_x, 140 - offset_y), pos_anchor='topleft')
                     else:
-                        utils.blit(dest=right_hud_surface, source=self.fruit_deck_remaining_amount, pos=(surface_x, 135), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.fruit_deck_remaining_amount, pos=(surface_x, 140), pos_anchor='topleft')
                     
                     # Path deck count
-                    self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
+                    self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.windows, size='smaller', color=colors.white)
                     if self.deck_scales[1] != 1.0:
                         scaled_path_count = pygame.transform.scale_by(surface=self.path_deck_remaining_amount, factor=self.deck_scales[1])
                         # Adjust position to keep the topleft anchor consistent during scaling
@@ -2206,12 +2214,12 @@ class PlayState(BaseState):
                         # Calculate offset to keep the same visual position
                         offset_x = (scaled_width - original_width) / 2
                         offset_y = (scaled_height - original_height) / 2
-                        utils.blit(dest=right_hud_surface, source=scaled_path_count, pos=(surface_x - offset_x, 270 - offset_y), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=scaled_path_count, pos=(surface_x - offset_x, 275 - offset_y), pos_anchor='topleft')
                     else:
-                        utils.blit(dest=right_hud_surface, source=self.path_deck_remaining_amount, pos=(surface_x, 270), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.path_deck_remaining_amount, pos=(surface_x, 275), pos_anchor='topleft')
                     
                     # Event deck count
-                    self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.lf2, size='small', color=colors.white)
+                    self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.windows, size='smaller', color=colors.white)
                     if self.deck_scales[2] != 1.0:
                         scaled_event_count = pygame.transform.scale_by(surface=self.event_deck_remaining_amount, factor=self.deck_scales[2])
                         # Adjust position to keep the topleft anchor consistent during scaling
@@ -2222,9 +2230,9 @@ class PlayState(BaseState):
                         # Calculate offset to keep the same visual position
                         offset_x = (scaled_width - original_width) / 2
                         offset_y = (scaled_height - original_height) / 2
-                        utils.blit(dest=right_hud_surface, source=scaled_event_count, pos=(surface_x - offset_x, 405 - offset_y), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=scaled_event_count, pos=(surface_x - offset_x, 410 - offset_y), pos_anchor='topleft')
                     else:
-                        utils.blit(dest=right_hud_surface, source=self.event_deck_remaining_amount, pos=(surface_x, 405), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.event_deck_remaining_amount, pos=(surface_x, 410), pos_anchor='topleft')
 
                     ## Render card backs in right white box to temporary surface
                     card_x = 1080 - (constants.canvas_width - self.box_width)
@@ -2452,6 +2460,15 @@ class PlayState(BaseState):
         # pause menu
         if self.paused and not self.in_tutorial:
             utils.blit(dest=canvas, source=self.pause_background)
+            utils.draw_rect(
+                dest=canvas,
+                size=(450, constants.canvas_height),
+                pos=(constants.canvas_width/2, 0),
+                pos_anchor=posanchors.midtop,
+                color=colors.mono_40,
+                outer_border_width=6,
+                outer_border_color=colors.mono_100,
+            )
             utils.blit(dest=canvas, source=self.pause_title, pos=(constants.canvas_width/2, 120), pos_anchor='center')
             
             # Render settings options with arrows (between Resume and Exit)
@@ -2637,7 +2654,7 @@ class PlayState(BaseState):
             'y': constants.canvas_height/2 + 150,
             'alpha': 0,
         }
-        self.day_title_text = utils.get_text(text=f'Day {self.current_day}', font=fonts.lf2, size='huge', color=colors.white)
+        self.day_title_text = utils.get_text(text=f'Day {self.current_day}', font=fonts.wacky_pixels, size='huge', color=colors.white)
         
         # Start HUD transition animation at the same time as day transition
         self.start_hud_transition()
@@ -2693,7 +2710,7 @@ class PlayState(BaseState):
     
     def animate_score(self, score_index):
         """Animate a score number with a scale-up then scale-down effect."""
-        self.score_scales[score_index] = 1.5
+        self.score_scales[score_index] = 1.75
         self.tween_list.append(tween.to(
             container=self.score_scales,
             key=score_index,
@@ -2711,7 +2728,7 @@ class PlayState(BaseState):
     
     def animate_deck_count(self, deck_index):
         """Animate a deck count number with a scale-up then scale-down effect."""
-        self.deck_scales[deck_index] = 1.5
+        self.deck_scales[deck_index] = 1.75
         self.tween_list.append(tween.to(
             container=self.deck_scales,
             key=deck_index,
@@ -2729,10 +2746,21 @@ class PlayState(BaseState):
     
     def animate_task_text(self):
         """Animate task text with a scale-down effect."""
-        self.task_text_scale = 1.1
+        self.task_text_scale = 1.15
         self.tween_list.append(tween.to(
             container=self,
             key='task_text_scale',
+            end_value=1.0,
+            time=0.3, 
+            ease_type=tweencurves.easeOutQuart
+        ))
+
+    def animate_turn_text(self):
+        """Animate turn text with a scale-down effect."""
+        self.turn_text_scale = 1.15
+        self.tween_list.append(tween.to(
+            container=self,
+            key='turn_text_scale',
             end_value=1.0,
             time=0.3, 
             ease_type=tweencurves.easeOutQuart

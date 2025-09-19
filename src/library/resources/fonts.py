@@ -7,27 +7,34 @@ lf2 = {
         'large': 40,
         'huge': 56,
     },
-    'pixel_size_divisor': 8
+    'pixel_size': 8
 }
 
-lf7 = {
-    'file': 'LazyFox Pixel Font 7.ttf',
+windows = {
+    'file': 'windows-bold-edited.ttf',
     'sizes': {
-        'tiny': 18,
-        'small': 24,
-        'medium': 32,
-        'large': 48,
+        'tinier': 12,
+        'tiny': 22,
+        'smaller': 24,
+        'small': 30,
+        'medium': 36,
+        'large': 42
     },
-    'pixel_size_divisor': 8
+    'pixel_size': 12
 }
 
-minecraftia = {
-    'file': 'Minecraftia-Regular.ttf',
+wacky_pixels = {
+    'file': 'Wacky Pixels edited.ttf',
     'sizes': {
-        'tiny': 16,
-        'small': 24,
+        'tinier': 24,
+        'tiny': 32,
+        'smaller': 40,
+        'small': 48,
+        'medium': 64,
+        'large': 80,
+        'huge': 96,
     },
-    'pixel_size_divisor': 8
+    'pixel_size': 16
 }
 
 mago1 = {
@@ -37,40 +44,14 @@ mago1 = {
         'small': 48,
         'medium': 64,
     },
-    'pixel_size_divisor': 16
+    'pixel_size': 16
 }
 
-m6x11 = {
-    'file': 'm6x11.ttf',
+minecraftia = {
+    'file': 'Minecraftia-Regular.ttf',
     'sizes': {
-        'tinyest': 26,
-        'tiny': 36,
-        'small': 48,
-        'medium': 64,
-        'large': 80
+        'tiny': 16,
+        'small': 24,
     },
-    'pixel_size_divisor': 16
-}
-
-boldpixels = {
-    'file': 'BoldPixels.ttf',
-    'sizes': {
-        'tinyest': 16,
-        'tiny': 32,
-        'small': 48,
-        'medium': 64,
-        'large': 80
-    },
-    'pixel_size_divisor': 16
-}
-
-silver = {
-    'file': 'silver.ttf',
-    'sizes': {
-        'tiny': 36,
-        'small': 48,
-        'medium': 64,
-        'large': 80
-    },
-    'pixel_size_divisor': 16
+    'pixel_size': 8
 }
