@@ -30,12 +30,19 @@ class Play_EndDayState(BaseState):
             previous_score = getattr(self.parent, f'final_day{self.parent.current_day - 1}_score')
 
             # If today's score is not higher than yesterday's
-            if self.current_score <= previous_score:
-                # Replace today's score with 0 (or keep it if already negative)
-                new_score = self.current_score if self.current_score < 0 else 0
+            if self.current_score <= previous_score or self.current_score < 0:
+                # Replace today's score with 0
+                new_score = 0
                 setattr(self.parent, f'final_day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 # Set penalty flag to prevent score recalculation
+                setattr(self.parent, f'day{self.parent.current_day}_penalty_applied', True)
+
+        else: 
+            if self.current_score < 0:
+                new_score = 0
+                setattr(self.parent, f'final_day{self.parent.current_day}_score', new_score)
+                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
                 setattr(self.parent, f'day{self.parent.current_day}_penalty_applied', True)
             
         self.button_list = []

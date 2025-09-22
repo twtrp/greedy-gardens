@@ -119,7 +119,7 @@ class TutorialState(BaseState):
         self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.mask_circle_radius = 750
 
-        # Load content #@note
+        # Load content 
         self.welcome_text = utils.get_text(
             text='Welcome to',
             font=fonts.boldpixels,
@@ -357,7 +357,7 @@ class TutorialState(BaseState):
                     pos_anchor=posanchors.center,
                 )
                 
-            # Render substates #@note
+            # Render substates 
 
             if not self.substate_stack:
                 ## Render welcome text
@@ -503,7 +503,7 @@ class TutorialState(BaseState):
                 time=0.1,
                 ease_type=tweencurves.easeOutCirc,
                 delay=delay
-            )) #@note
+            )) 
 
             delay += 0.75
             self.tween_list.append(tween.to(

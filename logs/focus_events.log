@@ -1,0 +1,7 @@
+
+=== New run: 2025-09-22 07:20:52 ===
+2025-09-22 07:20:52 - EVENT <Event(32768-ActiveEvent {'gain': 1, 'state': 2})>
+2025-09-22 07:20:52 - EVENT <Event(32768-ActiveEvent {'gain': 1, 'state': 1})>
+2025-09-22 07:20:52 - EVENT <Event(32770-VideoExpose {})>
+2025-09-22 07:20:54 - EVENT <Event(32768-ActiveEvent {'gain': 0, 'state': 1})>
+2025-09-22 07:20:57 - EVENT <Event(32768-ActiveEvent {'gain': 0, 'state': 2})>

@@ -25,6 +25,16 @@ class Button:
         self.pos = pos
         self.pos_anchor = pos_anchor
 
+        # Keep an unscaled base surface so we always scale from the original
+        # This prevents cumulative scaling when display mode / screen size changes
+        if surface is not None:
+            self.base_surface = surface
+        else:
+            # ensure a non-zero base surface when width/height provided
+            bw = self.para_width if self.para_width != 0 else 1
+            bh = self.para_height if self.para_height != 0 else 1
+            self.base_surface = pygame.Surface((bw, bh), pygame.SRCALPHA)
+
         self.hovered = False
         self.pressed = False
         self.clicked = False
@@ -32,22 +42,28 @@ class Button:
         self.hover_cursor = hover_cursor
 
         self.update_scale()
-        self.create_surface(surface)
+        self.create_surface()
         self.set_pos(self.pos, self.pos_anchor)
 
-    def create_surface(self, surface):
+    def create_surface(self):
+        # Recompute scale-derived values and create a fresh scaled surface
         self.scale_x = self.game.screen_width / constants.canvas_width
         self.scale_y = self.game.screen_height / constants.canvas_height
         self.padding_x = self.para_padding_x * self.scale_x
         self.padding_y = self.para_padding_y * self.scale_y
 
-        actual_width = (self.para_width * self.scale_x if self.para_width != 0 else surface.get_width() * self.scale_x) + 2 * self.padding_x
-        actual_height = (self.para_height * self.scale_y if self.para_height != 0 else surface.get_height() * self.scale_y) + 2 * self.padding_y
+        base_w = self.para_width if self.para_width != 0 else self.base_surface.get_width()
+        base_h = self.para_height if self.para_height != 0 else self.base_surface.get_height()
 
+        actual_width = int(base_w * self.scale_x + 2 * self.padding_x)
+        actual_height = int(base_h * self.scale_y + 2 * self.padding_y)
+
+        # Create the button surface and blit a scaled copy of the original base surface
         self.surface = pygame.Surface((actual_width, actual_height), pygame.SRCALPHA)
-        button_surface = surface if surface is not None else pygame.Surface((self.para_width, self.para_height))
-        scaled_button_surface = pygame.transform.scale(button_surface, (actual_width - 2 * self.padding_x, actual_height - 2 * self.padding_y))
-        self.surface.blit(scaled_button_surface, (self.padding_x, self.padding_y))
+        target_w = max(1, int(actual_width - 2 * self.padding_x))
+        target_h = max(1, int(actual_height - 2 * self.padding_y))
+        scaled_button_surface = pygame.transform.scale(self.base_surface, (target_w, target_h))
+        self.surface.blit(scaled_button_surface, (int(self.padding_x), int(self.padding_y)))
 
         self.rect = self.surface.get_rect()
 
@@ -61,7 +77,7 @@ class Button:
         self.enable_click = enable
 
     def set_pos(self, pos: tuple, pos_anchor: str):
-        setattr(self.rect, pos_anchor, (pos[0] * self.scale_x, pos[1] * self.scale_y))
+        setattr(self.rect, pos_anchor, (int(pos[0] * self.scale_x), int(pos[1] * self.scale_y)))
 
     def check_collision(self, pos):
         return self.rect.collidepoint(pos)
@@ -72,7 +88,8 @@ class Button:
 
         if new_scale_x != self.scale_x or new_scale_y != self.scale_y:
             self.update_scale()
-            self.create_surface(self.surface)
+            # Recreate the scaled surface from the original base surface
+            self.create_surface()
             self.set_pos(self.pos, self.pos_anchor)
 
         pos = pygame.mouse.get_pos()

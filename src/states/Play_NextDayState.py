@@ -18,7 +18,7 @@ class Play_NextDayState(BaseState):
         self.parent.endDayState = False
         self.parent.set_start_state=False
 
-        self.parent.left_box_none_text = utils.get_text(text=f'Draw day {self.parent.current_day + 1} fruit', font=fonts.windows, size='smaller', color=colors.white)
+        self.parent.left_box_none_text = utils.get_text(text=f'Draw day {self.parent.current_day + 1} fruit', font=fonts.wacky_pixels, size='tiny', color=colors.white)
         self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.wacky_pixels, size='medium', color=colors.white)
 
         if self.parent.current_day < 5 and not self.parent.current_day == 1:

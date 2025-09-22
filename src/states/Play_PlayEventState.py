@@ -866,7 +866,7 @@ class Play_PlayEventState(BaseState):
                 fruit_count = len(self.remaining_fruits_display)
                 fruit_width = fruit_count * 40 - 20  # Total width of all fruits (subtract 20 because last fruit doesn't need spacing)
                 total_width = title_width + 30 + fruit_width  # 30px gap between title and fruits
-                total_height = max(self.remaining_fruits_title.get_height(), 32)  # Height of scaled fruit is 32px
+                total_height = max(self.remaining_fruits_title.get_height(), 32) + 4  # Height of scaled fruit is 32px
                 
                 # Create surface for the entire display
                 remaining_fruits_surface = pygame.Surface((total_width, total_height), pygame.SRCALPHA)

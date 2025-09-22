@@ -117,7 +117,7 @@ class MenuState(BaseState):
                 'y_offset': 1000,
             },
         ]
-        self.noise_overlay = utils.get_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
+        # self.noise_overlay = utils.get_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
 
         self.wind_entities_list = []
         self.winds_props = {'y_offset': 1000}
@@ -259,7 +259,7 @@ class MenuState(BaseState):
             ## Render winds to menu_bg
             for wind in self.wind_entities_list:
                 wind.render()
-            utils.blit(dest=self.menu_bg, source=self.noise_overlay)
+            # utils.blit(dest=self.menu_bg, source=self.noise_overlay)
 
             ## Render final menu_bg to canvas
             utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))

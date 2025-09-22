@@ -1,4 +1,5 @@
 from src.library.essentials import *
+import time
 from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
 from src.states.TutorialState import TutorialState
@@ -34,8 +35,10 @@ class Game:
         else:
             self.screen_width = constants.window_width
             self.screen_height = constants.window_height
+            # Avoid HWSURFACE in windowed mode — some drivers/OSes produce a black or unresponsive
+            # window when the hardware surface is used and the window loses focus.
             self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                  flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+                                                  flags=pygame.DOUBLEBUF)
 
         utils.set_cursor(cursor=cursors.normal)
         self.screen.fill(color=colors.white)
@@ -85,8 +88,9 @@ class Game:
             else:
                 self.screen_width = constants.window_width
                 self.screen_height = constants.window_height
+                # Avoid HWSURFACE in windowed mode — see comment above.
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.HWSURFACE|pygame.DOUBLEBUF)
+                                                      flags=pygame.DOUBLEBUF)
             current_w, current_h = self.screen.get_size()
             new_mx = int(rel_x * current_w)
             new_my = int(rel_y * current_h)
@@ -137,6 +141,19 @@ class Game:
 
         # Handle quit
         for event in events:
+            # Diagnostic logging for focus/window events
+            try:
+                if self.focus_log_path and event.type in (pygame.ACTIVEEVENT, pygame.VIDEOEXPOSE, getattr(pygame, 'WINDOWFOCUS', None)):
+                    with open(self.focus_log_path, 'a', encoding='utf-8') as f:
+                        f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - EVENT {event!r}\n")
+                # Some pygame versions use WINDOWEVENT with event.event attribute values
+                if self.focus_log_path and event.type == getattr(pygame, 'WINDOWEVENT', None):
+                    with open(self.focus_log_path, 'a', encoding='utf-8') as f:
+                        f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - WINDOWEVENT {event.event}\n")
+            except Exception:
+                # Don't let logging failures break the game
+                pass
+
             if event.type == pygame.QUIT:
                 pygame.mixer.stop()
                 pygame.quit()

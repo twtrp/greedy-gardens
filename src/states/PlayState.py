@@ -141,11 +141,18 @@ class PlayState(BaseState):
         # Score animation properties
         self.previous_scores = [0, 0, 0, 0, 0, 0]  # Track previous scores to detect changes
         self.score_scales = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]  # Scale for each score (Day1, Day2, Day3, Day4, Seasonal, Total)
+        # Cached surfaces for scores (avoid regenerating every frame)
+        self._cached_score_colors = None
+        self._cached_score_amounts = None
         
         # Deck count animation properties
         self.turn_text_scale = 1.0
         self.previous_deck_counts = [0, 0, 0]  # Track previous deck counts (fruit, path, event)
         self.deck_scales = [1.0, 1.0, 1.0]  # Scale for each deck count
+        # Cached surfaces for deck counts
+        self.fruit_deck_remaining_amount_surface = None
+        self.path_deck_remaining_amount_surface = None
+        self.event_deck_remaining_amount_surface = None
         
         # Current task text animation properties
         self.previous_task_state = ""  # Track previous task state to detect changes
@@ -182,6 +189,14 @@ class PlayState(BaseState):
         self._tutorial_just_exited = False
 
         self.load_assets()
+
+        # Cached images for current task cards to avoid repeated sprite lookups
+        self._cached_current_path = None
+        self._cached_current_path_image = None
+        self._cached_current_event = None
+        self._cached_current_event_image = None
+        self._cached_magic_fruit_events = (None, None, None)
+        self._cached_magic_fruit_images = (None, None, None)
 
         self.ready = True
         utils.sound_play(sound=sfx.woop_out, volume=self.game.sfx_volume)
@@ -345,22 +360,22 @@ class PlayState(BaseState):
 
         self.score_title_list = []
         for score in self.score_list:
-            text = utils.get_text(text=score['text'], font=fonts.windows, size='smaller', color=score['color'])
+            text = utils.get_text(text=score['text'], font=fonts.wacky_pixels, size='tiny', color=score['color'])
             self.score_title_list.append(text)
 
         self.score_amount_list = []
         for score in self.score_list:
-            amount = utils.get_text(text=str(score['amount']), font=fonts.windows, size='smaller', color=score['color'])
+            amount = utils.get_text(text=str(score['amount']), font=fonts.wacky_pixels, size='tiny', color=score['color'])
             self.score_amount_list.append(amount)
 
         self.left_box_strike = utils.get_text(text='Event Strikes', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
         self.left_box_task = utils.get_text(text='Current Task', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
-        self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.windows, size='smaller', color=colors.white)
-        self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.windows, size='smaller', color=colors.white)
-        self.left_box_magic_event_text = utils.get_text(text='Play magic fruit event', font=fonts.windows, size='smaller', color=colors.white)
-        self.left_box_draw_path_text = utils.get_text(text='Draw path card', font=fonts.windows, size='smaller', color=colors.white)
-        self.left_box_draw_event_text = utils.get_text(text='Draw event card', font=fonts.windows, size='smaller', color=colors.white)
-        self.left_box_none_text = utils.get_text(text='Draw seasonal fruit', font=fonts.windows, size='smaller', color=colors.white)
+        self.left_box_path_text = utils.get_text(text='Place drawn path', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.left_box_event_text = utils.get_text(text='Play drawn event', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.left_box_magic_event_text = utils.get_text(text='Play magic fruit event', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.left_box_draw_path_text = utils.get_text(text='Draw path card', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.left_box_draw_event_text = utils.get_text(text='Draw event card', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.left_box_none_text = utils.get_text(text='Draw seasonal fruit', font=fonts.wacky_pixels, size='tiny', color=colors.white)
 
         self.blank_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_blank')
         self.live_strike_image = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='strike_live')
@@ -433,13 +448,13 @@ class PlayState(BaseState):
         )
 
         # Draw card hint
-        self.press_text = utils.get_text(text="Press", font=fonts.windows, size='smaller', color=colors.mono_175)
+        self.press_text = utils.get_text(text="Press", font=fonts.wacky_pixels, size='tiny', color=colors.mono_175)
         self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
         self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
-        self.slash_text = utils.get_text(text="/", font=fonts.minecraftia, size='tiny', color=colors.mono_175, long_shadow=False)
+        self.slash_text = utils.get_text(text="or", font=fonts.wacky_pixels, size='tiny', color=colors.mono_175)
         self.spacebar_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
         self.spacebar_sprite = pygame.transform.scale_by(surface=self.spacebar_sprite, factor=2)
-        combined_width = self.right_click_sprite.get_width() + self.slash_text.get_width() + self.spacebar_sprite.get_width() + 2
+        combined_width = self.right_click_sprite.get_width() + self.slash_text.get_width() + self.spacebar_sprite.get_width() + 6
         combined_height = max(self.right_click_sprite.get_height(), self.slash_text.get_height(), self.spacebar_sprite.get_height()) + self.press_text.get_height() + 10
         self.draw_card_hint = pygame.Surface((combined_width, combined_height), pygame.SRCALPHA)
         
@@ -458,17 +473,18 @@ class PlayState(BaseState):
         utils.blit(
             dest=self.draw_card_hint,
             source=self.slash_text,
-            pos=(self.right_click_sprite.get_width() + 2, combined_height//2 + 20),
+            pos=(self.right_click_sprite.get_width() + 4, combined_height//2 + 20),
             pos_anchor=posanchors.midleft
         )
         utils.blit(
             dest=self.draw_card_hint,
             source=self.spacebar_sprite,
-            pos=(self.right_click_sprite.get_width() + self.slash_text.get_width() + 2, combined_height//2 + 20),
+            pos=(self.right_click_sprite.get_width() + self.slash_text.get_width() + 6, combined_height//2 + 20),
             pos_anchor=posanchors.midleft
         )
         
-        self.draw_card_hint_scale_min = 1.0
+        # Minimum scale for the draw card hint 'breathing' animation
+        self.draw_card_hint_scale_min = 1.03
         self.draw_card_hint_scale_max = 1.25
 
         self.draw_card_hint_scale = 1.0
@@ -485,10 +501,10 @@ class PlayState(BaseState):
 
         self.deck_title_list = []
         for score in self.deck_list:
-            text = utils.get_text(text=score['text'], font=fonts.windows, size='smaller', color=colors.white)
+            text = utils.get_text(text=score['text'], font=fonts.wacky_pixels, size='tiny', color=colors.white)
             self.deck_title_list.append(text)
 
-        self.right_remaining = utils.get_text(text='remaining', font=fonts.windows, size='smaller', color=colors.white)
+        self.right_remaining = utils.get_text(text='remaining', font=fonts.wacky_pixels, size='tiny', color=colors.white)
         self.right_magic_fruits = utils.get_text(text='Magic Fruits', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
 
         self.next_text = utils.get_text(text='Next', font=fonts.windows, size='smaller', color=colors.white)
@@ -516,7 +532,7 @@ class PlayState(BaseState):
             self.dirt_sprite_8.append(self.random_dirt())
             self.dirt_sprite_9.append(self.random_dirt())
 
-        # grass path #@note
+        # grass path
         self.grass_light_path_N = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_N')
         self.grass_light_path_W = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_W')
         self.grass_light_path_E = utils.get_sprite(sprite_sheet=spritesheets.tileset, target_sprite='grass_light_path_E')
@@ -1341,6 +1357,8 @@ class PlayState(BaseState):
                 self.fruit_deck_remaining = Deck.remaining_cards(self.deck_fruit)
                 self.path_deck_remaining = Deck.remaining_cards(self.deck_path)
                 self.event_deck_remaining = Deck.remaining_cards(self.deck_event)
+                # Update cached deck surfaces if counts changed
+                self._update_deck_surfaces_if_needed()
                 
                 # Update developer mode alert
                 if self.dev_alert_timer > 0:
@@ -1371,6 +1389,9 @@ class PlayState(BaseState):
                 
                 # Check for current task card changes and trigger animations
                 self.check_current_task_card_changes()
+
+                # Ensure cached images are updated when current task cards change
+                self._update_current_task_images_if_needed()
                 
                 # Check for day fruit changes and trigger animations
                 self.check_day_fruit_changes()
@@ -1417,15 +1438,8 @@ class PlayState(BaseState):
                 current_scores = [score['amount'] for score in self.score_list]
                 self.check_score_changes(current_scores)
 
-                self.score_title_list = []
-                for score in self.score_list:
-                    text = utils.get_text(text=score['text'], font=fonts.windows, size='smaller', color=score['color'])
-                    self.score_title_list.append(text)
-
-                self.score_amount_list = []
-                for score in self.score_list:
-                    amount = utils.get_text(text=str(score['amount']), font=fonts.windows, size='smaller', color=score['color'])
-                    self.score_amount_list.append(amount)
+                # Update cached score surfaces only when colors or amounts change
+                self._update_score_surfaces_if_needed()
 
                 # Update turn display. Only animate when the turn changes so the
                 # tween isn't restarted every frame.
@@ -1506,7 +1520,7 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.dirt_sprite_9[i], pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.grass_light_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif self.game_board.board[i].home: #@note
+                    elif self.game_board.board[i].home: 
                             #home render
                             #render dirt and grass
 
@@ -1742,7 +1756,7 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.grass_dark_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 48), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.dirt_sprite_9[i], pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
                         utils.blit(dest=canvas, source=self.grass_dark_path_none, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 32, self.grid_start_y + ((i // 8) * self.cell_size) + 32), pos_anchor='topleft')
-                    elif self.game_board.board[i].home: #@note
+                    elif self.game_board.board[i].home:
                             #render dirt and grass
                             #1*1
                             utils.blit(dest=canvas, source=self.dirt_sprite_3[i], pos=(self.grid_start_x + ((i % 8) * self.cell_size), self.grid_start_y + ((i // 8) * self.cell_size)), pos_anchor='topleft')
@@ -2001,7 +2015,7 @@ class PlayState(BaseState):
                     if not card_being_rendered:
                         # Use fixed scale during end day state, animated scale otherwise
                         scale_factor = 1.0 if self.is_choosing else self.draw_card_hint_scale
-                        scaled_draw_card_hint = pygame.transform.scale_by(surface=self.draw_card_hint, factor=scale_factor)
+                        scaled_draw_card_hint = pygame.transform.smoothscale_by(surface=self.draw_card_hint, factor=scale_factor)
                         utils.blit(dest=left_hud_surface, source=scaled_draw_card_hint, pos=(self.box_width/2, 620), pos_anchor='center')   
 
                     ## Render value in left white box to temporary surface
@@ -2018,30 +2032,35 @@ class PlayState(BaseState):
                             else:
                                 utils.blit(dest=left_hud_surface, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
 
-                    ## Render strike in left white box to temporary surface
-                    for i in range(self.strikes):
-                        # Apply scale animation to strike
-                        if self.strike_scales[i] != 1.0:
-                            scaled_strike = pygame.transform.scale_by(surface=self.scaled_live_strike, factor=self.strike_scales[i])
-                            # Use center anchor to make scaling appear centered
-                            original_size = self.scaled_live_strike.get_size()
-                            center_x = self.box_width/2 + (i-1)*64
-                            center_y = 395 + original_size[1] // 2
-                            utils.blit(dest=left_hud_surface, source=scaled_strike, pos=(center_x, center_y), pos_anchor='center')
+                    ## Render strikes (live Xs) and blank boxes in the left white box
+                    # Use three fixed slots spaced by 56px, centered on self.box_width/2.
+                    # This ensures live and blank sprites use the exact same positions.
+                    slot_spacing = 56
+                    for slot_index in range(3):
+                        slot_x = self.box_width/2 + (slot_index - 1) * slot_spacing
+                        # If this slot is a live strike, draw X (possibly animated), otherwise draw blank box
+                        if slot_index < self.strikes:
+                            # Apply scale animation to strike if present
+                            if self.strike_scales[slot_index] != 1.0:
+                                scaled_strike = pygame.transform.scale_by(surface=self.scaled_live_strike, factor=self.strike_scales[slot_index])
+                                # Convert midtop (y=395) to center y for center anchor
+                                original_size = self.scaled_live_strike.get_size()
+                                center_y = 395 + original_size[1] // 2
+                                utils.blit(dest=left_hud_surface, source=scaled_strike, pos=(slot_x, center_y), pos_anchor='center')
+                            else:
+                                utils.blit(dest=left_hud_surface, source=self.scaled_live_strike, pos=(slot_x, 395), pos_anchor='midtop')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.scaled_live_strike, pos=(self.box_width/2 + (i-1)*64, 395), pos_anchor='midtop')
-                    for i in range(3 - self.strikes):
-                        utils.blit(dest=left_hud_surface, source=self.scaled_blank_strike, pos=(self.box_width/2 + (i-1)*64 + self.strikes*64, 395), pos_anchor='midtop')
+                            utils.blit(dest=left_hud_surface, source=self.scaled_blank_strike, pos=(slot_x, 395), pos_anchor='midtop')
 
                     ## Render current task image to temporary surface
                     if self.current_path:
-                        self.current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
+                        img = self._cached_current_path_image or utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
                         # Apply scale animation to current task card
                         if self.current_task_card_scale != 1.0:
-                            scaled_card = pygame.transform.scale_by(surface=self.current_path_image, factor=self.current_task_card_scale)
+                            scaled_card = pygame.transform.scale_by(surface=img, factor=self.current_task_card_scale)
                             utils.blit(dest=left_hud_surface, source=scaled_card, pos=(self.box_width/2, 630), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.current_path_image, pos=(self.box_width/2, 630), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=img, pos=(self.box_width/2, 630), pos_anchor='center')
                         # Apply scale animation to task text
                         if self.task_text_scale != 1.0:
                             scaled_task_text = pygame.transform.scale_by(surface=self.left_box_path_text, factor=self.task_text_scale)
@@ -2057,13 +2076,13 @@ class PlayState(BaseState):
                             utils.blit(dest=left_hud_surface, source=self.left_box_draw_path_text, pos=(self.box_width/2, 535), pos_anchor='center')
                     elif self.current_event and self.playing_magic_event:
                         if self.is_current_task_event:
-                            self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
+                            img = self._cached_current_event_image or utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                             # Apply scale animation to current task card
                             if self.current_task_card_scale != 1.0:
-                                scaled_card = pygame.transform.scale_by(surface=self.current_event_image, factor=self.current_task_card_scale)
+                                scaled_card = pygame.transform.scale_by(surface=img, factor=self.current_task_card_scale)
                                 utils.blit(dest=left_hud_surface, source=scaled_card, pos=(self.box_width/2, 630), pos_anchor='center')
                             else:
-                                utils.blit(dest=left_hud_surface, source=self.current_event_image, pos=(self.box_width/2, 630), pos_anchor='center')
+                                utils.blit(dest=left_hud_surface, source=img, pos=(self.box_width/2, 630), pos_anchor='center')
                         # Apply scale animation to task text
                         if self.task_text_scale != 1.0:
                             scaled_task_text = pygame.transform.scale_by(surface=self.left_box_magic_event_text, factor=self.task_text_scale)
@@ -2071,13 +2090,13 @@ class PlayState(BaseState):
                         else:
                             utils.blit(dest=left_hud_surface, source=self.left_box_magic_event_text, pos=(self.box_width/2, 535), pos_anchor='center')
                     elif self.current_event and not self.playing_magic_event:
-                        self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
+                        img = self._cached_current_event_image or utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
                         # Apply scale animation to current task card
                         if self.current_task_card_scale != 1.0:
-                            scaled_card = pygame.transform.scale_by(surface=self.current_event_image, factor=self.current_task_card_scale)
+                            scaled_card = pygame.transform.scale_by(surface=img, factor=self.current_task_card_scale)
                             utils.blit(dest=left_hud_surface, source=scaled_card, pos=(self.box_width/2, 630), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.current_event_image, pos=(self.box_width/2, 630), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=img, pos=(self.box_width/2, 630), pos_anchor='center')
                         # Apply scale animation to task text
                         if self.task_text_scale != 1.0:
                             scaled_task_text = pygame.transform.scale_by(surface=self.left_box_event_text, factor=self.task_text_scale)
@@ -2109,9 +2128,9 @@ class PlayState(BaseState):
                         # Apply scale animation to day 1 fruit
                         if self.day_fruit_scales[0] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day1_fruit_image, factor=self.day_fruit_scales[0])
-                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 83), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 79), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.day1_fruit_image, pos=(45, 83), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=self.day1_fruit_image, pos=(45, 79), pos_anchor='center')
                     if self.day2_fruit:
                         if self.current_day == 2:
                             self.day2_fruit_image = self.big_fruit_sprites['big_'+self.day2_fruit]
@@ -2121,9 +2140,9 @@ class PlayState(BaseState):
                         # Apply scale animation to day 2 fruit
                         if self.day_fruit_scales[1] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day2_fruit_image, factor=self.day_fruit_scales[1])
-                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 128), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 124), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.day2_fruit_image, pos=(45, 128), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=self.day2_fruit_image, pos=(45, 124), pos_anchor='center')
                     if self.day3_fruit:
                         if self.current_day == 3:
                             self.day3_fruit_image = self.big_fruit_sprites['big_'+self.day3_fruit]
@@ -2133,9 +2152,9 @@ class PlayState(BaseState):
                         # Apply scale animation to day 3 fruit
                         if self.day_fruit_scales[2] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day3_fruit_image, factor=self.day_fruit_scales[2])
-                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 173), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 169), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.day3_fruit_image, pos=(45, 173), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=self.day3_fruit_image, pos=(45, 169), pos_anchor='center')
                     if self.day4_fruit:
                         if self.current_day == 4:
                             self.day4_fruit_image = self.big_fruit_sprites['big_'+self.day4_fruit]
@@ -2145,9 +2164,9 @@ class PlayState(BaseState):
                         # Apply scale animation to day 4 fruit
                         if self.day_fruit_scales[3] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.day4_fruit_image, factor=self.day_fruit_scales[3])
-                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 218), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 214), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.day4_fruit_image, pos=(45, 218), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=self.day4_fruit_image, pos=(45, 214), pos_anchor='center')
 
                     ## Render seasonal fruit in left white box to temporary surface
                     if self.seasonal_fruit is not None:
@@ -2156,9 +2175,9 @@ class PlayState(BaseState):
                         # Apply scale animation to seasonal fruit
                         if self.day_fruit_scales[4] != 1.0:
                             scaled_fruit = pygame.transform.scale_by(surface=self.seasonal_fruit_image, factor=self.day_fruit_scales[4])
-                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 263), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=scaled_fruit, pos=(45, 259), pos_anchor='center')
                         else:
-                            utils.blit(dest=left_hud_surface, source=self.seasonal_fruit_image, pos=(45, 263), pos_anchor='center')
+                            utils.blit(dest=left_hud_surface, source=self.seasonal_fruit_image, pos=(45, 259), pos_anchor='center')
                     
                     # Apply alpha transition to the entire HUD surface and render it
                     left_hud_surface.set_alpha(int(255 * self.hud_left_alpha))
@@ -2191,53 +2210,50 @@ class PlayState(BaseState):
                         utils.blit(dest=right_hud_surface, source=self.right_remaining, pos=(surface_x, 105 + i*135), pos_anchor='topleft')
 
                     ## Render value in right white box to temporary surface
-                    # Fruit deck count
-                    self.fruit_deck_remaining_amount = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.windows, size='smaller', color=colors.white)
+                    # Fruit deck count (use cached surface)
+                    if self.fruit_deck_remaining_amount_surface is None:
+                        self.fruit_deck_remaining_amount_surface = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.wacky_pixels, size='tiny', color=colors.white)
                     if self.deck_scales[0] != 1.0:
-                        scaled_fruit_count = pygame.transform.scale_by(surface=self.fruit_deck_remaining_amount, factor=self.deck_scales[0])
-                        # Adjust position to keep the topleft anchor consistent during scaling
-                        original_width = self.fruit_deck_remaining_amount.get_width()
-                        original_height = self.fruit_deck_remaining_amount.get_height()
+                        scaled_fruit_count = pygame.transform.scale_by(surface=self.fruit_deck_remaining_amount_surface, factor=self.deck_scales[0])
+                        original_width = self.fruit_deck_remaining_amount_surface.get_width()
+                        original_height = self.fruit_deck_remaining_amount_surface.get_height()
                         scaled_width = scaled_fruit_count.get_width()
                         scaled_height = scaled_fruit_count.get_height()
-                        # Calculate offset to keep the same visual position
                         offset_x = (scaled_width - original_width) / 2
                         offset_y = (scaled_height - original_height) / 2
                         utils.blit(dest=right_hud_surface, source=scaled_fruit_count, pos=(surface_x - offset_x, 140 - offset_y), pos_anchor='topleft')
                     else:
-                        utils.blit(dest=right_hud_surface, source=self.fruit_deck_remaining_amount, pos=(surface_x, 140), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.fruit_deck_remaining_amount_surface, pos=(surface_x, 140), pos_anchor='topleft')
                     
-                    # Path deck count
-                    self.path_deck_remaining_amount = utils.get_text(text=str(self.path_deck_remaining), font=fonts.windows, size='smaller', color=colors.white)
+                    # Path deck count (use cached surface)
+                    if self.path_deck_remaining_amount_surface is None:
+                        self.path_deck_remaining_amount_surface = utils.get_text(text=str(self.path_deck_remaining), font=fonts.wacky_pixels, size='tiny', color=colors.white)
                     if self.deck_scales[1] != 1.0:
-                        scaled_path_count = pygame.transform.scale_by(surface=self.path_deck_remaining_amount, factor=self.deck_scales[1])
-                        # Adjust position to keep the topleft anchor consistent during scaling
-                        original_width = self.path_deck_remaining_amount.get_width()
-                        original_height = self.path_deck_remaining_amount.get_height()
+                        scaled_path_count = pygame.transform.scale_by(surface=self.path_deck_remaining_amount_surface, factor=self.deck_scales[1])
+                        original_width = self.path_deck_remaining_amount_surface.get_width()
+                        original_height = self.path_deck_remaining_amount_surface.get_height()
                         scaled_width = scaled_path_count.get_width()
                         scaled_height = scaled_path_count.get_height()
-                        # Calculate offset to keep the same visual position
                         offset_x = (scaled_width - original_width) / 2
                         offset_y = (scaled_height - original_height) / 2
                         utils.blit(dest=right_hud_surface, source=scaled_path_count, pos=(surface_x - offset_x, 275 - offset_y), pos_anchor='topleft')
                     else:
-                        utils.blit(dest=right_hud_surface, source=self.path_deck_remaining_amount, pos=(surface_x, 275), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.path_deck_remaining_amount_surface, pos=(surface_x, 275), pos_anchor='topleft')
                     
-                    # Event deck count
-                    self.event_deck_remaining_amount = utils.get_text(text=str(self.event_deck_remaining), font=fonts.windows, size='smaller', color=colors.white)
+                    # Event deck count (use cached surface)
+                    if self.event_deck_remaining_amount_surface is None:
+                        self.event_deck_remaining_amount_surface = utils.get_text(text=str(self.event_deck_remaining), font=fonts.wacky_pixels, size='tiny', color=colors.white)
                     if self.deck_scales[2] != 1.0:
-                        scaled_event_count = pygame.transform.scale_by(surface=self.event_deck_remaining_amount, factor=self.deck_scales[2])
-                        # Adjust position to keep the topleft anchor consistent during scaling
-                        original_width = self.event_deck_remaining_amount.get_width()
-                        original_height = self.event_deck_remaining_amount.get_height()
+                        scaled_event_count = pygame.transform.scale_by(surface=self.event_deck_remaining_amount_surface, factor=self.deck_scales[2])
+                        original_width = self.event_deck_remaining_amount_surface.get_width()
+                        original_height = self.event_deck_remaining_amount_surface.get_height()
                         scaled_width = scaled_event_count.get_width()
                         scaled_height = scaled_event_count.get_height()
-                        # Calculate offset to keep the same visual position
                         offset_x = (scaled_width - original_width) / 2
                         offset_y = (scaled_height - original_height) / 2
                         utils.blit(dest=right_hud_surface, source=scaled_event_count, pos=(surface_x - offset_x, 410 - offset_y), pos_anchor='topleft')
                     else:
-                        utils.blit(dest=right_hud_surface, source=self.event_deck_remaining_amount, pos=(surface_x, 410), pos_anchor='topleft')
+                        utils.blit(dest=right_hud_surface, source=self.event_deck_remaining_amount_surface, pos=(surface_x, 410), pos_anchor='topleft')
 
                     ## Render card backs in right white box to temporary surface
                     card_x = 1080 - (constants.canvas_width - self.box_width)
@@ -2247,9 +2263,13 @@ class PlayState(BaseState):
 
                     ## Render Magic Fruit Event cards to temporary surface
                     if self.magic_fruit1_event or self.magic_fruit2_event or self.magic_fruit3_event:
-                        utils.blit(dest=right_hud_surface, source=self.right_magic_fruits, pos=(self.box_width/2, 500), pos_anchor='center')
+                        utils.blit(dest=right_hud_surface, source=self.right_magic_fruits, pos=(self.box_width/2, 505), pos_anchor='center')
                     if self.magic_fruit1_event:
-                        self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
+                        small_cache, _ = (self._cached_magic_fruit_images if self._cached_magic_fruit_images else (None, None))
+                        cached_img = None
+                        if small_cache:
+                            cached_img = small_cache[0]
+                        self.magic_fruit1_event_image = cached_img or utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit1_event}")
                         magic1_x = 1073 - (constants.canvas_width - self.box_width)
                         utils.blit(dest=right_hud_surface, source=self.magic_fruit1_event_image, pos=(magic1_x, 619), pos_anchor='center')
                         utils.blit(
@@ -2259,7 +2279,11 @@ class PlayState(BaseState):
                             pos_anchor='center'
                         )
                     if self.magic_fruit2_event:
-                        self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
+                        small_cache, _ = (self._cached_magic_fruit_images if self._cached_magic_fruit_images else (None, None))
+                        cached_img = None
+                        if small_cache:
+                            cached_img = small_cache[1]
+                        self.magic_fruit2_event_image = cached_img or utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit2_event}")
                         magic2_x = 1143 - (constants.canvas_width - self.box_width)
                         utils.blit(dest=right_hud_surface, source=self.magic_fruit2_event_image, pos=(magic2_x, 629), pos_anchor='center')
                         utils.blit(
@@ -2269,7 +2293,11 @@ class PlayState(BaseState):
                             pos_anchor='center'
                         )
                     if self.magic_fruit3_event:
-                        self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
+                        small_cache, _ = (self._cached_magic_fruit_images if self._cached_magic_fruit_images else (None, None))
+                        cached_img = None
+                        if small_cache:
+                            cached_img = small_cache[2]
+                        self.magic_fruit3_event_image = cached_img or utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.magic_fruit3_event}")
                         magic3_x = 1213 - (constants.canvas_width - self.box_width)
                         utils.blit(dest=right_hud_surface, source=self.magic_fruit3_event_image, pos=(magic3_x, 639), pos_anchor='center')
                         utils.blit(
@@ -2350,8 +2378,14 @@ class PlayState(BaseState):
                             rect=(1165 + 42, 575 + 4, 12, 2)
                         )
                         utils.blit(dest=canvas, source=mask_surface) 
-                        self.magic_fruit3_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit3_event.replace('event_', 'event_big_')}")
-                        utils.blit(dest=canvas, source=self.magic_fruit3_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                        # Use cached big image when available
+                        _, big_cache = (self._cached_magic_fruit_images if self._cached_magic_fruit_images else (None, None))
+                        big_img = None
+                        if big_cache:
+                            big_img = big_cache[2]
+                        if not big_img:
+                            big_img = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit3_event.replace('event_', 'event_big_')}")
+                        utils.blit(dest=canvas, source=big_img, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     elif self.pop_up_revealed_event_card == 2 and self.magic_fruit2_event != None:
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                         mask_surface.fill((*colors.black, 90))
@@ -2383,8 +2417,13 @@ class PlayState(BaseState):
                             rect=(1165, 575, 2, 2)
                         )
                         utils.blit(dest=canvas, source=mask_surface)
-                        self.magic_fruit2_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit2_event.replace('event_', 'event_big_')}")
-                        utils.blit(dest=canvas, source=self.magic_fruit2_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                        _, big_cache = (self._cached_magic_fruit_images if self._cached_magic_fruit_images else (None, None))
+                        big_img = None
+                        if big_cache:
+                            big_img = big_cache[1]
+                        if not big_img:
+                            big_img = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit2_event.replace('event_', 'event_big_')}")
+                        utils.blit(dest=canvas, source=big_img, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
                     elif self.pop_up_revealed_event_card == 1 and self.magic_fruit1_event != None:
                         mask_surface = pygame.Surface((constants.canvas_width, constants.canvas_height), pygame.SRCALPHA)
                         mask_surface.fill((*colors.black, 90))
@@ -2423,8 +2462,13 @@ class PlayState(BaseState):
                             rect=(1095, 565, 2, 2)
                         )
                         utils.blit(dest=canvas, source=mask_surface)
-                        self.magic_fruit1_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit1_event.replace('event_', 'event_big_')}")
-                        utils.blit(dest=canvas, source=self.magic_fruit1_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
+                        _, big_cache = (self._cached_magic_fruit_images if self._cached_magic_fruit_images else (None, None))
+                        big_img = None
+                        if big_cache:
+                            big_img = big_cache[0]
+                        if not big_img:
+                            big_img = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.magic_fruit1_event.replace('event_', 'event_big_')}")
+                        utils.blit(dest=canvas, source=big_img, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor='center')
 
                     # Handle individual revealed event card hover (negative values)
                     elif self.pop_up_revealed_event_card < 0 and len(self.revealed_event) > 0:
@@ -2728,6 +2772,69 @@ class PlayState(BaseState):
             if current != previous:
                 self.animate_score(i)
         self.previous_scores = current_scores.copy()
+
+    def _update_score_surfaces_if_needed(self):
+        """Regenerate cached score title and amount surfaces only when value or color changes."""
+        colors_tuple = tuple([s['color'] for s in self.score_list])
+        amounts_tuple = tuple([s['amount'] for s in self.score_list])
+        if (self._cached_score_colors != colors_tuple) or (self._cached_score_amounts != amounts_tuple):
+            # regenerate
+            self.score_title_list = []
+            self.score_amount_list = []
+            for score in self.score_list:
+                title = utils.get_text(text=score['text'], font=fonts.wacky_pixels, size='tiny', color=score['color'])
+                amount = utils.get_text(text=str(score['amount']), font=fonts.wacky_pixels, size='tiny', color=score['color'])
+                self.score_title_list.append(title)
+                self.score_amount_list.append(amount)
+            self._cached_score_colors = colors_tuple
+            self._cached_score_amounts = amounts_tuple
+
+    def _update_deck_surfaces_if_needed(self):
+        """Regenerate cached deck count surfaces only when counts change."""
+        counts = (self.fruit_deck_remaining, self.path_deck_remaining, self.event_deck_remaining)
+        if counts != tuple(self.previous_deck_counts):
+            self.fruit_deck_remaining_amount_surface = utils.get_text(text=str(self.fruit_deck_remaining), font=fonts.wacky_pixels, size='tiny', color=colors.white)
+            self.path_deck_remaining_amount_surface = utils.get_text(text=str(self.path_deck_remaining), font=fonts.wacky_pixels, size='tiny', color=colors.white)
+            self.event_deck_remaining_amount_surface = utils.get_text(text=str(self.event_deck_remaining), font=fonts.wacky_pixels, size='tiny', color=colors.white)
+            # previous_deck_counts will be updated by check_deck_count_changes()
+
+    def _update_current_task_images_if_needed(self):
+        """Cache current task card images to avoid repeated sprite fetches."""
+        if self.current_path != self._cached_current_path:
+            self._cached_current_path = self.current_path
+            if self.current_path:
+                self._cached_current_path_image = utils.get_sprite(sprite_sheet=spritesheets.cards_path, target_sprite=f"card_{self.current_path}")
+            else:
+                self._cached_current_path_image = None
+
+        if self.current_event != self._cached_current_event:
+            self._cached_current_event = self.current_event
+            if self.current_event:
+                self._cached_current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{self.current_event}")
+            else:
+                self._cached_current_event_image = None
+
+        # Magic fruit event images (small and big)
+        updated = False
+        mag_events = (self.magic_fruit1_event, self.magic_fruit2_event, self.magic_fruit3_event)
+        for idx, evt in enumerate(mag_events):
+            if evt != self._cached_magic_fruit_events[idx]:
+                updated = True
+                break
+        if updated:
+            self._cached_magic_fruit_events = mag_events
+            small_imgs = []
+            big_imgs = []
+            for e in mag_events:
+                if e:
+                    small_imgs.append(utils.get_sprite(sprite_sheet=spritesheets.cards_event, target_sprite=f"card_{e}"))
+                    # big variant uses a different sheet/name mapping
+                    big_name = e.replace('event_', 'event_big_')
+                    big_imgs.append(utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{big_name}"))
+                else:
+                    small_imgs.append(None)
+                    big_imgs.append(None)
+            self._cached_magic_fruit_images = (tuple(small_imgs), tuple(big_imgs))
     
     def animate_deck_count(self, deck_index):
         """Animate a deck count number with a scale-up then scale-down effect."""
