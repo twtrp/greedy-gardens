@@ -127,12 +127,25 @@ class Deck:
         return strike_indices
 
     def not_all_duplicate(self):
-        copied_array = copy.deepcopy(self)
-        cleaned_copy = [path.card_name.replace('path_', '').replace('strike_', '') for path in copied_array]
-        for i in range(1,len(cleaned_copy)):
-            card1 = cleaned_copy[0]           
-            card2 = cleaned_copy[i]   
-            if card1 != card2:
-                return True
-        return False 
+        # Legacy method: callers sometimes call Deck.not_all_duplicate(cards_list)
+        # Normalize to support both instance and class-style calls by treating
+        # `self` as the iterable of card-like objects in that case.
+        try:
+            iterable = list(self)
+        except TypeError:
+            iterable = [self]
+
+        # Extract the cleaned card names (remove prefixes)
+        cleaned = set()
+        for path in iterable:
+            try:
+                name = path.card_name
+            except Exception:
+                # Fallback: if item is a string, use it directly
+                name = str(path)
+            cleaned_name = name.replace('path_', '').replace('strike_', '')
+            cleaned.add(cleaned_name)
+
+        # If there's more than one distinct cleaned name, not all are duplicates
+        return len(cleaned) > 1
         

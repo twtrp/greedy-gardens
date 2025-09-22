@@ -433,7 +433,7 @@ class PlayState(BaseState):
         self.key_down_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys, target_sprite='down')
         self.key_up_sprite = pygame.transform.scale_by(surface=self.key_up_sprite, factor=2)
         self.key_down_sprite = pygame.transform.scale_by(surface=self.key_down_sprite, factor=2)
-        self.key_hint_surface = pygame.Surface((self.key_up_sprite.get_width() + self.key_down_sprite.get_width() + 8, self.key_up_sprite.get_height()), pygame.SRCALPHA)
+        self.key_hint_surface = pygame.Surface((self.key_up_sprite.get_width() + self.key_down_sprite.get_width() + 6, self.key_up_sprite.get_height()), pygame.SRCALPHA)
         utils.blit(
             dest=self.key_hint_surface,
             source=self.key_up_sprite,
@@ -443,7 +443,7 @@ class PlayState(BaseState):
         utils.blit(
             dest=self.key_hint_surface,
             source=self.key_down_sprite,
-            pos=(self.key_up_sprite.get_width() + 8, 0),
+            pos=(self.key_up_sprite.get_width() + 6, 0),
             pos_anchor=posanchors.topleft
         )
 
@@ -2003,6 +2003,7 @@ class PlayState(BaseState):
                     # Render text in left white box to temporary surface
                     utils.blit(dest=left_hud_surface, source=self.left_box_title, pos=(self.box_width/2, 35), pos_anchor='center')
                     for i, score in enumerate(self.score_title_list):
+                        # Always show the day/seasonal title; only the numeric value is hidden until a fruit is assigned
                         utils.blit(dest=left_hud_surface, source=score, pos=(70, 80 + i*45), pos_anchor='midleft')
                     utils.blit(dest=left_hud_surface, source=self.left_box_strike, pos=(self.box_width/2, 370
                     ), pos_anchor='center')
@@ -2020,17 +2021,27 @@ class PlayState(BaseState):
 
                     ## Render value in left white box to temporary surface
                     for i, score in enumerate(self.score_amount_list):
-                        if i < self.current_day + 1 or i >= 4:
-                            # Apply scale animation to score numbers
-                            if self.score_scales[i] != 1.0:
-                                scaled_score = pygame.transform.scale_by(surface=score, factor=self.score_scales[i])
-                                # Use center anchor to make scaling appear centered
-                                # Calculate the center position based on the original midright position
-                                original_width = score.get_width()
-                                center_x = 240 - (original_width / 2)
-                                utils.blit(dest=left_hud_surface, source=scaled_score, pos=(center_x, 80 + i*45), pos_anchor='center')
-                            else:
-                                utils.blit(dest=left_hud_surface, source=score, pos=(240, 80 + i*45), pos_anchor='midright')
+                        # Always show Total (last index). For other slots, only show when their fruit is assigned.
+                        show_amount = False
+                        if i == 5:
+                            show_amount = True
+                        elif i == 0 and self.day1_fruit:
+                            show_amount = True
+                        elif i == 1 and self.day2_fruit:
+                            show_amount = True
+                        elif i == 2 and self.day3_fruit:
+                            show_amount = True
+                        elif i == 3 and self.day4_fruit:
+                            show_amount = True
+                        elif i >= 4 and self.seasonal_fruit:
+                            show_amount = True
+                        if show_amount:
+                            scaled_score = pygame.transform.scale_by(surface=score, factor=self.score_scales[i])
+                            # Use center anchor to make scaling appear centered
+                            # Calculate the center position based on the original midright position
+                            original_width = score.get_width()
+                            center_x = 240 - (original_width / 2)
+                            utils.blit(dest=left_hud_surface, source=scaled_score, pos=(center_x, 80 + i*45), pos_anchor='center')
 
                     ## Render strikes (live Xs) and blank boxes in the left white box
                     # Use three fixed slots spaced by 56px, centered on self.box_width/2.
@@ -2932,18 +2943,23 @@ class PlayState(BaseState):
         # Check each day fruit for changes
         if self.day1_fruit != self.previous_day1_fruit and self.day1_fruit is not None:
             self.animate_day_fruit(0)  # Day 1 fruit (index 0)
+            self.animate_score(0)
         
         if self.day2_fruit != self.previous_day2_fruit and self.day2_fruit is not None:
             self.animate_day_fruit(1)  # Day 2 fruit (index 1)
+            self.animate_score(1)
             
         if self.day3_fruit != self.previous_day3_fruit and self.day3_fruit is not None:
             self.animate_day_fruit(2)  # Day 3 fruit (index 2)
+            self.animate_score(2)
             
         if self.day4_fruit != self.previous_day4_fruit and self.day4_fruit is not None:
             self.animate_day_fruit(3)  # Day 4 fruit (index 3)
+            self.animate_score(3)
             
         if self.seasonal_fruit != self.previous_seasonal_fruit and self.seasonal_fruit is not None:
             self.animate_day_fruit(4)  # Seasonal fruit (index 4)
+            self.animate_score(4)
             
         # Update previous values
         self.previous_day1_fruit = self.day1_fruit
@@ -2951,6 +2967,13 @@ class PlayState(BaseState):
         self.previous_day3_fruit = self.day3_fruit
         self.previous_day4_fruit = self.day4_fruit
         self.previous_seasonal_fruit = self.seasonal_fruit
+        # If any day/seasonal fruit changed this frame, animate the Total number as well
+        if (self.day1_fruit != self.previous_day1_fruit or
+            self.day2_fruit != self.previous_day2_fruit or
+            self.day3_fruit != self.previous_day3_fruit or
+            self.day4_fruit != self.previous_day4_fruit or
+            self.seasonal_fruit != self.previous_seasonal_fruit):
+            self.animate_score(5)
 
     def show_dev_alert(self, text):
         """Show developer mode alert with the given text"""

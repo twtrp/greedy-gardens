@@ -532,40 +532,58 @@ class Play_PlayEventState(BaseState):
                             utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
-                            old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
-                            setattr(self.parent, f'day{self.parent.current_day}_fruit', self.card_drawn.card_name)
-                            self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
-                            random.shuffle(self.parent.deck_fruit.cards)
-                            self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.choosing = False
-                            self.parent.is_current_task_event = False
-                            self.parent.drawing_path_card = True
+                            if self.card_drawn:
+                                old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
+                                # Delay assignment until card dismissed
+                                self.pending_assignment = {
+                                    'attr': f'day{self.parent.current_day}_fruit',
+                                    'card': self.card_drawn,
+                                    'old_fruit': old_fruit,
+                                    'append_to_deck': True,
+                                    'drawn_list': 'fruit'
+                                }
+                                self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                self.choosing = False
+                                self.parent.is_current_task_event = False
+                                self.parent.drawing_path_card = True
                         elif button.id == 'tomorrow fruit':
                             # print('redraw tomorrow fruit')
                             utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
-                            old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
-                            setattr(self.parent, f'day{self.parent.current_day + 1}_fruit', self.card_drawn.card_name)
-                            self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
-                            random.shuffle(self.parent.deck_fruit.cards)
-                            self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.choosing = False
-                            self.parent.is_current_task_event = False
-                            self.parent.drawing_path_card = True
+                            if self.card_drawn:
+                                old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
+                                # Delay assignment until card dismissed
+                                self.pending_assignment = {
+                                    'attr': f'day{self.parent.current_day + 1}_fruit',
+                                    'card': self.card_drawn,
+                                    'old_fruit': old_fruit,
+                                    'append_to_deck': True,
+                                    'drawn_list': 'fruit'
+                                }
+                                self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                self.choosing = False
+                                self.parent.is_current_task_event = False
+                                self.parent.drawing_path_card = True
                         elif button.id == 'seasonal fruit':
                             # print('redraw seasonal fruit')
                             utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.card_drawn = self.parent.deck_fruit.draw_card()
-                            old_fruit = self.parent.seasonal_fruit
-                            self.parent.seasonal_fruit = self.card_drawn.card_name
-                            self.parent.deck_fruit.cards.append(Cards('fruit', old_fruit, False))
-                            random.shuffle(self.parent.deck_fruit.cards)
-                            self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                            self.choosing = False
-                            self.parent.is_current_task_event = False
-                            self.parent.drawing_path_card = True
+                            if self.card_drawn:
+                                old_fruit = self.parent.seasonal_fruit
+                                # Delay assignment until card dismissed
+                                self.pending_assignment = {
+                                    'attr': 'seasonal_fruit',
+                                    'card': self.card_drawn,
+                                    'old_fruit': old_fruit,
+                                    'append_to_deck': True,
+                                    'drawn_list': 'fruit'
+                                }
+                                self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                self.choosing = False
+                                self.parent.is_current_task_event = False
+                                self.parent.drawing_path_card = True
                         elif button.id == 'do nothing':
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                             self.choosing = False
@@ -574,9 +592,31 @@ class Play_PlayEventState(BaseState):
                     for event in events:
                         if event.type == pygame.KEYDOWN:
                             if event.key == pygame.K_SPACE:
+                                # Commit any pending assignment before finishing
+                                if hasattr(self, 'pending_assignment') and self.pending_assignment:
+                                    pa = self.pending_assignment
+                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
+                                    if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
+                                        self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
+                                        random.shuffle(self.parent.deck_fruit.cards)
+                                    if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
+                                        self.parent.drawn_cards_fruit.append(pa['card'])
+                                    # clear pending
+                                    self.pending_assignment = None
                                 self.played_event = True
                         elif event.type == pygame.MOUSEBUTTONDOWN:
                             if event.button == 3:  # Right click
+                                # Commit any pending assignment before finishing
+                                if hasattr(self, 'pending_assignment') and self.pending_assignment:
+                                    pa = self.pending_assignment
+                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
+                                    if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
+                                        self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
+                                        random.shuffle(self.parent.deck_fruit.cards)
+                                    if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
+                                        self.parent.drawn_cards_fruit.append(pa['card'])
+                                    # clear pending
+                                    self.pending_assignment = None
                                 self.played_event = True
 
             elif self.parent.current_event == 'event_remove':
@@ -750,7 +790,9 @@ class Play_PlayEventState(BaseState):
 
             elif self.parent.current_event == 'event_swap':
                 # print('event_swap')
-                if len(self.parent.drawn_cards_path) >= 2 and Deck.not_all_duplicate(self.parent.drawn_cards_path):
+                # Allow swap if there are at least two path tiles on the board
+                board_path_cells = [c for c in self.parent.game_board.board if c.path and not c.home]
+                if len(board_path_cells) >= 2:
 
                     self.cell_pos = -1
                     for button in self.parent.grid_buttons:
@@ -772,6 +814,15 @@ class Play_PlayEventState(BaseState):
                                     not self.parent.game_board.board[button.id].is_the_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
+                                        # Diagnostic: print why swap was allowed/blocked
+                                        try:
+                                            sel = self.selected_cell
+                                            cand = button.id
+                                            sel_cell = self.parent.game_board.board[sel]
+                                            cand_cell = self.parent.game_board.board[cand]
+                                            print(f"[DEBUG] swap click: selected={sel}, candidate={cand}, sel_path={sel_cell.path}, cand_path={cand_cell.path}, sel_home={sel_cell.home}, cand_home={cand_cell.home}, is_the_same={cand_cell.is_the_same(sel_cell)}, would_be_same={cand_cell.would_be_same(sel_cell)}")
+                                        except Exception as e:
+                                            print(f"[DEBUG] swap click diagnostic failed: {e}")
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
@@ -786,7 +837,18 @@ class Play_PlayEventState(BaseState):
                                 else:
                                     self.select_frame = self.parent.cant_selecting_tile
                 else:
-                    # print("No swap possible")
+                    # No swap possible — log diagnostics about board and drawn cards
+                    try:
+                        drawn = getattr(self.parent, 'drawn_cards_path', [])
+                        drawn_names = [getattr(c, 'card_name', str(c)) for c in drawn]
+                        board_shapes = []
+                        for c in board_path_cells:
+                            # derive a shape string from cell directions
+                            s = ('N' if c.north else '') + ('W' if c.west else '') + ('E' if c.east else '') + ('S' if c.south else '')
+                            board_shapes.append(s)
+                        print(f"[DEBUG] swap cancelled in Play_PlayEventState: len_board_paths={len(board_path_cells)}, board_shapes={board_shapes}, len_drawn={len(drawn)}, drawn_names={drawn_names}")
+                    except Exception as e:
+                        print(f"[DEBUG] swap cancelled diagnostic failed: {e}")
                     self.show_event_cancelled_popup()
                     self.played_event = True
 
@@ -1023,7 +1085,7 @@ class Play_PlayEventState(BaseState):
             utils.blit(
                 dest=canvas,
                 source=self.parent.key_hint_surface,
-                pos=(constants.canvas_width//2 - 47, 10),
+                pos=(constants.canvas_width//2 - 46, 10),
                 pos_anchor=posanchors.topleft,
             )
 

@@ -1,5 +1,6 @@
 from src.library.essentials import *
 from src.template.BaseState import BaseState
+from src.classes.Cards import Cards
 
 class Play_NextDayState(BaseState):
     def __init__(self, game, parent, stack):
@@ -75,11 +76,30 @@ class Play_NextDayState(BaseState):
                             )
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             if self.card_drawn:
-                                setattr(self.parent, f"day{self.parent.current_day + 1}_fruit", self.card_drawn.card_name)
-                                self.parent.drawn_cards_fruit.append(self.card_drawn)
+                                # Delay assigning to parent until the drawn card is dismissed from center
+                                self.pending_assignment = {
+                                    'attr': f"day{self.parent.current_day + 1}_fruit",
+                                    'card': self.card_drawn,
+                                    'old_fruit': None,
+                                    'append_to_deck': False,
+                                    'drawn_list': 'fruit'
+                                }
                                 self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                                 self.fruit_not_drawn = False
                         else:
+                            # Commit pending assignment if any, then finish
+                            if getattr(self, 'pending_assignment', None):
+                                pa = self.pending_assignment
+                                try:
+                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
+                                except Exception:
+                                    pass
+                                if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
+                                    self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
+                                    random.shuffle(self.parent.deck_fruit.cards)
+                                if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
+                                    self.parent.drawn_cards_fruit.append(pa['card'])
+                                self.pending_assignment = None
                             self.parent.drawing = True
                             self.parent.set_start_state=True
                             self.exit_state()
@@ -105,11 +125,30 @@ class Play_NextDayState(BaseState):
                             )
                             self.card_drawn = self.parent.deck_fruit.draw_card()
                             if self.card_drawn:
-                                setattr(self.parent, f"day{self.parent.current_day + 1}_fruit", self.card_drawn.card_name)
-                                self.parent.drawn_cards_fruit.append(self.card_drawn)
+                                # Delay assigning to parent until the drawn card is dismissed from center
+                                self.pending_assignment = {
+                                    'attr': f"day{self.parent.current_day + 1}_fruit",
+                                    'card': self.card_drawn,
+                                    'old_fruit': None,
+                                    'append_to_deck': False,
+                                    'drawn_list': 'fruit'
+                                }
                                 self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
                                 self.fruit_not_drawn = False
                         else:
+                            # Commit pending assignment if any, then finish
+                            if getattr(self, 'pending_assignment', None):
+                                pa = self.pending_assignment
+                                try:
+                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
+                                except Exception:
+                                    pass
+                                if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
+                                    self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
+                                    random.shuffle(self.parent.deck_fruit.cards)
+                                if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
+                                    self.parent.drawn_cards_fruit.append(pa['card'])
+                                self.pending_assignment = None
                             self.parent.drawing = True
                             self.parent.set_start_state=True
                             self.exit_state()
