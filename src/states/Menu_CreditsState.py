@@ -313,7 +313,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Game Board Generator Test in Pygame'],
+                    'text': ['Game Board Generator Test'],
                     'size': 'tiny',
                     'color': colors.white,
                     'font': fonts.mago1,

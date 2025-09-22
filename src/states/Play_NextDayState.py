@@ -5,8 +5,6 @@ from src.classes.Cards import Cards
 class Play_NextDayState(BaseState):
     def __init__(self, game, parent, stack):
         BaseState.__init__(self, game, parent, stack)
-
-        # print("Next Day")
  
         # update parent value
         self.parent.strikes = 0

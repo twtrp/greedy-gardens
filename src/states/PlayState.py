@@ -448,10 +448,10 @@ class PlayState(BaseState):
         )
 
         # Draw card hint
-        self.press_text = utils.get_text(text="Press", font=fonts.wacky_pixels, size='tiny', color=colors.mono_175)
+        self.press_text = utils.get_text(text='Press', font=fonts.wacky_pixels, size='tiny', color=colors.mono_175)
         self.right_click_sprite = utils.get_sprite(sprite_sheet=spritesheets.mouse, target_sprite='right_click')
         self.right_click_sprite = pygame.transform.scale_by(surface=self.right_click_sprite, factor=2)
-        self.slash_text = utils.get_text(text="or", font=fonts.wacky_pixels, size='tiny', color=colors.mono_175)
+        self.slash_text = utils.get_text(text='or', font=fonts.wacky_pixels, size='tiny', color=colors.mono_175)
         self.spacebar_sprite = utils.get_sprite(sprite_sheet=spritesheets.keyboard_keys_long, target_sprite='spacebar')
         self.spacebar_sprite = pygame.transform.scale_by(surface=self.spacebar_sprite, factor=2)
         combined_width = self.right_click_sprite.get_width() + self.slash_text.get_width() + self.spacebar_sprite.get_width() + 6
@@ -487,7 +487,7 @@ class PlayState(BaseState):
         self.draw_card_hint_scale_min = 1.03
         self.draw_card_hint_scale_max = 1.25
 
-        self.draw_card_hint_scale = 1.0
+        self.draw_card_hint_scale = 1.03
         self.draw_card_hint_animation_time = 0.0
         self.draw_card_hint_animation_cycle_duration = 2
 
@@ -726,7 +726,7 @@ class PlayState(BaseState):
         self.current_song = 0
 
         self.pause_background = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
-        self.pause_background.fill((*colors.white, 175))
+        self.pause_background.fill((*colors.white, 125))
         self.pause_title = utils.get_text(text='Paused', font=fonts.wacky_pixels, size='large', color=colors.yellow_light, outline=False)
         
         self.settings_manager = SettingsManager()

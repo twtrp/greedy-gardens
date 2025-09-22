@@ -115,6 +115,27 @@ class Play_EndDayState(BaseState):
                     self.parent.is_choosing = False
                     # Restart the rightclick hint animation when returning to normal gameplay
                     if hasattr(self.parent, 'start_draw_card_hint_animation'):
+                        # Reset draw hint animation state so it restarts cleanly at the minimum scale
+                        try:
+                            # Ensure any tweens that might modify the scale are cleared
+                            if hasattr(self.parent, 'tween_list'):
+                                self.parent.tween_list.clear()
+
+                            # If min/max exist, compute an animation time that yields the min amplitude
+                            if hasattr(self.parent, 'draw_card_hint_scale_min') and hasattr(self.parent, 'draw_card_hint_scale_max') and hasattr(self.parent, 'draw_card_hint_animation_cycle_duration'):
+                                # For sine: min occurs at -1 -> phase = 3*pi/2 (or -pi/2). We'll set animation_time so cycle_progress yields -pi/2
+                                # cycle_progress = (t % duration) / duration -> sin(2*pi*cycle_progress) = -1 when cycle_progress = 3/4
+                                # So set animation_time to 3/4 * cycle_duration
+                                self.parent.draw_card_hint_animation_time = 0.75 * self.parent.draw_card_hint_animation_cycle_duration
+                                # Set the visible scale to the minimum explicitly to avoid any one-frame jump
+                                self.parent.draw_card_hint_scale = self.parent.draw_card_hint_scale_min
+                            else:
+                                # Fallback: zero the animation timer and set scale to 1.0
+                                self.parent.draw_card_hint_animation_time = 0.0
+                                self.parent.draw_card_hint_scale = getattr(self.parent, 'draw_card_hint_scale', 1.0)
+                        except Exception:
+                            # If anything unexpected happens, fallback silently
+                            pass
                         self.parent.start_draw_card_hint_animation()
                     self.exit_state()
  

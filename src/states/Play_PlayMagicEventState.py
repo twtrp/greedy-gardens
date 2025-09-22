@@ -1082,15 +1082,6 @@ class Play_PlayMagicEventState(BaseState):
                                     not self.parent.game_board.board[button.id].is_the_same(self.parent.game_board.board[self.selected_cell])):
                                     self.select_frame = self.parent.selecting_tile
                                     if button.clicked:
-                                        # Diagnostic: print why swap was allowed/blocked
-                                        try:
-                                            sel = self.selected_cell
-                                            cand = button.id
-                                            sel_cell = self.parent.game_board.board[sel]
-                                            cand_cell = self.parent.game_board.board[cand]
-                                            print(f"[DEBUG] magic swap click: selected={sel}, candidate={cand}, sel_path={sel_cell.path}, cand_path={cand_cell.path}, sel_home={sel_cell.home}, cand_home={cand_cell.home}, is_the_same={cand_cell.is_the_same(sel_cell)}, would_be_same={cand_cell.would_be_same(sel_cell)}")
-                                        except Exception as e:
-                                            print(f"[DEBUG] magic swap click diagnostic failed: {e}")
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
@@ -1136,16 +1127,6 @@ class Play_PlayMagicEventState(BaseState):
                     #                     self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
                     # No swap possible — log diagnostics about board and drawn cards
-                    try:
-                        drawn = getattr(self.parent, 'drawn_cards_path', [])
-                        drawn_names = [getattr(c, 'card_name', str(c)) for c in drawn]
-                        board_shapes = []
-                        for c in board_path_cells:
-                            s = ('N' if c.north else '') + ('W' if c.west else '') + ('E' if c.east else '') + ('S' if c.south else '')
-                            board_shapes.append(s)
-                        print(f"[DEBUG] swap cancelled in Play_PlayMagicEventState: len_board_paths={len(board_path_cells)}, board_shapes={board_shapes}, len_drawn={len(drawn)}, drawn_names={drawn_names}")
-                    except Exception as e:
-                        print(f"[DEBUG] swap cancelled diagnostic failed: {e}")
                     self.played_event = True
 
             else: # for any bug

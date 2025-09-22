@@ -54,9 +54,8 @@ class Game:
 
         self.state_stack = []
 
-        if not self.first_run:
-            utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
-            utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
+        utils.music_load(music_channel=self.music_channel, name=music.menu_intro)
+        utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
 
         self.finished_bootup = False
 
@@ -133,11 +132,12 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            if self.first_run:
-                self.first_run = False
-                TutorialState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
-            else:
-                MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            # if self.first_run:
+            #     self.first_run = False
+            #     TutorialState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            # else:
+            #    MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
 
         # Handle quit
         for event in events:
