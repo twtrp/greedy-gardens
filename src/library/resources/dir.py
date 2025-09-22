@@ -22,11 +22,35 @@ if platform.system() in ['Windows', 'Linux']:
 elif platform.system() == 'Darwin':
     '''MacOS'''
     def resource_path(*parts):
-        if getattr(sys, "frozen", False): 
+        # If running as a frozen bundle (pyinstaller), use the bundle temp folder
+        if getattr(sys, "frozen", False):
             base = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
-        else:
-            base = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(base,*parts)
+            return os.path.join(base, *parts)
+
+        # When running from source on macOS, assets are stored at the repository root
+        # (not under src). Walk up parent directories from this file to find an
+        # `assets/` directory and return the joined path. If not found, fall back
+        # to using the directory of this file.
+        here = os.path.abspath(os.path.dirname(__file__))
+        cur = here
+        root = os.path.abspath(os.sep)
+        while True:
+            candidate = os.path.join(cur, *parts)
+            # If parts starts with 'assets', also check for the directory itself when parts==('assets',)
+            # but os.path.exists covers both files and dirs; prefer isdir for directories.
+            if os.path.exists(candidate):
+                return candidate
+            # Additionally, if the first part is 'assets', check for an assets folder directly under cur
+            if parts and parts[0] == 'assets':
+                assets_dir = os.path.join(cur, 'assets')
+                if os.path.isdir(assets_dir):
+                    return os.path.join(assets_dir, *parts[1:]) if len(parts) > 1 else assets_dir
+            if cur == root:
+                break
+            cur = os.path.dirname(cur)
+
+        # Fallback: return path relative to this file
+        return os.path.join(here, *parts)
 
     assets = resource_path('assets')
     data = resource_path('data')
