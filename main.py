@@ -37,7 +37,7 @@ class Game:
         if self.settings['fullscreen']:
             self.screen_width = self.display_info.current_w
             self.screen_height = self.display_info.current_h
-            self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+            self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.DOUBLEBUF|pygame.NOFRAME)
         else:
             self.screen_width = constants.window_width
             self.screen_height = constants.window_height
@@ -115,13 +115,12 @@ class Game:
             if self.settings['fullscreen']:
                 self.screen_width = self.display_info.current_w
                 self.screen_height = self.display_info.current_h
-                self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.HWSURFACE|pygame.DOUBLEBUF)
+                self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.DOUBLEBUF|pygame.NOFRAME)
             else:
                 self.screen_width = constants.window_width
                 self.screen_height = constants.window_height
-                # Avoid HWSURFACE in windowed mode — see comment above.
-                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                      flags=pygame.DOUBLEBUF)
+
+                self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
             # Recompute display geometry after changing screen size
             try:
                 # recompute using the same helper defined in __init__ scope

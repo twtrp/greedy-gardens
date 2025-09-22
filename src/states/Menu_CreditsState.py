@@ -776,12 +776,14 @@ class Menu_CreditsState(BaseState):
                         ['Cool Boy Zone! - Wacky Pixels', '<itch.io>'],
                         ['Fekete_Tamas - Windows', '<itch.io>'],
                         ['Nimble Beasts - magofont1', '<itch.io>'],
+                        ['Lazy Fox - LazyFox pixel font 7', '<itch.io>'],
                     ],
                     'size': [
                         ['small', 'small'],
                         ['smaller', 'smaller'],
                         ['small', 'small'],
-                        ['small', 'small']
+                        ['small', 'small'],
+                        ['small', 'small'],
                     ],
                     'color': colors.white,
                     'font': [
@@ -789,13 +791,15 @@ class Menu_CreditsState(BaseState):
                         [fonts.wacky_pixels, fonts.wacky_pixels],
                         [fonts.windows, fonts.windows],
                         [fonts.mago1, fonts.mago1],
+                        [fonts.lf7, fonts.lf7],
                     ],
                     'long_shadow': False,
                     'link': [
                         [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
                         [None, 'https://3d.itch.io/fonts'],
                         [None, 'https://www.dafont.com/windows-2.font'],
-                        [None, 'https://nimblebeastscollective.itch.io/magosfonts']
+                        [None, 'https://nimblebeastscollective.itch.io/magosfonts'],
+                        [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
                     ],
                     'padding': 20
                 },

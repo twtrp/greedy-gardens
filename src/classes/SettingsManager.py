@@ -24,7 +24,7 @@ class SettingsManager():
             },
             {
                 'id': 'music_volume',
-                'label': 'Music Volume',
+                'label': 'Music',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 0.8,
@@ -33,7 +33,7 @@ class SettingsManager():
             },
             {
                 'id': 'sfx_volume',
-                'label': 'SFX Volume',
+                'label': 'Sound Effects',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 0.8,
@@ -42,7 +42,7 @@ class SettingsManager():
             },
             {
                 'id': 'ambience_volume',
-                'label': 'Ambience Volume',
+                'label': 'Ambience',
                 'value': [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
                 'value_label': ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
                 'value_default': 0.8,

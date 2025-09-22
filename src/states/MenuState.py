@@ -270,7 +270,7 @@ class MenuState(BaseState):
             utils.blit(
                 dest=canvas,
                 source=version_text_copy,
-                pos=(12, constants.canvas_height - 2),
+                pos=(12, constants.canvas_height - 3),
                 pos_anchor=posanchors.bottomleft
             )
             copyright_text_copy = self.copyright_text.copy()
@@ -278,7 +278,7 @@ class MenuState(BaseState):
             utils.blit(
                 dest=canvas,
                 source=copyright_text_copy,
-                pos=(constants.canvas_width - 12, constants.canvas_height - 2),
+                pos=(constants.canvas_width - 12, constants.canvas_height - 3),
                 pos_anchor=posanchors.bottomright
             )
 
@@ -417,7 +417,7 @@ class MenuState(BaseState):
             ))
     
             for option in self.title_button_option_surface_list:
-                delay += 0.05
+                delay += 0.1
                 self.tween_list.append(tween.to(
                     container=option,
                     key='scale',

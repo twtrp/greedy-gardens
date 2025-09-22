@@ -68,8 +68,8 @@ class Play_NextDayState(BaseState):
                                 container=self.card_drawn_image_props,
                                 keys=['x', 'y', 'scale'],
                                 end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                                time=0.5,
-                                ease_type=tweencurves.easeOutQuint,
+                                time=0.4,
+                                ease_type=tweencurves.easeOutQuart,
                                 on_complete=on_complete
                             )
                             self.card_drawn = self.parent.deck_fruit.draw_card()
@@ -117,8 +117,8 @@ class Play_NextDayState(BaseState):
                                 container=self.card_drawn_image_props,
                                 keys=['x', 'y', 'scale'],
                                 end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                                time=0.5,
-                                ease_type=tweencurves.easeOutQuint,
+                                time=0.4,
+                                ease_type=tweencurves.easeOutQuart,
                                 on_complete=on_complete
                             )
                             self.card_drawn = self.parent.deck_fruit.draw_card()

@@ -30,7 +30,7 @@ class Play_DrawPathState(BaseState):
                             keys=['x', 'y', 'scale'],
                             end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
                             time=0.4,
-                            ease_type=tweencurves.easeOutQuint,
+                            ease_type=tweencurves.easeOutQuart,
                             on_complete=on_complete
                         )
                         utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
@@ -64,7 +64,7 @@ class Play_DrawPathState(BaseState):
                             keys=['x', 'y', 'scale'],
                             end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
                             time=0.4,
-                            ease_type=tweencurves.easeOutQuint,
+                            ease_type=tweencurves.easeOutQuart,
                             on_complete=on_complete
                         )
                         utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)

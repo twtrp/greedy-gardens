@@ -47,6 +47,14 @@ mago1 = {
     'pixel_size': 16
 }
 
+lf7 = {
+    'file': 'LazyFox Pixel Font 7.ttf',
+    'sizes': {
+        'small': 32,
+    },
+    'pixel_size': 8
+}
+
 minecraftia = {
     'file': 'Minecraftia-Regular.ttf',
     'sizes': {

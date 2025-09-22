@@ -64,8 +64,8 @@ class Play_PlayMagicEventState(BaseState):
             container=self.card_magic_event_props,
             keys=['x', 'y', 'scale'],
             end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-            time=0.4,
-            ease_type=tweencurves.easeOutQuint,
+            time=0.5,
+            ease_type=tweencurves.easeOutQuart,
             on_complete=on_complete
         )
 
@@ -669,6 +669,7 @@ class Play_PlayMagicEventState(BaseState):
                     #                     self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
                 else:
                     # No merge possible — but for swap branch below we also handle cancellation
+                    self.show_event_cancelled_popup()
                     self.played_event = True
                                     
             elif self.parent.current_event == 'event_point':
@@ -744,7 +745,7 @@ class Play_PlayMagicEventState(BaseState):
                             keys=['x', 'y', 'scale'],
                             end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
                             time=0.4,
-                            ease_type=tweencurves.easeOutQuint,
+                            ease_type=tweencurves.easeOutQuart,
                             on_complete=on_complete
                         )
 
@@ -1485,3 +1486,23 @@ class Play_PlayMagicEventState(BaseState):
                     
                     # Set played_event to True to exit this event and let magic_eventing take over
                     self.played_event = True
+
+    def show_event_cancelled_popup(self):
+        """Show popup when an event is cancelled due to being impossible"""
+        self.parent.event_cancelled_popup_props = {
+            'alpha': 255,
+            'y': 2
+        }
+        
+        def on_complete():
+            self.parent.event_cancelled_popup_props = None
+        
+        # Show for 2 seconds, then fade out over 1 second
+        self.parent.tween_list.append(tween.to(
+            container=self.parent.event_cancelled_popup_props,
+            key='alpha',
+            end_value=0,
+            time=1.0,
+            delay=2.0,
+            ease_type=tweencurves.easeOutQuint
+        ).on_complete(on_complete))

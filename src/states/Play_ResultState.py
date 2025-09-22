@@ -117,27 +117,27 @@ class Play_ResultStage(BaseState):
         self.glow_seasonal_fruit_image = utils.effect_outline(surface=self.big_seasonal_fruit_image, distance=2, color=colors.mono_50)
         
         
-        self.day1_text = utils.get_text(text="Day 1", font=fonts.windows, size='smaller', color=colors.white)
-        self.day2_text = utils.get_text(text='Day 2', font=fonts.windows, size='smaller', color=colors.white)
-        self.day3_text = utils.get_text(text='Day 3', font=fonts.windows, size='smaller', color=colors.white)
-        self.day4_text = utils.get_text(text='Day 4', font=fonts.windows, size='smaller', color=colors.white)
-        self.seasonal_text = utils.get_text(text='Seasonal', font=fonts.windows, size='smaller', color=colors.white)
+        self.day1_text = utils.get_text(text="Day 1", font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.day2_text = utils.get_text(text='Day 2', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.day3_text = utils.get_text(text='Day 3', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.day4_text = utils.get_text(text='Day 4', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.seasonal_text = utils.get_text(text='Seasonal', font=fonts.wacky_pixels, size='tiny', color=colors.white)
         
         # Convert the score to string when calling get_text
-        self.day1_score_text = utils.get_text(text=str(self.parent.final_day1_score),font=fonts.windows, size='smaller', color=colors.white)
-        self.day2_score_text = utils.get_text(text=str(self.parent.final_day2_score), font=fonts.windows, size='smaller', color=colors.white)
-        self.day3_score_text = utils.get_text(text=str(self.parent.final_day3_score), font=fonts.windows, size='smaller', color=colors.white)
-        self.day4_score_text = utils.get_text(text=str(self.parent.final_day4_score), font=fonts.windows, size='smaller', color=colors.white)
-        self.seasonal_score_text = utils.get_text(text=str(self.parent.final_seasonal_score), font=fonts.windows, size='smaller', color=colors.white)
+        self.day1_score_text = utils.get_text(text=str(self.parent.final_day1_score),font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.day2_score_text = utils.get_text(text=str(self.parent.final_day2_score), font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.day3_score_text = utils.get_text(text=str(self.parent.final_day3_score), font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.day4_score_text = utils.get_text(text=str(self.parent.final_day4_score), font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.seasonal_score_text = utils.get_text(text=str(self.parent.final_seasonal_score), font=fonts.wacky_pixels, size='tiny', color=colors.white)
         
-        self.total_text = utils.get_text(text='Total', font=fonts.windows, size='smaller', color=colors.white)
-        self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.windows, size='smaller', color=colors.white)
+        self.total_text = utils.get_text(text='Total', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.total_score_text = utils.get_text(text=str(self.parent.total_score), font=fonts.wacky_pixels, size='tiny', color=colors.white)
         
         # Display appropriate high score label based on seed type
-        self.high_score_text = utils.get_text(text='High Score', font=fonts.windows, size='smaller', color=colors.white)
-        self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.windows, size='smaller', color=colors.white)
+        self.high_score_text = utils.get_text(text='High Score', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+        self.high_score_fromDB_text = utils.get_text(text=str(self.high_score), font=fonts.wacky_pixels, size='tiny', color=colors.white)
         
-        self.new_text=utils.get_text(text='New ', font=fonts.windows, size='smaller', color=colors.green_light)
+        self.new_text=utils.get_text(text='New ', font=fonts.wacky_pixels, size='tiny', color=colors.green_light)
         
         self.button_option_list = [
             {
@@ -284,7 +284,7 @@ class Play_ResultStage(BaseState):
             utils.blit(dest=canvas, source=self.high_score_text ,pos=(constants.canvas_width/2 -135, 520), pos_anchor=posanchors.topleft)
             utils.blit(dest=canvas, source=self.high_score_fromDB_text, pos=((constants.canvas_width/2 )+160, 520), pos_anchor=posanchors.topright)
             if self.new_record:
-                utils.blit(dest=canvas, source=self.new_text, pos=((constants.canvas_width/2 )-200, 520), pos_anchor=posanchors.topleft)
+                utils.blit(dest=canvas, source=self.new_text, pos=((constants.canvas_width/2 )-195, 520), pos_anchor=posanchors.topleft)
             # for i, option in enumerate(self.button_option_surface_list):
             #     if self.selected_cell or self.selected_cell_2:
             #         scaled_remove_button = pygame.transform.scale_by(surface=option['surface2'], factor=option['scale'])
