@@ -307,7 +307,7 @@ class MenuState(BaseState):
                 ## Render game logo
                 processed_game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
                 processed_game_logo.set_alpha(self.game_logo_props['alpha'])
-                utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 150), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=processed_game_logo, pos=(constants.canvas_width/2, 160), pos_anchor=posanchors.center)
 
                 ## Render menu options
                 for i, option in enumerate(self.title_button_option_surface_list):

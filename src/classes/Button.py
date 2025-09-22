@@ -46,38 +46,72 @@ class Button:
         self.set_pos(self.pos, self.pos_anchor)
 
     def create_surface(self):
-        # Recompute scale-derived values and create a fresh scaled surface
-        self.scale_x = self.game.screen_width / constants.canvas_width
-        self.scale_y = self.game.screen_height / constants.canvas_height
-        self.padding_x = self.para_padding_x * self.scale_x
-        self.padding_y = self.para_padding_y * self.scale_y
+        # Create the button surface in canvas-space (unscaled). This lets the
+        # entire canvas be scaled later when rendering, keeping rendering and
+        # input logic consistent.
+        # padding and sizes are expected to be in canvas coordinates
+        self.padding_x = self.para_padding_x
+        self.padding_y = self.para_padding_y
 
         base_w = self.para_width if self.para_width != 0 else self.base_surface.get_width()
         base_h = self.para_height if self.para_height != 0 else self.base_surface.get_height()
 
-        actual_width = int(base_w * self.scale_x + 2 * self.padding_x)
-        actual_height = int(base_h * self.scale_y + 2 * self.padding_y)
+        actual_width = int(base_w + 2 * self.padding_x)
+        actual_height = int(base_h + 2 * self.padding_y)
 
-        # Create the button surface and blit a scaled copy of the original base surface
+        # Create the button surface (canvas-space)
         self.surface = pygame.Surface((actual_width, actual_height), pygame.SRCALPHA)
         target_w = max(1, int(actual_width - 2 * self.padding_x))
         target_h = max(1, int(actual_height - 2 * self.padding_y))
         scaled_button_surface = pygame.transform.scale(self.base_surface, (target_w, target_h))
         self.surface.blit(scaled_button_surface, (int(self.padding_x), int(self.padding_y)))
 
-        self.rect = self.surface.get_rect()
+        # Rectangle in canvas coordinates (used for rendering onto the canvas)
+        self.canvas_rect = self.surface.get_rect()
+
+        # Rectangle in screen coordinates (used for mouse collision). Will be
+        # computed from canvas_rect using the game's display_scale and offset.
+        try:
+            scale = self.game.display_scale
+        except Exception:
+            scale = 1.0
+        screen_w = max(1, int(self.canvas_rect.width * scale))
+        screen_h = max(1, int(self.canvas_rect.height * scale))
+        self.rect = pygame.Rect(0, 0, screen_w, screen_h)
 
     def update_scale(self):
-        self.scale_x = self.game.screen_width / constants.canvas_width
-        self.scale_y = self.game.screen_height / constants.canvas_height
-        self.padding_x = self.para_padding_x * self.scale_x
-        self.padding_y = self.para_padding_y * self.scale_y
+        # For layout we keep canvas-space units; display scaling is handled
+        # centrally by the Game instance. This method primarily triggers when
+        # the game display geometry changes so we can recompute the screen rect.
+        try:
+            scale = self.game.display_scale
+        except Exception:
+            scale = self.game.screen_width / constants.canvas_width
+        self.scale_x = scale
+        self.scale_y = scale
+        self.padding_x = self.para_padding_x
+        self.padding_y = self.para_padding_y
 
     def toggle_click(self, enable: bool):
         self.enable_click = enable
 
     def set_pos(self, pos: tuple, pos_anchor: str):
-        setattr(self.rect, pos_anchor, (int(pos[0] * self.scale_x), int(pos[1] * self.scale_y)))
+        # Position is provided in canvas coordinates. Set canvas_rect for
+        # rendering, and compute the screen-space rect for collision.
+        setattr(self.canvas_rect, pos_anchor, (int(pos[0]), int(pos[1])))
+        # Compute screen rect using display scale/offset
+        try:
+            scale = self.game.display_scale
+            offx, offy = int(self.game.display_offset[0]), int(self.game.display_offset[1])
+        except Exception:
+            scale = 1.0
+            offx, offy = 0, 0
+
+        screen_x = int(self.canvas_rect.left * scale) + offx
+        screen_y = int(self.canvas_rect.top * scale) + offy
+        screen_w = max(1, int(self.canvas_rect.width * scale))
+        screen_h = max(1, int(self.canvas_rect.height * scale))
+        self.rect = pygame.Rect(screen_x, screen_y, screen_w, screen_h)
 
     def check_collision(self, pos):
         return self.rect.collidepoint(pos)
@@ -92,8 +126,21 @@ class Button:
             self.create_surface()
             self.set_pos(self.pos, self.pos_anchor)
 
-        pos = pygame.mouse.get_pos()
-        self.hovered = self.rect.collidepoint(pos)
+        # Use screen-space mouse for collision because self.rect is in screen coords
+        mx, my = pygame.mouse.get_pos()
+        try:
+            offx, offy = self.game.display_offset
+            scale = self.game.display_scale
+        except Exception:
+            offx, offy = (0, 0)
+            scale = 1.0
+
+        # If mouse is inside the visible (scaled) canvas area, perform collision
+        within_canvas = (mx >= offx and my >= offy and mx < offx + int(constants.canvas_width * scale) and my < offy + int(constants.canvas_height * scale))
+        if not within_canvas:
+            self.hovered = False
+        else:
+            self.hovered = self.rect.collidepoint((mx, my))
 
         if self.enable_click:
             self.clicked = False
@@ -110,5 +157,8 @@ class Button:
             self.clicked = False
 
     def render(self, canvas):
-        pygame.draw.rect(canvas, (255, 0, 0), self.rect, 2)
-        pass
+        # Draw the button on the provided canvas (canvas-space). Use
+        # canvas_rect which is positioned in canvas coordinates.
+        canvas.blit(self.surface, self.canvas_rect)
+        # Optional debug outline on the canvas
+        # pygame.draw.rect(canvas, (255, 0, 0), self.canvas_rect, 1)

@@ -26,6 +26,12 @@ class Game:
         pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
         pygame.display.set_caption(self.title)
         self.canvas = pygame.Surface(size=(constants.canvas_width, constants.canvas_height))
+        # Ensure the logical canvas starts filled white so the visible game
+        # area shows white while the letterboxed bars are black on first frame.
+        try:
+            self.canvas.fill(colors.white)
+        except Exception:
+            self.canvas.fill((255, 255, 255))
         self.display_info = pygame.display.Info()
         
         if self.settings['fullscreen']:
@@ -35,14 +41,40 @@ class Game:
         else:
             self.screen_width = constants.window_width
             self.screen_height = constants.window_height
-            # Avoid HWSURFACE in windowed mode — some drivers/OSes produce a black or unresponsive
-            # window when the hardware surface is used and the window loses focus.
-            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
-                                                  flags=pygame.DOUBLEBUF)
+            self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
+
+        # Compute display scale and offset for letterboxing (preserve aspect ratio)
+        # display_scale: uniform scale to apply to the game canvas
+        # display_target_size: scaled canvas size in pixels
+        # display_offset: top-left offset where the scaled canvas is blitted on the screen
+        def compute_display_geometry():
+            sw, sh = self.screen_width, self.screen_height
+            cw, ch = constants.canvas_width, constants.canvas_height
+            scale = min(sw / cw, sh / ch)
+            target_w = int(cw * scale)
+            target_h = int(ch * scale)
+            offset_x = (sw - target_w) // 2
+            offset_y = (sh - target_h) // 2
+            self.display_scale = scale
+            self.display_target_size = (target_w, target_h)
+            self.display_offset = (offset_x, offset_y)
+
+        compute_display_geometry()
 
         utils.set_cursor(cursor=cursors.normal)
-        self.screen.fill(color=colors.white)
-        pygame.display.update()
+        # Draw initial frame with letterboxing (black bars) so the very first
+        # frame shown to the user matches the runtime scaling and doesn't flash
+        # an all-white screen.
+        try:
+            self.screen.fill((0, 0, 0))
+            target_w, target_h = self.display_target_size
+            scaled_canvas = pygame.transform.scale(self.canvas, (target_w, target_h))
+            self.screen.blit(scaled_canvas, self.display_offset)
+            pygame.display.update()
+        except Exception:
+            # If anything goes wrong, fallback to a solid black fill
+            self.screen.fill((0, 0, 0))
+            pygame.display.update()
         self.clock = pygame.time.Clock()
 
         self.music_channel = pygame.mixer.music
@@ -90,6 +122,22 @@ class Game:
                 # Avoid HWSURFACE in windowed mode — see comment above.
                 self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height),
                                                       flags=pygame.DOUBLEBUF)
+            # Recompute display geometry after changing screen size
+            try:
+                # recompute using the same helper defined in __init__ scope
+                sw, sh = self.screen_width, self.screen_height
+                cw, ch = constants.canvas_width, constants.canvas_height
+                scale = min(sw / cw, sh / ch)
+                target_w = int(cw * scale)
+                target_h = int(ch * scale)
+                offset_x = (sw - target_w) // 2
+                offset_y = (sh - target_h) // 2
+                self.display_scale = scale
+                self.display_target_size = (target_w, target_h)
+                self.display_offset = (offset_x, offset_y)
+            except Exception:
+                # Keep previous values if anything goes wrong
+                pass
             current_w, current_h = self.screen.get_size()
             new_mx = int(rel_x * current_w)
             new_my = int(rel_y * current_h)
@@ -172,11 +220,22 @@ class Game:
             self.state_stack[-1].render(canvas=self.canvas)
 
         # Render canvas to screen
-        if (constants.canvas_width, constants.canvas_height) != (self.screen_width, self.screen_height):
-            scaled_canvas = pygame.transform.scale(surface=self.canvas, size=(self.screen_width, self.screen_height))
-            utils.blit(dest=self.screen, source=scaled_canvas)
+        # If the screen size doesn't match the game's logical canvas, scale the
+        # canvas while preserving aspect ratio and center it. Fill the rest of
+        # the screen with black bars (letterbox/pillarbox).
+        cw, ch = constants.canvas_width, constants.canvas_height
+        if (cw, ch) != (self.screen_width, self.screen_height):
+            target_w, target_h = self.display_target_size
+            scaled_canvas = pygame.transform.scale(self.canvas, (target_w, target_h))
+            # Fill background with black bars
+            try:
+                self.screen.fill((0, 0, 0))
+            except Exception:
+                self.screen.fill((0, 0, 0))
+            # Blit the centered, scaled canvas
+            self.screen.blit(scaled_canvas, self.display_offset)
         else:
-            utils.blit(dest=self.screen, source=self.canvas)
+            self.screen.blit(self.canvas, (0, 0))
         
         # Update display
         pygame.display.update()
