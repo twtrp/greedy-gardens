@@ -1372,6 +1372,12 @@ class Play_PlayMagicEventState(BaseState):
             )
             utils.blit(
                 dest=canvas,
+                source=self.parent.event_free_control_hint,
+                pos=(constants.canvas_width//2, 2),
+                pos_anchor=posanchors.midtop
+            )
+            utils.blit(
+                dest=canvas,
                 source=self.parent.mouse_hint_surface,
                 pos=(constants.canvas_width//2 - 214, 4),
                 pos_anchor=posanchors.topleft,
