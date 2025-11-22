@@ -35,7 +35,7 @@ class PlayState(BaseState):
         print('Seed:',self.seed)
 
         # Developer mode
-        self.developer_mode = False
+        self.developer_mode = debug.debug_developer_mode
         
         self.game.canvas.fill((0, 0, 0))
 

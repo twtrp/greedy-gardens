@@ -11,6 +11,15 @@ from tkinter import messagebox
 class Game:
     def __init__(self):
         self.settings_manager = SettingsManager()
+        
+        # Delete settings.lst at startup if debug_first_run is enabled
+        if debug.debug_first_run and os.path.exists(self.settings_manager.settings_file):
+            try:
+                os.remove(self.settings_manager.settings_file)
+                print("Debug: settings.lst deleted at startup for first run test")
+            except Exception as e:
+                print(f"Debug: Failed to delete settings.lst at startup: {e}")
+        
         if not os.path.exists(self.settings_manager.settings_file):
             self.first_run = True
         else:
@@ -348,3 +357,12 @@ if __name__ == '__main__':
         traceback.print_exc()
         game.show_error_popup(e)
         sys.exit(1)
+    finally:
+        # Delete settings.lst after game closes if debug_first_run is enabled
+        if debug.debug_first_run:
+            try:
+                if os.path.exists(game.settings_manager.settings_file):
+                    os.remove(game.settings_manager.settings_file)
+                    print("Debug: settings.lst deleted for next first run test")
+            except Exception as e:
+                print(f"Debug: Failed to delete settings.lst: {e}")

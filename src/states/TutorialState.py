@@ -18,7 +18,8 @@ class TutorialState(BaseState):
 
         self.tween_list = []
         if not self.finished_boot_up:
-            self.bootup_tween_chain(skip=self.game.settings['skip_bootup'])
+            skip_bootup = debug.debug_skip_bootup or self.game.settings['skip_bootup']
+            self.bootup_tween_chain(skip=skip_bootup)
             self.transitioning = False
         else:
             self.bootup_tween_chain(skip=True)
@@ -331,7 +332,7 @@ class TutorialState(BaseState):
                                 self.freeze_frame = self.game.canvas.copy()
                                 def on_complete():
                                     self.tween_list.clear()
-                                    Tutorial_PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=random.randint(0, 999999)).enter_state()
+                                    Tutorial_PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=878495).enter_state()
                                 self.tween_list.append(tween.to(
                                     container=self,
                                     key='mask_circle_radius',
@@ -339,7 +340,6 @@ class TutorialState(BaseState):
                                     time=1,
                                     ease_type=tweencurves.easeOutQuint
                                 ).on_complete(on_complete))
-                            print('Clicked button:', button.id)
                     else:
                         for option in self.button_surface_list:
                             if button.id == option['id']:
@@ -600,7 +600,8 @@ class TutorialState(BaseState):
 
         else:
             self.game.start_menu_music()
-            self.finish_bootup()
+            self.finished_tween = True
+            self.finish_bootup_skip()
 
 
     def finish_bootup(self):
@@ -618,12 +619,45 @@ class TutorialState(BaseState):
         # Set props to final values
         for layer in self.landscape_list:
             layer['y_offset'] = 0
-            self.winds_props['y_offset'] = 0
-            self.game_logo_props['scale'] = 1
-            self.game_logo_props['alpha'] = 255
+        self.winds_props['y_offset'] = 0
+        self.game_logo_props['scale'] = 1
+        self.game_logo_props['alpha'] = 255
 
         # Convert surfaces to static
         self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])
         
         # Initiate substate
         # Menu_TitleState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+
+    def finish_bootup_skip(self):
+        """Called when skipping bootup animation - sets all elements to visible"""
+        self.game.finished_bootup = True
+
+        # Clear intro assets
+        del self.surface_logo
+        del self.surface_logo_props
+        del self.overlay
+        del self.overlay_props
+
+        # Clear tween list
+        self.tween_list.clear()
+
+        # Set props to final values
+        for layer in self.landscape_list:
+            layer['y_offset'] = 0
+        self.winds_props['y_offset'] = 0
+        
+        # Set text elements to visible when skipping
+        self.welcome_text_props['scale'] = 1
+        self.welcome_text_props['alpha'] = 255
+        self.game_logo_props['scale'] = 1
+        self.game_logo_props['alpha'] = 255
+        self.question_text_props['scale'] = 1
+        self.question_text_props['alpha'] = 255
+        self.no_button_props['scale'] = 1
+        self.no_button_props['alpha'] = 255
+        self.yes_button_props['scale'] = 1
+        self.yes_button_props['alpha'] = 255
+
+        # Convert surfaces to static
+        self.game_logo = pygame.transform.scale_by(surface=self.game_logo, factor=self.game_logo_props['scale'])

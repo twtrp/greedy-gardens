@@ -87,22 +87,16 @@ class SettingsManager():
 
     def load_all_settings(self):
         self.current_settings = {}
-
-        self.debug_first_run = False
         
         # Ensure data directory exists
-        if not os.path.exists(dir.data) and not self.debug_first_run:
+        if not os.path.exists(dir.data):
             os.makedirs(dir.data)
             
         # when settings file is missing
         if not os.path.exists(self.settings_file):
-            if not self.debug_first_run:
-                with open(self.settings_file, 'w') as fp:
-                    for setting in self.settings_list:
-                        fp.write(f'{setting['id']}={setting['value_default']}\n')
-                        self.current_settings[setting['id']] = setting['value_default']
-            else:
+            with open(self.settings_file, 'w') as fp:
                 for setting in self.settings_list:
+                    fp.write(f'{setting['id']}={setting['value_default']}\n')
                     self.current_settings[setting['id']] = setting['value_default']
 
         else:

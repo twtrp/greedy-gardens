@@ -15,7 +15,8 @@ class MenuState(BaseState):
 
         self.tween_list = []
         if not self.finished_boot_up:
-            self.bootup_tween_chain(skip=self.game.settings['skip_bootup'])
+            skip_bootup = debug.debug_skip_bootup or self.game.settings['skip_bootup']
+            self.bootup_tween_chain(skip=skip_bootup)
             self.transitioning = False
         else:
             self.bootup_tween_chain(skip=True)

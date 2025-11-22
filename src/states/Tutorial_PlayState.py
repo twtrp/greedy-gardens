@@ -35,7 +35,7 @@ class Tutorial_PlayState(BaseState):
         print('Seed:',self.seed)
 
         # Developer mode
-        self.developer_mode = False
+        self.developer_mode = debug.debug_developer_mode
         
         self.game.canvas.fill((0, 0, 0))
 
@@ -2715,7 +2715,7 @@ class Tutorial_PlayState(BaseState):
         self.day_title_text = utils.get_text(text=f'Day {self.current_day}', font=fonts.wacky_pixels, size='huge', color=colors.white)
         
         # Start HUD transition animation at the same time as day transition
-        self.start_hud_transition()
+        # self.start_hud_transition()
         
         def on_complete1():
             utils.multitween(
