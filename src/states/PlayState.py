@@ -35,7 +35,7 @@ class PlayState(BaseState):
         print('Seed:',self.seed)
 
         # Developer mode
-        self.developer_mode = True
+        self.developer_mode = False
         
         self.game.canvas.fill((0, 0, 0))
 
@@ -1048,7 +1048,7 @@ class PlayState(BaseState):
     
     def process_next_magic_fruit_in_queue(self):
         """Process the next magic fruit in the queue if any exist. Returns True if a magic fruit was started."""
-        if len(self.magic_fruit_queue) > 1:
+        if len(self.magic_fruit_queue) >= 1:
             # Remove the completed magic fruit from queue
             self.magic_fruit_queue.pop(0)
             

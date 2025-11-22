@@ -32,6 +32,7 @@ class Play_PlayMagicEventState(BaseState):
         self.selected_cell_2 = None
         self.choosing = False
         self.drawn_keep = False
+        self.skipped_disconnected = False
 
         self.card_path1_image = None
         self.card_path2_image = None
@@ -87,18 +88,36 @@ class Play_PlayMagicEventState(BaseState):
     def load_assets(self):
         # Process magic fruit when event starts (first magic fruit or from queue)
         if self.parent.magic_fruit_queue:
-            # Get the current magic fruit from queue
+            # Get the current magic fruit from queue (don't pop yet - validate first!)
             magic_number, cell_pos = self.parent.magic_fruit_queue[0]
             
+            # CRITICAL: Validate this magic fruit is still connected before processing
+            # (Previous magic fruit's event may have disconnected this one)
+            self.parent.game_board.connected_indices = []
+            self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
+            
+            if cell_pos not in self.parent.game_board.connected_indices:
+                # This magic fruit is no longer connected - skip it completely (no sound, no scoring, no removal)
+                self.parent.magic_fruit_queue.pop(0)  # Remove from queue only
+                
+                # Mark as skipped and immediately complete this "event" to trigger normal flow
+                self.skipped_disconnected = True
+                self.played_event = True  # This will trigger the queue check in update()
+                return
+            
+            # Magic fruit IS connected - process it normally
             # IMMEDIATELY remove from queue to prevent reprocessing
             self.parent.magic_fruit_queue.pop(0)
             
-            # Play magic fruit sound and update score
+            # Play magic fruit sound
             utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+            
+            # Add score for this magic fruit
             current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
             setattr(self.parent, f'day{self.parent.current_day}_score', current_score + 1)
             
             # Remove the magic fruit from the board and tracking (only for current magic fruit)
+            # This happens immediately so the event can modify the board
             self.parent.game_board.board[cell_pos].magic_fruit = 0
             if cell_pos in self.parent.game_board.magic_fruit_index:
                 self.parent.game_board.magic_fruit_index.remove(cell_pos)
@@ -319,6 +338,21 @@ class Play_PlayMagicEventState(BaseState):
         if self.played_event:
             # Magic fruit event completed, handle queue transition
             if self.parent.magic_fruit_queue:
+                # Revalidate the queue - check if the next magic fruit's position is still connected
+                # Recompute connected indices after the event modified the board
+                self.parent.game_board.connected_indices = []
+                self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
+                
+                # Filter queue to only include magic fruits whose positions are still connected
+                # Magic fruits #2 and #3 should still be on the board, so check if their cells are connected
+                validated_queue = []
+                for magic_number, cell_pos in self.parent.magic_fruit_queue:
+                    # Only keep if position is still connected to home after the event modified paths
+                    if cell_pos in self.parent.game_board.connected_indices:
+                        validated_queue.append((magic_number, cell_pos))
+                
+                self.parent.magic_fruit_queue = validated_queue
+                
                 # Check if there are more magic fruits to process
                 if self.parent.magic_fruit_queue:
                     # Set up next magic fruit event and trigger state re-entry
@@ -1178,6 +1212,10 @@ class Play_PlayMagicEventState(BaseState):
         self.cursor = cursors.normal
 
     def render(self, canvas):
+        # Skip rendering if we exited early due to disconnected magic fruit
+        if self.skipped_disconnected:
+            return
+        
 
         # show button hit box
         # for button in self.button_list:
@@ -1433,7 +1471,7 @@ class Play_PlayMagicEventState(BaseState):
                 magic_number, cell_pos = connected_magic_fruits[0]
                 self.parent.magic_eventing = True
                 
-                utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                # Sound will play in load_assets() when magic fruit is actually processed
                 if magic_number == 1:
                     self.parent.current_event = self.parent.magic_fruit1_event
                     # print('PlacePath Magic 1:', self.parent.magic_fruit1_event)
@@ -1444,15 +1482,10 @@ class Play_PlayMagicEventState(BaseState):
                     self.parent.current_event = self.parent.magic_fruit3_event
                     # print('PlacePath Magic 3:', self.parent.magic_fruit3_event)
                 
-                # Remove the magic fruit from the board and tracking
-                self.parent.game_board.board[cell_pos].magic_fruit = 0
-                self.parent.game_board.magic_fruit_index.remove(cell_pos)
+                # Set up magic fruit info (don't remove from board yet - let load_assets() handle that)
                 self.parent.magicing_number = magic_number
                 
-                current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                new_score = current_score + 1
-                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                # Score and removal will be handled in load_assets() when the magic event state loads
                 
                 # # Check if the path that triggered magic fruit was also a strike
                 # if "strike" in self.parent.current_path:
@@ -1472,7 +1505,7 @@ class Play_PlayMagicEventState(BaseState):
                     magic_number, cell_pos = connected_magic_fruits[0]
                     self.parent.magic_eventing = True
                     
-                    utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                    # Sound will play in load_assets() when magic fruit is actually processed
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
                     elif magic_number == 2:
@@ -1480,15 +1513,10 @@ class Play_PlayMagicEventState(BaseState):
                     elif magic_number == 3:
                         self.parent.current_event = self.parent.magic_fruit3_event
                     
-                    # Remove the magic fruit from the board and tracking
-                    self.parent.game_board.board[cell_pos].magic_fruit = 0
-                    self.parent.game_board.magic_fruit_index.remove(cell_pos)
+                    # Set up magic fruit info (don't remove from board yet - let load_assets() handle that)
                     self.parent.magicing_number = magic_number
                     
-                    current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                    new_score = current_score + 1
-                    setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                    setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                    # Score and removal will be handled in load_assets() when the magic event state loads
                     
                     # Set played_event to True to exit this event and let magic_eventing take over
                     self.played_event = True

@@ -1112,7 +1112,7 @@ class Play_PlayEventState(BaseState):
                 magic_number, cell_pos = connected_magic_fruits[0]
                 self.parent.magic_eventing = True
                 
-                utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                # Sound will play in load_assets() when magic fruit is actually processed
                 if magic_number == 1:
                     self.parent.current_event = self.parent.magic_fruit1_event
                     # print('PlacePath Magic 1:', self.parent.magic_fruit1_event)
@@ -1123,15 +1123,10 @@ class Play_PlayEventState(BaseState):
                     self.parent.current_event = self.parent.magic_fruit3_event
                     # print('PlacePath Magic 3:', self.parent.magic_fruit3_event)
                 
-                # Remove the magic fruit from the board and tracking
-                self.parent.game_board.board[cell_pos].magic_fruit = 0
-                self.parent.game_board.magic_fruit_index.remove(cell_pos)
+                # Set up magic fruit info (don't remove from board yet - let load_assets() handle that)
                 self.parent.magicing_number = magic_number
                 
-                current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                new_score = current_score + 1
-                setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                # Score and removal will be handled in load_assets() when the magic event state loads
                 
                 # # Check if the path that triggered magic fruit was also a strike
                 # if "strike" in self.parent.current_path:
@@ -1151,7 +1146,7 @@ class Play_PlayEventState(BaseState):
                     magic_number, cell_pos = connected_magic_fruits[0]
                     self.parent.magic_eventing = True
                     
-                    utils.sound_play(sound=sfx.magic_fruit, volume=self.game.sfx_volume)
+                    # Sound will play in load_assets() when magic fruit is actually processed
                     if magic_number == 1:
                         self.parent.current_event = self.parent.magic_fruit1_event
                     elif magic_number == 2:
@@ -1159,15 +1154,10 @@ class Play_PlayEventState(BaseState):
                     elif magic_number == 3:
                         self.parent.current_event = self.parent.magic_fruit3_event
                     
-                    # Remove the magic fruit from the board and tracking
-                    self.parent.game_board.board[cell_pos].magic_fruit = 0
-                    self.parent.game_board.magic_fruit_index.remove(cell_pos)
+                    # Set up magic fruit info (don't remove from board yet - let load_assets() handle that)
                     self.parent.magicing_number = magic_number
                     
-                    current_score = getattr(self.parent, f'day{self.parent.current_day}_score')
-                    new_score = current_score + 1
-                    setattr(self.parent, f'day{self.parent.current_day}_score', new_score)
-                    setattr(self.parent, f'magic_fruit{magic_number}_event', None)
+                    # Score and removal will be handled in load_assets() when the magic event state loads
                     
                     # Set played_event to True to exit this event and let magic_eventing take over
                     self.played_event = True
