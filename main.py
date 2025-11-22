@@ -1,5 +1,6 @@
 from src.library.essentials import *
 import time
+import platform
 from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
 from src.states.TutorialState import TutorialState
@@ -18,7 +19,7 @@ class Game:
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap']
 
-        self.version_number = 'v1.0.0.beta14'
+        self.version_number = 'v1.0.0.beta15'
         self.title = f'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
@@ -179,12 +180,12 @@ class Game:
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
         else:
-            # if self.first_run:
-            #     self.first_run = False
-            #     TutorialState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
-            # else:
-            #    MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
-            MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            if self.first_run:
+                self.first_run = False
+                TutorialState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            else:
+               MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
+            # MenuState(game=self, parent=self, stack=self.state_stack, finished_bootup=self.finished_bootup).enter_state()
 
         # Handle quit
         for event in events:
@@ -205,6 +206,85 @@ class Game:
                 pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
+            
+            # F11 to toggle fullscreen
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F11:
+                    # Toggle fullscreen setting
+                    self.settings['fullscreen'] = 1 if self.settings['fullscreen'] == 0 else 0
+                    
+                    # Save the new setting to file
+                    with open(self.settings_manager.settings_file, 'w') as fp:
+                        for setting in self.settings_manager.settings_list:
+                            fp.write(f"{setting['id']}={self.settings[setting['id']]}\n")
+                    
+                    # Update settings state if it's open
+                    for state in self.state_stack:
+                        if hasattr(state, 'substate_stack'):
+                            for substate in state.substate_stack:
+                                if substate.__class__.__name__ == 'Menu_SettingsState':
+                                    # Reload the settings index to reflect the change
+                                    substate.current_settings_index = substate.settings_manager.load_all_settings_index()
+                                    # Update the displayed text
+                                    for i, setting in enumerate(substate.settings_manager.settings_list):
+                                        text_string = setting['label'] + ':  ' + setting['value_label'][substate.current_settings_index[i]]
+                                        text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
+                                        substate.settings_option_surface_list[i]['surface'] = text
+                        
+                        # Update pause menu settings in PlayState/Tutorial_PlayState if open
+                        if hasattr(state, 'pause_settings_surface_list') and hasattr(state, 'settings_manager'):
+                            # Reload the settings index
+                            state.current_settings_index = state.settings_manager.load_all_settings_index()
+                            # Update pause menu settings display
+                            for pause_setting in state.pause_settings_surface_list:
+                                i = pause_setting['settings_list_index']
+                                setting = state.settings_manager.settings_list[i]
+                                text_string = setting['label'] + ':  ' + setting['value_label'][state.current_settings_index[i]]
+                                text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white, outline=False)
+                                pause_setting['surface'] = text
+                    
+                    # Preserve mouse position
+                    mx, my = pygame.mouse.get_pos()
+                    current_w, current_h = self.screen.get_size()
+                    rel_x = mx / current_w
+                    rel_y = my / current_h
+                    
+                    # Recreate screen with new mode
+                    if platform.system() == "Darwin":
+                        pygame.display.quit()
+                        pygame.display.init()
+                    pygame.display.set_icon(pygame.image.load(os.path.join(dir.graphics, 'icon.png')))
+                    pygame.display.set_caption(self.title)
+                    
+                    if self.settings['fullscreen']:
+                        self.screen_width = self.display_info.current_w
+                        self.screen_height = self.display_info.current_h
+                        self.screen = pygame.display.set_mode(flags=pygame.FULLSCREEN|pygame.DOUBLEBUF|pygame.NOFRAME)
+                    else:
+                        self.screen_width = constants.window_width
+                        self.screen_height = constants.window_height
+                        self.screen = pygame.display.set_mode(size=(self.screen_width, self.screen_height))
+                    
+                    # Recompute display geometry for letterboxing
+                    try:
+                        sw, sh = self.screen_width, self.screen_height
+                        cw, ch = constants.canvas_width, constants.canvas_height
+                        scale = min(sw / cw, sh / ch)
+                        target_w = int(cw * scale)
+                        target_h = int(ch * scale)
+                        offset_x = (sw - target_w) // 2
+                        offset_y = (sh - target_h) // 2
+                        self.display_scale = scale
+                        self.display_target_size = (target_w, target_h)
+                        self.display_offset = (offset_x, offset_y)
+                    except Exception:
+                        pass
+                    
+                    # Restore mouse position
+                    current_w, current_h = self.screen.get_size()
+                    new_mx = int(rel_x * current_w)
+                    new_my = int(rel_y * current_h)
+                    pygame.mouse.set_pos((new_mx, new_my))
 
             # # TEST CRASH: Press Ctrl+Shift+C to simulate a crash
             # if event.type == pygame.KEYDOWN:

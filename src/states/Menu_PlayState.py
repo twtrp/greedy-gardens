@@ -91,6 +91,8 @@ class Menu_PlayState(BaseState):
         self.textbox_mode = 'inactive'
         self.textbox_text = ''
         self.textbox_limit = 6
+        self.textbox_selection_start = 0
+        self.textbox_selection_end = 0
         self.textbox_text_surface = utils.get_text(
             text=self.textbox_text,
             font=fonts.lf2,
@@ -122,7 +124,62 @@ class Menu_PlayState(BaseState):
                         utils.sound_play(sound=sfx.deselect, volume=self.game.sfx_volume)
                         self.exit_state()
                     if self.textbox_mode == 'active':
-                        if event.key == pygame.K_BACKSPACE:
+                        # Check for Ctrl key combinations
+                        keys = pygame.key.get_pressed()
+                        if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
+                            if event.key == pygame.K_a:
+                                # Select all text
+                                self.textbox_selection_start = 0
+                                self.textbox_selection_end = len(self.textbox_text)
+                            elif event.key == pygame.K_c:
+                                # Copy selected text to clipboard
+                                try:
+                                    import tkinter as tk
+                                    text_to_copy = ''
+                                    if self.textbox_selection_start != self.textbox_selection_end:
+                                        start = min(self.textbox_selection_start, self.textbox_selection_end)
+                                        end = max(self.textbox_selection_start, self.textbox_selection_end)
+                                        text_to_copy = self.textbox_text[start:end]
+                                    elif len(self.textbox_text) > 0:
+                                        # Copy all text if no selection
+                                        text_to_copy = self.textbox_text
+                                    
+                                    if text_to_copy:
+                                        root = tk.Tk()
+                                        root.withdraw()
+                                        root.clipboard_clear()
+                                        root.clipboard_append(text_to_copy)
+                                        root.update()
+                                        root.destroy()
+                                except Exception:
+                                    pass
+                            elif event.key == pygame.K_v:
+                                # Paste from clipboard with validation
+                                try:
+                                    import tkinter as tk
+                                    root = tk.Tk()
+                                    root.withdraw()
+                                    pasted_text = root.clipboard_get().strip()
+                                    root.destroy()
+                                    
+                                    # Validate: must be all digits and max 6 characters
+                                    if pasted_text and pasted_text.isdigit() and len(pasted_text) <= self.textbox_limit:
+                                        self.textbox_text = pasted_text
+                                        self.textbox_text_surface = utils.get_text(
+                                            text=self.textbox_text,
+                                            font=fonts.mago1,
+                                            size='tiny',
+                                            color=colors.mono_50,
+                                            long_shadow=False,
+                                            outline=False
+                                        )
+                                        self.textbox_selection_start = len(self.textbox_text)
+                                        self.textbox_selection_end = len(self.textbox_text)
+                                        utils.sound_play(sound=sfx.keyboard, volume=self.game.sfx_volume, pitch_variation=0.2)
+                                except Exception:
+                                    # Silently ignore clipboard errors
+                                    pass
+                        elif event.key == pygame.K_BACKSPACE:
                             # delete one char immediately and start hold/repeat
                             if len(self.textbox_text) > 0:
                                 self.textbox_text = self.textbox_text[:-1]

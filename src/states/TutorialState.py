@@ -3,6 +3,7 @@ from src.template.BaseState import BaseState
 from src.classes.Wind import Wind
 from src.states.MenuState import MenuState
 from src.classes.Button import Button
+from src.states.Tutorial_PlayState import Tutorial_PlayState
 
 class TutorialState(BaseState):
     def __init__(self, game, parent, stack, finished_bootup=False):
@@ -102,7 +103,6 @@ class TutorialState(BaseState):
                 'y_offset': 1000,
             },
         ]
-        self.noise_overlay = utils.get_image(dir=dir.menu_bg, name='8_noise.png', mode='alpha')
 
         self.wind_entities_list = []
         self.winds_props = {'y_offset': 1000}
@@ -122,7 +122,7 @@ class TutorialState(BaseState):
         # Load content 
         self.welcome_text = utils.get_text(
             text='Welcome to',
-            font=fonts.boldpixels,
+            font=fonts.wacky_pixels,
             size='large',
             color=colors.white,
         )
@@ -144,12 +144,34 @@ class TutorialState(BaseState):
 
         self.question_text = utils.get_text(
             text='Do you want to learn how to play?',
-            font=fonts.boldpixels,
+            font=fonts.wacky_pixels,
             size='small',
             color=colors.white,
         )
+        self.question_text_2 = utils.get_text(
+            text='You can access the tutorial later.',
+            font=fonts.wacky_pixels,
+            size='small',
+            color=colors.white,
+        )
+        self.question_text_surface = pygame.Surface(
+            size=(max(self.question_text.get_width(), self.question_text_2.get_width()), self.question_text.get_height()*1.5 + self.question_text_2.get_height()),
+            flags=pygame.SRCALPHA
+        )
+        utils.blit(
+            dest=self.question_text_surface,
+            source=self.question_text,
+            pos=(self.question_text_surface.get_width()/2, self.question_text.get_height()/2),
+            pos_anchor=posanchors.midtop
+        )
+        utils.blit(
+            dest=self.question_text_surface,
+            source=self.question_text_2,
+            pos=(self.question_text_surface.get_width()/2, self.question_text.get_height() + self.question_text_2.get_height()/2),
+            pos_anchor=posanchors.midtop
+        )
         self.question_text_props = {
-            'pos': (constants.canvas_width/2, 480),
+            'pos': (constants.canvas_width/2, 450),
             'pos_anchor': posanchors.center,
             'scale': 0.5,
             'alpha': 0
@@ -299,6 +321,25 @@ class TutorialState(BaseState):
                         for option in self.button_surface_list:
                             if button.id == option['id']:
                                 option['scale'] = min(option['scale'] + 2.4*dt, 1.2)
+                        
+                        if button.clicked:
+                            if button.id == 'yes':
+                                self.game.music_channel.fadeout(1500)
+                                utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
+                                self.button_list.clear()
+                                self.transitioning = True
+                                self.freeze_frame = self.game.canvas.copy()
+                                def on_complete():
+                                    self.tween_list.clear()
+                                    Tutorial_PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=random.randint(0, 999999)).enter_state()
+                                self.tween_list.append(tween.to(
+                                    container=self,
+                                    key='mask_circle_radius',
+                                    end_value=0,
+                                    time=1,
+                                    ease_type=tweencurves.easeOutQuint
+                                ).on_complete(on_complete))
+                            print('Clicked button:', button.id)
                     else:
                         for option in self.button_surface_list:
                             if button.id == option['id']:
@@ -332,7 +373,6 @@ class TutorialState(BaseState):
             ## Render winds to menu_bg
             for wind in self.wind_entities_list:
                 wind.render()
-            utils.blit(dest=self.menu_bg, source=self.noise_overlay)
 
             ## Render final menu_bg to canvas
             utils.blit(dest=canvas, source=utils.effect_pixelate(surface=self.menu_bg, pixel_size=self.menu_bg_pixel_size))
@@ -357,7 +397,7 @@ class TutorialState(BaseState):
                     pos_anchor=posanchors.center,
                 )
                 
-            # Render substates 
+            # Render substates
 
             if not self.substate_stack:
                 ## Render welcome text
@@ -371,7 +411,7 @@ class TutorialState(BaseState):
                 utils.blit(dest=canvas, source=processed_game_logo, pos=self.game_logo_props['pos'], pos_anchor=self.welcome_text_props['pos_anchor'])
 
                 ## Render question text
-                processed_question_text = pygame.transform.scale_by(surface=self.question_text, factor=self.question_text_props['scale'])
+                processed_question_text = pygame.transform.scale_by(surface=self.question_text_surface, factor=self.question_text_props['scale'])
                 processed_question_text.set_alpha(self.question_text_props['alpha'])
                 utils.blit(dest=canvas, source=processed_question_text, pos=self.question_text_props['pos'], pos_anchor=self.question_text_props['pos_anchor'])
 
