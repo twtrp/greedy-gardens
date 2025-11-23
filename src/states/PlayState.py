@@ -1086,6 +1086,10 @@ class PlayState(BaseState):
             # Clear the queue as we're done
             self.magic_fruit_queue = []
             return False
+        
+    def _update_inject(dt, events):
+        """Hook for inheriting classes to update content when allowed. Override in child classes."""
+        pass
 
     def update(self, dt, events):
         if not self.paused or self.transitioning:
@@ -1248,6 +1252,8 @@ class PlayState(BaseState):
                 # Update substates
                 if self.substate_stack:
                     self.substate_stack[-1].update(dt=dt, events=events)
+
+                self._update_inject(dt=dt, events=events)
 
                 # Handle tutorial exit flag
                 if self._tutorial_just_exited:
@@ -1485,6 +1491,10 @@ class PlayState(BaseState):
                                 if button.id == 'event_card':
                                     self.pop_up_revealed_event_card = 4
                                     break
+
+    def _render_inject(self, canvas):
+        """Hook for inheriting classes to render content before pause menu. Override in child classes."""
+        pass
 
     def render(self, canvas):
 
@@ -2557,6 +2567,8 @@ class PlayState(BaseState):
                             self.current_event_image = utils.get_sprite(sprite_sheet=spritesheets.cards_event_big, target_sprite=f"card_{self.current_event.replace('event_', 'event_big_')}")
                             utils.blit(dest=canvas, source=self.current_event_image, pos=(constants.canvas_width/2, constants.canvas_height/2), pos_anchor=posanchors.center)
 
+        # Hook for child classes to render content before pause menu
+        self._render_inject(canvas)
 
         # pause menu
         if self.paused and not self.in_tutorial:

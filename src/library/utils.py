@@ -168,9 +168,13 @@ def get_text(
 
 
 def get_multicolor_text(
-        text_parts: list,
+        texts: list,
         font: dict,
         size: str = 'medium',
+        long_shadow: bool = True,
+        long_shadow_direction = 'bottom',
+        long_shadow_color: pygame.Color = None,
+        long_shadow_distance: int = None,
         outline: bool = True,
         outline_color: pygame.Color = colors.mono_50,
         outline_distance: int = None
@@ -179,7 +183,7 @@ def get_multicolor_text(
     Create text with multiple colors.
     Returns Surface
     
-    text_parts = list of tuples [(text, color), (text, color), ...]
+    texts = list of tuples [(text, color), (text, color), ...]
                  Example: [('Welcome to ', colors.white), ('Greedy Gardens', colors.yellow)]
     font = the font dictionary imported from fonts.py
     size = font size key defined in the fonts.py
@@ -191,14 +195,25 @@ def get_multicolor_text(
     total_width = 0
     max_height = 0
     
-    # Render each part without outline first
-    for text, color in text_parts:
+    # Render each part with its own long shadow color, but no outline yet
+    for text, color in texts:
+        # Determine shadow color for this specific text segment
+        if long_shadow:
+            segment_shadow_color = long_shadow_color if long_shadow_color is not None else color_darken(color=color, factor=0.5)
+            segment_shadow_distance = long_shadow_distance if long_shadow_distance is not None else get_font_deco_distance(font=font, size=size)
+        else:
+            segment_shadow_color = None
+            segment_shadow_distance = None
+        
         surf = get_text(
             text=text,
             font=font,
             size=size,
             color=color,
-            long_shadow=False,
+            long_shadow=long_shadow,
+            long_shadow_direction=long_shadow_direction,
+            long_shadow_color=segment_shadow_color,
+            long_shadow_distance=segment_shadow_distance,
             outline=False
         )
         surfaces.append(surf)

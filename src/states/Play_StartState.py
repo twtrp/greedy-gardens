@@ -38,10 +38,10 @@ class Play_StartState(BaseState):
     def update(self, dt, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and not self.parent.transitioning and self.parent.shown_day_title:
+                if event.key == pygame.K_SPACE and not self.parent.transitioning and self.parent.shown_day_title and not getattr(self.parent, 'block_gameplay_input', False):
                     self._handle_card_drawing()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3 and not self.parent.transitioning and self.parent.shown_day_title:  # Right click
+                if event.button == 3 and not self.parent.transitioning and self.parent.shown_day_title and not getattr(self.parent, 'block_gameplay_input', False):  # Right click
                     self._handle_card_drawing()
 
         utils.set_cursor(cursor=self.cursor)

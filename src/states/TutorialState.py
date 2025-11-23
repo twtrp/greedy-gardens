@@ -3,7 +3,7 @@ from src.template.BaseState import BaseState
 from src.classes.Wind import Wind
 from src.states.MenuState import MenuState
 from src.classes.Button import Button
-from src.states.Play_TutorialState import Play_TutorialState
+from src.states.Tutorial_PlayState import Tutorial_PlayState
 from src.states.MenuState import MenuState
 
 class TutorialState(BaseState):
@@ -333,7 +333,7 @@ class TutorialState(BaseState):
                                 self.freeze_frame = self.game.canvas.copy()
                                 def on_complete():
                                     self.tween_list.clear()
-                                    Play_TutorialState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=878495).enter_state()
+                                    Tutorial_PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=878495).enter_state()
                                 self.tween_list.append(tween.to(
                                     container=self,
                                     key='mask_circle_radius',

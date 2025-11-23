@@ -239,7 +239,7 @@ class Game:
                                         text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
                                         substate.settings_option_surface_list[i]['surface'] = text
                         
-                        # Update pause menu settings in PlayState/Play_TutorialState if open
+                        # Update pause menu settings in PlayState/Tutorial_PlayState if open
                         if hasattr(state, 'pause_settings_surface_list') and hasattr(state, 'settings_manager'):
                             # Reload the settings index
                             state.current_settings_index = state.settings_manager.load_all_settings_index()
@@ -333,7 +333,22 @@ class Game:
             try:
                 raw_dt = self.clock.tick(self.fps_cap)/1000.0
                 dt = min(raw_dt, 0.1)
+                
+                # Pump events to keep window responsive
+                pygame.event.pump()
+                
+                # Get events, but limit queue size to prevent flooding after focus loss
                 events = pygame.event.get()
+                
+                # If event queue is suspiciously large (>100), clear non-essential events
+                if len(events) > 100:
+                    # Keep only quit, key, and mouse events
+                    events = [e for e in events if e.type in (
+                        pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP,
+                        pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, 
+                        pygame.MOUSEMOTION
+                    )]
+                
                 self.update(dt=dt, events=events)
                 self.render()
             except KeyboardInterrupt:
