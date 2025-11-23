@@ -72,7 +72,7 @@ keyboard = {
 }
 fruit_collect = {
     'name': 'pop.ogg',
-    'volume': 0.75,
+    'volume': 0.65,
 }
 fruit_collect_end = {
     'name': 'Pickup_Coin10.ogg',

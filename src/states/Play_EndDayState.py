@@ -180,8 +180,8 @@ class Play_EndDayState(BaseState):
         total_fruits = len(self.fruits_to_collect)
         if total_fruits > 1:
             pitch_progress = self.current_fruit_index / (total_fruits - 1)
-            # Scale pitch range based on fruit count: min 0.2 range for 2 fruits, max 1.5 range for 16+ fruits
-            pitch_range = min(0.2 + (total_fruits - 2) * 0.1, 1.5)
+            # Scale pitch range more gradually: 2 fruits = 0.15 range, increases by 0.06 per fruit, max 1.2 at 20+ fruits
+            pitch_range = min(0.15 + (total_fruits - 2) * 0.06, 1.2)
             pitch = 1.0 + (pitch_progress * pitch_range)
         else:
             pitch = 1.0
