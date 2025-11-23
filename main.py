@@ -16,7 +16,6 @@ class Game:
         if debug.debug_first_run and os.path.exists(self.settings_manager.settings_file):
             try:
                 os.remove(self.settings_manager.settings_file)
-                print("Debug: settings.lst deleted at startup for first run test")
             except Exception as e:
                 print(f"Debug: Failed to delete settings.lst at startup: {e}")
         
@@ -363,6 +362,5 @@ if __name__ == '__main__':
             try:
                 if os.path.exists(game.settings_manager.settings_file):
                     os.remove(game.settings_manager.settings_file)
-                    print("Debug: settings.lst deleted for next first run test")
             except Exception as e:
                 print(f"Debug: Failed to delete settings.lst: {e}")

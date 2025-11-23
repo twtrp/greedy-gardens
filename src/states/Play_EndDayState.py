@@ -61,10 +61,11 @@ class Play_EndDayState(BaseState):
         self.parent.hidden_fruits_during_animation.clear()
 
         # Start fruit collection animation (before setting is_choosing)
-        self._start_fruit_collection_animation()
-        
         # Keep is_choosing False during animation, set to True when animation completes
         self.parent.is_choosing = False
+        self._start_fruit_collection_animation()
+        
+        # Note: If no fruits to animate, _start_fruit_collection_animation sets is_choosing to True
 
         self.load_assets()
     
@@ -117,6 +118,7 @@ class Play_EndDayState(BaseState):
         # If no fruits to animate, show screen immediately
         if len(fruits_to_collect) == 0:
             self.fruits_animating = False
+            self.parent.is_choosing = True  # Show dim mask immediately
             return
         
         # Store fruits queue and collection state

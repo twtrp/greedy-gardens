@@ -46,7 +46,7 @@ class Menu_SettingsState(BaseState):
                 group='setting',
                 width=500,
                 height=50,
-                pos=(constants.canvas_width/2, 225 + i*50),
+                pos=(constants.canvas_width/2, 245 + i*50),
                 pos_anchor=posanchors.center,
                 hover_cursor=None,
                 enable_click=False
@@ -57,7 +57,7 @@ class Menu_SettingsState(BaseState):
                 group='arrow',
                 width=48,
                 height=50,
-                pos=(constants.canvas_width/2 - 180, 225 + i*50),
+                pos=(constants.canvas_width/2 - 180, 245 + i*50),
                 pos_anchor=posanchors.center
             ))
             self.button_list.append(Button(
@@ -66,7 +66,7 @@ class Menu_SettingsState(BaseState):
                 group='arrow',
                 width=48,
                 height=50,
-                pos=(constants.canvas_width/2 + 180, 225 + i*50),
+                pos=(constants.canvas_width/2 + 180, 245 + i*50),
                 pos_anchor=posanchors.center
             ))
             
@@ -195,19 +195,19 @@ class Menu_SettingsState(BaseState):
         utils.blit(dest=canvas, source=self.page_title, pos=(constants.canvas_width/2, 125), pos_anchor=posanchors.center)
         for i, option in enumerate(self.settings_option_surface_list):
             if option['id'] != 'skip_bootup':
-                utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 225 + i*50), pos_anchor=posanchors.center)
+                utils.blit(dest=canvas, source=option['surface'], pos=(constants.canvas_width/2, 245 + i*50), pos_anchor=posanchors.center)
                 scaled_left_arrow = pygame.transform.scale_by(surface=self.arrow_left, factor=option['left_arrow_scale'])
                 scaled_right_arrow = pygame.transform.scale_by(surface=self.arrow_right, factor=option['right_arrow_scale'])
                 utils.blit(
                     dest=canvas,
                     source=scaled_left_arrow,
-                    pos=(constants.canvas_width/2 - 180, 225 + i*50),
+                    pos=(constants.canvas_width/2 - 180, 245 + i*50),
                     pos_anchor=posanchors.center
                 )
                 utils.blit(
                     dest=canvas,
                     source=scaled_right_arrow,
-                    pos=(constants.canvas_width/2 + 180, 225 + i*50),
+                    pos=(constants.canvas_width/2 + 180, 245 + i*50),
                     pos_anchor=posanchors.center
                 )
             

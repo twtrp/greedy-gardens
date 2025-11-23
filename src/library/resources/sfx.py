@@ -1,6 +1,6 @@
 ambience = {
     'name': 'forest_ambience.ogg',
-    'volume': 0.3,
+    'volume': 0.45,
 }
 deselect = {
     'name': 'SFX_UI_CloseMenu.ogg',
@@ -76,5 +76,5 @@ fruit_collect = {
 }
 fruit_collect_end = {
     'name': 'Pickup_Coin10.ogg',
-    'volume': 0.35,
+    'volume': 0.25,
 }
