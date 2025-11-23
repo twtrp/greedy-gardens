@@ -733,6 +733,7 @@ class Menu_CreditsState(BaseState):
                     'text': [
                         ['HUNTER AUDIO PRODUCTION - Retro 8bit SFX and Music Pack', '<itch.io>'],
                         ['SoupTonic - SoupTonic\'s sound SFX Pack 1', '<itch.io>'],
+                        ['Murkje - 88 royalty free Retro SFX', '<itch.io>'],
                         ['freesound community - Rooster crow', '<pixabay>'],
                         ['freesound community - card mixing', '<pixabay>'],
                         ['ZapSplat - Wooden stake hit, impact dry dirt, soil 1', '<zapsplat>'],
@@ -747,6 +748,7 @@ class Menu_CreditsState(BaseState):
                     'link': [
                         [None,'https://hunteraudio.itch.io/8bit-sfx-and-music-pack'],
                         [None, 'https://souptonic.itch.io/souptonic-sfx-pack-1-ui-sounds'],
+                        [None, 'https://murkje.itch.io/retro-sfx'],
                         [None,'https://pixabay.com/sound-effects/rooster-crow-105568/'],
                         [None, 'https://pixabay.com/sound-effects/search/card-mixing-48088/'],
                         [None, 'https://www.zapsplat.com/music/wooden-stake-hit-impact-dry-dirt-soil-1/'],

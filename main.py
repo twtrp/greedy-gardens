@@ -240,7 +240,7 @@ class Game:
                                         text = utils.get_text(text=text_string, font=fonts.lf2, size='small', color=colors.white)
                                         substate.settings_option_surface_list[i]['surface'] = text
                         
-                        # Update pause menu settings in PlayState/Tutorial_PlayState if open
+                        # Update pause menu settings in PlayState/Play_TutorialState if open
                         if hasattr(state, 'pause_settings_surface_list') and hasattr(state, 'settings_manager'):
                             # Reload the settings index
                             state.current_settings_index = state.settings_manager.load_all_settings_index()

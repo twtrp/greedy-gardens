@@ -70,3 +70,11 @@ keyboard = {
     'name': 'keyboard.ogg',
     'volume': 0.4
 }
+fruit_collect = {
+    'name': 'pop.ogg',
+    'volume': 0.75,
+}
+fruit_collect_end = {
+    'name': 'Pickup_Coin10.ogg',
+    'volume': 0.35,
+}

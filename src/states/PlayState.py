@@ -132,6 +132,9 @@ class PlayState(BaseState):
         self.tween_list = []
         self.mask_surface = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.mask_circle_radius = 0
+        
+        # Track fruits to hide during end day animation (keeps them in array for scoring)
+        self.hidden_fruits_during_animation = set()
 
         # HUD transition properties
         self.hud_left_alpha = 0.0
@@ -1414,15 +1417,22 @@ class PlayState(BaseState):
                         day_colors[f"day{i}_color"] = colors.mono_175
                 
                 #Score calculation
-                if self.current_day < 2 and not self.day1_penalty_applied:
-                    self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit) if self.day1_fruit is not None else 0)
-                if self.current_day < 3 and not self.day2_penalty_applied:
-                    self.final_day2_score = self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit) if self.day2_fruit is not None else 0)
-                if self.current_day < 4 and not self.day3_penalty_applied:
-                    self.final_day3_score = self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit) if self.day3_fruit is not None else 0)
-                if self.current_day < 5 and not self.day4_penalty_applied:
-                    self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit) if self.day4_fruit is not None else 0)
-                self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit) if self.seasonal_fruit is not None else 0)
+                # Skip score recalculation during end day state to prevent scores from changing during animation or display
+                # Check if the current substate is Play_EndDayState by checking the class name
+                is_in_end_day_state = False
+                if self.substate_stack:
+                    is_in_end_day_state = self.substate_stack[-1].__class__.__name__ == 'Play_EndDayState'
+                
+                if not is_in_end_day_state:
+                    if self.current_day < 2 and not self.day1_penalty_applied:
+                        self.final_day1_score = self.day1_score + (self.game_board.board_eval(today_fruit=self.day1_fruit, hidden_fruits=self.hidden_fruits_during_animation) if self.day1_fruit is not None else 0)
+                    if self.current_day < 3 and not self.day2_penalty_applied:
+                        self.final_day2_score = self.day2_score + (self.game_board.board_eval(today_fruit=self.day2_fruit, hidden_fruits=self.hidden_fruits_during_animation) if self.day2_fruit is not None else 0)
+                    if self.current_day < 4 and not self.day3_penalty_applied:
+                        self.final_day3_score = self.day3_score + (self.game_board.board_eval(today_fruit=self.day3_fruit, hidden_fruits=self.hidden_fruits_during_animation) if self.day3_fruit is not None else 0)
+                    if self.current_day < 5 and not self.day4_penalty_applied:
+                        self.final_day4_score = self.day4_score + (self.game_board.board_eval(today_fruit=self.day4_fruit, hidden_fruits=self.hidden_fruits_during_animation) if self.day4_fruit is not None else 0)
+                    self.final_seasonal_score = self.seasonal_score + (self.game_board.board_eval(today_fruit=self.seasonal_fruit, hidden_fruits=self.hidden_fruits_during_animation) if self.seasonal_fruit is not None else 0)
                 self.total_score = self.final_day1_score + self.final_day2_score + self.final_day3_score + self.final_day4_score + self.final_seasonal_score
 
                 self.score_list = [
@@ -1645,7 +1655,16 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.dirt_sprite_7[i], pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_light_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size)+64), pos_anchor='topleft')
                         
-                            utils.blit(dest=canvas, source=self.home, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+17, self.grid_start_y + ((i // 8) * self.cell_size)+16), pos_anchor='topleft')
+                            # Apply farmhouse scale if animating
+                            home_sprite = self.home
+                            home_x = self.grid_start_x + ((i % 8) * self.cell_size)+17
+                            home_y = self.grid_start_y + ((i // 8) * self.cell_size)+16
+                            if hasattr(self, 'farmhouse_scale') and self.farmhouse_scale != 1.0:
+                                home_sprite = pygame.transform.scale_by(self.home, self.farmhouse_scale)
+                                # Adjust position to keep center in same place
+                                home_x -= (home_sprite.get_width() - self.home.get_width()) // 2
+                                home_y -= (home_sprite.get_height() - self.home.get_height()) // 2
+                            utils.blit(dest=canvas, source=home_sprite, pos=(home_x, home_y), pos_anchor='topleft')
                     else:
                         #path 2 directions
                         if self.game_board.board[i].north:
@@ -1827,7 +1846,16 @@ class PlayState(BaseState):
                             utils.blit(dest=canvas, source=self.dirt_sprite_7[i], pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size) + 64), pos_anchor='topleft')
                             utils.blit(dest=canvas, source=self.grass_dark_path_NW, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+64, self.grid_start_y + ((i // 8) * self.cell_size)+64), pos_anchor='topleft')
                         
-                            utils.blit(dest=canvas, source=self.home, pos=(self.grid_start_x + ((i % 8) * self.cell_size)+17, self.grid_start_y + ((i // 8) * self.cell_size)+16), pos_anchor='topleft')
+                            # Apply farmhouse scale if animating
+                            home_sprite = self.home
+                            home_x = self.grid_start_x + ((i % 8) * self.cell_size)+17
+                            home_y = self.grid_start_y + ((i // 8) * self.cell_size)+16
+                            if hasattr(self, 'farmhouse_scale') and self.farmhouse_scale != 1.0:
+                                home_sprite = pygame.transform.scale_by(self.home, self.farmhouse_scale)
+                                # Adjust position to keep center in same place
+                                home_x -= (home_sprite.get_width() - self.home.get_width()) // 2
+                                home_y -= (home_sprite.get_height() - self.home.get_height()) // 2
+                            utils.blit(dest=canvas, source=home_sprite, pos=(home_x, home_y), pos_anchor='topleft')
                     else:
                         
                         if self.game_board.board[i].north:
@@ -1928,6 +1956,10 @@ class PlayState(BaseState):
                 if self.game_board.board[i].fruit:
                     for pos, fruit in enumerate(self.game_board.board[i].fruit):
                         if fruit != None:
+                            # Skip rendering if this fruit is hidden during animation
+                            if (i, pos) in self.hidden_fruits_during_animation:
+                                continue
+                            
                             fruit_image = self.big_fruit_sprites[fruit]
                             if pos == 0:
                                 utils.blit(dest=canvas, source=self.fruit_shadow, pos=(self.grid_start_x + ((i % 8) * self.cell_size) + 0, self.grid_start_y + ((i // 8) * self.cell_size) + 0), pos_anchor='topleft')
@@ -2691,7 +2723,7 @@ class PlayState(BaseState):
             text_width = alert_text_surface.get_width()
             text_height = alert_text_surface.get_height()
             bg_rect = pygame.Rect(0, 0, text_width + 20, text_height + 10)
-            bg_rect.center = (constants.canvas_width // 2, 50)  # Top of screen
+            bg_rect.center = (constants.canvas_width // 2, 30)  # 20 pixels higher
             
             # Draw simple black background
             pygame.draw.rect(canvas, colors.black, bg_rect)
@@ -2717,22 +2749,6 @@ class PlayState(BaseState):
         # Start HUD transition animation at the same time as day transition
         self.start_hud_transition()
         
-        def on_complete1():
-            utils.multitween(
-                tween_list=self.tween_list,
-                container=self.day_title_text_props,
-                keys=['y', 'alpha'],
-                end_values=[constants.canvas_height/2 - 150, 0],
-                time=1,
-                ease_type=[tweencurves.easeInExpo, tweencurves.easeInCubic],
-                on_complete=on_complete2
-            )
-        def on_complete2():
-            self.day_title_text = None
-            self.day_title_text_props = None
-            self.shown_day_title = True
-            self.tween_list.clear()
-            
         utils.multitween(
             tween_list=self.tween_list,
             container=self.day_title_text_props,
@@ -2740,8 +2756,23 @@ class PlayState(BaseState):
             end_values=[constants.canvas_height/2, 255],
             time=1,
             ease_type=[tweencurves.easeOutExpo, tweencurves.easeOutCubic],
-            on_complete=on_complete1
+            on_complete=lambda: 
+        utils.multitween(
+            tween_list=self.tween_list,
+            container=self.day_title_text_props,
+            keys=['y', 'alpha'],
+            end_values=[constants.canvas_height/2 - 150, 0],
+            time=1,
+            ease_type=[tweencurves.easeInExpo, tweencurves.easeInCubic],
+            on_complete=on_complete
         )
+        ) 
+                   
+        def on_complete():
+            self.day_title_text = None
+            self.day_title_text_props = None
+            self.shown_day_title = True
+            self.tween_list.clear()
 
                     
     def start_hud_transition(self):
@@ -2979,6 +3010,7 @@ class PlayState(BaseState):
         """Show developer mode alert with the given text"""
         self.dev_alert_text = text
         self.dev_alert_timer = self.dev_alert_duration
+        self.dev_alert_y = 50  # Position 20 pixels higher
 
     def _handle_developer_keys(self, event):
         """Handle developer mode key presses"""
@@ -3053,6 +3085,14 @@ class PlayState(BaseState):
             self.deck_path.add_card_to_top(card_name, shift_pressed)
             self.show_dev_alert(f"Added: Path {'Strike ' if shift_pressed else ''}NWE")
         
+        # Strike addition - Enter key
+        elif event.key == pygame.K_RETURN:
+            if self.strikes < 3:
+                self.strikes += 1
+                self.show_dev_alert(f"Strike Added! ({self.strikes}/3)")
+            else:
+                self.show_dev_alert("Already at max strikes (3/3)")
+        
         # Strike removal - Backspace
         elif event.key == pygame.K_BACKSPACE:
             if self.strikes > 0:
@@ -3060,6 +3100,32 @@ class PlayState(BaseState):
                 self.show_dev_alert(f"Strike Removed! ({self.strikes}/3)")
             else:
                 self.show_dev_alert("No strikes to remove")
+        
+        # Place 4-way path directly - Minus key
+        elif event.key == pygame.K_MINUS:
+            self._place_dev_four_way_path()
+            self.show_dev_alert("Placed 4-way path at hovered tile")
+    
+    def _place_dev_four_way_path(self):
+        """Place a 4-way path on the currently hovered tile"""
+        # Find hovered grid button
+        for button in self.grid_buttons:
+            if button.hovered:
+                index = button.id
+                cell = self.game_board.board[index]
+                
+                # Set all four directions
+                cell.north = True
+                cell.south = True
+                cell.east = True
+                cell.west = True
+                cell.path = True
+                cell.temp = False
+                
+                # Update connected indices by recalculating from farmhouse
+                self.game_board.connected_indices = []
+                self.game_board.check_connection(self.game_board.connected_indices, self.game_board.home_index)
+                return
     
     def animate_day_fruit(self, fruit_index):
         """Animate a specific day fruit with a scale-up then scale-down effect."""

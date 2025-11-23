@@ -3,7 +3,8 @@ from src.template.BaseState import BaseState
 from src.classes.Wind import Wind
 from src.states.MenuState import MenuState
 from src.classes.Button import Button
-from src.states.Tutorial_PlayState import Tutorial_PlayState
+from src.states.Play_TutorialState import Play_TutorialState
+from src.states.MenuState import MenuState
 
 class TutorialState(BaseState):
     def __init__(self, game, parent, stack, finished_bootup=False):
@@ -313,7 +314,7 @@ class TutorialState(BaseState):
                 self.wind_entities_list.append(Wind(surface=self.menu_bg, sprites=self.wind_sprites))
 
             # Update buttons
-            if self.finished_tween:
+            if self.finished_tween and not self.transitioning:
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
                     
@@ -332,7 +333,7 @@ class TutorialState(BaseState):
                                 self.freeze_frame = self.game.canvas.copy()
                                 def on_complete():
                                     self.tween_list.clear()
-                                    Tutorial_PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=878495).enter_state()
+                                    Play_TutorialState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=878495).enter_state()
                                 self.tween_list.append(tween.to(
                                     container=self,
                                     key='mask_circle_radius',
@@ -340,6 +341,23 @@ class TutorialState(BaseState):
                                     time=1,
                                     ease_type=tweencurves.easeOutQuint
                                 ).on_complete(on_complete))
+                            elif button.id == 'no':
+                                self.transitioning = True
+                                self.game.music_channel.fadeout(1500)
+                                utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
+                                self.freeze_frame = self.game.canvas.copy()
+                                def on_complete():
+                                    utils.music_load(music_channel=self.game.music_channel, name=music.menu_loop)
+                                    utils.music_queue(music_channel=self.game.music_channel, name=music.menu_loop, loops=-1)
+                                    self.game.state_stack.clear()
+                                self.tween_list.append(tween.to(
+                                    container=self,
+                                    key='mask_circle_radius',
+                                    end_value=0,
+                                    time=1,
+                                    ease_type=tweencurves.easeOutQuint
+                                ).on_complete(on_complete))
+
                     else:
                         for option in self.button_surface_list:
                             if button.id == option['id']:

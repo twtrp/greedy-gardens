@@ -52,104 +52,60 @@ class Play_NextDayState(BaseState):
         # draw fruit for next next day
         if self.parent.current_day < self.parent.day:
             for event in events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and self.parent.shown_day_title:
-                        if self.fruit_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                            self.card_drawn_image_props = {
-                                'x': 1080,
-                                'y': 130,
-                                'scale': 1,
+                should_trigger = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.parent.shown_day_title:
+                    should_trigger = True
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.parent.shown_day_title:
+                    should_trigger = True
+                
+                if should_trigger:
+                    if self.fruit_not_drawn:
+                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
+                        self.card_drawn_image_props = {
+                            'x': 1080,
+                            'y': 130,
+                            'scale': 1,
+                        }
+                        def on_complete():
+                            self.parent.tween_list.clear()
+                        utils.multitween(
+                            tween_list=self.parent.tween_list,
+                            container=self.card_drawn_image_props,
+                            keys=['x', 'y', 'scale'],
+                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                            time=0.4,
+                            ease_type=tweencurves.easeOutQuart,
+                            on_complete=on_complete
+                        )
+                        self.card_drawn = self.parent.deck_fruit.draw_card()
+                        if self.card_drawn:
+                            # Delay assigning to parent until the drawn card is dismissed from center
+                            self.pending_assignment = {
+                                'attr': f"day{self.parent.current_day + 1}_fruit",
+                                'card': self.card_drawn,
+                                'old_fruit': None,
+                                'append_to_deck': False,
+                                'drawn_list': 'fruit'
                             }
-                            def on_complete():
-                                self.parent.tween_list.clear()
-                            utils.multitween(
-                                tween_list=self.parent.tween_list,
-                                container=self.card_drawn_image_props,
-                                keys=['x', 'y', 'scale'],
-                                end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                                time=0.4,
-                                ease_type=tweencurves.easeOutQuart,
-                                on_complete=on_complete
-                            )
-                            self.card_drawn = self.parent.deck_fruit.draw_card()
-                            if self.card_drawn:
-                                # Delay assigning to parent until the drawn card is dismissed from center
-                                self.pending_assignment = {
-                                    'attr': f"day{self.parent.current_day + 1}_fruit",
-                                    'card': self.card_drawn,
-                                    'old_fruit': None,
-                                    'append_to_deck': False,
-                                    'drawn_list': 'fruit'
-                                }
-                                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                                self.fruit_not_drawn = False
-                        else:
-                            # Commit pending assignment if any, then finish
-                            if getattr(self, 'pending_assignment', None):
-                                pa = self.pending_assignment
-                                try:
-                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
-                                except Exception:
-                                    pass
-                                if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
-                                    self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
-                                    random.shuffle(self.parent.deck_fruit.cards)
-                                if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
-                                    self.parent.drawn_cards_fruit.append(pa['card'])
-                                self.pending_assignment = None
-                            self.parent.drawing = True
-                            self.parent.set_start_state=True
-                            self.exit_state()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 3 and self.parent.shown_day_title:  # Right click
-                        if self.fruit_not_drawn:
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                            self.card_drawn_image_props = {
-                                'x': 1080,
-                                'y': 130,
-                                'scale': 1,
-                            }
-                            def on_complete():
-                                self.parent.tween_list.clear()
-                            utils.multitween(
-                                tween_list=self.parent.tween_list,
-                                container=self.card_drawn_image_props,
-                                keys=['x', 'y', 'scale'],
-                                end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                                time=0.4,
-                                ease_type=tweencurves.easeOutQuart,
-                                on_complete=on_complete
-                            )
-                            self.card_drawn = self.parent.deck_fruit.draw_card()
-                            if self.card_drawn:
-                                # Delay assigning to parent until the drawn card is dismissed from center
-                                self.pending_assignment = {
-                                    'attr': f"day{self.parent.current_day + 1}_fruit",
-                                    'card': self.card_drawn,
-                                    'old_fruit': None,
-                                    'append_to_deck': False,
-                                    'drawn_list': 'fruit'
-                                }
-                                self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                                self.fruit_not_drawn = False
-                        else:
-                            # Commit pending assignment if any, then finish
-                            if getattr(self, 'pending_assignment', None):
-                                pa = self.pending_assignment
-                                try:
-                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
-                                except Exception:
-                                    pass
-                                if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
-                                    self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
-                                    random.shuffle(self.parent.deck_fruit.cards)
-                                if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
-                                    self.parent.drawn_cards_fruit.append(pa['card'])
-                                self.pending_assignment = None
-                            self.parent.drawing = True
-                            self.parent.set_start_state=True
-                            self.exit_state()
+                            self.card_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                            self.fruit_not_drawn = False
+                    else:
+                        # Commit pending assignment if any, then finish
+                        if getattr(self, 'pending_assignment', None):
+                            pa = self.pending_assignment
+                            try:
+                                setattr(self.parent, pa['attr'], pa['card'].card_name)
+                            except Exception:
+                                pass
+                            if pa.get('append_to_deck') and pa.get('old_fruit') is not None:
+                                self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
+                                random.shuffle(self.parent.deck_fruit.cards)
+                            if pa.get('drawn_list') == 'fruit' and pa.get('card') is not None:
+                                self.parent.drawn_cards_fruit.append(pa['card'])
+                            self.pending_assignment = None
+                        self.parent.drawing = True
+                        self.parent.set_start_state=True
+                        self.exit_state()
         elif self.parent.current_day == self.parent.day:
             self.parent.drawing = True
             self.parent.set_start_state=True

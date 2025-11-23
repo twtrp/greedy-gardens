@@ -14,74 +14,44 @@ class Play_DrawPathState(BaseState):
 
     def update(self, dt, events):
         for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and self.parent.shown_day_title:
-                    if self.not_drawn:
-                        self.card_drawn_image_props = {
-                            'x': 1080,
-                            'y': 265,
-                            'scale': 1,
-                        }
-                        def on_complete():
-                            self.parent.tween_list.clear()
-                        utils.multitween(
-                            tween_list=self.parent.tween_list,
-                            container=self.card_drawn_image_props,
-                            keys=['x', 'y', 'scale'],
-                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                            time=0.4,
-                            ease_type=tweencurves.easeOutQuart,
-                            on_complete=on_complete
-                        )
-                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                        self.card_drawn = self.parent.deck_path.draw_card()
-                        self.parent.drawn_cards_path.append(self.card_drawn)
-                        self.card_drawn_image = self.parent.cards_path_sprites[f"card_{self.card_drawn.card_name}"]
-                        if len(self.parent.revealed_path) > 0:
-                            self.parent.revealed_path.pop()
-                        self.not_drawn = False
-                    else:
-                        self.parent.current_path = self.card_drawn.card_name
-                        self.parent.placing = True
-                        if "strike" in self.parent.current_path:
-                            self.parent.strikes += 1
-                        # print("exiting draw path")
-                        self.parent.drawing_path_card = False
-                        self.exit_state()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3 and self.parent.shown_day_title:  # Right click
-                    if self.not_drawn:
-                        self.card_drawn_image_props = {
-                            'x': 1080,
-                            'y': 265,
-                            'scale': 1,
-                        }
-                        def on_complete():
-                            self.parent.tween_list.clear()
-                        utils.multitween(
-                            tween_list=self.parent.tween_list,
-                            container=self.card_drawn_image_props,
-                            keys=['x', 'y', 'scale'],
-                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                            time=0.4,
-                            ease_type=tweencurves.easeOutQuart,
-                            on_complete=on_complete
-                        )
-                        utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                        self.card_drawn = self.parent.deck_path.draw_card()
-                        self.parent.drawn_cards_path.append(self.card_drawn)
-                        self.card_drawn_image = self.parent.cards_path_sprites[f"card_{self.card_drawn.card_name}"]
-                        if len(self.parent.revealed_path) > 0:
-                            self.parent.revealed_path.pop()
-                        self.not_drawn = False
-                    else:
-                        self.parent.current_path = self.card_drawn.card_name
-                        self.parent.placing = True
-                        if "strike" in self.parent.current_path:
-                            self.parent.strikes += 1
-                        # print("exiting draw path")
-                        self.parent.drawing_path_card = False
-                        self.exit_state()
+            should_trigger = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.parent.shown_day_title:
+                should_trigger = True
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.parent.shown_day_title:
+                should_trigger = True
+            if should_trigger: 
+                if self.not_drawn:
+                    self.card_drawn_image_props = {
+                        'x': 1080,
+                        'y': 265,
+                        'scale': 1,
+                    }
+                    def on_complete():
+                        self.parent.tween_list.clear()
+                    utils.multitween(
+                        tween_list=self.parent.tween_list,
+                        container=self.card_drawn_image_props,
+                        keys=['x', 'y', 'scale'],
+                        end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                        time=0.4,
+                        ease_type=tweencurves.easeOutQuart,
+                        on_complete=on_complete
+                    )
+                    utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
+                    self.card_drawn = self.parent.deck_path.draw_card()
+                    self.parent.drawn_cards_path.append(self.card_drawn)
+                    self.card_drawn_image = self.parent.cards_path_sprites[f"card_{self.card_drawn.card_name}"]
+                    if len(self.parent.revealed_path) > 0:
+                        self.parent.revealed_path.pop()
+                    self.not_drawn = False
+                else:
+                    self.parent.current_path = self.card_drawn.card_name
+                    self.parent.placing = True
+                    if "strike" in self.parent.current_path:
+                        self.parent.strikes += 1
+                    # print("exiting draw path")
+                    self.parent.drawing_path_card = False
+                    self.exit_state()
  
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

@@ -255,14 +255,17 @@ class GameBoard():
                 self.check_connection(connected_indices, south_index)
         
 
-    def board_eval(self, today_fruit):
+    def board_eval(self, today_fruit, hidden_fruits=None):
         self.connected_indices = []
         self.check_connection(self.connected_indices, self.home_index)
         score = 0
         for i in self.connected_indices:
             cell_fruit = self.board[i].fruit
             if cell_fruit:
-                for fruit in cell_fruit:
+                for pos, fruit in enumerate(cell_fruit):
+                    # Skip fruits that are currently being animated
+                    if hidden_fruits and (i, pos) in hidden_fruits:
+                        continue
                     # Will change this condition later after asking Three how the fruit name is passed
                     if fruit == today_fruit and fruit != None:
                         score += 1

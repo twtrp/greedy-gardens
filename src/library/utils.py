@@ -167,6 +167,62 @@ def get_text(
     return text_surface
 
 
+def get_multicolor_text(
+        text_parts: list,
+        font: dict,
+        size: str = 'medium',
+        outline: bool = True,
+        outline_color: pygame.Color = colors.mono_50,
+        outline_distance: int = None
+    ) -> pygame.Surface:
+    '''
+    Create text with multiple colors.
+    Returns Surface
+    
+    text_parts = list of tuples [(text, color), (text, color), ...]
+                 Example: [('Welcome to ', colors.white), ('Greedy Gardens', colors.yellow)]
+    font = the font dictionary imported from fonts.py
+    size = font size key defined in the fonts.py
+    outline = whether to apply outline to the entire text
+    outline_color = color of the outline
+    outline_distance = distance of the outline
+    '''
+    surfaces = []
+    total_width = 0
+    max_height = 0
+    
+    # Render each part without outline first
+    for text, color in text_parts:
+        surf = get_text(
+            text=text,
+            font=font,
+            size=size,
+            color=color,
+            long_shadow=False,
+            outline=False
+        )
+        surfaces.append(surf)
+        total_width += surf.get_width()
+        max_height = max(max_height, surf.get_height())
+    
+    # Create combined surface
+    combined = pygame.Surface((total_width, max_height), pygame.SRCALPHA)
+    
+    # Blit each part
+    x_offset = 0
+    for surf in surfaces:
+        combined.blit(surf, (x_offset, 0))
+        x_offset += surf.get_width()
+    
+    # Apply outline to entire combined text
+    if outline:
+        if outline_distance is None:
+            outline_distance = get_font_deco_distance(font=font, size=size)
+        combined = effect_outline(surface=combined, distance=outline_distance, color=outline_color)
+    
+    return combined
+
+
 def get_font_deco_distance(font: dict,
                            size: str
                           ) -> int:
@@ -430,7 +486,8 @@ def sound_play(
         loops: int = 0,
         maxtime: int = 0,
         fade_ms: int = 0,
-        pitch_variation: float = 0.0
+        pitch_variation: float = 0.0,
+        pitch: float = 1.0
     ) -> None:
     '''
     Use this to play sound effects
@@ -443,13 +500,20 @@ def sound_play(
     maxtime = number of milliseconds to play the sound effect
     fade_ms = number of milliseconds to fade the sound effect in or out
     pitch_variation = amount of pitch randomization (0.0 = no variation, 0.1 = ±10% pitch variation)
+    pitch = direct pitch multiplier (1.0 = normal, 1.5 = 50% higher, 0.5 = 50% lower)
     '''
     
     sound_audio = pygame.mixer.Sound(file=os.path.join(dir.sfx, sound['name']))
     sound_audio.set_volume(sound['volume'] * volume)
     
     if pitch_variation > 0:
-        pitch_multiplier = 1.0 + random.uniform(-pitch_variation, pitch_variation)
+        pitch_multiplier = pitch * (1.0 + random.uniform(-pitch_variation, pitch_variation))
+    elif pitch != 1.0:
+        pitch_multiplier = pitch
+    else:
+        pitch_multiplier = None
+    
+    if pitch_multiplier is not None:
         
         raw_data = pygame.sndarray.array(sound_audio)
         
@@ -578,3 +642,4 @@ def multitween(
                 ease_type=ease_type,
                 delay=delay
             ).on_complete(on_complete))
+
