@@ -41,7 +41,7 @@ class Module_ClickToContinue(BaseTutorialModule):
             ))
         
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Only left click
                 if self.tutorial_state is not None and not self.tutorial_state.paused:
                     self.tutorial_state.current_step += 1
 

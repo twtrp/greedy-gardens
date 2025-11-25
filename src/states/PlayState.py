@@ -493,6 +493,12 @@ class PlayState(BaseState):
         self.draw_card_hint_scale = 1.03
         self.draw_card_hint_animation_time = 0.0
         self.draw_card_hint_animation_cycle_duration = 2
+        
+        # Fade animation for draw card hint
+        self.draw_card_hint_alpha = 0
+        self.draw_card_hint_fade_duration = 300  # milliseconds
+        self.draw_card_hint_fade_timer = 0
+        self.draw_card_hint_should_show = False
 
         self.right_box_title = utils.get_text(text='Turn 1', font=fonts.wacky_pixels, size='smaller', color=colors.white, outline_distance=3)
 
@@ -1304,6 +1310,39 @@ class PlayState(BaseState):
                     for button in self.button_list:
                         button.update(dt=dt, events=events)
 
+                # Update draw card hint fade animation
+                # Check if hint should be showing
+                # Hide only when: 1) End day result screen, 2) Current task card is displayed
+                in_end_day_state = False
+                if self.substate_stack:
+                    current_substate = self.substate_stack[-1]
+                    if current_substate.__class__.__name__ == 'Play_EndDayState':
+                        in_end_day_state = True
+                
+                # Check if current task card is being displayed
+                current_task_active = (self.current_path or 
+                                      (self.current_event and self.playing_magic_event and self.is_current_task_event) or
+                                      (self.current_event and not self.playing_magic_event))
+                
+                should_show_hint = not current_task_active and not in_end_day_state and self.shown_day_title
+                
+                # Start fade-in when hint should appear
+                if should_show_hint and not self.draw_card_hint_should_show:
+                    self.draw_card_hint_should_show = True
+                    self.draw_card_hint_fade_timer = 0
+                elif not should_show_hint:
+                    self.draw_card_hint_should_show = False
+                    self.draw_card_hint_alpha = 0
+                    self.draw_card_hint_fade_timer = 0
+                
+                # Animate fade-in
+                if self.draw_card_hint_should_show and self.draw_card_hint_alpha < 255:
+                    self.draw_card_hint_fade_timer += dt * 1000
+                    if self.draw_card_hint_fade_timer >= self.draw_card_hint_fade_duration:
+                        self.draw_card_hint_alpha = 255
+                    else:
+                        self.draw_card_hint_alpha = int((self.draw_card_hint_fade_timer / self.draw_card_hint_fade_duration) * 255)
+
                 # State change and loop
                 if not self.started:
                     if hasattr(self, '_create_start_state'):
@@ -2063,8 +2102,9 @@ class PlayState(BaseState):
                     ), pos_anchor='center')
                     utils.blit(dest=left_hud_surface, source=self.left_box_task, pos=(self.box_width/2, 500), pos_anchor='center')
 
-                    ## Render rightclick hint (hide when: card is being rendered, fruit animation is happening, day title is showing, or end day result screen is showing)
-                    card_being_rendered = (self.current_path or 
+                    ## Render rightclick hint (hide when: current task card active or end day result screen)
+                    # Check if current task card is being displayed
+                    current_task_active = (self.current_path or 
                                          (self.current_event and self.playing_magic_event and self.is_current_task_event) or
                                          (self.current_event and not self.playing_magic_event))
                     
@@ -2075,13 +2115,15 @@ class PlayState(BaseState):
                         if current_substate.__class__.__name__ == 'Play_EndDayState':
                             in_end_day_state = True
                     
-                    # Hide hint during: card rendering, end day state, or day title display
-                    show_hint = not card_being_rendered and not in_end_day_state and self.shown_day_title
+                    # Hide hint only during: current task card display or end day state
+                    show_hint = not current_task_active and not in_end_day_state and self.shown_day_title
                     
                     if show_hint:
                         # Use fixed scale during end day state, animated scale otherwise
                         scale_factor = 1.0 if self.is_choosing else self.draw_card_hint_scale
                         scaled_draw_card_hint = pygame.transform.smoothscale_by(surface=self.draw_card_hint, factor=scale_factor)
+                        # Apply alpha fade
+                        scaled_draw_card_hint.set_alpha(self.draw_card_hint_alpha)
                         utils.blit(dest=left_hud_surface, source=scaled_draw_card_hint, pos=(self.box_width/2, 620), pos_anchor='center')   
 
                     ## Render value in left white box to temporary surface

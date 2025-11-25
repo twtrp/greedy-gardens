@@ -187,7 +187,6 @@ class Tutorial_PlayState(PlayState):
             ],
             [
                 lambda: setattr(self, 'show_day_title_in_tutorial', True),
-                lambda: setattr(self, 'transitioning', True),
                 self.day_title_tween_chain,
             ]
         ]
