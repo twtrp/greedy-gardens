@@ -27,7 +27,7 @@ class Game:
         self.settings = self.settings_manager.load_all_settings()
         self.fps_cap = self.settings['fps_cap']
 
-        self.version_number = 'v1.0.0.beta15'
+        self.version_number = constants.game_version
         self.title = f'Greedy Gardens'
 
         pygame.mixer.pre_init(frequency=44100, size=16, channels=2, buffer=4096)
@@ -87,7 +87,11 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.music_channel = pygame.mixer.music
-        self.music_channel.set_volume(self.settings['music_volume'] * 0.65)
+        # Apply debug mute if enabled
+        if debug.debug_mute_music:
+            self.music_channel.set_volume(0)
+        else:
+            self.music_channel.set_volume(self.settings['music_volume'] * 0.65)
         self.sfx_volume = self.settings['sfx_volume']
         self.ambience_channel = pygame.mixer.Channel(0)
         self.ambience_channel.set_volume(self.settings['ambience_volume'] * 0.75)
@@ -106,7 +110,11 @@ class Game:
     def apply_settings(self, setting_index):
         self.settings = self.settings_manager.load_all_settings()
         if setting_index == 2:
-            self.music_channel.set_volume(self.settings['music_volume']*0.75)
+            # Apply debug mute if enabled, otherwise use settings
+            if debug.debug_mute_music:
+                self.music_channel.set_volume(0)
+            else:
+                self.music_channel.set_volume(self.settings['music_volume']*0.75)
         if setting_index == 3:
             self.sfx_volume = self.settings['sfx_volume']
         if setting_index == 4:
@@ -214,6 +222,14 @@ class Game:
                 pygame.mixer.stop()
                 pygame.quit()
                 sys.exit()
+            
+            # Developer mode: print cursor position with '/' key
+            if debug.debug_developer_mode and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SLASH:
+                    mouse_pos = pygame.mouse.get_pos()
+                    canvas_x = (mouse_pos[0] - self.display_offset[0]) / self.display_scale
+                    canvas_y = (mouse_pos[1] - self.display_offset[1]) / self.display_scale
+                    print(f"Cursor position - ({int(canvas_x)}, {int(canvas_y)})")
             
             # F11 to toggle fullscreen
             if event.type == pygame.KEYDOWN:

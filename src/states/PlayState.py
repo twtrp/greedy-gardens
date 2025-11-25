@@ -1087,7 +1087,7 @@ class PlayState(BaseState):
             self.magic_fruit_queue = []
             return False
         
-    def _update_inject(dt, events):
+    def _update_inject(self, dt, events):
         """Hook for inheriting classes to update content when allowed. Override in child classes."""
         pass
 
@@ -1103,6 +1103,8 @@ class PlayState(BaseState):
 
             if self.paused:
                 if not self.in_tutorial:
+                    # Track if any button was clicked to filter events
+                    pause_button_clicked = False
                     for button in self.pause_options_button_list:
                         button.update(dt=dt, events=events)
                         if button.hovered:
@@ -1168,10 +1170,13 @@ class PlayState(BaseState):
                             elif button.id == 'resume':
                                 utils.sound_play(sound=sfx.resume, volume=self.game.sfx_volume)
                                 self.paused = False
+                                pause_button_clicked = True
                             elif button.id == 'how_to_play':
                                 utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
                                 self.in_tutorial = True
+                                pause_button_clicked = True
                             elif button.id == 'quit' and not self.transitioning:
+                                pause_button_clicked = True
                                 self.transitioning = True
                                 self.game.music_channel.fadeout(1500)
                                 utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
@@ -1197,6 +1202,10 @@ class PlayState(BaseState):
                                     ease_type=tweencurves.easeOutQuint
                                 ).on_complete(on_complete))
                             break
+                    
+                    # Filter out mouse button events if any pause button was clicked
+                    if pause_button_clicked:
+                        events = [e for e in events if e.type != pygame.MOUSEBUTTONDOWN]
 
                 for event in events:
                     if event.type == pygame.KEYDOWN:
@@ -1297,7 +1306,10 @@ class PlayState(BaseState):
 
                 # State change and loop
                 if not self.started:
-                    Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
+                    if hasattr(self, '_create_start_state'):
+                        self._create_start_state()
+                    else:
+                        Play_StartState(game=self.game, parent=self, stack=self.substate_stack).enter_state()
                     self.started = True
                 elif self.drawing:
                     self.current_turn += 1

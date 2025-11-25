@@ -26,7 +26,7 @@ class Module_ClickToContinue(BaseTutorialModule):
         self.tutorial_state = tutorial_state
         
         # Scale animation
-        self.scale = 1.25
+        self.scale = 1.15
         self.tween_started = False
     
     def _update_inject(self, dt, events):
@@ -36,18 +36,16 @@ class Module_ClickToContinue(BaseTutorialModule):
                 container=self,
                 key='scale',
                 end_value=1.0,
-                time=0.5,
+                time=0.25,
                 ease_type=tweencurves.easeOutQuart
             ))
         
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.tutorial_state is not None:
+                if self.tutorial_state is not None and not self.tutorial_state.paused:
                     self.tutorial_state.current_step += 1
-                    print(self.tutorial_state.current_step)
 
     def _render_inject(self, canvas):
-        # Apply scale to content
         scaled_content = pygame.transform.scale_by(surface=self.content, factor=self.scale)
         self.surface = scaled_content
     

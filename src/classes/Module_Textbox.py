@@ -1,7 +1,7 @@
 from src.library.essentials import *
 from src.template.BaseTutorialModule import BaseTutorialModule
 
-class Module_Text(BaseTutorialModule):
+class Module_Textbox(BaseTutorialModule):
     def __init__(
             self,
             content: list[pygame.Surface],
@@ -25,8 +25,7 @@ class Module_Text(BaseTutorialModule):
         self.padding_x = 15
         self.padding_y = 10
         self.line_spacing = 0
-    
-    def _render_inject(self, canvas):
+
         self.surface = pygame.Surface(
             size=(
                 max([line.get_width() for line in self.content]) + (self.padding_x * 2),
@@ -68,3 +67,4 @@ class Module_Text(BaseTutorialModule):
                 )
             current_y += line.get_height() + self.line_spacing
         
+

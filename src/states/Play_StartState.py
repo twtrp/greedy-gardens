@@ -36,13 +36,25 @@ class Play_StartState(BaseState):
         utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
         
     def update(self, dt, events):
+        # Check if in tutorial mode and get input permissions
+        get_module_func = getattr(self.parent, '_get_active_allow_input_module', None)
+        allow_input_module = get_module_func() if get_module_func else None
+        
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and not self.parent.transitioning and self.parent.shown_day_title and not getattr(self.parent, 'block_gameplay_input', False):
-                    self._handle_card_drawing()
+                if event.key == pygame.K_SPACE and not self.parent.transitioning and self.parent.shown_day_title:
+                    # Check if drawing card is allowed
+                    if allow_input_module is None or allow_input_module.is_draw_card_allowed():
+                        if allow_input_module is not None:
+                            allow_input_module.consume_draw_card()
+                        self._handle_card_drawing()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3 and not self.parent.transitioning and self.parent.shown_day_title and not getattr(self.parent, 'block_gameplay_input', False):  # Right click
-                    self._handle_card_drawing()
+                if event.button == 3 and not self.parent.transitioning and self.parent.shown_day_title:  # Right click
+                    # Check if drawing card is allowed
+                    if allow_input_module is None or allow_input_module.is_draw_card_allowed():
+                        if allow_input_module is not None:
+                            allow_input_module.consume_draw_card()
+                        self._handle_card_drawing()
 
         utils.set_cursor(cursor=self.cursor)
         self.cursor = cursors.normal

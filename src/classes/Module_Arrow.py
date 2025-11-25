@@ -1,53 +1,58 @@
 from src.library.essentials import *
 from src.template.BaseTutorialModule import BaseTutorialModule
-import tween
+import math
 
 class Module_Arrow(BaseTutorialModule):
     def __init__(
-        self,
-        text: str = "< Click anywhere to continue >",
-        pos: tuple = (constants.canvas_width/2, 695),
-        pos_anchor: str = posanchors.center,
-        fade_duration: int = 0,
-        tween_list: list = None,
-        tutorial_state = None,
-    ):
+            self,
+            pos: tuple = (constants.canvas_width // 2, constants.canvas_height // 2),
+            direction: str = 'down',
+            enable_animation: bool = True,
+            animation_amplitude: int = 8,
+            animation_speed: float = 1.0,
+            fade_duration: int = 300,
+        ):
         super().__init__(fade_duration=fade_duration)
         
-        self.content = utils.get_text(
-            text=text,
-            font=fonts.lf2,
-            size='small',
-            color=colors.white
-        )
-        self.pos = pos
-        self.pos_anchor = pos_anchor
-        self.tween_list = tween_list
-        self.tutorial_state = tutorial_state
+        if direction not in ['left', 'right', 'down', 'up']:
+            raise ValueError(f"direction must be 'left', 'right', 'down', or 'up', got '{direction}'")
         
-        # Scale animation
-        self.scale = 1.25
-        self.tween_started = False
+        self.direction = direction
+        self.base_pos = list(pos)  # Store original position
+        self.pos = list(pos)  # Current animated position
+        
+        if self.direction == 'left':
+            self.pos_anchor = posanchors.midleft
+        elif self.direction == 'right':
+            self.pos_anchor = posanchors.midright
+        elif self.direction == 'up':
+            self.pos_anchor = posanchors.midtop
+        elif self.direction == 'down':
+            self.pos_anchor = posanchors.midbottom
+        
+        # Animation properties
+        self.enable_animation = enable_animation
+        self.animation_amplitude = animation_amplitude
+        self.animation_speed = animation_speed
+        self.animation_time = 0
+
+        self.surface = utils.get_sprite(
+            sprite_sheet=spritesheets.gui,
+            target_sprite=f'pointer_{self.direction}'
+        )
+        self.surface = pygame.transform.scale_by(surface=self.surface, factor=3)
     
     def _update_inject(self, dt, events):
-        if not self.tween_started and self.tween_list is not None:
-            self.tween_started = True
-            self.tween_list.append(tween.to(
-                container=self,
-                key='scale',
-                end_value=1.0,
-                time=0.5,
-                ease_type=tweencurves.easeOutQuart
-            ))
-        
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.tutorial_state is not None:
-                    self.tutorial_state.current_step += 1
-                    print(self.tutorial_state.current_step)
-
-    def _render_inject(self, canvas):
-        # Apply scale to content
-        scaled_content = pygame.transform.scale_by(surface=self.content, factor=self.scale)
-        self.surface = scaled_content
-    
+        if self.enable_animation:
+            self.animation_time += dt * self.animation_speed
+            
+            offset = math.sin(self.animation_time * math.pi) * self.animation_amplitude
+            
+            if self.direction == 'left':
+                self.pos = [self.base_pos[0] + offset + self.animation_amplitude, self.base_pos[1]]
+            elif self.direction == 'right':
+                self.pos = [self.base_pos[0] - offset - self.animation_amplitude, self.base_pos[1]]
+            elif self.direction == 'up':
+                self.pos = [self.base_pos[0], self.base_pos[1] + offset + self.animation_amplitude]
+            elif self.direction == 'down':
+                self.pos = [self.base_pos[0], self.base_pos[1] - offset - self.animation_amplitude] 

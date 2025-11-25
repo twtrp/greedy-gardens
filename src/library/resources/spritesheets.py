@@ -261,6 +261,30 @@ gui = {
             'width': 80,
             'height': 80,
         },
+        'pointer_right': {
+            'x': 80,
+            'y': 464,
+            'width': 16,
+            'height': 16,
+        },
+        'pointer_down': {
+            'x': 96,
+            'y': 464,
+            'width': 16,
+            'height': 16,
+        },
+        'pointer_left': {
+            'x': 112,
+            'y': 464,
+            'width': 16,
+            'height': 16,
+        },
+        'pointer_up': {
+            'x': 128,
+            'y': 464,
+            'width': 16,
+            'height': 16,
+        },
     }
 }
 
