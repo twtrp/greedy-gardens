@@ -21,6 +21,7 @@ from src.classes.Module_Textbox import Module_Textbox
 from src.classes.Module_ClickToContinue import Module_ClickToContinue
 from src.classes.Module_AllowInput import Module_AllowInput
 from src.classes.Module_Arrow import Module_Arrow
+from src.classes.Module_Dim import Module_Dim
 import tween
 import math
 
@@ -76,6 +77,22 @@ class Tutorial_PlayState(PlayState):
         self.step_delay_timer = 0  # Accumulated time in milliseconds
         self.step_delay_target = 0  # Target delay for current step in milliseconds
         self.step_modules_visible = False
+        
+        # Simulated input queue for developer skip
+        self.simulated_input_queue = []
+        self.simulated_input_delay = 100  # ms between inputs
+        self.simulated_input_timer = 0
+        
+        # Flag for \ key to trigger ] on next frame
+        self.trigger_skip_next_frame = False
+        
+        # Auto-skip mode for \ key
+        self.auto_skip_active = False
+        self.auto_skip_timer = 0
+        self.auto_skip_delay = 100  # Dynamic delay between ] presses
+        
+        # Initialize visible modules list
+        self.visible_modules = []
 
         self.tutorial_steps = [
             # Format for each step: [delay_ms, module1, module2, delay_ms, module3, ...]
@@ -86,7 +103,7 @@ class Tutorial_PlayState(PlayState):
                         utils.get_text(
                             text="Welcome to the farm!",
                             font=fonts.wacky_pixels,
-                            size='smaller',
+                            size='small',
                             color=colors.white
                         ),
                         utils.get_multicolor_text(
@@ -105,7 +122,7 @@ class Tutorial_PlayState(PlayState):
                     fade_duration=800,
                 ),
                 1500,
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self, fade_duration=300)
             ],
             [
                 Module_Textbox(
@@ -125,13 +142,47 @@ class Tutorial_PlayState(PlayState):
                             ],
                             font=fonts.wacky_pixels,
                             size='tiny',
-                        )
+                        ),
                     ],
                 ),
-                1000,
                 Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
             ],
             [
+                Module_Textbox(
+                    content=[
+                        utils.get_text(
+                            text="But there's a catch!!!",
+                            font=fonts.wacky_pixels,
+                            size='smaller',
+                            color=colors.white
+                        ),
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('You must collect ', colors.white),
+                                ('more fruits than your previous day', colors.yellow_light),
+                                (',', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('or you will earn ', colors.white),
+                                ('ZERO ', colors.yellow_light),
+                                ('points for that day!', colors.white)
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                    ],
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Arrow(
+                    pos=(682, 357),
+                    direction='up',
+                ),
                 Module_Textbox(
                     content=[
                         utils.get_multicolor_text(
@@ -140,10 +191,10 @@ class Tutorial_PlayState(PlayState):
                                 (' shed.', colors.yellow_light)
                             ],
                             font=fonts.wacky_pixels,
-                            size='small',
+                            size='smaller',
                         ),
                         utils.get_text(
-                            text="To collect fruits, you need to connect",
+                            text="To collect fruits, you need to connect-",
                             font=fonts.wacky_pixels,
                             size='tiny',
                             color=colors.white
@@ -157,18 +208,9 @@ class Tutorial_PlayState(PlayState):
                             size='tiny',
                         ),
                     ],
-                    pos=(682, 232),
-                    pos_anchor=posanchors.midbottom,
+                    pos=(682, 422),
+                    pos_anchor=posanchors.midtop,
                 ),
-                Module_AllowInput(
-                    allow_draw_card=2,
-                    tutorial_state=self,
-                    auto_advance=True
-                ),
-                Module_Arrow(
-                    pos=(682, 302)
-                ),
-                1000,
                 Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
             ],
             [
@@ -182,13 +224,281 @@ class Tutorial_PlayState(PlayState):
                         ),
                     ],
                 ),
-                1000,
                 Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
             ],
             [
                 lambda: setattr(self, 'show_day_title_in_tutorial', True),
                 self.day_title_tween_chain,
-            ]
+                2500,
+                Module_Dim(
+                    cutouts=[(1018, 52, 1270, 478)]
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('These are the ', colors.white),
+                                ('cards', colors.yellow_light),
+                                (':', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='smaller',
+                        ),
+                        utils.get_text(
+                            text="fruit cards, path cards, and event cards.",
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        )
+                    ],
+                    bg=False,
+                    align='right',
+                    pos=(990, 265),
+                    pos_anchor=posanchors.midright,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(1018, 52, 1270, 478)],
+                    fade_duration=0
+                ),
+                Module_Arrow(
+                    pos=(1010, 128),
+                    direction='right',
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Fruit cards ', colors.yellow_light),
+                                ('assign fruits to each day.', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                    ],
+                    bg=False,
+                    align='right',
+                    pos=(945, 128),
+                    pos_anchor=posanchors.midright,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(1018, 52, 1270, 478)],
+                    fade_duration=0
+                ),
+                Module_Arrow(
+                    pos=(1010, 264),
+                    direction='right',
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Path cards ', colors.yellow_light),
+                                ('lets you place the given path.', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                    ],
+                    bg=False,
+                    align='right',
+                    pos=(945, 264),
+                    pos_anchor=posanchors.midright,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(1018, 52, 1270, 478)],
+                    fade_duration=0
+                ),
+                Module_Arrow(
+                    pos=(1010, 400),
+                    direction='right',
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Event cards ', colors.yellow_light),
+                                ('will be explained later...', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                    ],
+                    bg=False,
+                    align='right',
+                    pos=(945, 400),
+                    pos_anchor=posanchors.midright,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(41, 571, 233, 680)],
+                    fade_duration=0
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Let\'s ', colors.white),
+                                ('draw ', colors.yellow_light),
+                                ('some cards to start the game!', colors.white)
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='smaller',
+                        ),
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Right click ', colors.yellow_light),
+                                ('or press ', colors.white),
+                                ('spacebar ', colors.yellow_light),
+                                ('to draw cards.', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                    ],
+                    bg=False,
+                ),
+                Module_AllowInput(
+                    allow_draw_card=1,
+                    auto_advance=True,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_Textbox(
+                    content=[
+                        utils.get_text(
+                            text='Keep drawing cards!',
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        )
+                    ],
+                    pos=(constants.canvas_width // 2, 670),
+                    pos_anchor=posanchors.midbottom,
+                ),
+                Module_AllowInput(
+                    allow_draw_card=6,
+                    auto_advance=True,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(12, 54, 255, 148)],
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('You collect ', colors.white),
+                                ('oranges ', colors.yellow_light),
+                                ('today!', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                        utils.get_text(
+                            text="Remember, tomorrow you need to collect more-",
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                        utils.get_text(
+                            text="peaches than you collected oranges today.",
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                    ],
+                    bg=False,
+                    align='left',
+                    pos=(288, 101),
+                    pos_anchor=posanchors.midleft,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(12, 236, 255, 283)],
+                    fade_duration=0,
+                    cutout_fade_duration=300
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('This is the ', colors.white),
+                                ('seasonal fruit', colors.yellow_light),
+                                ('.', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='smaller',
+                        ),
+                        utils.get_text(
+                            text="Seasonal fruits give you bonus points at the end of the game.",
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        )
+                    ],
+                    bg=False,
+                    align='left',
+                    pos=(288, 259),
+                    pos_anchor=posanchors.midleft,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
+            [
+                Module_Dim(
+                    cutouts=[(12, 54, 255, 283)],
+                    fade_duration=0,
+                    cutout_fade_duration=300
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Notice how there are ', colors.white),
+                                ('6 fruit types', colors.yellow_light),
+                                (',', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('but ', colors.white),
+                                ('only 5 ', colors.yellow_light),
+                                ('will be collected during your 4 days here.', colors.white),
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
+                        utils.get_text(
+                            text="So, don't assume you can collect them all.",
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                    ],
+                    bg=False,
+                    align='left',
+                    pos=(288, 168),
+                    pos_anchor=posanchors.midleft,
+                ),
+                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+            ],
         ]
         
         # Initialize delay for first step
@@ -223,13 +533,87 @@ class Tutorial_PlayState(PlayState):
         
         return modules_with_delays
 
+
+
     def _update_inject(self, dt, events):
-        # Developer mode: skip tutorial step with ] key
+        # Process simulated input queue first
+        simulating = False
+        if self.simulated_input_queue:
+            simulating = True
+            
+            # If timer hasn't started (is 0), execute action immediately
+            if self.simulated_input_timer == 0:
+                action = self.simulated_input_queue.pop(0)
+                
+                if action[0] == 'function':
+                    action[1]()
+                elif action[0] == 'draw_card':
+                    # Create and directly send a spacebar event to substates
+                    if self.substate_stack:
+                        # Temporarily disable transitioning and enable day title to allow input
+                        was_transitioning = self.transitioning
+                        was_shown_day_title = self.shown_day_title
+                        self.transitioning = False
+                        self.shown_day_title = True
+                        keydown_event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE)
+                        self.substate_stack[-1].update(dt=dt, events=[keydown_event])
+                        self.transitioning = was_transitioning
+                        self.shown_day_title = was_shown_day_title
+                elif action[0] == 'left_click':
+                    item, pos = action[1], action[2]
+                    # Create and directly send a mouse click event to substates
+                    if self.substate_stack:
+                        # Temporarily disable transitioning to allow input
+                        was_transitioning = self.transitioning
+                        self.transitioning = False
+                        click_event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=pos)
+                        self.substate_stack[-1].update(dt=dt, events=[click_event])
+                        self.transitioning = was_transitioning
+                elif action[0] == 'jump_step':
+                    self.current_step = action[1]
+                    self.simulated_input_timer = 0  # Reset for next use
+                    return  # Don't wait after jumping
+                
+                # Start delay timer after executing action
+                self.simulated_input_timer = 0.001  # Small non-zero value to indicate delay started
+            
+            # Wait for delay after action
+            self.simulated_input_timer += dt * 1000
+            if self.simulated_input_timer >= self.simulated_input_delay:
+                self.simulated_input_timer = 0  # Reset for next action
+        
+        # Don't process manual skip keys while simulating
+        if simulating:
+            return
+        
+        # Developer mode: skip tutorial step with ] key, \ starts auto-skip
         if debug.debug_developer_mode:
             for event in events:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHTBRACKET:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHTBRACKET:
+                        self._skip_to_next_step()
+                        return
+                    elif event.key == pygame.K_BACKSLASH:
+                        # Start/stop auto-skip mode
+                        self.auto_skip_active = not self.auto_skip_active
+                        self.auto_skip_timer = 0
+                        if self.auto_skip_active:
+                            self._calculate_auto_skip_delay()
+                        return
+        
+        # Auto-skip mode: trigger ] with dynamic delay (only when queue is empty)
+        if self.auto_skip_active and not self.simulated_input_queue:
+            self.auto_skip_timer += dt * 1000
+            if self.auto_skip_timer >= self.auto_skip_delay:
+                self.auto_skip_timer = 0
+                # Stop at last step (don't go out of bounds)
+                if self.current_step < len(self.tutorial_steps) - 1:
                     self._skip_to_next_step()
-                    return
+                    # Calculate delay for next step
+                    self._calculate_auto_skip_delay()
+                else:
+                    # Stop auto-skip when reaching last step
+                    self.auto_skip_active = False
         
         # Check if current step exists
         if self.current_step >= len(self.tutorial_steps):
@@ -267,21 +651,60 @@ class Tutorial_PlayState(PlayState):
         for module in self.visible_modules:
             module.update(dt, events)
     
-    def _skip_to_next_step(self):
-        """Execute all remaining functions in current step, then advance to next step"""
-        if not hasattr(self, 'module_queue'):
-            self.current_step += 1
+
+
+    def _calculate_auto_skip_delay(self):
+        """Calculate delay: 100ms base + 100ms per input"""
+        if self.current_step >= len(self.tutorial_steps):
+            self.auto_skip_delay = 100
             return
         
-        # Execute all remaining functions in the current step
-        for i in range(self.current_queue_index, len(self.module_queue)):
-            item_type, item_value = self.module_queue[i]
-            if item_type == 'function':
-                item_value()
+        delay = 100  # Base delay
         
-        # Advance to next step
-        self.current_step += 1
-        print(f"Skipped to tutorial step {self.current_step}")
+        # Add 100ms for each input in current step
+        step_data = self.tutorial_steps[self.current_step]
+        for item in step_data:
+            if hasattr(item, '__class__') and item.__class__.__name__ == 'Module_AllowInput':
+                if item.allow_draw_card > 0:
+                    delay += item.allow_draw_card * 100
+                if item.allow_left_click_rect:
+                    delay += 100
+        
+        self.auto_skip_delay = delay
+    
+    def _skip_to_next_step(self):
+        """Queue remaining inputs for current step, then advance to next step"""
+        # Don't skip if already at or past the last step
+        if self.current_step >= len(self.tutorial_steps):
+            return
+        
+        # Clear any existing queue
+        self.simulated_input_queue = []
+        
+        # Queue functions and inputs from current step
+        step_data = self.tutorial_steps[self.current_step]
+        for item in step_data:
+            if callable(item) and item != self.day_title_tween_chain:
+                # Skip day_title_tween_chain to prevent it from playing again
+                self.simulated_input_queue.append(('function', item))
+            elif hasattr(item, '__class__') and item.__class__.__name__ == 'Module_AllowInput':
+                # Queue draw card inputs
+                if item.allow_draw_card > 0:
+                    for _ in range(item.allow_draw_card):
+                        self.simulated_input_queue.append(('draw_card', item))
+                        print(f"  Queued draw_card input")
+                # Queue left click input
+                if item.allow_left_click_rect:
+                    x, y, width, height = item.allow_left_click_rect
+                    center_x = x + width // 2
+                    center_y = y + height // 2
+                    self.simulated_input_queue.append(('left_click', item, (center_x, center_y)))
+                    print(f"  Queued left_click at ({center_x}, {center_y})")
+        
+        # Queue jump to next step
+        self.simulated_input_queue.append(('jump_step', self.current_step + 1))
+        self.simulated_input_timer = 0
+        print(f"Queued {len(self.simulated_input_queue)} actions for step {self.current_step}, will advance to {self.current_step + 1}")
     
     def _get_active_allow_input_module(self):
         """Get the currently active Module_AllowInput if one exists, or return default blocking module"""

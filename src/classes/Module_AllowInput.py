@@ -7,7 +7,7 @@ class Module_AllowInput(BaseTutorialModule):
         self,
         allow_draw_card: int = 0,
         allow_left_click_rect: tuple = None,
-        auto_advance: bool = False,
+        auto_advance: bool = True,
         tutorial_state = None,
     ):
         """

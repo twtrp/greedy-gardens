@@ -32,11 +32,11 @@ chicken_crowing = {
 }
 woop_in = {
     'name': 'Life_Lose.ogg',
-    'volume': 0.75,
+    'volume': 0.5,
 }
 woop_out = {
     'name': 'Life_Gain.ogg',
-    'volume': 1,
+    'volume': 0.75,
 }
 card = {
     'name': 'card-mixing-48088.ogg',

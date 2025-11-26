@@ -1,15 +1,8 @@
 from src.library.essentials import *
 
 
-class BaseTutorialModule:
-    """Base class for all tutorial modules with common fade-in functionality"""
-    
+class BaseTutorialModule:    
     def __init__(self, fade_duration: int = 300):
-        """
-        Initialize base tutorial module with fade-in animation
-        
-        fade_duration: Duration of fade-in animation in milliseconds
-        """
         # Fade-in animation
         self.fade_duration = fade_duration  # Duration in milliseconds
         self.fade_timer = 0  # Current time in milliseconds

@@ -8,7 +8,7 @@ class Module_Arrow(BaseTutorialModule):
             pos: tuple = (constants.canvas_width // 2, constants.canvas_height // 2),
             direction: str = 'down',
             enable_animation: bool = True,
-            animation_amplitude: int = 8,
+            animation_amplitude: int = 5,
             animation_speed: float = 1.0,
             fade_duration: int = 300,
         ):

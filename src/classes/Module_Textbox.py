@@ -5,7 +5,7 @@ class Module_Textbox(BaseTutorialModule):
     def __init__(
             self,
             content: list[pygame.Surface],
-            textbox: bool = True,
+            bg: bool = True,
             align: str = 'center',
             pos: tuple = (constants.canvas_width // 2, constants.canvas_height // 2),
             pos_anchor: str = posanchors.center,
@@ -17,29 +17,29 @@ class Module_Textbox(BaseTutorialModule):
             raise ValueError(f"align must be 'left', 'right', or 'center', got '{align}'")
         
         self.content = content
-        self.textbox = textbox
+        self.bg = bg
         self.align = align
         self.pos = pos
         self.pos_anchor = pos_anchor
 
-        self.padding_x = 15
+        self.padding_x = 20
         self.padding_y = 10
         self.line_spacing = 0
 
         self.surface = pygame.Surface(
             size=(
-                max([line.get_width() for line in self.content]) + (self.padding_x * 2),
-                sum([line.get_height() for line in self.content]) + (self.padding_y * 2) + (self.line_spacing * (len(self.content) - 1))
+                max([line.get_width() for line in self.content]) + (self.padding_x) * 2,
+                sum([line.get_height() for line in self.content]) + (self.padding_y) * 2 + (self.line_spacing * (len(self.content) - 1))
             ),
             flags=pygame.SRCALPHA
         )
-        if self.textbox:
+        if self.bg:
             utils.draw_rect(
                 dest=self.surface,
                 size=(self.surface.get_width(), self.surface.get_height()),
                 pos=(0, 0),
                 pos_anchor=posanchors.topleft,
-                color=(*colors.mono_50, 155),
+                color=(*colors.mono_50, 150),
                 inner_border_width=3
             )
         current_y = self.padding_y
@@ -55,14 +55,14 @@ class Module_Textbox(BaseTutorialModule):
                 utils.blit(
                     dest=self.surface,
                     source=line,
-                    pos=(self.padding_x, current_y),
+                    pos=(self.padding_x if self.bg else 0, current_y),
                     pos_anchor=posanchors.topleft
                 )
             elif self.align == 'right':
                 utils.blit(
                     dest=self.surface,
                     source=line,
-                    pos=(self.surface.get_width() - self.padding_x, current_y),
+                    pos=(self.surface.get_width() - (self.padding_x if self.bg else 0), current_y),
                     pos_anchor=posanchors.topright
                 )
             current_y += line.get_height() + self.line_spacing

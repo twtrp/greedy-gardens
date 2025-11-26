@@ -51,12 +51,23 @@ class Play_NextDayState(BaseState):
 
         # draw fruit for next next day
         if self.parent.current_day < self.parent.day:
+            # Check if in tutorial mode and get input permissions
+            get_module_func = getattr(self.parent, '_get_active_allow_input_module', None)
+            allow_input_module = get_module_func() if get_module_func else None
+            
             for event in events:
                 should_trigger = False
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.parent.shown_day_title:
                     should_trigger = True
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and self.parent.shown_day_title:
                     should_trigger = True
+                
+                # Check if drawing card is allowed in tutorial
+                if should_trigger and allow_input_module is not None:
+                    if not allow_input_module.is_draw_card_allowed():
+                        should_trigger = False
+                    elif should_trigger:
+                        allow_input_module.consume_draw_card()
                 
                 if should_trigger:
                     if self.fruit_not_drawn:
