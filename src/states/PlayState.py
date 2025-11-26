@@ -16,8 +16,6 @@ from src.classes.Button import Button
 from src.classes.TimerManager import TimerManager
 from src.classes.Wind import Wind
 from src.classes.SettingsManager import SettingsManager
-import tween
-import math
 
 class PlayState(BaseState):
     def __init__(self, game, parent, stack, seed):
@@ -1303,12 +1301,44 @@ class PlayState(BaseState):
                     self.draw_card_hint_scale = center_scale + amplitude * math.sin(cycle_progress * 2 * math.pi)
 
                 if not self.transitioning:
+                    # Check tutorial input permissions
+                    get_module_func = getattr(self, '_get_active_allow_input_module', None)
+                    allow_input_module = get_module_func() if get_module_func else None
+                    
+                    # Filter events for tutorial mode
+                    filtered_events = events
+                    grid_events = events
+                    
+                    if allow_input_module is not None:
+                        # Filter out left clicks that aren't allowed
+                        filtered_events = []
+                        for event in events:
+                            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                                # Check if this left click is allowed
+                                if allow_input_module.is_left_click_allowed(event.pos):
+                                    filtered_events.append(event)
+                                    allow_input_module.consume_left_click()
+                                # Otherwise, block the event
+                            else:
+                                # Non-left-click events pass through
+                                filtered_events.append(event)
+                        
+                        # If no left click rect is defined, block ALL grid button interaction (including hover)
+                        if allow_input_module.allow_left_click_rect is None:
+                            grid_events = []
+                    
                     # update buttons
                     for button in self.grid_buttons:
-                        button.update(dt=dt, events=events)
+                        button.update(dt=dt, events=grid_events)
+                    
+                    # Force clear grid button hover/click states if interaction not allowed
+                    if allow_input_module is not None and allow_input_module.allow_left_click_rect is None:
+                        for button in self.grid_buttons:
+                            button.hovered = False
+                            button.clicked = False
 
                     for button in self.button_list:
-                        button.update(dt=dt, events=events)
+                        button.update(dt=dt, events=filtered_events)
 
                 # Update draw card hint fade animation
                 # Check if hint should be showing

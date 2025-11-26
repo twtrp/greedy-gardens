@@ -22,8 +22,7 @@ from src.classes.Module_ClickToContinue import Module_ClickToContinue
 from src.classes.Module_AllowInput import Module_AllowInput
 from src.classes.Module_Arrow import Module_Arrow
 from src.classes.Module_Dim import Module_Dim
-import tween
-import math
+from src.classes.Module_ManipulateDeck import Module_ManipulateDeck
 
 class Tutorial_Play_StartState(Play_StartState):
     def __init__(self, game, parent, stack):
@@ -122,7 +121,7 @@ class Tutorial_PlayState(PlayState):
                     fade_duration=800,
                 ),
                 1500,
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self, fade_duration=300)
+                Module_ClickToContinue(tutorial_state=self, fade_duration=300)
             ],
             [
                 Module_Textbox(
@@ -145,7 +144,7 @@ class Tutorial_PlayState(PlayState):
                         ),
                     ],
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Textbox(
@@ -176,7 +175,7 @@ class Tutorial_PlayState(PlayState):
                         ),
                     ],
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Arrow(
@@ -211,7 +210,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(682, 422),
                     pos_anchor=posanchors.midtop,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Textbox(
@@ -224,7 +223,7 @@ class Tutorial_PlayState(PlayState):
                         ),
                     ],
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 lambda: setattr(self, 'show_day_title_in_tutorial', True),
@@ -256,7 +255,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(990, 265),
                     pos_anchor=posanchors.midright,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Dim(
@@ -283,7 +282,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(945, 128),
                     pos_anchor=posanchors.midright,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Dim(
@@ -310,7 +309,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(945, 264),
                     pos_anchor=posanchors.midright,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Dim(
@@ -337,7 +336,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(945, 400),
                     pos_anchor=posanchors.midright,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Dim(
@@ -426,7 +425,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(288, 101),
                     pos_anchor=posanchors.midleft,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Dim(
@@ -457,7 +456,7 @@ class Tutorial_PlayState(PlayState):
                     pos=(288, 259),
                     pos_anchor=posanchors.midleft,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
             [
                 Module_Dim(
@@ -497,8 +496,89 @@ class Tutorial_PlayState(PlayState):
                     pos=(288, 168),
                     pos_anchor=posanchors.midleft,
                 ),
-                Module_ClickToContinue(tween_list=self.tween_list, tutorial_state=self)
+                Module_ClickToContinue(tutorial_state=self)
             ],
+            [
+                Module_ManipulateDeck(
+                    deck_type='path',
+                    card_name='path_WS',
+                    tutorial_state=self
+                ),
+                Module_Dim(
+                    cutouts=[(41, 571, 233, 680)],
+                    fade_duration=0,
+                    cutout_fade_duration=300
+                ),
+                Module_Textbox(
+                    content=[
+                        utils.get_text(
+                            text='Now that the setup is done,',
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Let\'s draw our first ', colors.white),
+                                ('path', colors.yellow_light),
+                                ('!', colors.white)
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='smaller',
+                        ),
+                    ],
+                    bg=False,
+                ),
+                Module_AllowInput(
+                    allow_draw_card=1,
+                    auto_advance=True,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_Textbox(
+                    content=[
+                        utils.get_text(
+                            text='Press right click or spacebar one more time.',
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        )
+                    ],
+                    pos=(constants.canvas_width // 2, 670),
+                    pos_anchor=posanchors.midbottom,
+                ),
+                Module_AllowInput(
+                    allow_draw_card=1,
+                    auto_advance=True,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_Dim(),
+                Module_Textbox(
+                    content=[
+                        utils.get_text(
+                            text='Normally, you can place the path anywhere you want,',
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                        utils.get_text(
+                            text='but for this tutorial, we will guide you through it.',
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                    ],
+                    bg=False,
+                ),
+                Module_ClickToContinue(tutorial_state=self)
+            ],
+            #@note
+            [
+
+            ]
         ]
         
         # Initialize delay for first step
@@ -647,9 +727,18 @@ class Tutorial_PlayState(PlayState):
                 self.visible_modules.append(item_value)
                 self.current_queue_index += 1
         
+        # Track step before updating modules
+        step_before_update = self.current_step
+        
         # Update all visible modules
         for module in self.visible_modules:
             module.update(dt, events)
+        
+        # If step changed during module update (e.g., ClickToContinue was clicked),
+        # filter out mouse button events to prevent them from being processed by the new step
+        if step_before_update != self.current_step:
+            # Remove MOUSEBUTTONDOWN events that caused the step change
+            events.clear()
     
 
 

@@ -1,6 +1,5 @@
 from src.library.essentials import *
 from src.template.BaseTutorialModule import BaseTutorialModule
-import tween
 
 class Module_ClickToContinue(BaseTutorialModule):
     def __init__(
@@ -9,7 +8,6 @@ class Module_ClickToContinue(BaseTutorialModule):
         pos: tuple = (constants.canvas_width/2, 695),
         pos_anchor: str = posanchors.center,
         fade_duration: int = 0,
-        tween_list: list = None,
         tutorial_state = None,
     ):
         super().__init__(fade_duration=fade_duration)
@@ -22,7 +20,6 @@ class Module_ClickToContinue(BaseTutorialModule):
         )
         self.pos = pos
         self.pos_anchor = pos_anchor
-        self.tween_list = tween_list
         self.tutorial_state = tutorial_state
     
     def _update_inject(self, dt, events):
