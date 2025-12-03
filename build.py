@@ -56,23 +56,23 @@ def is_linux() -> bool:
 # ---------------------------
 
 def extract_version_from_main() -> str | None:
-    """Extracts version string from main.py looking for: self.version_number = 'vX.Y.Z'"""
-    main_py = ROOT / "main.py"
-    if not main_py.exists():
-        log("❌ main.py not found. Make sure you're in the project root directory.")
+    """Extracts version string from constants.py looking for: game_version = 'X.Y.Z'"""
+    constants_py = ROOT / "src" / "library" / "resources" / "constants.py"
+    if not constants_py.exists():
+        log("❌ constants.py not found. Make sure you're in the project root directory.")
         return None
 
     try:
-        content = main_py.read_text(encoding="utf-8")
-        m = re.search(r"self\.version_number\s*=\s*['\"]([^'\"]+)['\"]", content)
+        content = constants_py.read_text(encoding="utf-8")
+        m = re.search(r"game_version\s*=\s*['\"]([^'\"]+)['\"]", content)
         if not m:
-            log("❌ Could not find version number in main.py (self.version_number = '...').")
+            log("❌ Could not find version number in constants.py (game_version = '...').")
             return None
         raw = m.group(1)
         clean = raw.lstrip('v')  # drop leading 'v' for filenames
         return clean
     except Exception as e:
-        log(f"❌ Error reading main.py: {e}")
+        log(f"❌ Error reading constants.py: {e}")
         return None
 
 # ---------------------------
