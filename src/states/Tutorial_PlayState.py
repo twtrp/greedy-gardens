@@ -2436,7 +2436,9 @@ class Tutorial_PlayState(PlayState):
                         utils.get_multicolor_text(
                             texts=[
                                 ('Quit the tutorial by pressing ', colors.white),
-                                ('ESC ', colors.yellow_light),
+                                ('ESC', colors.yellow_light),
+                                ('/', colors.white),
+                                ('Middle mouse', colors.yellow_light),
                                 ('then ', colors.white),
                                 ('Exit', colors.yellow_light),
                                 (',', colors.white),
