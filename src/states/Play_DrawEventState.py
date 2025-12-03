@@ -31,7 +31,7 @@ class Play_DrawEventState(BaseState):
             if should_trigger and allow_input_module is not None:
                 if not allow_input_module.is_draw_card_allowed():
                     should_trigger = False
-                elif should_trigger:
+                else:
                     allow_input_module.consume_draw_card()
             
             if should_trigger:

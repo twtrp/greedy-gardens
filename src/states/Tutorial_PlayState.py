@@ -812,7 +812,13 @@ class Tutorial_PlayState(PlayState):
                     pos_anchor=posanchors.midbottom,
                 ),
                 Module_AllowInput(
-                    allow_draw_card=2,
+                    allow_draw_card=1,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_AllowInput(
+                    allow_draw_card=1,
                     tutorial_state=self
                 ),
             ],
@@ -1388,7 +1394,13 @@ class Tutorial_PlayState(PlayState):
                     pos_anchor=posanchors.midbottom,
                 ),
                 Module_AllowInput(
-                    allow_draw_card=2,
+                    allow_draw_card=1,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_AllowInput(
+                    allow_draw_card=1,
                     tutorial_state=self
                 ),
             ],
@@ -2161,7 +2173,7 @@ class Tutorial_PlayState(PlayState):
                         utils.get_multicolor_text(
                             texts=[
                                 ('That\'s ', colors.white),
-                                ('+1 point', colors.yellow_light),
+                                ('+1 point ', colors.yellow_light),
                                 ('from magic fruit 1.', colors.white),
                             ],
                             font=fonts.wacky_pixels,

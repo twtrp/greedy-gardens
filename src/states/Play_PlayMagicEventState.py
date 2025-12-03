@@ -395,26 +395,28 @@ class Play_PlayMagicEventState(BaseState):
         
         if not self.shown_event:
             for event in events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        if (self.parent.current_event == 'event_point' or
-                            self.parent.current_event == 'event_redraw' or
-                            self.parent.current_event == 'event_reveal'):
-                            self.choosing = True
-                            utils.sound_play(sound=sfx.appear, volume=self.game.sfx_volume)
-                        self.parent.is_current_task_event = True
-                        self.shown_event = True
-                        self.parent.playing_magic_event = True
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 3:  # Right click
-                        if (self.parent.current_event == 'event_point' or
-                            self.parent.current_event == 'event_redraw' or
-                            self.parent.current_event == 'event_reveal'):
-                            self.choosing = True
-                            utils.sound_play(sound=sfx.appear, volume=self.game.sfx_volume)
-                        self.parent.is_current_task_event = True
-                        self.shown_event = True
-                        self.parent.playing_magic_event = True
+                should_trigger = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    should_trigger = True
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                    should_trigger = True
+                
+                # Check if drawing card is allowed in tutorial
+                if should_trigger and allow_input_module is not None:
+                    if not allow_input_module.is_draw_card_allowed():
+                        should_trigger = False
+                    else:
+                        allow_input_module.consume_draw_card()
+                
+                if should_trigger:
+                    if (self.parent.current_event == 'event_point' or
+                        self.parent.current_event == 'event_redraw' or
+                        self.parent.current_event == 'event_reveal'):
+                        self.choosing = True
+                        utils.sound_play(sound=sfx.appear, volume=self.game.sfx_volume)
+                    self.parent.is_current_task_event = True
+                    self.shown_event = True
+                    self.parent.playing_magic_event = True
 
         # Each event
         elif not self.played_event and self.shown_event:
@@ -907,38 +909,34 @@ class Play_PlayMagicEventState(BaseState):
                                 self.played_event = True
                 if self.fruit_drawn_image:
                     for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
-                                # Commit pending assignment if any, then finish
-                                if getattr(self, 'pending_assignment', None):
-                                    pa = self.pending_assignment
-                                    try:
-                                        setattr(self.parent, pa['attr'], pa['card'].card_name)
-                                    except Exception:
-                                        pass
-                                    if pa.get('append_to_deck'):
-                                        self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
-                                        random.shuffle(self.parent.deck_fruit.cards)
-                                    if pa.get('drawn_list') == 'fruit':
-                                        self.parent.drawn_cards_fruit.append(pa['card'])
-                                    self.pending_assignment = None
-                                self.played_event = True
-                        elif event.type == pygame.MOUSEBUTTONDOWN:
-                            if event.button == 3:  # Right click
-                                # Commit pending assignment if any, then finish
-                                if getattr(self, 'pending_assignment', None):
-                                    pa = self.pending_assignment
-                                    try:
-                                        setattr(self.parent, pa['attr'], pa['card'].card_name)
-                                    except Exception:
-                                        pass
-                                    if pa.get('append_to_deck'):
-                                        self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
-                                        random.shuffle(self.parent.deck_fruit.cards)
-                                    if pa.get('drawn_list') == 'fruit':
-                                        self.parent.drawn_cards_fruit.append(pa['card'])
-                                    self.pending_assignment = None
-                                self.played_event = True
+                        should_trigger = False
+                        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                            should_trigger = True
+                        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                            should_trigger = True
+                        
+                        # Check if drawing card is allowed in tutorial
+                        if should_trigger and allow_input_module is not None:
+                            if not allow_input_module.is_draw_card_allowed():
+                                should_trigger = False
+                            else:
+                                allow_input_module.consume_draw_card()
+                        
+                        if should_trigger:
+                            # Commit pending assignment if any, then finish
+                            if getattr(self, 'pending_assignment', None):
+                                pa = self.pending_assignment
+                                try:
+                                    setattr(self.parent, pa['attr'], pa['card'].card_name)
+                                except Exception:
+                                    pass
+                                if pa.get('append_to_deck'):
+                                    self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
+                                    random.shuffle(self.parent.deck_fruit.cards)
+                                if pa.get('drawn_list') == 'fruit':
+                                    self.parent.drawn_cards_fruit.append(pa['card'])
+                                self.pending_assignment = None
+                            self.played_event = True
 
             elif self.parent.current_event == 'event_remove':
                 # print('event_remove')
