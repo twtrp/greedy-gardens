@@ -5,7 +5,7 @@
 debug_first_run = 0
 
 # Set to True to enable developer mode features
-debug_developer_mode = 1
+debug_developer_mode = 0
 
 # Set to True to skip the intro bootup animation
 debug_skip_bootup = 0

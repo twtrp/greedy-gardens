@@ -101,9 +101,9 @@ class Play_ResultStage(BaseState):
         if is_tutorial:
             self.seed_text = utils.get_text(text=f'Tutorial Mode', font=fonts.wacky_pixels, size='smaller', color=colors.white)
         elif self.setted_seed:
-            self.seed_text = utils.get_text(text=f'Set Seed', font=fonts.wacky_pixels, size='smaller', color=colors.white)
+            self.seed_text = utils.get_text(text=f'Set Seed - {self.parent.seed}', font=fonts.wacky_pixels, size='smaller', color=colors.white)
         elif not self.setted_seed:
-            self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.wacky_pixels, size='smaller', color=colors.white)
+            self.seed_text = utils.get_text(text=f'Random Seed - {self.parent.seed}', font=fonts.wacky_pixels, size='smaller', color=colors.white)
         
         self.fruit_sprites = utils.get_sprite_sheet(sprite_sheet=spritesheets.fruit_16x16)
         #Gen chat and not work. Do later ()
