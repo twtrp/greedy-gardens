@@ -658,3 +658,52 @@ def multitween(
                 delay=delay
             ).on_complete(on_complete))
 
+
+# Coordinate conversion functions
+
+def canvas_to_screen(pos: tuple, game) -> tuple:
+    """
+    Convert canvas coordinates to screen coordinates.
+    Handles fullscreen scaling and offset.
+    
+    pos: (x, y) in canvas coordinates
+    game: Game instance with display_scale and display_offset
+    
+    Returns: (screen_x, screen_y) in screen coordinates
+    """
+    x, y = pos
+    try:
+        scale = game.display_scale
+        offx, offy = int(game.display_offset[0]), int(game.display_offset[1])
+    except Exception:
+        scale = 1.0
+        offx, offy = 0, 0
+    
+    screen_x = int(x * scale) + offx
+    screen_y = int(y * scale) + offy
+    return (screen_x, screen_y)
+
+
+def canvas_rect_to_screen(rect: tuple, game) -> tuple:
+    """
+    Convert a canvas rectangle (x1, y1, x2, y2) to screen coordinates.
+    
+    rect: (x1, y1, x2, y2) in canvas coordinates
+    game: Game instance with display_scale and display_offset
+    
+    Returns: (screen_x1, screen_y1, screen_x2, screen_y2) in screen coordinates
+    """
+    x1, y1, x2, y2 = rect
+    try:
+        scale = game.display_scale
+        offx, offy = int(game.display_offset[0]), int(game.display_offset[1])
+    except Exception:
+        scale = 1.0
+        offx, offy = 0, 0
+    
+    screen_x1 = int(x1 * scale) + offx
+    screen_y1 = int(y1 * scale) + offy
+    screen_x2 = int(x2 * scale) + offx
+    screen_y2 = int(y2 * scale) + offy
+    return (screen_x1, screen_y1, screen_x2, screen_y2)
+

@@ -764,7 +764,7 @@ class PlayState(BaseState):
             },
             {
                 'id': 'how_to_play',
-                'text': 'How to Play',
+                'text': 'Tutorial summary',
             },
             {
                 'id': 'quit',
@@ -857,19 +857,19 @@ class PlayState(BaseState):
         self.tutorial_surface_list = [
             [
                 utils.get_text(
-                    text="Welcome to Greedy Gardens!",
+                    text="This is Greedy Gardens!",
                     font=fonts.minecraftia, size='small', color=colors.green_light, long_shadow=False
                 ),
                 utils.get_text(
-                    text="You're a fruit picker working on a 4-day contract.",
+                    text="You will spend 4 days here collecting fruits.",
                     font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Your job is to collect fruits by building paths",
+                    text="Your job is building paths",
                     font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="to connect fruits to the Farmhouse.",
+                     text="to connect fruits to the shed.",
                     font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
             ],
@@ -909,7 +909,7 @@ class PlayState(BaseState):
                     font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
-                    text="Fruits connected to Farmhouse are scored when day ends.",
+                    text="Fruits connected to the shed are scored when day ends.",
                     font=fonts.minecraftia, size='tiny', color=colors.white, long_shadow=False
                 ),
                 utils.get_text(
@@ -1262,9 +1262,26 @@ class PlayState(BaseState):
 
 
             else: 
-                # Update substates
+                # GLOBAL Tutorial input filtering - filter ALL events before substates
+                get_module_func = getattr(self, '_get_active_allow_input_module', None)
+                allow_input_module = get_module_func() if get_module_func else None
+                
+                substate_events = events
+                if allow_input_module is not None:
+                    # Filter out left clicks that aren't allowed
+                    substate_events = []
+                    for event in events:
+                        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                            if allow_input_module.is_left_click_allowed(event.pos):
+                                substate_events.append(event)
+                            # Otherwise, block the event
+                        else:
+                            # Non-left-click events pass through
+                            substate_events.append(event)
+                
+                # Update substates with filtered events
                 if self.substate_stack:
-                    self.substate_stack[-1].update(dt=dt, events=events)
+                    self.substate_stack[-1].update(dt=dt, events=substate_events)
 
                 self._update_inject(dt=dt, events=events)
 
@@ -1317,7 +1334,6 @@ class PlayState(BaseState):
                                 # Check if this left click is allowed
                                 if allow_input_module.is_left_click_allowed(event.pos):
                                     filtered_events.append(event)
-                                    allow_input_module.consume_left_click()
                                 # Otherwise, block the event
                             else:
                                 # Non-left-click events pass through
@@ -1331,11 +1347,43 @@ class PlayState(BaseState):
                     for button in self.grid_buttons:
                         button.update(dt=dt, events=grid_events)
                     
-                    # Force clear grid button hover/click states if interaction not allowed
-                    if allow_input_module is not None and allow_input_module.allow_left_click_rect is None:
+                    # Force clear grid button hover/click states based on allowed rect FIRST
+                    if allow_input_module is not None:
+                        if allow_input_module.allow_left_click_rect is None:
+                            # No rect defined - block all grid interaction
+                            for button in self.grid_buttons:
+                                button.hovered = False
+                                button.clicked = False
+                        else:
+                            # Rect defined - check if mouse position is within allowed area
+                            mouse_pos = pygame.mouse.get_pos()
+                            # Use is_left_click_allowed to check if click is within allowed rect
+                            click_allowed = allow_input_module.is_left_click_allowed(mouse_pos)
+                            if not click_allowed:
+                                # Mouse is outside allowed area - clear all grid button states
+                                for button in self.grid_buttons:
+                                    button.hovered = False
+                                    button.clicked = False
+                    
+                    # THEN check if any grid button was clicked (within allowed area) and consume it
+                    if allow_input_module is not None and allow_input_module.allow_left_click_rect is not None:
                         for button in self.grid_buttons:
-                            button.hovered = False
-                            button.clicked = False
+                            if button.clicked:
+                                # Set _last_clicked_rect_idx before consuming
+                                try:
+                                    bx, by = button.canvas_rect.centerx, button.canvas_rect.centery
+                                    if hasattr(allow_input_module, 'allow_left_click_rects'):
+                                        for idx, rect in enumerate(allow_input_module.allow_left_click_rects):
+                                            x1, y1, x2, y2 = rect
+                                            if x1 <= bx <= x2 and y1 <= by <= y2:
+                                                allow_input_module._last_clicked_rect_idx = idx
+                                                break
+                                    else:
+                                        allow_input_module._last_clicked_rect_idx = 0
+                                except Exception:
+                                    pass
+                                allow_input_module.consume_left_click()
+                                break
 
                     for button in self.button_list:
                         button.update(dt=dt, events=filtered_events)
@@ -1547,31 +1595,62 @@ class PlayState(BaseState):
 
                 # hover function 
                 if self.setup_start_state==True and not self.transitioning:
+                    # Check if hovering is allowed in tutorial mode
+                    mouse_pos = pygame.mouse.get_pos()
+                    hover_allowed = True
+                    allow_input_module = None
+                    get_module_func = getattr(self, '_get_active_allow_input_module', None)
+                    if get_module_func is not None:
+                        allow_input_module = get_module_func()
+                        if allow_input_module is not None:
+                            hover_allowed = allow_input_module.is_hover_allowed(mouse_pos)
+                    
                     top_card = None
                     self.pop_up_revealed_event_card = 0
-                    for button in reversed(self.button_list): 
-                        if button.hovered:
-                            if button.id == 'magic_fruit_3' and self.magic_fruit3_event != None:
-                                self.pop_up_revealed_event_card = 3
-                                break
-                            elif button.id == 'magic_fruit_2' and self.magic_fruit2_event != None:
-                                self.pop_up_revealed_event_card = 2
-                                break
-                            elif button.id == 'magic_fruit_1' and self.magic_fruit1_event != None:
-                                self.pop_up_revealed_event_card = 1
-                                break
-                            elif button.id.startswith('revealed_event_individual_'):
-                                # Extract the index from the button id
-                                index = int(button.id.split('_')[-1])
-                                # Set popup to show this individual revealed event card (using negative values to distinguish from magic fruits)
-                                self.pop_up_revealed_event_card = -(index + 1) # -1, -2, -3, -4 for individual revealed events
-                                break
-                    if self.play_event_state == True:
-                        for button in self.button_list:
+                    if hover_allowed:
+                        for button in reversed(self.button_list): 
                             if button.hovered:
-                                if button.id == 'event_card':
-                                    self.pop_up_revealed_event_card = 4
+                                if button.id == 'magic_fruit_3' and self.magic_fruit3_event != None:
+                                    self.pop_up_revealed_event_card = 3
+                                    # Consume hover if in tutorial mode with allow_hover_rect
+                                    if allow_input_module is not None and allow_input_module.allow_hover_rect is not None:
+                                        allow_input_module.consume_hover()
                                     break
+                                elif button.id == 'magic_fruit_2' and self.magic_fruit2_event != None:
+                                    self.pop_up_revealed_event_card = 2
+                                    # Consume hover if in tutorial mode with allow_hover_rect
+                                    if allow_input_module is not None and allow_input_module.allow_hover_rect is not None:
+                                        allow_input_module.consume_hover()
+                                    break
+                                elif button.id == 'magic_fruit_1' and self.magic_fruit1_event != None:
+                                    self.pop_up_revealed_event_card = 1
+                                    # Consume hover if in tutorial mode with allow_hover_rect
+                                    if allow_input_module is not None and allow_input_module.allow_hover_rect is not None:
+                                        allow_input_module.consume_hover()
+                                    break
+                                elif button.id.startswith('revealed_event_individual_'):
+                                    # Extract the index from the button id
+                                    index = int(button.id.split('_')[-1])
+                                    # Set popup to show this individual revealed event card (using negative values to distinguish from magic fruits)
+                                    self.pop_up_revealed_event_card = -(index + 1) # -1, -2, -3, -4 for individual revealed events
+                                    # Consume hover if in tutorial mode with allow_hover_rect
+                                    if allow_input_module is not None and allow_input_module.allow_hover_rect is not None:
+                                        allow_input_module.consume_hover()
+                                    break
+                        if self.play_event_state == True:
+                            for button in self.button_list:
+                                if button.hovered:
+                                    if button.id == 'event_card':
+                                        # Check if hover is allowed before showing popup
+                                        mouse_pos = pygame.mouse.get_pos()
+                                        if allow_input_module is not None and allow_input_module.allow_hover_rect is not None:
+                                            if allow_input_module.is_hover_allowed(mouse_pos):
+                                                self.pop_up_revealed_event_card = 4
+                                                allow_input_module.consume_hover()
+                                        else:
+                                            # No tutorial restrictions - allow hover
+                                            self.pop_up_revealed_event_card = 4
+                                        break
 
     def _render_inject(self, canvas):
         """Hook for inheriting classes to render content before pause menu. Override in child classes."""

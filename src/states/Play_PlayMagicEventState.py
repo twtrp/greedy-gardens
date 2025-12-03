@@ -387,6 +387,12 @@ class Play_PlayMagicEventState(BaseState):
             self.exit_state()
             return
 
+        # Get allow_input_module for tutorial
+        allow_input_module = None
+        get_module_func = getattr(self.parent, '_get_active_allow_input_module', None)
+        if get_module_func is not None:
+            allow_input_module = get_module_func()
+        
         if not self.shown_event:
             for event in events:
                 if event.type == pygame.KEYDOWN:
@@ -419,18 +425,34 @@ class Play_PlayMagicEventState(BaseState):
                 for event in events:
                     if event.type == pygame.KEYDOWN:
                         if (event.key == pygame.K_w or event.key == pygame.K_UP) and self.choice > 0:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice -= 1
+                            # Tutorial: Check if scrolling up is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_up_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_up()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice -= 1
                         elif (event.key == pygame.K_s or event.key == pygame.K_DOWN) and self.choice < 5:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice += 1
+                            # Tutorial: Check if scrolling down is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_down_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_down()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice += 1
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 4 and self.choice > 0:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice -= 1
+                            # Tutorial: Check if scrolling up is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_up_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_up()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice -= 1
                         elif event.button == 5 and self.choice < 5:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice += 1
+                            # Tutorial: Check if scrolling down is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_down_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_down()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice += 1
 
                 self.cell_pos = -1
                 for button in self.parent.grid_buttons:
@@ -709,7 +731,22 @@ class Play_PlayMagicEventState(BaseState):
             elif self.parent.current_event == 'event_point':
                 # print('event_point')
                 for button in self.button_list:
-                    button.update(dt=dt, events=events)
+                    # Tutorial: Filter click events if not allowed
+                    filtered_events = events
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        filtered_events = [e for e in events if e.type != pygame.MOUSEBUTTONDOWN or 
+                                         (e.button == 1 and allow_input_module.is_left_click_allowed(e.pos))]
+                    button.update(dt=dt, events=filtered_events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if button.hovered:
                         if button.id == 'view board':
                             self.choosing = False
@@ -726,27 +763,47 @@ class Play_PlayMagicEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
-                        if button.id == 'add today':
-                            # print(f'adding score day {self.parent.current_day}')
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') + 1)
-                            if (self.parent.current_day < self.parent.day):
-                                setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') - 1)
-                            self.choosing = False
-                            self.played_event = True
-                        elif button.id == 'lose today':
-                            # print(f'losing score day {self.parent.current_day}')
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') - 1)
-                            if (self.parent.current_day < self.parent.day):
-                                setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') + 1)
-                            self.choosing = False
-                            self.played_event = True
+                        # Tutorial: Check if left click is allowed for this button
+                        if allow_input_module is None or allow_input_module.is_left_click_allowed(pygame.mouse.get_pos()):
+                            if allow_input_module is not None:
+                                allow_input_module.consume_left_click()
+                            
+                            if button.id == 'add today':
+                                # print(f'adding score day {self.parent.current_day}')
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') + 1)
+                                if (self.parent.current_day < self.parent.day):
+                                    setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') - 1)
+                                self.choosing = False
+                                self.played_event = True
+                            elif button.id == 'lose today':
+                                # print(f'losing score day {self.parent.current_day}')
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                setattr(self.parent, f'day{self.parent.current_day}_score', getattr(self.parent, f'day{self.parent.current_day}_score') - 1)
+                                if (self.parent.current_day < self.parent.day):
+                                    setattr(self.parent, f'day{self.parent.current_day + 1}_score', getattr(self.parent, f'day{self.parent.current_day + 1}_score') + 1)
+                                self.choosing = False
+                                self.played_event = True
 
             elif self.parent.current_event == 'event_redraw':
                 # print('event_redraw')
                 for button in self.button_list:
-                    button.update(dt=dt, events=events)
+                    # Tutorial: Filter click events if not allowed
+                    filtered_events = events
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        filtered_events = [e for e in events if e.type != pygame.MOUSEBUTTONDOWN or 
+                                         (e.button == 1 and allow_input_module.is_left_click_allowed(e.pos))]
+                    button.update(dt=dt, events=filtered_events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if not self.fruit_drawn_image:
                         if button.hovered:
                             if button.id == 'view board':
@@ -765,84 +822,89 @@ class Play_PlayMagicEventState(BaseState):
                                     option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                                     option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
                     if button.clicked and self.choosing:
-                        if not button.id == 'do nothing':
-                            self.fruit_drawn_image_props = {
-                                'x': 1080,
-                                'y': 130,
-                                'scale': 1,
-                            }
-                        def on_complete():
-                            self.parent.tween_list.clear()
-                        utils.multitween(
-                            tween_list=self.parent.tween_list,
-                            container=self.fruit_drawn_image_props,
-                            keys=['x', 'y', 'scale'],
-                            end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
-                            time=0.4,
-                            ease_type=tweencurves.easeOutQuart,
-                            on_complete=on_complete
-                        )
+                        # Tutorial: Check if left click is allowed for this button
+                        if allow_input_module is None or allow_input_module.is_left_click_allowed(pygame.mouse.get_pos()):
+                            if allow_input_module is not None:
+                                allow_input_module.consume_left_click()
+                            
+                            if not button.id == 'do nothing':
+                                self.fruit_drawn_image_props = {
+                                    'x': 1080,
+                                    'y': 130,
+                                    'scale': 1,
+                                }
+                            def on_complete():
+                                self.parent.tween_list.clear()
+                            utils.multitween(
+                                tween_list=self.parent.tween_list,
+                                container=self.fruit_drawn_image_props,
+                                keys=['x', 'y', 'scale'],
+                                end_values=[constants.canvas_width/2, constants.canvas_height/2, 2],
+                                time=0.4,
+                                ease_type=tweencurves.easeOutQuart,
+                                on_complete=on_complete
+                            )
 
-                        random.seed(self.parent.seed)
-                        
-                        if button.id == 'today fruit':
-                            # print('redraw today fruit')
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            self.card_drawn = self.parent.deck_fruit.draw_card()
-                            if self.card_drawn:
-                                old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
-                                # Delay assignment until card dismissed
-                                self.pending_assignment = {
-                                    'attr': f'day{self.parent.current_day}_fruit',
-                                    'card': self.card_drawn,
-                                    'old_fruit': old_fruit,
-                                    'append_to_deck': True,
-                                    'drawn_list': 'fruit'
-                                }
-                                self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                            random.seed(self.parent.seed)
+                            
+                            if button.id == 'today fruit':
+                                # print('redraw today fruit')
+                                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                self.card_drawn = self.parent.deck_fruit.draw_card()
+                                if self.card_drawn:
+                                    old_fruit = getattr(self.parent, f'day{self.parent.current_day}_fruit')
+                                    # Delay assignment until card dismissed
+                                    self.pending_assignment = {
+                                        'attr': f'day{self.parent.current_day}_fruit',
+                                        'card': self.card_drawn,
+                                        'old_fruit': old_fruit,
+                                        'append_to_deck': True,
+                                        'drawn_list': 'fruit'
+                                    }
+                                    self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                    self.choosing = False
+                                    self.parent.drawing_path_card = True
+                            elif button.id == 'tomorrow fruit':
+                                # print('redraw tomorrow fruit')
+                                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                self.card_drawn = self.parent.deck_fruit.draw_card()
+                                if self.card_drawn:
+                                    old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
+                                    # Delay assignment until card dismissed
+                                    self.pending_assignment = {
+                                        'attr': f'day{self.parent.current_day + 1}_fruit',
+                                        'card': self.card_drawn,
+                                        'old_fruit': old_fruit,
+                                        'append_to_deck': True,
+                                        'drawn_list': 'fruit'
+                                    }
+                                    self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                    self.choosing = False
+                                    self.parent.drawing_path_card = True
+                            elif button.id == 'seasonal fruit':
+                                # print('redraw seasonal fruit')
+                                utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                self.card_drawn = self.parent.deck_fruit.draw_card()
+                                if self.card_drawn:
+                                    old_fruit = self.parent.seasonal_fruit
+                                    # Delay assignment until card dismissed
+                                    self.pending_assignment = {
+                                        'attr': 'seasonal_fruit',
+                                        'card': self.card_drawn,
+                                        'old_fruit': old_fruit,
+                                        'append_to_deck': True,
+                                        'drawn_list': 'fruit'
+                                    }
+                                    self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
+                                    self.choosing = False
+                                    self.parent.drawing_path_card = True
+                            elif button.id == 'do nothing':
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
                                 self.choosing = False
-                                self.parent.drawing_path_card = True
-                        elif button.id == 'tomorrow fruit':
-                            # print('redraw tomorrow fruit')
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            self.card_drawn = self.parent.deck_fruit.draw_card()
-                            if self.card_drawn:
-                                old_fruit = getattr(self.parent, f'day{self.parent.current_day + 1}_fruit')
-                                # Delay assignment until card dismissed
-                                self.pending_assignment = {
-                                    'attr': f'day{self.parent.current_day + 1}_fruit',
-                                    'card': self.card_drawn,
-                                    'old_fruit': old_fruit,
-                                    'append_to_deck': True,
-                                    'drawn_list': 'fruit'
-                                }
-                                self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                                self.choosing = False
-                                self.parent.drawing_path_card = True
-                        elif button.id == 'seasonal fruit':
-                            # print('redraw seasonal fruit')
-                            utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            self.card_drawn = self.parent.deck_fruit.draw_card()
-                            if self.card_drawn:
-                                old_fruit = self.parent.seasonal_fruit
-                                # Delay assignment until card dismissed
-                                self.pending_assignment = {
-                                    'attr': 'seasonal_fruit',
-                                    'card': self.card_drawn,
-                                    'old_fruit': old_fruit,
-                                    'append_to_deck': True,
-                                    'drawn_list': 'fruit'
-                                }
-                                self.fruit_drawn_image = self.parent.cards_fruit_sprites[f"card_{self.card_drawn.card_name}"]
-                                self.choosing = False
-                                self.parent.drawing_path_card = True
-                        elif button.id == 'do nothing':
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            self.choosing = False
-                            self.played_event = True
+                                self.played_event = True
                 if self.fruit_drawn_image:
                     for event in events:
                         if event.type == pygame.KEYDOWN:
@@ -974,7 +1036,22 @@ class Play_PlayMagicEventState(BaseState):
                 #                     self.selecting_tile = utils.get_sprite(sprite_sheet=spritesheets.gui, target_sprite='cant_selecting_tile', mode='alpha')
 
                 for button in self.button_list:
-                    button.update(dt=dt, events=events)
+                    # Tutorial: Filter click events if not allowed
+                    filtered_events = events
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        filtered_events = [e for e in events if e.type != pygame.MOUSEBUTTONDOWN or 
+                                         (e.button == 1 and allow_input_module.is_left_click_allowed(e.pos))]
+                    button.update(dt=dt, events=filtered_events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if button.hovered:
                         for option in self.remove_button_option_surface_list:
                             if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
@@ -987,51 +1064,55 @@ class Play_PlayMagicEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
-                        if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
-                            if button.id == 'remove':
-                                utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
-                                if self.selected_cell is not None:
-                                    if not self.parent.game_board.board[self.selected_cell].temp:
-                                        old_path1 = ""
-                                        if self.parent.game_board.board[self.selected_cell].north:
-                                            old_path1 += "N"
-                                        if self.parent.game_board.board[self.selected_cell].west:
-                                            old_path1 += "W"
-                                        if self.parent.game_board.board[self.selected_cell].east:
-                                            old_path1 += "E"
-                                        if self.parent.game_board.board[self.selected_cell].south:
-                                            old_path1 += "S"
-                                        for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
-                                            if old_path1 in self.parent.drawn_cards_path[n].card_name:
-                                                self.parent.drawn_cards_path.pop(n)  
-                                                break
-                                    self.parent.game_board.board[self.selected_cell].north = False
-                                    self.parent.game_board.board[self.selected_cell].west = False
-                                    self.parent.game_board.board[self.selected_cell].east = False
-                                    self.parent.game_board.board[self.selected_cell].south = False
-                                    self.parent.game_board.board[self.selected_cell].path = False
-                                    self.parent.game_board.board[self.selected_cell].temp = False
-                                if self.selected_cell_2 is not None:
-                                    if not self.parent.game_board.board[self.selected_cell_2].temp:
-                                        old_path2 = ""
-                                        if self.parent.game_board.board[self.selected_cell_2].north:
-                                            old_path2 += "N"
-                                        if self.parent.game_board.board[self.selected_cell_2].west:
-                                            old_path2 += "W"
-                                        if self.parent.game_board.board[self.selected_cell_2].east:
-                                            old_path2 += "E"
-                                        if self.parent.game_board.board[self.selected_cell_2].south:
-                                            old_path2 += "S"
-                                        for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
-                                            if old_path2 in self.parent.drawn_cards_path[m].card_name:
-                                                self.parent.drawn_cards_path.pop(m)  
-                                                break
-                                    self.parent.game_board.board[self.selected_cell_2].north = False
-                                    self.parent.game_board.board[self.selected_cell_2].west = False
-                                    self.parent.game_board.board[self.selected_cell_2].east = False
-                                    self.parent.game_board.board[self.selected_cell_2].south = False
-                                    self.parent.game_board.board[self.selected_cell_2].path = False
+                        # Tutorial: Check if left click is allowed for this button
+                        if allow_input_module is None or allow_input_module.is_left_click_allowed(pygame.mouse.get_pos()):
+                            if allow_input_module is not None:
+                                allow_input_module.consume_left_click()
+                            
+                            if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
+                                if button.id == 'remove':
+                                    utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
+                                    if self.selected_cell is not None:
+                                        if not self.parent.game_board.board[self.selected_cell].temp:
+                                            old_path1 = ""
+                                            if self.parent.game_board.board[self.selected_cell].north:
+                                                old_path1 += "N"
+                                            if self.parent.game_board.board[self.selected_cell].west:
+                                                old_path1 += "W"
+                                            if self.parent.game_board.board[self.selected_cell].east:
+                                                old_path1 += "E"
+                                            if self.parent.game_board.board[self.selected_cell].south:
+                                                old_path1 += "S"
+                                            for n in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                                if old_path1 in self.parent.drawn_cards_path[n].card_name:
+                                                    self.parent.drawn_cards_path.pop(n)  
+                                                    break
+                                        self.parent.game_board.board[self.selected_cell].north = False
+                                        self.parent.game_board.board[self.selected_cell].west = False
+                                        self.parent.game_board.board[self.selected_cell].east = False
+                                        self.parent.game_board.board[self.selected_cell].south = False
+                                        self.parent.game_board.board[self.selected_cell].path = False
+                                        self.parent.game_board.board[self.selected_cell].temp = False
                                     if self.selected_cell_2 is not None:
+                                        if not self.parent.game_board.board[self.selected_cell_2].temp:
+                                            old_path2 = ""
+                                            if self.parent.game_board.board[self.selected_cell_2].north:
+                                                old_path2 += "N"
+                                            if self.parent.game_board.board[self.selected_cell_2].west:
+                                                old_path2 += "W"
+                                            if self.parent.game_board.board[self.selected_cell_2].east:
+                                                old_path2 += "E"
+                                            if self.parent.game_board.board[self.selected_cell_2].south:
+                                                old_path2 += "S"
+                                            for m in range(len(self.parent.drawn_cards_path)-1, -1, -1):  
+                                                if old_path2 in self.parent.drawn_cards_path[m].card_name:
+                                                    self.parent.drawn_cards_path.pop(m)  
+                                                    break
+                                        self.parent.game_board.board[self.selected_cell_2].north = False
+                                        self.parent.game_board.board[self.selected_cell_2].west = False
+                                        self.parent.game_board.board[self.selected_cell_2].east = False
+                                        self.parent.game_board.board[self.selected_cell_2].south = False
+                                        self.parent.game_board.board[self.selected_cell_2].path = False
                                         self.parent.game_board.board[self.selected_cell_2].temp = False
                                 # print(self.parent.drawn_cards_path)
                                 self.played_event = True
@@ -1040,7 +1121,22 @@ class Play_PlayMagicEventState(BaseState):
             elif self.parent.current_event == 'event_reveal':
                 # print('event_reveal')
                 for button in self.button_list:
-                    button.update(dt=dt, events=events)
+                    # Tutorial: Filter click events if not allowed
+                    filtered_events = events
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        filtered_events = [e for e in events if e.type != pygame.MOUSEBUTTONDOWN or 
+                                         (e.button == 1 and allow_input_module.is_left_click_allowed(e.pos))]
+                    button.update(dt=dt, events=filtered_events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None and button.id not in ['view board']:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if button.hovered:
                         if button.id == 'view board':
                                 self.choosing = False
@@ -1056,39 +1152,44 @@ class Play_PlayMagicEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
-                        if button.id == 'reveal path':
-                            self.choosing = False
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
-                            for card in self.parent.revealed_path:
-                                if "strike_" in card.card_name:
-                                    card.card_name = card.card_name.replace("strike_", "")
-                            # print(self.parent.revealed_path)
-                            self.played_event = True
-                        if button.id == 'reveal event':
-                            self.choosing = False
-                            utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                            self.parent.revealed_event = self.parent.deck_event.cards[-4:]
-                            # print(self.parent.revealed_event)
-                            # Update buttons for revealed event cards
-                            # Remove existing revealed event buttons
-                            self.parent.button_list = [btn for btn in self.parent.button_list if not btn.id.startswith('revealed_event_individual_')]
+                        # Tutorial: Check if left click is allowed for this button
+                        if allow_input_module is None or allow_input_module.is_left_click_allowed(pygame.mouse.get_pos()):
+                            if allow_input_module is not None:
+                                allow_input_module.consume_left_click()
                             
-                            # Add new buttons for each revealed event card with larger hitboxes to eliminate gaps
-                            for i, card in enumerate(self.parent.revealed_event):
-                                # Create a larger invisible surface for better hover detection
-                                button_surface = pygame.Surface((self.parent.revealed_event_button_width, self.parent.revealed_event_button_height), pygame.SRCALPHA)
-                                button_x = constants.canvas_width - self.parent.box_width - self.parent.revealed_event_button_width
-                                button_y = self.parent.revealed_event_button_y_base + i * self.parent.revealed_event_button_y_spacing
-                                self.parent.button_list.append(Button(
-                                    game=self.parent.game,
-                                    id=f'revealed_event_individual_{i}',
-                                    surface=button_surface,  # Use larger invisible surface for hitbox
-                                    pos=(button_x, button_y),
-                                    pos_anchor='topleft',
-                                    hover_cursor=cursors.hand,
-                                ))
-                            self.played_event = True
+                            if button.id == 'reveal path':
+                                self.choosing = False
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
+                                for card in self.parent.revealed_path:
+                                    if "strike_" in card.card_name:
+                                        card.card_name = card.card_name.replace("strike_", "")
+                                # print(self.parent.revealed_path)
+                                self.played_event = True
+                            if button.id == 'reveal event':
+                                self.choosing = False
+                                utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
+                                self.parent.revealed_event = self.parent.deck_event.cards[-4:]
+                                # print(self.parent.revealed_event)
+                                # Update buttons for revealed event cards
+                                # Remove existing revealed event buttons
+                                self.parent.button_list = [btn for btn in self.parent.button_list if not btn.id.startswith('revealed_event_individual_')]
+                                
+                                # Add new buttons for each revealed event card with larger hitboxes to eliminate gaps
+                                for i, card in enumerate(self.parent.revealed_event):
+                                    # Create a larger invisible surface for better hover detection
+                                    button_surface = pygame.Surface((self.parent.revealed_event_button_width, self.parent.revealed_event_button_height), pygame.SRCALPHA)
+                                    button_x = constants.canvas_width - self.parent.box_width - self.parent.revealed_event_button_width
+                                    button_y = self.parent.revealed_event_button_y_base + i * self.parent.revealed_event_button_y_spacing
+                                    self.parent.button_list.append(Button(
+                                        game=self.parent.game,
+                                        id=f'revealed_event_individual_{i}',
+                                        surface=button_surface,  # Use larger invisible surface for hitbox
+                                        pos=(button_x, button_y),
+                                        pos_anchor='topleft',
+                                        hover_cursor=cursors.hand,
+                                    ))
+                                self.played_event = True
                 # self.played_event = True
 
             elif self.parent.current_event == 'event_swap':
@@ -1356,7 +1457,16 @@ class Play_PlayMagicEventState(BaseState):
                     scaled_remove_button = pygame.transform.scale_by(surface=option['surface1'], factor=option['scale'])
                 utils.blit(dest=canvas, source=scaled_remove_button, pos=(constants.canvas_width/2, 696), pos_anchor=posanchors.center)
 
-        if self.parent.current_event == 'event_move' and self.shown_event:
+        if self.parent.current_event == 'event_move':
+            utils.draw_rect(
+                dest=canvas,
+                size=(self.parent.event_move_control_hint.get_width() + 20, 40),
+                pos=(constants.canvas_width//2, 0),
+                pos_anchor=posanchors.midtop,
+                color=(*colors.white, 150),
+                inner_border_width=4,
+                inner_border_color=colors.mono_240,
+            ) 
             utils.blit(
                 dest=canvas,
                 source=self.parent.event_move_control_hint,

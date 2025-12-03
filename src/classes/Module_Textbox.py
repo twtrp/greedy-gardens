@@ -6,6 +6,7 @@ class Module_Textbox(BaseTutorialModule):
             self,
             content: list[pygame.Surface],
             bg: bool = True,
+            bg_opacity: int = 175,
             align: str = 'center',
             pos: tuple = (constants.canvas_width // 2, constants.canvas_height // 2),
             pos_anchor: str = posanchors.center,
@@ -18,6 +19,7 @@ class Module_Textbox(BaseTutorialModule):
         
         self.content = content
         self.bg = bg
+        self.bg_opacity = bg_opacity
         self.align = align
         self.pos = pos
         self.pos_anchor = pos_anchor
@@ -39,7 +41,7 @@ class Module_Textbox(BaseTutorialModule):
                 size=(self.surface.get_width(), self.surface.get_height()),
                 pos=(0, 0),
                 pos_anchor=posanchors.topleft,
-                color=(*colors.mono_50, 150),
+                color=(*colors.mono_50, self.bg_opacity),
                 inner_border_width=3
             )
         current_y = self.padding_y

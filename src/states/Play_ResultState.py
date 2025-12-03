@@ -19,70 +19,78 @@ class Play_ResultStage(BaseState):
         self.new_record = False
         self.setted_seed= self.parent.set_seed
         
+        # Check if this is a tutorial - don't save tutorial results
+        is_tutorial = self.parent.__class__.__name__ == 'Tutorial_PlayState'
+        
         # Ensure data directory exists
         if not os.path.exists('data'):
             os.makedirs('data')
         
-        try:
-            sql_conn = sqlite3.connect('data/records.sqlite')
-            sql_cursor = sql_conn.cursor()
-            
-            # Create table if it doesn't exist
-            sql_cursor.execute('''
-                CREATE TABLE IF NOT EXISTS records (
-                    score INTEGER,
-                    seed INTEGER,
-                    seed_type TEXT
-                )
-            ''')
-            sql_conn.commit()
-            
-            # Get current high score and check for new record
-            if self.setted_seed:
-                # Get current high score for ALL set seeds (global leaderboard)
-                sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Set Seed"')
-                result = sql_cursor.fetchone()
-                current_high_score = result[0] if result[0] is not None else 0
+        if not is_tutorial:
+            try:
+                sql_conn = sqlite3.connect('data/records.sqlite')
+                sql_cursor = sql_conn.cursor()
                 
-                # Check if this is a new record for set seeds globally
-                if self.parent.total_score > current_high_score:
-                    self.high_score = self.parent.total_score
-                    self.new_record = True
-                else:
-                    self.high_score = current_high_score
-                    self.new_record = False
-                    
-                # Insert the new score
-                sql_cursor.execute(
-                    'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
-                    (self.parent.total_score, self.parent.seed, 'Set Seed')
-                )
-            else:
-                # Get current high score for random seeds
-                sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Random Seed"')
-                result = sql_cursor.fetchone()
-                current_high_score = result[0] if result[0] is not None else 0
+                # Create table if it doesn't exist
+                sql_cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS records (
+                        score INTEGER,
+                        seed INTEGER,
+                        seed_type TEXT
+                    )
+                ''')
+                sql_conn.commit()
                 
-                # Check if this is a new record for random seeds
-                if self.parent.total_score > current_high_score:
-                    self.high_score = self.parent.total_score
-                    self.new_record = True
-                else:
-                    self.high_score = current_high_score
-                    self.new_record = False
+                # Get current high score and check for new record
+                if self.setted_seed:
+                    # Get current high score for ALL set seeds (global leaderboard)
+                    sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Set Seed"')
+                    result = sql_cursor.fetchone()
+                    current_high_score = result[0] if result[0] is not None else 0
                     
-                # Insert the new score
-                sql_cursor.execute(
-                    'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
-                    (self.parent.total_score, self.parent.seed, 'Random Seed')
-                )
+                    # Check if this is a new record for set seeds globally
+                    if self.parent.total_score > current_high_score:
+                        self.high_score = self.parent.total_score
+                        self.new_record = True
+                    else:
+                        self.high_score = current_high_score
+                        self.new_record = False
+                        
+                    # Insert the new score
+                    sql_cursor.execute(
+                        'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
+                        (self.parent.total_score, self.parent.seed, 'Set Seed')
+                    )
+                else:
+                    # Get current high score for random seeds
+                    sql_cursor.execute('SELECT MAX(score) FROM records WHERE seed_type = "Random Seed"')
+                    result = sql_cursor.fetchone()
+                    current_high_score = result[0] if result[0] is not None else 0
+                    
+                    # Check if this is a new record for random seeds
+                    if self.parent.total_score > current_high_score:
+                        self.high_score = self.parent.total_score
+                        self.new_record = True
+                    else:
+                        self.high_score = current_high_score
+                        self.new_record = False
+                        
+                    # Insert the new score
+                    sql_cursor.execute(
+                        'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
+                        (self.parent.total_score, self.parent.seed, 'Random Seed')
+                    )
 
-            sql_conn.commit()
-            sql_cursor.close()
-            sql_conn.close()
-        except Exception as e:
-            print(f"Error with records database: {e}")
-            # Set default values if database fails
+                sql_conn.commit()
+                sql_cursor.close()
+                sql_conn.close()
+            except Exception as e:
+                print(f"Error with records database: {e}")
+                # Set default values if database fails
+                self.high_score = self.parent.total_score
+                self.new_record = False
+        else:
+            # Tutorial mode - don't save, just show current score as high score
             self.high_score = self.parent.total_score
             self.new_record = False
 
@@ -90,7 +98,9 @@ class Play_ResultStage(BaseState):
         self.button_list = []
         
         self.final_results_text = utils.get_text(text='Final Results', font=fonts.wacky_pixels, size='medium', color=colors.white)
-        if self.setted_seed:
+        if is_tutorial:
+            self.seed_text = utils.get_text(text=f'Tutorial Mode', font=fonts.wacky_pixels, size='smaller', color=colors.white)
+        elif self.setted_seed:
             self.seed_text = utils.get_text(text=f'Set Seed', font=fonts.wacky_pixels, size='smaller', color=colors.white)
         elif not self.setted_seed:
             self.seed_text = utils.get_text(text=f'Random Seed', font=fonts.wacky_pixels, size='smaller', color=colors.white)

@@ -16,7 +16,7 @@ class Module_ClickToContinue(BaseTutorialModule):
             text=text,
             font=fonts.lf2,
             size='small',
-            color=colors.white
+            color=colors.yellow_light
         )
         self.pos = pos
         self.pos_anchor = pos_anchor
@@ -24,7 +24,7 @@ class Module_ClickToContinue(BaseTutorialModule):
     
     def _update_inject(self, dt, events):
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Only left click
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
                 if self.tutorial_state is not None and not self.tutorial_state.paused:
                     self.tutorial_state.current_step += 1
 

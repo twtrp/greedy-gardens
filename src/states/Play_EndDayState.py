@@ -289,7 +289,7 @@ class Play_EndDayState(BaseState):
             pos=(0, 0),
             pos_anchor='topleft'
         ))
-        self.continue_text = utils.get_text(text="Click anywhere to continue", font=fonts.lf2, size='small', color=colors.yellow_light)
+        self.continue_text = utils.get_text(text="< Click anywhere to continue >", font=fonts.lf2, size='small', color=colors.yellow_light)
         
     def update(self, dt, events):
         # Update animation timer for sequential collection

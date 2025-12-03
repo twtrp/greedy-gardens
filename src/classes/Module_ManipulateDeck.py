@@ -67,5 +67,3 @@ class Module_ManipulateDeck(BaseTutorialModule):
         # Remove the card from its current position and add it to the top
         card = deck.cards.pop(card_index)
         deck.cards.append(card)
-        
-        print(f"Moved '{self.card_name}' to top of {self.deck_type} deck")

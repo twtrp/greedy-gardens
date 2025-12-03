@@ -2,7 +2,7 @@ from src.library.essentials import *
 from src.template.BaseState import BaseState
 from src.classes.Button import Button
 from src.states.PlayState import PlayState
-from src.states.Menu_TutorialState import Menu_TutorialState
+from src.states.Tutorial_PlayState import Tutorial_PlayState
 
 class Menu_PlayState(BaseState):
     def __init__(self, game, parent, stack):
@@ -51,7 +51,7 @@ class Menu_PlayState(BaseState):
             },
             {
                 'id': 'tutorial',
-                'text': 'Tutorial',
+                'text': 'Play tutorial',
             },
             {
                 'id': 'back',
@@ -276,8 +276,21 @@ class Menu_PlayState(BaseState):
                             ease_type=tweencurves.easeOutQuint
                         ).on_complete(on_complete))
                     elif button.id == 'tutorial':
-                        utils.sound_play(sound=sfx.select, volume=self.game.sfx_volume)
-                        Menu_TutorialState(game=self.game, parent=self.parent, stack=self.parent.substate_stack).enter_state()
+                        self.game.music_channel.fadeout(1500)
+                        utils.sound_play(sound=sfx.woop_in, volume=self.game.sfx_volume)
+                        self.button_list.clear()
+                        self.transitioning = True
+                        self.freeze_frame = self.game.canvas.copy()
+                        def on_complete():
+                            self.parent.tween_list.clear()
+                            Tutorial_PlayState(game=self.game, parent=self.game, stack=self.game.state_stack, seed=878495).enter_state()
+                        self.parent.tween_list.append(tween.to(
+                            container=self,
+                            key='mask_circle_radius',
+                            end_value=0,
+                            time=1,
+                            ease_type=tweencurves.easeOutQuint
+                        ).on_complete(on_complete))
                     elif button.id == 'textbox':
                         self.textbox_mode = 'active'
                         # reset backspace timers when activating textbox

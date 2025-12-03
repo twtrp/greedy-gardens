@@ -252,6 +252,12 @@ class Play_PlayEventState(BaseState):
         self.path_ES_image = self.parent.path_ES_image
 
     def update(self, dt, events):
+        # Get allow_input_module for button state clearing
+        allow_input_module = None
+        get_module_func = getattr(self.parent, '_get_active_allow_input_module', None)
+        if get_module_func is not None:
+            allow_input_module = get_module_func()
+        
         # Each event
         if not self.played_event:
             if self.parent.current_event == 'event_free':
@@ -261,18 +267,34 @@ class Play_PlayEventState(BaseState):
                 for event in events:
                     if event.type == pygame.KEYDOWN:
                         if (event.key == pygame.K_w or event.key == pygame.K_UP) and self.choice > 0:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice -= 1
+                            # Tutorial: Check if scrolling up is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_up_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_up()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice -= 1
                         elif (event.key == pygame.K_s or event.key == pygame.K_DOWN) and self.choice < 5:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice += 1
+                            # Tutorial: Check if scrolling down is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_down_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_down()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice += 1
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 4 and self.choice > 0:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice -= 1
+                            # Tutorial: Check if scrolling up is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_up_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_up()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice -= 1
                         elif event.button == 5 and self.choice < 5:
-                            utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
-                            self.choice += 1
+                            # Tutorial: Check if scrolling down is allowed
+                            if allow_input_module is None or allow_input_module.is_scroll_down_allowed():
+                                if allow_input_module is not None:
+                                    allow_input_module.consume_scroll_down()
+                                utils.sound_play(sound=sfx.scroll, volume=self.game.sfx_volume*0.35)
+                                self.choice += 1
 
                 self.cell_pos = -1
                 for button in self.parent.grid_buttons:
@@ -452,6 +474,16 @@ class Play_PlayEventState(BaseState):
                 # print('event_point')
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if button.hovered:
                         if button.id == 'view board':
                             self.choosing = False
@@ -468,6 +500,10 @@ class Play_PlayEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
+                        # Tutorial: Consume left click when button is clicked
+                        if allow_input_module is not None and allow_input_module.allow_left_click_rect is not None:
+                            allow_input_module.consume_left_click()
+                        
                         if button.id == 'add today':
                             # print(f'adding score day {self.parent.current_day}')
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
@@ -489,6 +525,16 @@ class Play_PlayEventState(BaseState):
                 # print('event_redraw')
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if not self.fruit_drawn_image:
                         if button.hovered:
                             if button.id == 'view board':
@@ -507,6 +553,10 @@ class Play_PlayEventState(BaseState):
                                     option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                                     option['scale_fruit'] = max(option['scale_fruit'] - 7.2*dt, 3.0)
                     if button.clicked and self.choosing:
+                        # Tutorial: Consume left click when button is clicked
+                        if allow_input_module is not None and allow_input_module.allow_left_click_rect is not None:
+                            allow_input_module.consume_left_click()
+                        
                         if not button.id == 'do nothing':
                             self.fruit_drawn_image_props = {
                                 'x': 1080,
@@ -686,6 +736,10 @@ class Play_PlayEventState(BaseState):
                     if button.clicked:
                         if (self.selected_cell is not None) or (self.selected_cell_2 is not None):
                             if button.id == 'remove':
+                                # Tutorial: Consume left click when button is clicked
+                                if allow_input_module is not None and allow_input_module.allow_left_click_rect is not None:
+                                    allow_input_module.consume_left_click()
+                                
                                 utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                 if self.selected_cell is not None:
                                     if not self.parent.game_board.board[self.selected_cell].temp:
@@ -738,6 +792,16 @@ class Play_PlayEventState(BaseState):
                 # print('event_reveal')
                 for button in self.button_list:
                     button.update(dt=dt, events=events)
+                    
+                    # Tutorial: Clear button states if not allowed
+                    if allow_input_module is not None:
+                        mouse_pos = pygame.mouse.get_pos()
+                        # Clear if button is hovered but not allowed
+                        if button.hovered and not allow_input_module.is_left_click_allowed(mouse_pos):
+                            button.hovered = False
+                            button.pressed = False
+                            button.clicked = False
+                    
                     if button.hovered:
                         if button.id == 'view board':
                                 self.choosing = False
@@ -753,6 +817,10 @@ class Play_PlayEventState(BaseState):
                             if button.id == option['id']:
                                 option['scale'] = max(option['scale'] - 2.4*dt, 1.0)
                     if button.clicked:
+                        # Tutorial: Consume left click when button is clicked
+                        if allow_input_module is not None and allow_input_module.allow_left_click_rect is not None:
+                            allow_input_module.consume_left_click()
+                        
                         if button.id == 'reveal path':
                             self.choosing = False
                             utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)

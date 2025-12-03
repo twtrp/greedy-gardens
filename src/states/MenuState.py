@@ -64,7 +64,7 @@ class MenuState(BaseState):
             pos_anchor=posanchors.midright,
         )
 
-        self.my_logo = utils.get_image(dir=dir.branding, name='ttewtor_logo.png', mode='colorkey')
+        self.my_logo = utils.get_image(dir=dir.branding, name='my_logo.png', mode='colorkey')
         self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
         utils.blit(
             dest=self.surface_logo,
@@ -185,7 +185,7 @@ class MenuState(BaseState):
         )
         
         self.copyright_text = utils.get_text(
-            text='(c) 2025 ttewtor',
+            text='(c) 2025 BytePunch',
             font=fonts.mago1,
             size='tiny',
             color=colors.white, 

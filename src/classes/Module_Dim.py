@@ -10,12 +10,14 @@ class Module_Dim(BaseTutorialModule):
             cutouts: list = [],
             fade_duration: int = 300,
             cutout_fade_duration: int = 0,
+            opacity : int = 175
         ):
         super().__init__(fade_duration=fade_duration)
         
         self.pos = (0, 0)
         self.pos_anchor = posanchors.topleft
         self.cutouts = cutouts
+        self.opacity = opacity
         
         # Separate fade tracking for cutouts
         self.cutout_fade_duration = cutout_fade_duration
@@ -28,7 +30,7 @@ class Module_Dim(BaseTutorialModule):
             size=(constants.canvas_width, constants.canvas_height),
             flags=pygame.SRCALPHA
         )
-        self.dim_surface.fill((*colors.black, 150))
+        self.dim_surface.fill((*colors.black, self.opacity))
         
         # Cutout surface (separate)
         self.cutout_surface = pygame.Surface(

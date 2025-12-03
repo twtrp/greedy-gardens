@@ -246,7 +246,7 @@ class Menu_CreditsState(BaseState):
 
     def _load_graphics(self):
         """Load all graphics assets"""
-        self.my_logo = utils.get_image(dir=dir.branding, name='ttewtor_logo.png', mode='colorkey')
+        self.my_logo = utils.get_image(dir=dir.branding, name='my_logo.png', mode='colorkey')
         self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
 
         self.team_namsom_logo_long = utils.get_image(dir=dir.branding, name='team_namsom_logo_long.png', mode='colorkey')
@@ -292,19 +292,23 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'image': self.my_logo,
-                'padding_bottom': -15
+                'padding_bottom': 340
             },
-            {
-                'texts': {
-                    'text': ['<itch.io>', ' ','<Linktree>'],
-                    'size': 'small',
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                    'link': ['https://ttewtor.short.gy/itchio', None, 'https://ttewtor.short.gy/linktree']
-                },
-                'inline': True,
-                'padding_bottom': 340,
-            },
+            # {
+            #     'image': self.my_logo,
+            #     'padding_bottom': -15
+            # },
+            # {
+            #     'texts': {
+            #         'text': ['<itch.io>', ' ','<Linktree>'],
+            #         'size': 'small',
+            #         'font': fonts.mago1,
+            #         'long_shadow': False,
+            #         'link': ['https://ttewtor.short.gy/itchio', None, 'https://ttewtor.short.gy/linktree']
+            #     },
+            #     'inline': True,
+            #     'padding_bottom': 340,
+            # },
 
 
             {
@@ -359,7 +363,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Piraboon (ttewtor) Piyawarapong'],
+                    'text': ['BytePunch'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -452,7 +456,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Visual Consultant'],
+                    'text': ['Visuals Consultant'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -503,7 +507,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Alison (dmx)', 'noellnon'],
+                    'text': ['Alison (dmx)', 'noell'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -524,12 +528,13 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Ranviee', '<GitHub>'],
+                    # 'text': ['Ranviee', '<GitHub>'],
+                    'text': ['Ranviee0'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
-                    'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
+                    # 'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
                 },
                 'inline': True,
                 'padding_bottom': 50
@@ -576,6 +581,27 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
+                    'text': ['Supportive gogh friends'],
+                    'size': 'smaller',
+                    'color': colors.yellow_light,
+                    'font': fonts.wacky_pixels,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
+            },
+            {
+                'texts': {
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'KuroLeo', 'madibun', 'meymey/mymyz', 'Mroll', 'nashidrop', 'ReiYurei', 'Song', 'Yuoko', 'Zehn Zedel'],
+                    'size': 'small',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                    'padding': 15,
+                },
+                'padding_bottom': 50
+            },
+            {
+                'texts': {
                     'text': ['Being cute'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
@@ -587,7 +613,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['noellnon'],
+                    'text': ['noell'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,

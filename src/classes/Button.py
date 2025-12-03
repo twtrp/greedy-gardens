@@ -155,6 +155,16 @@ class Button:
         else:
             self.pressed = False
             self.clicked = False
+    
+    def simulate_click(self):
+        """
+        Simulate a button click. Safe API for programmatic button triggering.
+        Sets the button state as if it was hovered and clicked by the user.
+        """
+        if self.enable_click:
+            self.hovered = True
+            self.pressed = True
+            self.clicked = True
 
     def render(self, canvas):
         # Draw the button on the provided canvas (canvas-space). Use
