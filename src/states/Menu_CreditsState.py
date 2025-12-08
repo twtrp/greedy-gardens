@@ -353,7 +353,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Lead Designer and Lead Programmer'],
+                    'text': ['Lead Designer and Programmer'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -363,7 +363,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['BytePunch'],
+                    'text': ['BytePunchDev'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -394,7 +394,17 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 300
+                'padding_bottom': 40
+            },
+            {
+                'texts': {
+                    'text': ['Core Programmers'],
+                    'size': 'smaller',
+                    'color': colors.yellow_light,
+                    'font': fonts.wacky_pixels,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 20
             },
 
 

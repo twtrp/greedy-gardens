@@ -232,7 +232,7 @@ def create_release_folder(version: str, built_name: str, built_path: Path) -> Pa
         shutil.copytree(built_path, dst_app)
         log("✅ Copied .app bundle")
     else:
-        dst_bin = release_folder / f"PlayGreedyGardens-v{version}{built_path.suffix}"
+        dst_bin = release_folder / built_path.name
         shutil.copy2(built_path, dst_bin)
         log("✅ Copied executable")
 

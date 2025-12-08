@@ -185,7 +185,7 @@ class MenuState(BaseState):
         )
         
         self.copyright_text = utils.get_text(
-            text='(c) 2025 BytePunch',
+            text='(c) 2025 BytePunchDev',
             font=fonts.mago1,
             size='tiny',
             color=colors.white, 
