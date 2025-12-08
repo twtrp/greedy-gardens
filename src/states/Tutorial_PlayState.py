@@ -408,32 +408,6 @@ class Tutorial_PlayState(PlayState):
             ],
             [
                 Module_Dim(
-                    cutouts=[(1016, 475, 1270, 709)],
-                ),
-                Module_Arrow(
-                    pos=(1010, 592),
-                    direction='right',
-                ),
-                Module_Textbox(
-                    content=[
-                        utils.get_multicolor_text(
-                            texts=[
-                                ('Magic fruits ', colors.yellow_light),
-                                ('will be explained later...', colors.white),
-                            ],
-                            font=fonts.wacky_pixels,
-                            size='tiny',
-                        ),
-                    ],
-                    bg=False,
-                    align='right',
-                    pos=(945, 592),
-                    pos_anchor=posanchors.midright,
-                ),
-                Module_ClickToContinue(tutorial_state=self)
-            ],
-            [
-                Module_Dim(
                     cutouts=[(12, 54, 255, 148)],
                 ),
                 Module_Textbox(
@@ -1657,7 +1631,13 @@ class Tutorial_PlayState(PlayState):
                     pos_anchor=posanchors.midbottom,
                 ),
                 Module_AllowInput(
-                    allow_draw_card=4,
+                    allow_draw_card=1,
+                    tutorial_state=self
+                ),
+            ],
+            [
+                Module_AllowInput(
+                    allow_draw_card=3,
                     tutorial_state=self
                 ),
             ],
