@@ -339,7 +339,7 @@ class Menu_CreditsState(BaseState):
 
             {
                 'texts': {
-                    'text': ['Originally a college project by'],
+                    'text': ['Based a university prototype by'],
                     'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
@@ -353,7 +353,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Lead Designer and Programmer'],
+                    'text': ['Lead Designer and Programmer, Current Development'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -373,7 +373,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Core Programmers'],
+                    'text': ['Prototype Contributions'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -394,17 +394,7 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 40
-            },
-            {
-                'texts': {
-                    'text': ['Core Programmers'],
-                    'size': 'smaller',
-                    'color': colors.yellow_light,
-                    'font': fonts.wacky_pixels,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 20
+                'padding_bottom': 310
             },
 
 
@@ -430,7 +420,7 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
-                'padding_bottom': 90
+                'padding_bottom': 100
             },
 
 
@@ -446,28 +436,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Visuals Consultant'],
-                    'size': 'smaller',
-                    'color': colors.yellow_light,
-                    'font': fonts.wacky_pixels,
-                    'long_shadow': False,
-                    'padding': 10,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Alison (dmx)'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 50
-            },
-            {
-                'texts': {
-                    'text': ['Windows Playtester'],
+                    'text': ['Windows Playtesters'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -477,11 +446,12 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['promptnut no.1 player'],
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'meimei/mymyz', 'Mroll', 'promptnut no.1 player', 'ReiYurei', 'Zehn Zedel'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'padding': 15,
                 },
                 'padding_bottom': 50
             },
@@ -497,7 +467,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Alison (dmx)', 'Noell'],
+                    'text': ['Alison (dmx)', 'Liew', 'Noell'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -508,7 +478,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Linux Playtester'],
+                    'text': ['Linux Playtesters'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -519,14 +489,14 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     # 'text': ['Ranviee', '<GitHub>'],
-                    'text': ['Ranviee0'],
+                    'text': ['Ranviee', 'Yuoko/FXR'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
+                    'padding': 15,
                     # 'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
                 },
-                'inline': True,
                 'padding_bottom': 50
             },
             {
@@ -581,7 +551,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'KuroLeo', 'madibun', 'meimei/mymyz', 'Mroll', 'nashidrop', 'ReiYurei', 'Song', 'Yuoko', 'Zehn Zedel'],
+                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Song'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
