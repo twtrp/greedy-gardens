@@ -55,22 +55,22 @@ class MenuState(BaseState):
         self.surface_logo = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
         self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
 
-        self.team_namsom_logo = utils.get_image(dir=dir.branding, name='team_namsom_logo.png', mode='colorkey')
-        self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=5)
-        utils.blit(
-            dest=self.surface_logo,
-            source=self.team_namsom_logo,
-            pos=(self.surface_logo.get_width()/2 - 70, self.surface_logo.get_height()/2),
-            pos_anchor=posanchors.midright,
-        )
+        # self.team_namsom_logo = utils.get_image(dir=dir.branding, name='team_namsom_logo.png', mode='colorkey')
+        # self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=5)
+        # utils.blit(
+        #     dest=self.surface_logo,
+        #     source=self.team_namsom_logo,
+        #     pos=(self.surface_logo.get_width()/2 - 70, self.surface_logo.get_height()/2),
+        #     pos_anchor=posanchors.midright,
+        # )
 
         self.my_logo = utils.get_image(dir=dir.branding, name='my_logo.png', mode='colorkey')
-        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
+        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=4)
         utils.blit(
             dest=self.surface_logo,
             source=self.my_logo,
-            pos=(self.surface_logo.get_width()/2 + 10, self.surface_logo.get_height()/2),
-            pos_anchor=posanchors.midleft,
+            pos=(self.surface_logo.get_width()/2, self.surface_logo.get_height()/2),
+            pos_anchor=posanchors.center,
         )
 
         # text = utils.get_text(

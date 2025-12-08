@@ -353,7 +353,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Lead Designer and Programmer'],
+                    'text': ['Lead Designer and Lead Programmer'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -389,26 +389,6 @@ class Menu_CreditsState(BaseState):
                         'Napat Ariyapattanaporn',
                     ],
                     'padding': 15,
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 40
-            },
-            {
-                'texts': {
-                    'text': ['Development Pattern Designer'],
-                    'size': 'smaller',
-                    'color': colors.yellow_light,
-                    'font': fonts.wacky_pixels,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Teetawat Bussabarati'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -591,7 +571,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'KuroLeo', 'madibun', 'meymey/mymyz', 'Mroll', 'nashidrop', 'ReiYurei', 'Song', 'Yuoko', 'Zehn Zedel'],
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'KuroLeo', 'madibun', 'meimei/mymyz', 'Mroll', 'nashidrop', 'ReiYurei', 'Song', 'Yuoko', 'Zehn Zedel'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
