@@ -2438,7 +2438,7 @@ class Tutorial_PlayState(PlayState):
                                 ('Quit the tutorial by pressing ', colors.white),
                                 ('ESC', colors.yellow_light),
                                 ('/', colors.white),
-                                ('Middle mouse', colors.yellow_light),
+                                ('Middle mouse ', colors.yellow_light),
                                 ('then ', colors.white),
                                 ('Exit', colors.yellow_light),
                                 (',', colors.white),

@@ -247,7 +247,7 @@ class Menu_CreditsState(BaseState):
     def _load_graphics(self):
         """Load all graphics assets"""
         self.my_logo = utils.get_image(dir=dir.branding, name='my_logo.png', mode='colorkey')
-        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
+        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=4)
 
         self.team_namsom_logo_long = utils.get_image(dir=dir.branding, name='team_namsom_logo_long.png', mode='colorkey')
         self.team_namsom_logo_long = pygame.transform.scale_by(surface=self.team_namsom_logo_long, factor=4)
@@ -278,7 +278,7 @@ class Menu_CreditsState(BaseState):
                     'size': 'large',
                     'padding': 0,
                 },
-                'padding_top': 200,
+                'padding_top': 180,
                 'padding_bottom': 50
             },
             {
@@ -288,11 +288,11 @@ class Menu_CreditsState(BaseState):
                     'size': 'small',
                     'padding': 0
                 },
-                'padding_bottom': 70
+                'padding_bottom': 100
             },
             {
                 'image': self.my_logo,
-                'padding_bottom': 340
+                'padding_bottom': 320
             },
             # {
             #     'image': self.my_logo,
@@ -507,7 +507,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Alison (dmx)', 'noell'],
+                    'text': ['Alison (dmx)', 'Noell'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -613,7 +613,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['noell'],
+                    'text': ['Noell'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
