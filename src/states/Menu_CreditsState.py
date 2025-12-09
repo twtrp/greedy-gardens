@@ -551,7 +551,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Riri', 'Sabrinoy/Brina', 'Song'],
+                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Sabrinoy/Brina', 'Song'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -764,7 +764,7 @@ class Menu_CreditsState(BaseState):
                         ['Cool Boy Zone! - Wacky Pixels', '<itch.io>'],
                         ['Fekete_Tamas - Windows', '<itch.io>'],
                         ['Nimble Beasts - magofont1', '<itch.io>'],
-                        ['Lazy Fox - LazyFox pixel font 7', '<itch.io>'],
+                        ['Andrew Tyler - Minecraftia', '<dafont.com>'],
                     ],
                     'size': [
                         ['small', 'small'],
@@ -779,7 +779,7 @@ class Menu_CreditsState(BaseState):
                         [fonts.wacky_pixels, fonts.wacky_pixels],
                         [fonts.windows, fonts.windows],
                         [fonts.mago1, fonts.mago1],
-                        [fonts.lf7, fonts.lf7],
+                        [fonts.minecraftia, fonts.minecraftia],
                     ],
                     'long_shadow': False,
                     'link': [
@@ -787,7 +787,7 @@ class Menu_CreditsState(BaseState):
                         [None, 'https://3d.itch.io/fonts'],
                         [None, 'https://www.dafont.com/windows-2.font'],
                         [None, 'https://nimblebeastscollective.itch.io/magosfonts'],
-                        [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
+                        [None, 'https://www.dafont.com/minecraftia.font'],
                     ],
                     'padding': 20
                 },
