@@ -446,7 +446,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'meimei/mymyz', 'Mroll', 'promptnut no.1 player', 'ReiYurei', 'Zehn Zedel'],
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'meimei/mymyz', 'Mroll', 'promptnut no.1', 'ReiYurei', 'Zehn Zedel'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -551,7 +551,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Song'],
+                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Riri', 'Sabrinoy/Brina', 'Song'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
