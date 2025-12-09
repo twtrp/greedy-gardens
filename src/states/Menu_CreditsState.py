@@ -277,6 +277,7 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.wacky_pixels,
                     'size': 'large',
                     'padding': 0,
+                    'outline': True,
                 },
                 'padding_top': 180,
                 'padding_bottom': 50
@@ -286,7 +287,8 @@ class Menu_CreditsState(BaseState):
                     'text': ['made with love by'],
                     'font': fonts.wacky_pixels,
                     'size': 'small',
-                    'padding': 0
+                    'padding': 0,
+                    'outline': True,
                 },
                 'padding_bottom': 100
             },
@@ -489,7 +491,7 @@ class Menu_CreditsState(BaseState):
             {
                 'texts': {
                     # 'text': ['Ranviee', '<GitHub>'],
-                    'text': ['Ranviee', 'Yuoko/FXR'],
+                    'text': ['Ranviee'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -551,7 +553,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Sabrinoy/Brina', 'Song'],
+                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Sabrinoy/Brina', 'Song', 'Yuoko/FXR'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -762,8 +764,9 @@ class Menu_CreditsState(BaseState):
                     'text': [
                         ['Lazy Fox - LazyFox pixel font 2', '<itch.io>'],
                         ['Cool Boy Zone! - Wacky Pixels', '<itch.io>'],
-                        ['Fekete_Tamas - Windows', '<itch.io>'],
                         ['Nimble Beasts - magofont1', '<itch.io>'],
+                        ['Zacchary Dempsey-Plante - Pixellari', '<dafont.com>'],
+                        ['Fekete_Tamas - Windows', '<dafont.com>'],
                         ['Andrew Tyler - Minecraftia', '<dafont.com>'],
                     ],
                     'size': [
@@ -772,21 +775,24 @@ class Menu_CreditsState(BaseState):
                         ['small', 'small'],
                         ['small', 'small'],
                         ['small', 'small'],
+                        ['small', 'small'],
                     ],
                     'color': colors.white,
                     'font': [
                         [fonts.lf2, fonts.lf2],
                         [fonts.wacky_pixels, fonts.wacky_pixels],
-                        [fonts.windows, fonts.windows],
                         [fonts.mago1, fonts.mago1],
+                        [fonts.pixellari, fonts.pixellari],
+                        [fonts.windows, fonts.windows],
                         [fonts.minecraftia, fonts.minecraftia],
                     ],
                     'long_shadow': False,
                     'link': [
                         [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
                         [None, 'https://3d.itch.io/fonts'],
-                        [None, 'https://www.dafont.com/windows-2.font'],
                         [None, 'https://nimblebeastscollective.itch.io/magosfonts'],
+                        [None, 'https://www.dafont.com/pixellari.font'],
+                        [None, 'https://www.dafont.com/windows-2.font'],
                         [None, 'https://www.dafont.com/minecraftia.font'],
                     ],
                     'padding': 20
@@ -953,6 +959,7 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.wacky_pixels,
                     'size': 'large',
                     'color': colors.white,
+                    'outline': True,
                 },
                 'padding_bottom': 240
             },

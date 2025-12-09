@@ -63,3 +63,11 @@ minecraftia = {
     },
     'pixel_size': 8
 }
+
+pixellari = {
+    'file': 'Pixellari edited.ttf',
+    'sizes': {
+        'small': 32,
+    },
+    'pixel_size': 16
+}
