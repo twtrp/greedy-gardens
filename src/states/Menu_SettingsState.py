@@ -40,6 +40,10 @@ class Menu_SettingsState(BaseState):
                 'right_arrow_scale': 0
             })
         for i, option in enumerate(self.settings_option_surface_list):
+            # Skip creating buttons for skip_bootup setting (it's hidden)
+            if option['id'] == 'skip_bootup':
+                continue
+                
             self.button_list.append(Button(
                 game=self.game,
                 id=option['id'],

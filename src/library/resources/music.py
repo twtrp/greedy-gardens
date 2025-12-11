@@ -1,8 +1,6 @@
 menu_intro = "26 5am - Goodbye _ Towball's Crossing (intro).ogg"
 menu_loop = "26 5am - Goodbye _ Towball's Crossing (loop).ogg"
 
-tutorial = "25 4am _ Towball's Crossing (loop).ogg"
-
 play_1 = '01 Main Theme _ Towballs Crossing.ogg'
 play_2 = '03 7am _ Towballs Crossing.ogg'
 play_3 = '04 8am _ Towballs Crossing.ogg'

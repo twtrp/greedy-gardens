@@ -448,7 +448,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'meimei/mymyz', 'Mroll', 'promptnut no.1', 'ReiYurei', 'Zehn Zedel'],
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'madibun', 'meimei/mymyz', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Zehn Zedel'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -480,7 +480,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Linux Playtesters'],
+                    'text': ['Linux Playtester'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -553,7 +553,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['KuroLeo', 'madibun', 'nashidrop', 'Sabrinoy/Brina', 'Song', 'Yuoko/FXR'],
+                    'text': ['KuroLeo', 'Sabrinoy/Brina', 'Song', 'Yuoko/FXR'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
