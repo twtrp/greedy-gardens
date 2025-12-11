@@ -230,6 +230,25 @@ class Game:
                     canvas_x = (mouse_pos[0] - self.display_offset[0]) / self.display_scale
                     canvas_y = (mouse_pos[1] - self.display_offset[1]) / self.display_scale
                     print(f"Cursor position - ({int(canvas_x)}, {int(canvas_y)})")
+                
+                # Developer mode: move window with arrow keys (only in windowed mode)
+                if not self.settings['fullscreen']:
+                    window_pos = pygame.display.get_window_position() if hasattr(pygame.display, 'get_window_position') else (0, 0)
+                    new_x, new_y = window_pos
+                    
+                    if event.key == pygame.K_UP:
+                        new_y -= 300
+                    elif event.key == pygame.K_DOWN:
+                        new_y += 300
+                    elif event.key == pygame.K_LEFT:
+                        new_x -= 300
+                    elif event.key == pygame.K_RIGHT:
+                        new_x += 300
+                    
+                    if (event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]):
+                        if hasattr(pygame.display, 'set_window_position'):
+                            pygame.display.set_window_position((new_x, new_y))
+                            print(f"Window moved to ({new_x}, {new_y})")
             
             # F11 to toggle fullscreen
             if event.type == pygame.KEYDOWN:
