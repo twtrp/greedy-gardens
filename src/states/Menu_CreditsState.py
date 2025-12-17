@@ -365,7 +365,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['BytePunchDev'],
+                    'text': ['BytePunch'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -448,7 +448,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'madibun', 'meimei/mymyz', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Zehn Zedel'],
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Rick the GraftedGod', 'Sin', 'Zehn Zedel'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -553,7 +553,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['KuroLeo', 'Sabrinoy/Brina', 'Song', 'Yuoko/FXR'],
+                    'text': ['KuroLeo', 'Riri', 'Sabrinoy/Brina', 'Song', 'Yuoko/FXR'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
