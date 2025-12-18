@@ -341,7 +341,7 @@ class Menu_CreditsState(BaseState):
 
             {
                 'texts': {
-                    'text': ['Based a university prototype by'],
+                    'text': ['Based on a university prototype by'],
                     'font': fonts.wacky_pixels,
                     'size': 'small',
                     'color': colors.white,
@@ -448,7 +448,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Rick the GraftedGod', 'Sin', 'Zehn Zedel'],
+                    'text': ['eutheciel', 'Han2/Hoplitx', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Rick the GraftedGod', 'Seanchovy', 'Sin', 'Zehn Zedel'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
