@@ -1236,8 +1236,8 @@ class Tutorial_PlayState(PlayState):
             [
                 Module_Dim(
                     cutouts=[
-                        (400, 208, 480, 288),
-                        (640, 128, 720, 208)
+                        (400, 288, 480, 368),
+                        (640, 208, 720, 288)
                     ],
                 ),
                 Module_Textbox(
@@ -2401,11 +2401,14 @@ class Tutorial_PlayState(PlayState):
                             size='smaller',
                             color=colors.white
                         ),
-                        utils.get_text(
-                            text='(most fun via Discord streams!)',
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('(', colors.white),
+                                ('most fun via Discord livestreams!', colors.yellow_light),
+                                (')', colors.white),
+                            ],
                             font=fonts.wacky_pixels,
                             size='smaller',
-                            color=colors.yellow_light
                         ),
                         utils.get_text(
                             text='',
