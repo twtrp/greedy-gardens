@@ -315,6 +315,9 @@ class Play_PlayEventState(BaseState):
                                     self.parent.game_board.board[button.id].south = True
                                 self.parent.game_board.board[button.id].temp = True
                                 self.parent.game_board.board[button.id].path = True
+                                # Recalculate connections after placing to detect newly connected magic fruits
+                                self.parent.game_board.connected_indices = []
+                                self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
                                 self.check_magic_fruit_collection(button)
                                 self.played_event = True
                         else:
@@ -367,6 +370,9 @@ class Play_PlayEventState(BaseState):
                                         source_cell.path_type = None
                                         source_cell.temp = False
                                         
+                                        # Recalculate connections after move to detect newly connected magic fruits
+                                        self.parent.game_board.connected_indices = []
+                                        self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
                                         self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
                                         self.played_event = True
@@ -454,6 +460,9 @@ class Play_PlayEventState(BaseState):
                                                 self.parent.drawn_cards_path.pop(m)  
                                                 break
                                         self.parent.drawn_cards_path.append(Cards("path", new_path, False))
+                                        # Recalculate connections after merge to detect newly connected magic fruits
+                                        self.parent.game_board.connected_indices = []
+                                        self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
                                         self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
                                         self.played_event = True
@@ -885,6 +894,9 @@ class Play_PlayEventState(BaseState):
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         utils.sound_play(sound=sfx.dig, volume=self.game.sfx_volume, pitch_variation=0.15)
                                         Cell.swap_path(self.parent.game_board.board[button.id], self.parent.game_board.board[self.selected_cell])
+                                        # Recalculate connections after swap to detect newly connected magic fruits
+                                        self.parent.game_board.connected_indices = []
+                                        self.parent.game_board.check_connection(self.parent.game_board.connected_indices, self.parent.game_board.home_index)
                                         self.check_magic_fruit_collection(button)
                                         self.selected_cell = None
                                         self.played_event = True

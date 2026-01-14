@@ -294,7 +294,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'image': self.my_logo,
-                'padding_bottom': 320
+                'padding_bottom': 100
             },
             # {
             #     'image': self.my_logo,
@@ -311,32 +311,6 @@ class Menu_CreditsState(BaseState):
             #     'inline': True,
             #     'padding_bottom': 340,
             # },
-
-
-            {
-                'image': self.bts_pygame_board_sim,
-                'padding_bottom': -192
-            },
-            {
-                'texts': {
-                    'text': ['Game Board Generator Test'],
-                    'size': 'tiny',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 3
-            },
-            {
-                'texts': {
-                     'text': ['We screenshotted the board and then played the game by drawing on our iPad.'],
-                    'size': 'tiny',
-                    'color': colors.mono_205,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 100
-            },
 
 
             {
@@ -365,7 +339,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['BytePunch'],
+                    'text': ['mojimups'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -401,12 +375,12 @@ class Menu_CreditsState(BaseState):
 
 
             {
-                'image': self.bts_figma_paper,
-                'padding_bottom': -205
+                'image': self.bts_pygame_board_sim,
+                'padding_bottom': -192
             },
             {
                 'texts': {
-                     'text': ['Paper Prototype Printouts in Figma'],
+                    'text': ['Game Board Generator Test'],
                     'size': 'tiny',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -416,7 +390,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                     'text': ['We chose a balanced board from the generator to be played in class lab.'],
+                     'text': ['We screenshotted the board and then played by drawing on our iPads.'],
                     'size': 'tiny',
                     'color': colors.mono_205,
                     'font': fonts.mago1,
@@ -424,7 +398,6 @@ class Menu_CreditsState(BaseState):
                 },
                 'padding_bottom': 100
             },
-
 
             {
                 'texts': {
@@ -436,7 +409,7 @@ class Menu_CreditsState(BaseState):
                 },
                 'padding_bottom': 50
             },
-            {
+                        {
                 'texts': {
                     'text': ['Windows Playtesters'],
                     'size': 'smaller',
@@ -448,7 +421,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'Han2/Hoplitx', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Rick the GraftedGod', 'Seanchovy', 'Sin', 'Zehn Zedel'],
+                    'text': ['eutheciel', 'dadysherwin1', 'Han2/Hoplitx', 'JaxxGotIt', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'promptnut no.1', 'ReiYurei', 'Seanchovy', 'Zehn Zedelsteins'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -469,7 +442,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Alison (dmx)', 'Liew', 'Noell'],
+                    'text': ['Alison (dmx)', 'Noell'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -480,7 +453,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Linux Playtester'],
+                    'text': ['Linux Playtesters'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -490,17 +463,64 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    # 'text': ['Ranviee', '<GitHub>'],
-                    'text': ['Ranviee'],
+                    'text': ['Ranviee', 'Yuoko/FXR'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
                     'padding': 15,
-                    # 'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
                 },
-                'padding_bottom': 50
+                'padding_bottom': 300
             },
+
+            #     'texts': {
+            #         'text': ['Linux Playtester'],
+            #         'size': 'smaller',
+            #         'color': colors.yellow_light,
+            #         'font': fonts.wacky_pixels,
+            #         'long_shadow': False,
+            #     },
+            #     'padding_bottom': 20
+            # },
+            # {
+            #     'texts': {
+            #         # 'text': ['Ranviee', '<GitHub>'],
+            #         'text': ['Ranviee'],
+            #         'size': 'small',
+            #         'color': colors.white,
+            #         'font': fonts.mago1,
+            #         'long_shadow': False,
+            #         'padding': 15,
+            #         # 'link': [None, 'https://ttewtor.short.gy/ranvieegithub']
+            #     },
+            #     'padding_bottom': 50
+            # },
+
+            {
+                'image': self.bts_figma_paper,
+                'padding_bottom': -205
+            },
+            {
+                'texts': {
+                     'text': ['Paper Prototype Printouts in Figma'],
+                    'size': 'tiny',
+                    'color': colors.white,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 3
+            },
+            {
+                'texts': {
+                     'text': ['The cards were a pain to cut out.'],
+                    'size': 'tiny',
+                    'color': colors.mono_205,
+                    'font': fonts.mago1,
+                    'long_shadow': False,
+                },
+                'padding_bottom': 100
+            },
+
             {
                 'texts': {
                     'text': ['Help with Display Mode Issues'],
@@ -543,7 +563,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Supportive gogh friends'],
+                    'text': ['Supportive friends'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
                     'font': fonts.wacky_pixels,
@@ -553,7 +573,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['KuroLeo', 'Riri', 'Sabrinoy/Brina', 'Song', 'Yuoko/FXR'],
+                    'text': ['Sabrinoy/Brina', 'Simcarea', 'Song', 'Taylor McCue'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -617,7 +637,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['We decided the house and magic fruit locations with dice rolls.'],
+                    'text': ['Some people were confused but some really enjoyed it.'],
                     'size': 'tiny',
                     'color': colors.mono_205,
                     'font': fonts.mago1,
@@ -695,12 +715,12 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['BurghRecords - Forest Ambience', '<YouTube>'],
+                    'text': ['zehendrew - Calm Nature Ambience', '<pixabay>'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
                     'long_shadow': False,
-                    'link': [None, 'https://youtu.be/83X26UkmbkM?si=_xANQHf0wvVhEGTz']
+                    'link': [None, 'https://pixabay.com/sound-effects/calm-nature-ambience-379478/']
                 },
                 'inline': True,
                 'padding_bottom': 40
