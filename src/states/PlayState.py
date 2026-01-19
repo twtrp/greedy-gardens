@@ -23,6 +23,10 @@ class PlayState(BaseState):
 
         self.ready = False
 
+        # Convert seed to string if it's an integer (for backwards compatibility)
+        if isinstance(seed, int):
+            seed = str(seed)
+
         if seed == '':
             self.set_seed = False
             self.seed = random.randint(0, 99999999)

@@ -152,6 +152,13 @@ def build_windows_linux(version: str) -> tuple[str, Path] | tuple[None, None]:
     cmd = ["pyinstaller", "--onefile", "--noconsole", "--name", exe_name, "main.py"]
     if icon:
         cmd.extend(["--icon", str(icon)])
+    
+    # Add version info for Windows builds
+    if is_windows():
+        version_file = ROOT / "version_info.txt"
+        if version_file.exists():
+            cmd.extend(["--version-file", str(version_file)])
+            log(f"✅ Using version info: {version_file}")
 
     try:
         run_ok(cmd, check=True)
