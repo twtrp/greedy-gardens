@@ -1,12 +1,7 @@
 from src.library.essentials import *
-import time
-import platform
 from src.classes.SettingsManager import SettingsManager
 from src.states.MenuState import MenuState
 from src.states.TutorialState import TutorialState
-import traceback
-import tkinter as tk
-from tkinter import messagebox
 
 class Game:
     def __init__(self):

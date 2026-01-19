@@ -25,10 +25,19 @@ class PlayState(BaseState):
 
         if seed == '':
             self.set_seed = False
-            self.seed = random.randint(0, 999999)
+            self.seed = random.randint(0, 99999999)
+            self.seed_original = ''  # Store original input
         else:
             self.set_seed = True
-            self.seed = int(seed)
+            self.seed_original = seed  # Store original input
+            # Convert seed to integer - if it's already numeric use it, otherwise hash it like Minecraft
+            if seed.isdigit():
+                self.seed = int(seed)
+            else:
+                # Hash the string to create a consistent numeric seed (using MD5 for deterministic hashing)
+                hash_obj = hashlib.md5(seed.encode('utf-8'))
+                hash_int = int(hash_obj.hexdigest(), 16)
+                self.seed = hash_int % 100000000
 
         print('Seed:',self.seed)
 

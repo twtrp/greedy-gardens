@@ -246,8 +246,9 @@ class Menu_CreditsState(BaseState):
 
     def _load_graphics(self):
         """Load all graphics assets"""
-        self.my_logo = utils.get_image(dir=dir.branding, name='my_logo.png', mode='colorkey')
-        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=4)
+        self.my_logo = utils.get_image(dir=dir.branding, name='my_logo_long.png', mode='colorkey')
+        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=2)
+        self.my_logo = utils.effect_outline(surface=self.my_logo, color=colors.mono_40, distance=2)
 
         self.team_namsom_logo_long = utils.get_image(dir=dir.branding, name='team_namsom_logo_long.png', mode='colorkey')
         self.team_namsom_logo_long = pygame.transform.scale_by(surface=self.team_namsom_logo_long, factor=4)
@@ -290,11 +291,11 @@ class Menu_CreditsState(BaseState):
                     'padding': 0,
                     'outline': True,
                 },
-                'padding_bottom': 100
+                'padding_bottom': 80
             },
             {
                 'image': self.my_logo,
-                'padding_bottom': 100
+                'padding_bottom': 120
             },
             # {
             #     'image': self.my_logo,
@@ -573,7 +574,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Sabrinoy/Brina', 'Simcarea', 'Song', 'Taylor McCue'],
+                    'text': ['nroleo','Sabrinoy/Brina', 'Simcarea', 'Song', 'Taylor McCue'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -637,7 +638,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Some people were confused but some really enjoyed it.'],
+                    'text': ['Some classmates were confused but some really enjoyed it.'],
                     'size': 'tiny',
                     'color': colors.mono_205,
                     'font': fonts.mago1,

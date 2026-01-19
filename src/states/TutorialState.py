@@ -52,7 +52,7 @@ class TutorialState(BaseState):
         
         # Load intro assets
         self.surface_logo = pygame.Surface(size=(constants.canvas_width, constants.canvas_height), flags=pygame.SRCALPHA)
-        self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 0.7}
+        self.surface_logo_props = {'y_offset': 0, 'alpha': 0, 'scale': 1}
 
         # self.team_namsom_logo = utils.get_image(dir=dir.branding, name='team_namsom_logo.png', mode='colorkey')
         # self.team_namsom_logo = pygame.transform.scale_by(surface=self.team_namsom_logo, factor=5)
@@ -64,7 +64,7 @@ class TutorialState(BaseState):
         # )
 
         self.my_logo = utils.get_image(dir=dir.branding, name='my_logo.png', mode='colorkey')
-        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=4)
+        self.my_logo = pygame.transform.scale_by(surface=self.my_logo, factor=3)
         utils.blit(
             dest=self.surface_logo,
             source=self.my_logo,
@@ -475,7 +475,7 @@ class TutorialState(BaseState):
                 container=self.surface_logo_props,
                 key='alpha',
                 end_value=255,
-                time=2,
+                time=2.5,
                 ease_type=tweencurves.easeOutCubic,
                 delay=delay
             ))
@@ -488,7 +488,7 @@ class TutorialState(BaseState):
                 delay=delay
             ))
 
-            delay += 2
+            delay += 1.5
             self.tween_list.append(tween.to(
                 container=self.overlay_props,
                 key='alpha',
