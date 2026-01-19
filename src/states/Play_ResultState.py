@@ -31,15 +31,46 @@ class Play_ResultStage(BaseState):
                 sql_conn = sqlite3.connect('data/records.sqlite')
                 sql_cursor = sql_conn.cursor()
                 
-                # Create table if it doesn't exist
-                sql_cursor.execute('''
-                    CREATE TABLE IF NOT EXISTS records (
-                        score INTEGER,
-                        seed INTEGER,
-                        seed_type TEXT
-                    )
-                ''')
-                sql_conn.commit()
+                # Check if table exists and get its schema
+                sql_cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='records'")
+                table_exists = sql_cursor.fetchone() is not None
+                
+                if table_exists:
+                    # Check if seed column is INTEGER (old schema)
+                    sql_cursor.execute("PRAGMA table_info(records)")
+                    columns = sql_cursor.fetchall()
+                    seed_column_type = None
+                    for col in columns:
+                        if col[1] == 'seed':
+                            seed_column_type = col[2]
+                            break
+                    
+                    # Migrate from INTEGER to TEXT if needed
+                    if seed_column_type == 'INTEGER':
+                        # Create new table with TEXT seed column
+                        sql_cursor.execute('''
+                            CREATE TABLE records_new (
+                                score INTEGER,
+                                seed TEXT,
+                                seed_type TEXT
+                            )
+                        ''')
+                        # Copy data, converting INTEGER seeds to TEXT
+                        sql_cursor.execute('INSERT INTO records_new (score, seed, seed_type) SELECT score, CAST(seed AS TEXT), seed_type FROM records')
+                        # Drop old table and rename new one
+                        sql_cursor.execute('DROP TABLE records')
+                        sql_cursor.execute('ALTER TABLE records_new RENAME TO records')
+                        sql_conn.commit()
+                else:
+                    # Create table with TEXT seed column
+                    sql_cursor.execute('''
+                        CREATE TABLE records (
+                            score INTEGER,
+                            seed TEXT,
+                            seed_type TEXT
+                        )
+                    ''')
+                    sql_conn.commit()
                 
                 # Get current high score and check for new record
                 if self.setted_seed:
@@ -59,7 +90,7 @@ class Play_ResultStage(BaseState):
                     # Insert the new score
                     sql_cursor.execute(
                         'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
-                        (self.parent.total_score, self.parent.seed, 'Set Seed')
+                        (self.parent.total_score, self.parent.seed_text, 'Set Seed')
                     )
                 else:
                     # Get current high score for random seeds
@@ -78,7 +109,7 @@ class Play_ResultStage(BaseState):
                     # Insert the new score
                     sql_cursor.execute(
                         'INSERT INTO records (score, seed, seed_type) VALUES (?, ?, ?)',
-                        (self.parent.total_score, self.parent.seed, 'Random Seed')
+                        (self.parent.total_score, self.parent.seed_text, 'Random Seed')
                     )
 
                 sql_conn.commit()

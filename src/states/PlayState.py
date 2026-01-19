@@ -26,10 +26,10 @@ class PlayState(BaseState):
         if seed == '':
             self.set_seed = False
             self.seed = random.randint(0, 99999999)
-            self.seed_original = ''  # Store original input
+            self.seed_text = str(self.seed)  # Store as text for database
         else:
             self.set_seed = True
-            self.seed_original = seed  # Store original input
+            self.seed_text = seed  # Store original text input
             # Convert seed to integer - if it's already numeric use it, otherwise hash it like Minecraft
             if seed.isdigit():
                 self.seed = int(seed)
@@ -39,7 +39,7 @@ class PlayState(BaseState):
                 hash_int = int(hash_obj.hexdigest(), 16)
                 self.seed = hash_int % 100000000
 
-        print('Seed:',self.seed)
+        print('Seed:',self.seed, '(from:', self.seed_text, ')')
 
         # Developer mode
         self.developer_mode = debug.debug_developer_mode
