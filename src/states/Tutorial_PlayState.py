@@ -2395,11 +2395,14 @@ class Tutorial_PlayState(PlayState):
                             size='smaller',
                             color=colors.green_light
                         ),
-                        utils.get_text(
-                            text='Chase your high score or challenge friends on the same seed.',
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('Chase your high score or challenge friends on the ', colors.white),
+                                ('same seed', colors.yellow_light),
+                                ('.', colors.white),
+                            ],
                             font=fonts.wacky_pixels,
                             size='smaller',
-                            color=colors.white
                         ),
                         utils.get_multicolor_text(
                             texts=[
