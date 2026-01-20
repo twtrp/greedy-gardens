@@ -350,8 +350,8 @@ class MenuState(BaseState):
                 container=self.surface_logo_props,
                 key='alpha',
                 end_value=255,
-                time=2.5,
-                ease_type=tweencurves.easeOutCubic,
+                time=1.5,
+                ease_type=tweencurves.easeOutQuad,
                 delay=delay
             ))
             self.tween_list.append(tween.to(

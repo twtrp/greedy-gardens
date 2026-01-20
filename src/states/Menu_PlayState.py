@@ -381,9 +381,9 @@ class Menu_PlayState(BaseState):
                     inner_border_width=3
                 )
                 if self.textbox_text == '':
-                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 410), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 409), pos_anchor=posanchors.center)
                 else:
-                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 410), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 409), pos_anchor=posanchors.center)
             elif self.textbox_mode == 'hovered':
                 utils.draw_rect(
                     dest=canvas,
@@ -396,9 +396,9 @@ class Menu_PlayState(BaseState):
                     outer_border_color=colors.white
                 )
                 if self.textbox_text == '':
-                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 410), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_placeholder_surface, pos=(constants.canvas_width/2, 409), pos_anchor=posanchors.center)
                 else:
-                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 410), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 409), pos_anchor=posanchors.center)
             elif self.textbox_mode == 'active':
                 utils.draw_rect(
                     dest=canvas,
@@ -413,7 +413,7 @@ class Menu_PlayState(BaseState):
                     outest_border_color=colors.white
                 )
                 if self.textbox_text != '':
-                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 410), pos_anchor=posanchors.center)
+                    utils.blit(dest=canvas, source=self.textbox_text_surface, pos=(constants.canvas_width/2, 409), pos_anchor=posanchors.center)
 
         else:
             utils.blit(dest=canvas, source=self.freeze_frame)
