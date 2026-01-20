@@ -364,10 +364,6 @@ class Game:
                 raw_dt = self.clock.tick(self.fps_cap)/1000.0
                 dt = min(raw_dt, 0.1)
                 
-                # Update window title with FPS
-                fps = self.clock.get_fps()
-                pygame.display.set_caption(f'{self.title} - FPS: {fps:.1f}')
-                
                 # Pump events to keep window responsive
                 pygame.event.pump()
                 
