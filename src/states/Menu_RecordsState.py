@@ -8,6 +8,16 @@ class Menu_RecordsState(BaseState):
 
         self.sql_conn = sqlite3.connect(os.path.join(dir.data, 'records.sqlite'))
         self.sql_cursor = self.sql_conn.cursor()
+        
+        # Create table if it doesn't exist
+        self.sql_cursor.execute('''
+            CREATE TABLE IF NOT EXISTS `records` (
+                `score` INTEGER,
+                `seed` TEXT,
+                `seed_type` TEXT
+            )
+        ''')
+        self.sql_conn.commit()
 
         self.table_width = 600
         self.table_height = 300

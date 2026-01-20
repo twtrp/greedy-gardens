@@ -20,6 +20,16 @@ class Play_ResultStage(BaseState):
         self.setted_seed= self.parent.set_seed
         sql_conn = sqlite3.connect('data/records.sqlite')
         sql_cursor = sql_conn.cursor()
+        
+        # Create table if it doesn't exist
+        sql_cursor.execute('''
+            CREATE TABLE IF NOT EXISTS `records` (
+                `score` INTEGER,
+                `seed` TEXT,
+                `seed_type` TEXT
+            )
+        ''')
+        sql_conn.commit()
         if self.setted_seed:
             # Check if seed exists
             sql_cursor.execute('SELECT COUNT(*) FROM records WHERE seed = ?', (self.parent.seed,))
