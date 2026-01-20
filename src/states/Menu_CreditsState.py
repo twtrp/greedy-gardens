@@ -364,6 +364,7 @@ class Menu_CreditsState(BaseState):
                         'Kittisak Wanganansukdee',
                         'Krittidech Paijitjinda',
                         'Napat Ariyapattanaporn',
+                        'Teetawat Bussabarati'
                     ],
                     'padding': 15,
                     'size': 'small',

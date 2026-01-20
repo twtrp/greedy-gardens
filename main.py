@@ -98,6 +98,8 @@ class Game:
         utils.music_queue(music_channel=self.music_channel, name=music.menu_loop, loops=-1)
 
         self.finished_bootup = False
+        self.focus_log_path = None  # Can be set to a file path for debugging focus issues
+        self.window_minimized = False
 
 
     # Class methods
@@ -200,17 +202,44 @@ class Game:
 
         # Handle quit
         for event in events:
-            # Diagnostic logging for focus/window events
+            # Handle window focus/minimize events
             try:
-                if self.focus_log_path and event.type in (pygame.ACTIVEEVENT, pygame.VIDEOEXPOSE, getattr(pygame, 'WINDOWFOCUS', None)):
+                # Check for window minimize/restore events
+                if hasattr(pygame, 'WINDOWEVENT') and event.type == pygame.WINDOWEVENT:
+                    # WINDOWEVENT_MINIMIZED = 5, WINDOWEVENT_RESTORED = 6, WINDOWEVENT_FOCUS_GAINED = 12
+                    if hasattr(event, 'event'):
+                        if event.event == 5:  # Minimized
+                            self.window_minimized = True
+                        elif event.event in (6, 12):  # Restored or focus gained
+                            if self.window_minimized:
+                                self.window_minimized = False
+                                # Force a display refresh to fix potential rendering issues
+                                pygame.event.clear()
+                                self.render()
+                                pygame.display.flip()
+                
+                # Legacy pygame versions use ACTIVEEVENT
+                if hasattr(pygame, 'ACTIVEEVENT') and event.type == pygame.ACTIVEEVENT:
+                    if hasattr(event, 'state') and hasattr(event, 'gain'):
+                        if event.state == 1 and event.gain == 0:  # Lost focus
+                            self.window_minimized = True
+                        elif event.state == 1 and event.gain == 1:  # Gained focus
+                            if self.window_minimized:
+                                self.window_minimized = False
+                                pygame.event.clear()
+                                self.render()
+                                pygame.display.flip()
+                
+                # Diagnostic logging for focus/window events
+                if self.focus_log_path and event.type in (pygame.ACTIVEEVENT if hasattr(pygame, 'ACTIVEEVENT') else -1, 
+                                                           pygame.VIDEOEXPOSE if hasattr(pygame, 'VIDEOEXPOSE') else -1,
+                                                           pygame.WINDOWEVENT if hasattr(pygame, 'WINDOWEVENT') else -1):
                     with open(self.focus_log_path, 'a', encoding='utf-8') as f:
                         f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - EVENT {event!r}\n")
-                # Some pygame versions use WINDOWEVENT with event.event attribute values
-                if self.focus_log_path and event.type == getattr(pygame, 'WINDOWEVENT', None):
-                    with open(self.focus_log_path, 'a', encoding='utf-8') as f:
-                        f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - WINDOWEVENT {event.event}\n")
+                        if hasattr(event, 'event'):
+                            f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - WINDOWEVENT {event.event}\n")
             except Exception:
-                # Don't let logging failures break the game
+                # Don't let event handling failures break the game
                 pass
 
             if event.type == pygame.QUIT:
@@ -381,6 +410,10 @@ class Game:
                 
                 self.update(dt=dt, events=events)
                 self.render()
+                
+                # Extra display update to ensure window responsiveness after minimize/restore
+                if self.window_minimized:
+                    pygame.display.flip()
             except KeyboardInterrupt:
                 pygame.mixer.stop()
                 pygame.quit()
