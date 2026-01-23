@@ -423,7 +423,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'dadysherwin1', 'Drillad', 'Han2/Hoplitx', 'JaxxGotIt', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'neden', 'promptnut no.1', 'ReiYurei', 'Seanchovy', 'violett.', 'Zehn/zedelsteins', 'Zundamon (not the real one)'],
+                    'text': ['eutheciel', 'dadysherwin1', 'Drillad', 'Han2/Hoplitx', 'JaxxGotIt', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'neden', 'promptnut no.1', 'ReiYurei', 'Seanchovy', 'Zehn/zedelsteins', 'Zundamon (not the real one)'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
