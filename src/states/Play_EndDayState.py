@@ -353,8 +353,7 @@ class Play_EndDayState(BaseState):
                                 # If anything unexpected happens, fallback silently
                                 pass
                             self.parent.start_draw_card_hint_animation()
-                        # Clear the hidden fruits set now that we're moving to next day
-                        self.parent.hidden_fruits_during_animation.clear()
+                        # Don't clear hidden fruits here - let Play_NextDayState handle it after removing fruits from board
                         self.exit_state()
  
     def render(self, canvas):

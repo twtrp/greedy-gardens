@@ -17,27 +17,36 @@ class Play_NextDayState(BaseState):
         self.parent.endDayState = False
         self.parent.set_start_state=False
 
-        self.parent.left_box_none_text = utils.get_text(text=f'Draw day {self.parent.current_day + 1} fruit', font=fonts.wacky_pixels, size='tiny', color=colors.white)
-        self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.wacky_pixels, size='medium', color=colors.white)
+        if self.parent.current_day + 1 != 5:
+            self.parent.left_box_none_text = utils.get_text(text=f'Draw day {self.parent.current_day + 1} fruit', font=fonts.wacky_pixels, size='tiny', color=colors.white)
+            self.card_drawn_text = utils.get_text(text=f'Day {self.parent.current_day + 1} Fruit', font=fonts.wacky_pixels, size='medium', color=colors.white)
 
-        if self.parent.current_day < 5 and not self.parent.current_day == 1:
-            utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
-            self.parent.day_title_tween_chain()
-
-    def update(self, dt, events):
-        if self.parent.current_day>=5:
+        # Remove collected fruits from board immediately to prevent 1-frame flash
+        if self.parent.current_day >= 5:
             for index in self.parent.game_board.connected_indices:
                 cell = self.parent.game_board.board[index]
                 if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
                     cell.fruit = [None if item == getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') else item for item in cell.fruit]
                 if self.parent.seasonal_fruit in cell.fruit:
                     cell.fruit = [None if item == self.parent.seasonal_fruit else item for item in cell.fruit]
-            self.exit_state()
         else:
             for index in self.parent.game_board.connected_indices:
                 cell = self.parent.game_board.board[index]
                 if getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') in cell.fruit:
                     cell.fruit = [None if item == getattr(self.parent, f'day{self.parent.current_day - 1}_fruit') else item for item in cell.fruit]
+        
+        # Clear hidden fruits set after removing fruits from board
+        self.parent.hidden_fruits_during_animation.clear()
+
+        if self.parent.current_day < 5 and not self.parent.current_day == 1:
+            utils.sound_play(sound=sfx.chicken_crowing, volume=self.game.sfx_volume)
+            self.parent.day_title_tween_chain()
+
+    def update(self, dt, events):
+        # Check if game is over (already handled in __init__)
+        if self.parent.current_day >= 5:
+            self.exit_state()
+            return
 
         # clear free(temp) path
         for i, rect in enumerate(self.parent.grid_hitboxes):
