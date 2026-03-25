@@ -17,7 +17,7 @@ class BaseState(ABC):
 
     
     @abstractmethod
-    def render(self, surface):
+    def render(self, canvas):
         pass
 
     

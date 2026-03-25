@@ -7,8 +7,8 @@ class SettingsManager():
             {
                 'id': 'fullscreen',
                 'label': 'Fullscreen',
-                'value': [0, 1],
-                'value_label': ['off', 'on'],
+                'value': [0, 1, 2],
+                'value_label': ['off', 'on-smooth', 'on-sharp'],
                 'value_default': 0,
                 'value_default_label': 'off',
                 'value_default_index': 0,

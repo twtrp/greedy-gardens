@@ -5,6 +5,11 @@ import numpy
 from typing import List
 
 
+# Track the active cursor descriptor so other systems (like 4K zoom rendering)
+# can mirror cursor changes when the system cursor is hidden.
+_current_cursor = cursors.normal
+
+
 # Color functions
 
 def color_darken(
@@ -565,13 +570,20 @@ def set_cursor(
     image = surface to set as the cursor
     hotspot = hotspot of the cursor
     '''
+    global _current_cursor
     image = get_sprite(sprite_sheet=spritesheets.cursors, target_sprite=cursor['sprite'])
     hotspot = cursor['hotspot']
-    cursor = pygame.cursors.Cursor(hotspot, image)
+    pygame_cursor = pygame.cursors.Cursor(hotspot, image)
     try:
-        pygame.mouse.set_cursor(cursor)
+        pygame.mouse.set_cursor(pygame_cursor)
+        _current_cursor = cursor
     except pygame.error:
-        cursor = cursors.normal
+        _current_cursor = cursors.normal
+
+
+def get_current_cursor() -> dict:
+    '''Return the last cursor descriptor set via set_cursor.'''
+    return _current_cursor
 
 
 # Tween functions

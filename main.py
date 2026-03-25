@@ -100,9 +100,59 @@ class Game:
         self.finished_bootup = False
         self.focus_log_path = None  # Can be set to a file path for debugging focus issues
         self.window_minimized = False
+        
+        # 4K zoom mode for trailer capture (developer mode)
+        self.zoom_4k_mode = False
+        self.zoom_view_offset_x = 0
+        self.zoom_view_offset_y = 0
+        self.zoom_edge_pan_speed = 800  # pixels per second
+        self._original_mouse_get_pos = pygame.mouse.get_pos  # Store original function
+        self.zoom_cursor_sprite = None  # Scaled cursor for zoom mode
+        self.zoom_cursor_name = None  # Track active cursor sprite key in zoom mode
+        self.zoom_4k_surface = None  # Cached 4K surface for performance
 
 
     # Class methods
+
+    def _get_transformed_mouse_pos(self):
+        """Transform mouse position for 4K zoom mode"""
+        screen_x, screen_y = self._original_mouse_get_pos()
+        
+        # Convert to viewport position (accounting for letterboxing)
+        viewport_x = (screen_x - self.display_offset[0]) / self.display_scale
+        viewport_y = (screen_y - self.display_offset[1]) / self.display_scale
+        
+        # The viewport shows a portion of the 4K surface
+        # Calculate position in 4K space
+        zoom_4k_x = viewport_x + (-self.zoom_view_offset_x)
+        zoom_4k_y = viewport_y + (-self.zoom_view_offset_y)
+        
+        # Scale back down from 4K to original canvas coordinates (4K is 3x scale)
+        canvas_x = zoom_4k_x / 3.0
+        canvas_y = zoom_4k_y / 3.0
+        
+        # Clamp to canvas bounds
+        canvas_x = max(0, min(constants.canvas_width, canvas_x))
+        canvas_y = max(0, min(constants.canvas_height, canvas_y))
+        
+        # Convert back to screen coordinates where the game expects them
+        adjusted_screen_x = int(canvas_x * self.display_scale + self.display_offset[0])
+        adjusted_screen_y = int(canvas_y * self.display_scale + self.display_offset[1])
+        
+        return (adjusted_screen_x, adjusted_screen_y)
+
+    def _refresh_zoom_cursor_sprite(self):
+        """Sync zoom cursor sprite with the currently active game cursor."""
+        cursor_data = utils.get_current_cursor()
+        sprite_name = cursor_data.get('sprite', 'cursor_normal')
+        if sprite_name == self.zoom_cursor_name and self.zoom_cursor_sprite is not None:
+            return
+        cursor_sprite = utils.get_sprite(sprite_sheet=spritesheets.cursors, target_sprite=sprite_name)
+        self.zoom_cursor_sprite = pygame.transform.scale(
+            cursor_sprite,
+            (cursor_sprite.get_width() * 3, cursor_sprite.get_height() * 3)
+        )
+        self.zoom_cursor_name = sprite_name
 
     def apply_settings(self, setting_index):
         self.settings = self.settings_manager.load_all_settings()
@@ -189,6 +239,39 @@ class Game:
     # Main methods
 
     def update(self, dt, events):
+        # Handle 4K zoom edge panning (developer mode)
+        if debug.debug_developer_mode and self.zoom_4k_mode:
+            mouse_x, mouse_y = self._original_mouse_get_pos()  # Use original position for edge detection
+            screen_w, screen_h = self.screen.get_size()
+            
+            # Define edge threshold (pixels from edge)
+            edge_threshold = 50
+            pan_amount = self.zoom_edge_pan_speed * dt
+            
+            # Pan left
+            if mouse_x < edge_threshold:
+                self.zoom_view_offset_x += pan_amount
+                # Clamp to not pan beyond left edge
+                self.zoom_view_offset_x = min(self.zoom_view_offset_x, 0)
+            
+            # Pan right
+            if mouse_x > screen_w - edge_threshold:
+                self.zoom_view_offset_x -= pan_amount
+                # Clamp to not pan beyond right edge (4K width - canvas width)
+                self.zoom_view_offset_x = max(self.zoom_view_offset_x, -(3840 - constants.canvas_width))
+            
+            # Pan up
+            if mouse_y < edge_threshold:
+                self.zoom_view_offset_y += pan_amount
+                # Clamp to not pan beyond top edge
+                self.zoom_view_offset_y = min(self.zoom_view_offset_y, 0)
+            
+            # Pan down
+            if mouse_y > screen_h - edge_threshold:
+                self.zoom_view_offset_y -= pan_amount
+                # Clamp to not pan beyond bottom edge (4K height - canvas height)
+                self.zoom_view_offset_y = max(self.zoom_view_offset_y, -(2160 - constants.canvas_height))
+        
         # Update current state
         if self.state_stack:
             self.state_stack[-1].update(dt=dt, events=events)
@@ -247,6 +330,34 @@ class Game:
                 pygame.quit()
                 sys.exit()
             
+            # Developer mode: F1 to toggle 4K zoom mode
+            if debug.debug_developer_mode and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F1:
+                    self.zoom_4k_mode = not self.zoom_4k_mode
+                    if self.zoom_4k_mode:
+                        print("4K zoom mode enabled - use mouse at screen edges to pan")
+                        # Center the view initially
+                        self.zoom_view_offset_x = -(3840 - constants.canvas_width) // 2
+                        self.zoom_view_offset_y = -(2160 - constants.canvas_height) // 2
+                        # Override mouse.get_pos to return transformed coordinates
+                        pygame.mouse.get_pos = self._get_transformed_mouse_pos
+                        # Hide system cursor and create scaled cursor
+                        pygame.mouse.set_visible(False)
+                        self._refresh_zoom_cursor_sprite()
+                        # Pre-create 4K surface for performance
+                        self.zoom_4k_surface = pygame.Surface((3840, 2160))
+                    else:
+                        print("4K zoom mode disabled")
+                        self.zoom_view_offset_x = 0
+                        self.zoom_view_offset_y = 0
+                        # Restore original mouse.get_pos
+                        pygame.mouse.get_pos = self._original_mouse_get_pos
+                        # Show system cursor
+                        pygame.mouse.set_visible(True)
+                        self.zoom_cursor_sprite = None
+                        self.zoom_cursor_name = None
+                        self.zoom_4k_surface = None
+            
             # Developer mode: print cursor position with '/' key
             if debug.debug_developer_mode and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SLASH:
@@ -274,11 +385,11 @@ class Game:
                             pygame.display.set_window_position((new_x, new_y))
                             print(f"Window moved to ({new_x}, {new_y})")
             
-            # F11 to toggle fullscreen
+            # F11 to cycle fullscreen modes
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F11:
-                    # Toggle fullscreen setting
-                    self.settings['fullscreen'] = 1 if self.settings['fullscreen'] == 0 else 0
+                    # Cycle fullscreen setting: 0 -> 1 -> 2 -> 0
+                    self.settings['fullscreen'] = (self.settings['fullscreen'] + 1) % 3
                     
                     # Save the new setting to file
                     with open(self.settings_manager.settings_file, 'w') as fp:
@@ -366,22 +477,56 @@ class Game:
             self.state_stack[-1].render(canvas=self.canvas)
 
         # Render canvas to screen
-        # If the screen size doesn't match the game's logical canvas, scale the
-        # canvas while preserving aspect ratio and center it. Fill the rest of
-        # the screen with black bars (letterbox/pillarbox).
         cw, ch = constants.canvas_width, constants.canvas_height
-        if (cw, ch) != (self.screen_width, self.screen_height):
-            target_w, target_h = self.display_target_size
-            scaled_canvas = pygame.transform.scale(self.canvas, (target_w, target_h))
-            # Fill background with black bars
-            try:
+        if self.zoom_4k_mode:
+            self._refresh_zoom_cursor_sprite()
+            # Scale the canvas up to 4K (3x scale from 1280x720) and blit to cached surface
+            scaled_canvas = pygame.transform.scale(self.canvas, (3840, 2160))
+            self.zoom_4k_surface.blit(scaled_canvas, (0, 0))
+            
+            # Extract the viewport (original canvas size) from the 4K surface
+            viewport_rect = pygame.Rect(
+                -self.zoom_view_offset_x,
+                -self.zoom_view_offset_y,
+                cw,
+                ch
+            )
+            viewport = self.zoom_4k_surface.subsurface(viewport_rect)
+            
+            # Now scale this viewport to fit the screen
+            if (cw, ch) != (self.screen_width, self.screen_height):
+                target_w, target_h = self.display_target_size
+                final_scaled = pygame.transform.scale(viewport, (target_w, target_h))
                 self.screen.fill((0, 0, 0))
-            except Exception:
-                self.screen.fill((0, 0, 0))
-            # Blit the centered, scaled canvas
-            self.screen.blit(scaled_canvas, self.display_offset)
+                self.screen.blit(final_scaled, self.display_offset)
+            else:
+                self.screen.blit(viewport, (0, 0))
+            
+            # Draw scaled cursor on top
+            if self.zoom_cursor_sprite:
+                mouse_x, mouse_y = self._original_mouse_get_pos()
+                self.screen.blit(self.zoom_cursor_sprite, (mouse_x, mouse_y))
         else:
-            self.screen.blit(self.canvas, (0, 0))
+            # Normal rendering (original code)
+            # If the screen size doesn't match the game's logical canvas, scale the
+            # canvas while preserving aspect ratio and center it. Fill the rest of
+            # the screen with black bars (letterbox/pillarbox).
+            if (cw, ch) != (self.screen_width, self.screen_height):
+                target_w, target_h = self.display_target_size
+                # Use .scale for sharpened (2), .smoothscale for consistent (1 or default)
+                if self.settings.get('fullscreen', 1) == 2:
+                    scaled_canvas = pygame.transform.scale(self.canvas, (target_w, target_h))
+                else:
+                    scaled_canvas = pygame.transform.smoothscale(self.canvas, (target_w, target_h))
+                # Fill background with black bars
+                try:
+                    self.screen.fill((0, 0, 0))
+                except Exception:
+                    self.screen.fill((0, 0, 0))
+                # Blit the centered, scaled canvas
+                self.screen.blit(scaled_canvas, self.display_offset)
+            else:
+                self.screen.blit(self.canvas, (0, 0))
         
         # Update display
         pygame.display.update()

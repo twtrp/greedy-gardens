@@ -423,7 +423,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'dadysherwin1', 'Drillad', 'Han2/Hoplitx', 'JaxxGotIt', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'neden', 'promptnut no.1', 'ReiYurei', 'Seanchovy', 'Zehn/zedelsteins', 'Zundamon (not the real one)'],
+                    'text': ['eutheciel', 'dadysherwin1', 'Drillad/2wosafe', 'Han2/Hoplitx', 'JaxxGotIt', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'neden', 'promptnut no.1', 'ReiYurei', 'rentikoy', 'Seanchovy', 'Zehn/zedelsteins', 'Zundah'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -575,7 +575,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['nroleo','Sabrinoy/Brina', 'Simcarea', 'Song', 'Taylor McCue'],
+                    'text': ['Anko', 'nroleo', 'Sabrinoy', 'Simcarea/usal', 'sung', 'Taylor McCue'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,

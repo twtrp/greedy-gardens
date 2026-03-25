@@ -482,9 +482,9 @@ class Tutorial_PlayState(PlayState):
                     content=[
                         utils.get_multicolor_text(
                             texts=[
-                                ('Notice how there are ', colors.white),
+                                ('There are ', colors.white),
                                 ('6 fruit types', colors.yellow_light),
-                                (',', colors.white),
+                                ('on the board,', colors.white),
                             ],
                             font=fonts.wacky_pixels,
                             size='tiny',
@@ -1847,7 +1847,7 @@ class Tutorial_PlayState(PlayState):
                         utils.get_multicolor_text(
                             texts=[
                                 ('Since the ', colors.white),
-                                ('magic fruit ', colors.yellow_light),
+                                ('magic fruit 1', colors.yellow_light),
                                 ('could', colors.white),
                             ],
                             font=fonts.wacky_pixels,

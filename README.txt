@@ -53,6 +53,7 @@ Developer Mode Controls
 Global Controls:
     /           - Print cursor position to console
     Arrow Keys  - Move window (windowed mode only)
+    F1          - Toggle 4K zoom mode for trailer capture (move mouse to screen edges to pan)
 
 Play State Controls:
     Event Cards (Letters):

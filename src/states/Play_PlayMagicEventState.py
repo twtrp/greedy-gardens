@@ -1164,7 +1164,7 @@ class Play_PlayMagicEventState(BaseState):
                             if button.id == 'reveal path':
                                 self.choosing = False
                                 utils.sound_play(sound=sfx.click, volume=self.game.sfx_volume)
-                                self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-3:])
+                                self.parent.revealed_path = copy.deepcopy(self.parent.deck_path.cards[-4:])
                                 for card in self.parent.revealed_path:
                                     if "strike_" in card.card_name:
                                         card.card_name = card.card_name.replace("strike_", "")

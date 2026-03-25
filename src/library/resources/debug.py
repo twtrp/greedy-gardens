@@ -8,7 +8,7 @@ debug_first_run = 0
 debug_developer_mode = 1
 
 # Set to True to skip the intro bootup animation
-debug_skip_bootup = 1
+debug_skip_bootup = 0
 
 # Set to True to mute all music for testing
-debug_mute_music = 1
+debug_mute_music = 0
