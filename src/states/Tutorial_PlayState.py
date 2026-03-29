@@ -1428,22 +1428,49 @@ class Tutorial_PlayState(PlayState):
                 )
             ],
             [
+                Module_Dim(
+                    cutouts=[
+                        (942, 448, 1020, 603),
+                    ]
+                ),
                 Module_Textbox(
                     content=[
+                        utils.get_multicolor_text(
+                            texts=[
+                                ('The ', colors.white),
+                                ('purple X ', colors.yellow_light),
+                                ('indicates a ', colors.white),
+                                ('strike', colors.yellow_light),
+                                ('.', colors.white)
+                            ],
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                        ),
                         utils.get_text(
-                            text='Looks like we only have 2 paths left today.',
+                            text='Since we can only take 1 more strike,',
+                            font=fonts.wacky_pixels,
+                            size='tiny',
+                            color=colors.white
+                        ),
+                        utils.get_text(
+                            text='we only have 2 paths left today.',
                             font=fonts.wacky_pixels,
                             size='tiny',
                             color=colors.white
                         ),
                     ],
-                    pos=(constants.canvas_width // 2, 670),
+                    align='left',
+                    pos=(constants.canvas_width // 2 + 80, 585),
                     pos_anchor=posanchors.midbottom,
+                    bg=False
                 ),
+                Module_ClickToContinue(tutorial_state=self)
+            ],
+            [
                 Module_AllowInput(
                     allow_draw_card=1,
                     tutorial_state=self
-                ),
+                )
             ],
             [
                 Module_AllowInput(
@@ -1846,7 +1873,7 @@ class Tutorial_PlayState(PlayState):
                         ),
                         utils.get_multicolor_text(
                             texts=[
-                                ('Since the ', colors.white),
+                                ('Since ', colors.white),
                                 ('magic fruit 1', colors.yellow_light),
                                 ('could', colors.white),
                             ],

@@ -335,7 +335,6 @@ class Game:
                 if event.key == pygame.K_F1:
                     self.zoom_4k_mode = not self.zoom_4k_mode
                     if self.zoom_4k_mode:
-                        print("4K zoom mode enabled - use mouse at screen edges to pan")
                         # Center the view initially
                         self.zoom_view_offset_x = -(3840 - constants.canvas_width) // 2
                         self.zoom_view_offset_y = -(2160 - constants.canvas_height) // 2
@@ -347,7 +346,6 @@ class Game:
                         # Pre-create 4K surface for performance
                         self.zoom_4k_surface = pygame.Surface((3840, 2160))
                     else:
-                        print("4K zoom mode disabled")
                         self.zoom_view_offset_x = 0
                         self.zoom_view_offset_y = 0
                         # Restore original mouse.get_pos

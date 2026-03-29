@@ -364,7 +364,6 @@ class Menu_CreditsState(BaseState):
                         'Kittisak Wanganansukdee',
                         'Krittidech Paijitjinda',
                         'Napat Ariyapattanaporn',
-                        'Teetawat Bussabarati'
                     ],
                     'padding': 15,
                     'size': 'small',
@@ -423,7 +422,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['eutheciel', 'dadysherwin1', 'Drillad/2wosafe', 'Han2/Hoplitx', 'JaxxGotIt', 'madibun', 'mymyz/meimei', 'Mroll', 'nashidrop', 'neden', 'promptnut no.1', 'ReiYurei', 'rentikoy', 'Seanchovy', 'Zehn/zedelsteins', 'Zundah'],
+                    'text': ['eutheciel     dadysherwin1     Drillad/2wosafe', 'Han2/Hoplitx     JaxxGotIt     madibun', 'mymyz/meimei     Mroll     nashidrop', 'Phaxtolgia     promptnut no.1     ReiYurei', 'rentikoy     Seanchovy     Sephiroth', 'Vans     Zehn/zedelsteins     Zundah'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -525,26 +524,6 @@ class Menu_CreditsState(BaseState):
 
             {
                 'texts': {
-                    'text': ['Help with Display Mode Issues'],
-                    'size': 'smaller',
-                    'color': colors.yellow_light,
-                    'font': fonts.wacky_pixels,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 20
-            },
-            {
-                'texts': {
-                    'text': ['Martinus from Pygame Discord'],
-                    'size': 'small',
-                    'color': colors.white,
-                    'font': fonts.mago1,
-                    'long_shadow': False,
-                },
-                'padding_bottom': 50
-            },
-            {
-                'texts': {
                     'text': ['Game Dev Class Teacher'],
                     'size': 'smaller',
                     'color': colors.yellow_light,
@@ -575,7 +554,7 @@ class Menu_CreditsState(BaseState):
             },
             {
                 'texts': {
-                    'text': ['Anko', 'nroleo', 'Sabrinoy', 'Simcarea/usal', 'sung', 'Taylor McCue'],
+                    'text': ['Anko3     Belderchal     nroleo', 'Sabrinoy     Simcarea/usal     sung', 'Taylor McCue'],
                     'size': 'small',
                     'color': colors.white,
                     'font': fonts.mago1,
@@ -785,6 +764,7 @@ class Menu_CreditsState(BaseState):
                 'texts': {
                     'text': [
                         ['Lazy Fox - LazyFox pixel font 2', '<itch.io>'],
+                        ['Lazy Fox - LazyFox pixel font 7', '<itch.io>'],
                         ['Cool Boy Zone! - Wacky Pixels', '<itch.io>'],
                         ['Nimble Beasts - magofont1', '<itch.io>'],
                         ['Zacchary Dempsey-Plante - Pixellari', '<dafont.com>'],
@@ -792,6 +772,7 @@ class Menu_CreditsState(BaseState):
                         ['Andrew Tyler - Minecraftia', '<dafont.com>'],
                     ],
                     'size': [
+                        ['small', 'small'],
                         ['small', 'small'],
                         ['smaller', 'smaller'],
                         ['small', 'small'],
@@ -802,6 +783,7 @@ class Menu_CreditsState(BaseState):
                     'color': colors.white,
                     'font': [
                         [fonts.lf2, fonts.lf2],
+                        [fonts.lf7, fonts.lf7],
                         [fonts.wacky_pixels, fonts.wacky_pixels],
                         [fonts.mago1, fonts.mago1],
                         [fonts.pixellari, fonts.pixellari],
@@ -810,6 +792,7 @@ class Menu_CreditsState(BaseState):
                     ],
                     'long_shadow': False,
                     'link': [
+                        [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
                         [None, 'https://lazy-fox.itch.io/lazy-pixel-fonts'],
                         [None, 'https://3d.itch.io/fonts'],
                         [None, 'https://nimblebeastscollective.itch.io/magosfonts'],
@@ -970,6 +953,15 @@ class Menu_CreditsState(BaseState):
                     'font': fonts.mago1,
                     'long_shadow': False,
                 },
+                'padding_bottom': 80
+            },
+            {
+                'texts': {
+                     'text': ['In loving memory of grandma'],
+                    'size': 'smaller',
+                    'font': fonts.wacky_pixels,
+                    'long_shadow': False,
+                },
                 'padding_bottom': 310
             },
 
@@ -983,7 +975,7 @@ class Menu_CreditsState(BaseState):
                     'color': colors.white,
                     'outline': True,
                 },
-                'padding_bottom': 240
+                'padding_bottom': 230
             },
         ]
         

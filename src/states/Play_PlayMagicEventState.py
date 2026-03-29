@@ -4,6 +4,7 @@ from src.classes.Button import Button
 from src.classes.Deck import Deck
 from src.classes.Cards import Cards
 from src.classes.Cell import Cell
+import hashlib
 
 
 class Play_PlayMagicEventState(BaseState):
@@ -37,6 +38,7 @@ class Play_PlayMagicEventState(BaseState):
         self.card_path1_image = None
         self.card_path2_image = None
         self.fruit_drawn_image = None
+        self._redraw_shuffle_counter = 0
 
         self.select_frame = self.parent.selecting_tile
 
@@ -84,6 +86,16 @@ class Play_PlayMagicEventState(BaseState):
         self.card_path2_image_scale = 1
 
         self.load_assets()
+
+    def _deterministic_shuffle(self, cards, context):
+        card_names = [card.card_name for card in cards]
+        seed_material = (
+            f"{self.parent.seed}|{self.parent.current_day}|{context}|"
+            f"{self._redraw_shuffle_counter}|{','.join(card_names)}"
+        )
+        seed_value = hashlib.sha256(seed_material.encode('utf-8')).hexdigest()
+        random.Random(seed_value).shuffle(cards)
+        self._redraw_shuffle_counter += 1
 
     def load_assets(self):
         # Process magic fruit when event starts (first magic fruit or from queue)
@@ -258,7 +270,7 @@ class Play_PlayMagicEventState(BaseState):
             
             # Create shuffled remaining fruits display for redraw event
             remaining_fruits = self.parent.deck_fruit.cards.copy()
-            random.shuffle(remaining_fruits)
+            self._deterministic_shuffle(remaining_fruits, 'magic_event_redraw_preview')
             self.remaining_fruits_display = remaining_fruits[:6]  # Show first 6 fruits
         elif self.parent.current_event == 'event_remove':
             self.remove_button_option_list = [
@@ -292,7 +304,7 @@ class Play_PlayMagicEventState(BaseState):
             self.reveal_button_option_list = [
                 {
                     'id': 'reveal path',
-                    'text': 'Reveal next 3 path cards',
+                    'text': 'Reveal next 4 path cards',
                 },
                 {
                     'id': 'reveal event',
@@ -853,8 +865,6 @@ class Play_PlayMagicEventState(BaseState):
                                 on_complete=on_complete
                             )
 
-                            random.seed(self.parent.seed)
-                            
                             if button.id == 'today fruit':
                                 # print('redraw today fruit')
                                 utils.sound_play(sound=sfx.card, volume=self.game.sfx_volume, pitch_variation=0.15)
@@ -938,7 +948,7 @@ class Play_PlayMagicEventState(BaseState):
                                     pass
                                 if pa.get('append_to_deck'):
                                     self.parent.deck_fruit.cards.append(Cards('fruit', pa['old_fruit'], False))
-                                    random.shuffle(self.parent.deck_fruit.cards)
+                                    self._deterministic_shuffle(self.parent.deck_fruit.cards, 'magic_event_redraw_commit')
                                 if pa.get('drawn_list') == 'fruit':
                                     self.parent.drawn_cards_fruit.append(pa['card'])
                                 self.pending_assignment = None

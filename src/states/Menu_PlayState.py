@@ -97,7 +97,8 @@ class Menu_PlayState(BaseState):
                 ))
         
             
-        self.textbox_label = utils.get_text(text='Seed', font=fonts.lf2, size='small', color=colors.mono_205)
+        self.textbox_label = utils.get_text(text='Seed', font=fonts.wacky_pixels, size='small', color=colors.white)
+        self.textbox_description = utils.get_text(text='Same seed = same world!', font=fonts.wacky_pixels, size='tiny', color=colors.white)
         self.textbox_mode = 'inactive'
         self.textbox_text = ''
         self.textbox_limit = 8
@@ -172,8 +173,8 @@ class Menu_PlayState(BaseState):
                                     pasted_text = root.clipboard_get().strip()
                                     root.destroy()
                                     
-                                    # Validate: max character limit only
-                                    if pasted_text and len(pasted_text) <= self.textbox_limit:
+                                    # Validate: max character limit and no spaces
+                                    if pasted_text and len(pasted_text) <= self.textbox_limit and ' ' not in pasted_text:
                                         self.textbox_text = pasted_text
                                         self.textbox_text_surface = utils.get_text(
                                             text=self.textbox_text,
@@ -208,7 +209,7 @@ class Menu_PlayState(BaseState):
                         elif event.key == pygame.K_RETURN:
                             self.textbox_mode = 'inactive'
                         else:
-                            if len(self.textbox_text) < self.textbox_limit and event.unicode.isprintable() and event.unicode not in ['\t', '\n', '\r']:
+                            if len(self.textbox_text) < self.textbox_limit and event.unicode.isprintable() and event.unicode not in ['\t', '\n', '\r', ' ']:
                                 # insert one char immediately and start hold/repeat for this character
                                 self.textbox_text += event.unicode
                                 self.textbox_text_surface = utils.get_text(
@@ -342,7 +343,7 @@ class Menu_PlayState(BaseState):
                 self.number_repeat_timer += dt
                 if self.number_repeat_timer >= self.number_repeat_interval:
                     self.number_repeat_timer -= self.number_repeat_interval
-                    if len(self.textbox_text) < self.textbox_limit:
+                    if len(self.textbox_text) < self.textbox_limit and self.number_hold_char != ' ':
                         # append the held digit
                         self.textbox_text += self.number_hold_char
                         self.textbox_text_surface = utils.get_text(
@@ -371,6 +372,7 @@ class Menu_PlayState(BaseState):
                     utils.blit(dest=canvas, source=processed_surface, pos=(constants.canvas_width/2, 580), pos_anchor=posanchors.center)
 
             utils.blit(dest=canvas, source=self.textbox_label, pos=(constants.canvas_width/2, 362), pos_anchor=posanchors.center)
+            utils.blit(dest=canvas, source=self.textbox_description, pos=(constants.canvas_width/2, 456), pos_anchor=posanchors.center)
             if self.textbox_mode == 'inactive':
                 utils.draw_rect(
                     dest=canvas,
